@@ -47,27 +47,24 @@ boards:
     publish:
       can0:
         - BMSErrors
-        - BmsPackStatus0
+        - BmsPackStatus
         - BMS_SOC
         - BMSCellTemps
-      can1:
-        - BmsPackStatus1
     subscribe:
       can0:
         - BMSState
         - BMS_VCU_Switch
-      can1:
         - BMS_CSB_Switch
   csb:
     arch: arm
     publish:
-      can1:
+      can0:
         - BMS_CSB_Switch
         - BMS_Mode
         - ElconCommand
     subscribe:
-      can1:
-        - BmsPackStatus1
+      can0:
+        - BmsPackStatus
         - ElconHeartbeat
   mc:
     subscribe:
@@ -81,15 +78,14 @@ boards:
         - CurrentSensor_Power
   elcon:
     publish:
-      can1:
+      can0:
         - ElconHeartbeat
     subscribe:
-      can1:
+      can0:
         - ElconCommand
 
 buses:
   can0:
-    is_extended: false
     messages:
       FrontCanNodeOutput:
         can_id: 0x0D0
@@ -160,7 +156,7 @@ buses:
             length: 9
             c_type: uint16_t
             signed: false
-      BmsPackStatus0:
+      BmsPackStatus:
         can_id: 0x0F2
         frequency: 10Hz
         is_big_endian: true
@@ -176,10 +172,10 @@ buses:
             length: 11
             c_type: int16_t
             signed: true
-          avg_cell_voltage:
+          balancing_needed:
             position: 20
-            length: 10
-            c_type: uint16_t
+            length: 1
+            c_type: bool
             signed: false
           min_cell_voltage:
             position: 30
@@ -490,11 +486,8 @@ buses:
             length: 16
             c_type: uint16_t
             unit: daJ # 10 joules
-  can1:
-    is_extended: true
-    messages:
-      BMS_CSB_Switch: # Switch CAN bus and baudrate
-        can_id: 0x10
+      BMS_CSB_Switch: # Switch baudrate
+        can_id: 0x600
         frequency: 0.1Hz # Just picked this to be less than the Elcon stuff
         is_big_endian: true
         segments:
@@ -503,7 +496,7 @@ buses:
             length: 1
             c_type: bool
       BMS_Mode:
-        can_id: 0x11
+        can_id: 0x601
         frequency: 1Hz
         is_big_endian: true
         segments:
@@ -571,44 +564,3 @@ buses:
             position: 35
             length: 1
             c_type: bool
-      BmsPackStatus1:
-        can_id: 0x12
-        frequency: 10Hz
-        is_big_endian: true
-        segments:
-          pack_voltage:
-            position: 0
-            length: 9
-            c_type: uint16_t
-            signed: false
-            unit: mV # check
-          pack_current:
-            position: 9
-            length: 11
-            c_type: int16_t
-            signed: true
-          balancing_needed:
-            position: 20
-            length: 1
-            c_type: bool
-            signed: false
-          min_cell_voltage:
-            position: 30
-            length: 10
-            c_type: uint16_t
-            signed: false
-          min_cell_voltage_id:
-            position: 40
-            length: 7
-            c_type: uint8_t
-            signed: false
-          max_cell_voltage:
-            position: 47
-            length: 10
-            c_type: uint16_t
-            signed: false
-          max_cell_voltage_id:
-            position: 57
-            length: 7
-            c_type: uint8_t
-            signed: false
