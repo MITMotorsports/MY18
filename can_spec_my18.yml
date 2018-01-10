@@ -1,0 +1,614 @@
+name: MY18
+archs:
+  - avr
+  - arm
+boards:
+  can_node:
+    arch: arm
+    publish:
+      can0:
+        - FrontCanNodeOutput
+        - FrontCanNodeWheelSpeed
+    subscribe:
+      can0:
+        - RearCanNodeWheelSpeed
+        - VcuToDash
+        - BMS_SOC
+  rear_can_node:
+    arch: arm
+    publish:
+      can0:
+        - RearCanNodeWheelSpeed
+  vcu:
+    arch: avr
+    publish:
+      can0:
+        - VcuToDash
+        - BMSState
+        - BMS_VCU_Switch
+        - MC_Command
+    subscribe:
+      can0:
+        - FrontCanNodeOutput
+        - Dash_Request
+  dash:
+    arch: avr
+    publish:
+      can0:
+        - Dash_Request
+    subscribe:
+      can0:
+        - VcuToDash
+        - BMSErrors
+        - FrontCanNodeOutput
+        - RearCanNodeWheelSpeed
+  bms:
+    arch: arm
+    publish:
+      can0:
+        - BMSErrors
+        - BmsPackStatus0
+        - BMS_SOC
+        - BMSCellTemps
+      can1:
+        - BmsPackStatus1
+    subscribe:
+      can0:
+        - BMSState
+        - BMS_VCU_Switch
+      can1:
+        - BMS_CSB_Switch
+  csb:
+    arch: arm
+    publish:
+      can1:
+        - BMS_CSB_Switch
+        - BMS_Mode
+        - ElconCommand
+    subscribe:
+      can1:
+        - BmsPackStatus1
+        - ElconHeartbeat
+  mc:
+    subscribe:
+      can0:
+        - MC_Command
+  current_sensor:
+    publish:
+      can0:
+        - CurrentSensor_Current
+        - CurrentSensor_Voltage
+        - CurrentSensor_Power
+  elcon:
+    publish:
+      can1:
+        - ElconHeartbeat
+    subscribe:
+      can1:
+        - ElconCommand
+
+buses:
+  can0:
+    is_extended: false
+    messages:
+      FrontCanNodeOutput:
+        can_id: 0x0D0
+        frequency: 50Hz
+        is_big_endian: true
+        segments:
+          requested_torque:
+            position: 0
+            length: 16
+            c_type: int16_t
+            signed: true
+            unit: daJ # From motor controller manual
+          is_throttle_implausible:
+            position: 16
+            length: 1
+            c_type: bool
+          has_brake_throttle_conflict:
+            position: 17
+            length: 1
+            c_type: bool
+      FrontCanNodeWheelSpeed:
+        can_id: 0x0F0
+        frequency: 10Hz
+        is_big_endian: true
+        segments:
+          front_right_wheel_speed:
+            position: 0
+            length: 32
+            c_type: uint32_t
+            signed: false
+            unit: mRPM
+          front_left_wheel_speed:
+            position: 32
+            length: 32
+            c_type: uint32_t
+            signed: false
+            unit: mRPM
+      BMSCellTemps:
+        can_id: 0x0F1
+        frequency: 10Hz
+        is_big_endian: true
+        segments:
+          avg_cell_temp:
+            position: 0
+            length: 15
+            c_type: int16_t
+            signed: false
+            unit: C
+          min_cell_temp:
+            position: 15
+            length: 15
+            c_type: int16_t
+            signed: false
+            unit: C
+          min_cell_temp_id:
+            position: 30
+            length: 9
+            c_type: uint16_t
+            signed: false
+          max_cell_temp:
+            position: 39
+            length: 5
+            c_type: int16_t
+            signed: false
+            unit: C
+          max_cell_temp_id:
+            position: 54
+            length: 9
+            c_type: uint16_t
+            signed: false
+      BmsPackStatus0:
+        can_id: 0x0F2
+        frequency: 10Hz
+        is_big_endian: true
+        segments:
+          pack_voltage:
+            position: 0
+            length: 9
+            c_type: uint16_t
+            signed: false
+            unit: mV # check
+          pack_current:
+            position: 9
+            length: 11
+            c_type: int16_t
+            signed: true
+          avg_cell_voltage:
+            position: 20
+            length: 10
+            c_type: uint16_t
+            signed: false
+          min_cell_voltage:
+            position: 30
+            length: 10
+            c_type: uint16_t
+            signed: false
+          min_cell_voltage_id:
+            position: 40
+            length: 7
+            c_type: uint8_t
+            signed: false
+          max_cell_voltage:
+            position: 47
+            length: 10
+            c_type: uint16_t
+            signed: false
+          max_cell_voltage_id:
+            position: 57
+            length: 7
+            c_type: uint8_t
+            signed: false
+      BMSErrors:
+        can_id: 0x0D4
+        frequency: 50Hz
+        is_big_endian: true
+        segments:
+          type:
+            position: 0
+            length: 4
+            c_type: enum
+            enum:
+              NONE: 0x0
+              LTC6804_PEC: 0x1
+              LTC6804_CVST: 0x2
+              LTC6804_OWT: 0x3
+              EEPROM: 0x4
+              CELL_UNDER_VOLTAGE: 0x5
+              CELL_OVER_VOLTAGE: 0x6
+              CELL_UNDER_TEMP: 0x7
+              CELL_OVER_TEMP: 0x8
+              OVER_CURRENT: 0x9
+              CAN: 0xA
+              CONFLICTING_MODE_REQUESTS: 0xB
+              VCU_DEAD: 0xC
+              CONTROL_FLOW: 0xD
+              OTHER: 0xE
+      BMS_SOC:
+        can_id: 0x0D5
+        frequency: 10Hz
+        is_big_endian: true
+        segments:
+          soc_percentage:
+            position: 1
+            length: 10
+            c_type: uint16_t
+            signed: false
+      Dash_Request:
+        can_id: 0x0D2
+        frequency: 50Hz
+        is_big_endian: true
+        segments:
+          type:
+            position: 0
+            length: 3
+            c_type: enum
+            enum:
+              NO_REQUEST: 0x0
+              RTD_ENABLE: 0x1
+              RTD_DISABLE: 0x2
+              LIMP_MODE_ENABLE: 0x3
+              LIMP_MODE_DISABLE: 0x4
+              TRACTION_CONTROL_ENABLE: 0x5
+              TRACTION_CONTROL_DISABLE: 0x6
+              ACTIVE_AERO_ENABLE: 0x7
+              ACTIVE_AERO_DISABLE: 0x8
+              FAN_ENABLE: 0x9
+              FAN_DISABLE: 0xA
+      BMSState:
+        can_id: 0x0D3
+        frequency: 1Hz
+        is_big_endian: true
+        segments:
+          state:
+            position: 0
+            length: 1
+            c_type: bool
+      VcuToDash:
+        can_id: 0x0F3
+        frequency: 10Hz
+        is_big_endian: true
+        segments:
+          rtd_light_on:
+            position: 0
+            length: 1
+            c_type: bool
+          ams_light_on:
+            position: 1
+            length: 1
+            c_type: bool
+          imd_light_on:
+            position: 2
+            length: 1
+            c_type: bool
+          hv_light_on:
+            position: 3
+            length: 1
+            c_type: bool
+          traction_control:
+            position: 4
+            length: 1
+            c_type: bool
+          limp_mode_on:
+            position: 5
+            length: 1
+            c_type: bool
+          lv_warning_on:
+            position: 6
+            length: 1
+            c_type: bool
+          active_aero_on:
+            position: 7
+            length: 1
+            c_type: bool
+          regen_on:
+            position: 8
+            length: 1
+            c_type: bool
+          shutdown_esd_drain_open:
+            position: 9
+            length: 1
+            c_type: bool
+          shutdown_bms_open:
+            position: 10
+            length: 1
+            c_type: bool
+          shutdown_imd_open:
+            position: 11
+            length: 1
+            c_type: bool
+          shutdown_bspd_open:
+            position: 12
+            length: 1
+            c_type: bool
+          shutdown_vcu_open:
+            position: 13
+            length: 1
+            c_type: bool
+          shutdown_precharge_open:
+            position: 14
+            length: 1
+            c_type: bool
+          shutdown_master_reset_open:
+            position: 15
+            length: 1
+            c_type: bool
+          shutdown_driver_reset_open:
+            position: 16
+            length: 1
+            c_type: bool
+          heartbeat_front_can_node_dead:
+            position: 25
+            length: 1
+            c_type: bool
+          heartbeat_rear_can_node_dead:
+            position: 26
+            length: 1
+            c_type: bool
+          heartbeat_bms_dead:
+            position: 27
+            length: 1
+            c_type: bool
+          heartbeat_dash_dead:
+            position: 28
+            length: 1
+            c_type: bool
+          heartbeat_mc_dead:
+            position: 29
+            length: 1
+            c_type: bool
+          heartbeat_current_sensor_dead:
+            position: 30
+            length: 1
+            c_type: bool
+          tsms_off:
+            position: 31
+            length: 1
+            c_type: bool
+          reset_latch_open:
+            position: 32
+            length: 1
+            c_type: bool
+          precharge_running:
+            position: 33
+            length: 1
+            c_type: bool
+          master_reset_not_initialized:
+            position: 34
+            length: 1
+            c_type: bool
+          driver_reset_not_initialized:
+            position: 35
+            length: 1
+            c_type: bool
+          lv_battery_voltage:
+            position: 40
+            length: 10
+            c_type: uint16_t
+            signed: false
+          limp_state:
+            position: 50
+            length: 3
+            c_type: enum
+            enum:
+              LIMP_NORMAL: 0x0
+              LIMP_50: 0x1
+              LIMP_33: 0x2
+              LIMP_25: 0x3
+      RearCanNodeWheelSpeed:
+        can_id: 0x0D1
+        frequency: 50Hz
+        is_big_endian: true
+        segments:
+          rear_right_wheel_speed:
+            position: 0
+            length: 32
+            c_type: uint32_t
+            signed: false
+            unit: mRPM
+          rear_left_wheel_speed:
+            position: 32
+            length: 32
+            c_type: uint32_t
+            signed: false
+            unit: mRPM
+      BMS_VCU_Switch: # Switch CAN bus and baudrate
+        can_id: 0x0F4
+        frequency: 1Hz
+        is_big_endian: true
+        segments:
+          always_true:
+            position: 0
+            length: 1
+            c_type: bool
+      CurrentSensor_Current:
+        can_id: 0x521
+        frequency: 20Hz
+        is_big_endian: true
+        segments:
+          pack_current:
+            position: 16
+            length: 32
+            c_type: int32_t
+            signed: true
+            unit: mA
+      CurrentSensor_Voltage:
+        can_id: 0x522
+        frequency: 20Hz
+        is_big_endian: true
+        segments:
+          pack_voltage:
+            position: 16
+            length: 32
+            c_type: int32_t
+            signed: true
+            unit: mV
+      CurrentSensor_Power:
+        can_id: 0x526
+        frequency: 20Hz
+        is_big_endian: true
+        segments:
+          power:
+            position: 16
+            length: 32
+            c_type: int32_t
+            signed: false
+            unit: W
+      MC_Command:
+        can_id: 0x0C0 # From manual
+        frequency: 2.5Hz # MC needs a message at 2 Hz or higher
+        is_big_endian: true
+        segments:
+          torque:
+            position: 0
+            length: 16
+            c_type: uint16_t
+            signed: false
+            unit: daJ # 10 joules
+          speed:
+            position: 16
+            length: 16
+            c_type: uint16_t
+            signed: false
+            unit: RPM
+          direction_is_counterclockwise: # when viewed from shaft end of motor
+            position: 32
+            length: 1
+            c_type: bool
+          inverter_enabled:
+            position: 40
+            length: 1
+            c_type: bool
+          discharge_enabled:
+            position: 41
+            length: 1
+            c_type: bool
+          torque_limit:
+            position: 48
+            length: 16
+            c_type: uint16_t
+            unit: daJ # 10 joules
+  can1:
+    is_extended: true
+    messages:
+      BMS_CSB_Switch: # Switch CAN bus and baudrate
+        can_id: 0x10
+        frequency: 0.1Hz # Just picked this to be less than the Elcon stuff
+        is_big_endian: true
+        segments:
+          always_true:
+            position: 0
+            length: 1
+            c_type: bool
+      BMS_Mode:
+        can_id: 0x11
+        frequency: 1Hz
+        is_big_endian: true
+        segments:
+          requested_mode:
+            position: 0
+            length: 1
+            c_type: enum
+            enum:
+              CHARGE: 0x0
+              BALANCE: 0x1
+      ElconCommand:
+        can_id: 0x1806E5F4
+        frequency: 1Hz
+        is_big_endian: true
+        segments:
+          max_terminal_voltage:
+            position: 0
+            length: 16
+            c_type: uint16_t
+            signed: false
+            unit: dV
+          max_current:
+            position: 16
+            length: 16
+            c_type: uint16_t
+            signed: false
+            unit: dA
+          control:
+            position: 32
+            length: 1
+            c_type: enum
+            enum:
+              stop: 0x0
+              start: 0x1
+      ElconHeartbeat:
+        can_id: 0x18FF50E5
+        frequency: 1Hz
+        is_big_endian: true
+        segments:
+          output_voltage:
+            position: 0
+            length: 16
+            c_type: uint16_t
+            signed: false
+            unit: dV
+          output_current:
+            position: 16
+            length: 16
+            c_type: uint16_t
+            signed: false
+            unit: dA
+          has_hardware_failure:
+            position: 32
+            length: 1
+            c_type: bool
+          over_temp_protection_on:
+            position: 33
+            length: 1
+            c_type: bool
+          is_input_voltage_wrong:
+            position: 34
+            length: 1
+            c_type: bool
+          battery_voltage_not_detected: # If battery voltage is not detected, the charger stays turned off the prevent reverse polarity
+            position: 35
+            length: 1
+            c_type: bool
+      BmsPackStatus1:
+        can_id: 0x12
+        frequency: 10Hz
+        is_big_endian: true
+        segments:
+          pack_voltage:
+            position: 0
+            length: 9
+            c_type: uint16_t
+            signed: false
+            unit: mV # check
+          pack_current:
+            position: 9
+            length: 11
+            c_type: int16_t
+            signed: true
+          balancing_needed:
+            position: 20
+            length: 1
+            c_type: bool
+            signed: false
+          min_cell_voltage:
+            position: 30
+            length: 10
+            c_type: uint16_t
+            signed: false
+          min_cell_voltage_id:
+            position: 40
+            length: 7
+            c_type: uint8_t
+            signed: false
+          max_cell_voltage:
+            position: 47
+            length: 10
+            c_type: uint16_t
+            signed: false
+          max_cell_voltage_id:
+            position: 57
+            length: 7
+            c_type: uint8_t
+            signed: false
