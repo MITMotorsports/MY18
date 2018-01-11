@@ -2,4 +2,4 @@
 cd "${0%/*}"
 
 git pull
-git submodule update
+git submodule update --init --recursive
