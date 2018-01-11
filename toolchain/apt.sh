@@ -9,6 +9,7 @@ apt-get install -y \
   gcc-arm-none-eabi \
   git \
   make \
+  python3 \
 
 if [ $1 = "clean" ]; then
   rm -rf /var/lib/apt
