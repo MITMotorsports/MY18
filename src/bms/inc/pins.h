@@ -29,4 +29,8 @@
 #define PIN_IOCON_LED2                IOCON_PIO2_11
 #define PIN_IOCON_LED3                IOCON_PIO1_5
 
+#define IOCON_LED1_FUNC IOCON_FUNC0
+#define IOCON_LED2_FUNC IOCON_FUNC0
+#define IOCON_LED3_FUNC IOCON_FUNC0
+
 #endif
