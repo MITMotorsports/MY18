@@ -1,6 +1,14 @@
-#include "chip.h"
-#include "MY18_Can_Library.h"
+#include <string.h>
+#include "../../../lib/lpc11cx4-library/lpc_chip_11cxx_lib/inc/chip.h"
+#include "../../../lib/lpc11cx4-library/evt_lib/inc/ltc6804.h"
+#include "../inc/config.h"
 
-int main() {
-    return 0;
+
+extern volatile uint32_t msTicks;
+
+
+int main(void){
+	Board_Chip_Init();
+	return 0;
 }
+
