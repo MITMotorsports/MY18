@@ -11,9 +11,7 @@ boards:
         - FrontCanNodeWheelSpeed
     subscribe:
       can0:
-        - RearCanNodeWheelSpeed
         - VcuToDash
-        - BMS_SOC
   rear_can_node:
     arch: arm
     publish:

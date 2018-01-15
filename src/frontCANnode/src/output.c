@@ -19,14 +19,14 @@ void Output_initialize(Can_Output_State_T *output) {
 }
 
 void Output_process_output(Input_T *input, State_T *state) {
-  if(state->can_out_state->send_output_msg) {
-    state->can_out_state->send_output_msg = false;
+  if(state->can_output->send_output_msg) {
+    state->can_output->send_output_msg = false;
     Can_ErrorID_T error = write_can_output_msg(input, state);
     handle_can_error(error);
   }
 
-  if(state->can_out_state->send_wheel_speed_msg) {
-    state->can_out_state->send_wheel_speed_msg = false;
+  if(state->can_output->send_wheel_speed_msg) {
+    state->can_output->send_wheel_speed_msg = false;
     Can_ErrorID_T error = write_can_output_msg(input, state);
     handle_can_error(error);
   }
@@ -37,7 +37,7 @@ Can_ErrorID_T write_can_output_msg(Input_T *input, State_T *state) {
 
   msg.has_brake_throttle_conflict = state->rules->has_brake_throttle_conflict;
   msg.is_throttle_implausible = state->rules->implausibility_reported;
-  msg.requested_torque = state->torque_state->requested_torque;
+  msg.requested_torque = state->torque->requested_torque;
 
   return Can_FrontCanNodeOutput_Write(&msg);
 }

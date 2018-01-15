@@ -20,14 +20,14 @@ void State_initialize(State_T *state) {
   state->rules->implausibility_reported = false;
   state->rules->has_brake_throttle_conflict = false;
 
-  state->can_out_state->send_output_msg = false;
-  state->can_out_state->send_wheel_speed_msg = false;
+  state->can_output->send_output_msg = false;
+  state->can_output->send_wheel_speed_msg = false;
 }
 
 void State_update_state(Input_T *input, State_T *state) {
   Rules_update_implausibility(input->adc, state->rules, input->msTicks);
   Rules_update_conflict(input, state->rules);
-  update_can_state(state->can_out_state, input->msTicks);
+  update_can_state(state->can_output, input->msTicks);
 }
 
 void update_can_state(Can_Output_State_T *can_output, uint32_t msTicks) {

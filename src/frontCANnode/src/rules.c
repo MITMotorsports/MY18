@@ -82,7 +82,7 @@ void Rules_update_conflict(Input_T *input, Rules_State_T *rules) {
 }
 
 bool check_implausibility(uint16_t accel_1_travel, uint16_t accel_2_travel) {
-  uint16_t max_travel = max(accel_1_travel, accel_2_travel);
-  uint16_t min_travel = min(accel_1_travel, accel_2_travel);
+  uint16_t max_travel = (accel_1_travel > accel_2_travel) ? accel_1_travel : accel_2_travel;
+  uint16_t min_travel = (accel_1_travel > accel_2_travel) ? accel_2_travel : accel_1_travel;
   return max_travel - min_travel >= IMPLAUSIBILITY_THROTTLE_TRAVEL;
 }

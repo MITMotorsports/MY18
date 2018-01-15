@@ -21,9 +21,7 @@ typedef struct {
 
 // Based off of subsribe fields in CAN spec
 typedef struct {
-  Can_RearCanNodeWheelSpeed_T *rear_wheel_speed_msg; // Traction control?
-  Can_VcuToDash_T *vcu_dash_msg; // For limp mode
-  Can_BMS_SOC_T *bms_soc_msg; // For active limp mode
+  Can_VcuToDashID_T limp_state; // For limp mode
 } Can_Input_T;
 
 typedef struct {
@@ -65,8 +63,8 @@ typedef struct {
 
 typedef struct {
   Rules_State_T *rules;
-  Torque_State_T *torque_state;
-  Can_Output_State_T *can_out_state;
+  Torque_State_T *torque;
+  Can_Output_State_T *can_output;
 } State_T;
 
 #endif // TYPES_H
