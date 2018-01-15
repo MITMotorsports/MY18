@@ -1,4 +1,4 @@
-// Basically copied from MY17
+// Copied from MY17
 
 #include "serial.h"
 

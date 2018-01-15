@@ -20,10 +20,10 @@ bool check_implausibility(uint16_t accel_1, uint16_t accel_2);
 
 void Rules_update_implausibility(ADC_Input_T *adc, Rules_State_T *rules, uint32_t msTicks) {
   // TODO make these actually work with some reorganization of input.c to absorb transform
-  uint16_t left_throttle_pot = 0;
-  uint16_t right_throttle_pot = 0;
+  uint16_t accel_1 = 0;
+  uint16_t accel_2 = 0;
 
-  bool curr_implausible = check_implausibility(left_throttle_pot, right_throttle_pot);
+  bool curr_implausible = check_implausibility(accel_1, accel_2);
   bool prev_implausible = rules->implausibility_observed;
 
   if (!curr_implausible) {
@@ -55,32 +55,34 @@ void Rules_update_conflict(Input_T *input, Rules_State_T *rules) {
   }
 
   // TODO make these actually work with some reorganization of input.c
-  uint16_t left_throttle_pot = 0;
-  uint16_t right_throttle_pot = 0;
-  const uint16_t throttle = (left_throttle_pot > right_throttle_pot) ? right_throttle_pot : left_throttle_pot;
+  const uint16_t accel_1 = 0;
+  const uint16_t accel_2 = 0;
+
+  // Take minimum
+  const uint16_t accel = (accel_1 > accel_2) ? accel_2 : accel_1;
 
   bool curr_conflict = rules->has_brake_throttle_conflict;
 
   if (curr_conflict) {
     // Conflict state: Remove conflict if throttle < 5% travel (EV2.5.1)
-    bool next_conflict = throttle >= CONFLICT_END_THROTTLE_TRAVEL;
+    bool next_conflict = accel >= CONFLICT_END_THROTTLE_TRAVEL;
     rules->has_brake_throttle_conflict = next_conflict;
     return;
   }
 
   // TODO Figure out why in MY17 this was set to be the same
-  const uint16_t brake = adc->front_brake_pressure;
+  const uint16_t brake = adc->brake_1;
 
   // TODO adjust this setting based on LV voltage
   bool brake_engaged = brake > CONFLICT_BRAKE_RAW;
 
-  bool throttle_engaged = throttle > CONFLICT_BEGIN_THROTTLE_TRAVEL;
+  bool throttle_engaged = accel > CONFLICT_BEGIN_THROTTLE_TRAVEL;
 
   rules->has_brake_throttle_conflict = brake_engaged && throttle_engaged;
 }
 
-bool check_implausibility(uint16_t left_throttle_travel, uint16_t right_throttle_travel) {
-  uint16_t max_travel = max(left_throttle_travel, right_throttle_travel);
-  uint16_t min_travel = min(left_throttle_travel, right_throttle_travel);
+bool check_implausibility(uint16_t accel_1_travel, uint16_t accel_2_travel) {
+  uint16_t max_travel = max(accel_1_travel, accel_2_travel);
+  uint16_t min_travel = min(accel_1_travel, accel_2_travel);
   return max_travel - min_travel >= IMPLAUSIBILITY_THROTTLE_TRAVEL;
 }

@@ -9,25 +9,25 @@
 static ADC_CLOCK_SETUP_T adc_setup;
 
 void ADC_Init(void) {
-  const uint32_t FRONT_BRAKEIN_CONFIG = IOCON_FUNC2 | IOCON_MODE_INACT | IOCON_ADMODE_EN;
+  const uint32_t ADC_PIN_CONFIG = IOCON_FUNC2 | IOCON_MODE_INACT | IOCON_ADMODE_EN;
 
   Chip_ADC_Init(LPC_ADC, &adc_setup);
 
-  // Steering
+  // Steering / AD0
   Chip_IOCON_PinMuxSet(LPC_IOCON, STEERING_PIN, STEERING_PIN_CONFIG);
   Chip_ADC_EnableChannel(LPC_ADC, STEERING_CHANNEL, ENABLE);
-  // Left throttle
-  Chip_IOCON_PinMuxSet(LPC_IOCON, LEFT_THROTTLE_POT_PIN, LEFT_THROTTLE_POT_PIN_CONFIG);
-  Chip_ADC_EnableChannel(LPC_ADC, LEFT_THROTTLE_POT_CHANNEL, ENABLE);
-  // Right throttle
-  Chip_IOCON_PinMuxSet(LPC_IOCON, RIGHT_THROTTLE_POT_PIN, RIGHT_THROTTLE_POT_PIN_CONFIG);
-  Chip_ADC_EnableChannel(LPC_ADC, RIGHT_THROTTLE_POT_CHANNEL, ENABLE);
-  // Front brake
-  Chip_IOCON_PinMuxSet(LPC_IOCON, FRONT_BRAKE_PIN, FRONT_BRAKE_PIN_CONFIG);
-  Chip_ADC_EnableChannel(LPC_ADC, FRONT_BRAKE_CHANNEL, ENABLE);
-  // Rear brake
-  Chip_IOCON_PinMuxSet(LPC_IOCON, REAR_BRAKE_PIN, REAR_BRAKE_PIN_CONFIG);
-  Chip_ADC_EnableChannel(LPC_ADC, REAR_BRAKE_CHANNEL, ENABLE);
+  // Accel 1 / AD2
+  Chip_IOCON_PinMuxSet(LPC_IOCON, ACCEL_1_PIN, ACCEL_1_PIN_CONFIG);
+  Chip_ADC_EnableChannel(LPC_ADC, ACCEL_1_CHANNEL, ENABLE);
+  // Accel 2 / AD3
+  Chip_IOCON_PinMuxSet(LPC_IOCON, ACCEL_2_PIN, ACCEL_2_PIN_CONFIG);
+  Chip_ADC_EnableChannel(LPC_ADC, ACCEL_2_CHANNEL, ENABLE);
+  // Brake 1 / AD4
+  Chip_IOCON_PinMuxSet(LPC_IOCON, BRAKE_1_PIN, BRAKE_1_PIN_CONFIG);
+  Chip_ADC_EnableChannel(LPC_ADC, BRAKE_1_CHANNEL, ENABLE);
+  // Brake 2 / AD5
+  Chip_IOCON_PinMuxSet(LPC_IOCON, BRAKE_2_PIN, BRAKE_2_PIN_CONFIG);
+  Chip_ADC_EnableChannel(LPC_ADC, BRAKE_2_CHANNEL, ENABLE);
 
   // Disable all other channels
   // TODO re-enable ones for wheel speed

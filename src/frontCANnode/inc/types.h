@@ -6,10 +6,10 @@
 #include "Can_Library.h"
 
 typedef struct {
-  uint16_t left_throttle_pot;
-  uint16_t right_throttle_pot;
-  uint16_t front_brake_pressure;
-  uint16_t rear_brake_pressure;
+  uint16_t accel_1;
+  uint16_t accel_2;
+  uint16_t brake_1;
+  uint16_t brake_2;
 
   uint32_t last_updated;
 } ADC_Input_T;

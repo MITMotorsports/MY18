@@ -15,10 +15,10 @@ void can_process_bms_soc(Input_T *input);
 // TODO Add wheel speed stuff
 
 void Input_initialize(Input_T *input) {
-  input->adc->left_throttle_pot = 0;
-  input->adc->right_throttle_pot = 0;
-  input->adc->front_brake_pressure = 0;
-  input->adc->rear_brake_pressure = 0;
+  input->adc->accel_1 = 0;
+  input->adc->accel_2 = 0;
+  input->adc->brake_1 = 0;
+  input->adc->brake_2 = 0;
 
   input->can_input->rear_wheel_speed_msg->rear_right_wheel_speed = 0;
   input->can_input->rear_wheel_speed_msg->rear_left_wheel_speed = 0;
@@ -52,7 +52,7 @@ void Input_initialize(Input_T *input) {
   input->can_input->vcu_dash_msg->master_reset_not_initialized = false;
   input->can_input->vcu_dash_msg->driver_reset_not_initialized = false;
   input->can_input->vcu_dash_msg->lv_battery_voltage = 0;
-  input->can_input->vcu_dash_msg->limp_state = CAN_VCUTODASH_LIMP_NORMAL;
+  input->can_input->vcu_dash_msg->limp_state = CAN_VCUTODASH_LIMP_NORMAL; // From CAN spec
 }
 
 void Input_fill_input(Input_T *input) {
@@ -66,10 +66,10 @@ void update_adc(Input_T *input) {
   uint32_t next_updated = adc->last_updated + ADC_UPDATE_PERIOD_MS;
 
   if (next_updated < input->msTicks) {
-    adc->left_throttle_pot = ADC_Read(LEFT_THROTTLE_POT_CHANNEL);
-    adc->right_throttle_pot = ADC_Read(RIGHT_THROTTLE_POT_CHANNEL);
-    adc->front_brake_pressure = ADC_Read(FRONT_BRAKE_CHANNEL);
-    adc->rear_brake_pressure = ADC_Read(REAR_BRAKE_CHANNEL);
+    adc->accel_1 = ADC_Read(ACCEL_1_CHANNEL);
+    adc->accel_2 = ADC_Read(ACCEL_2_CHANNEL);
+    adc->brake_1 = ADC_Read(BRAKE_1_CHANNEL);
+    adc->brake_2 = ADC_Read(BRAKE_2_CHANNEL);
     adc->last_updated = input->msTicks;
   }
 }
