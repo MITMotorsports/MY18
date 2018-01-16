@@ -1,5 +1,3 @@
-// Copied from MY17
-
 #include "serial.h"
 
 #include <stdlib.h>

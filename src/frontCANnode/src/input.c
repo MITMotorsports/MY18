@@ -26,7 +26,6 @@ void Input_fill_input(Input_T *input) {
   update_can(input);
 }
 
-// Copied from MY17
 void update_adc(Input_T *input) {
   ADC_Input_T *adc = input->adc;
   uint32_t next_updated = adc->last_updated + ADC_UPDATE_PERIOD_MS;

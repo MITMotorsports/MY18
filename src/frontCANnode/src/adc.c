@@ -1,4 +1,3 @@
-// Other than names, copied from MY17
 #include "adc.h"
 
 #include <stdint.h>
@@ -6,11 +5,26 @@
 
 #include "serial.h"
 
+#define UNUSED_1_CHANNEL ADC_CH1
+#define UNUSED_2_CHANNEL ADC_CH6
+#define UNUSED_3_CHANNEL ADC_CH7
+
+#define STEERING_PIN IOCON_PIO0_11
+#define ACCEL_1_PIN IOCON_PIO1_1
+#define ACCEL_2_PIN IOCON_PIO1_2
+#define BRAKE_1_PIN IOCON_PIO1_3
+#define BRAKE_2_PIN IOCON_PIO1_4
+
+// FUNC 2 is ADC for all pins here except for PIO1_4
+#define ACCEL_1_PIN_CONFIG (IOCON_FUNC2 | IOCON_MODE_INACT | IOCON_ADMODE_EN)
+#define ACCEL_2_PIN_CONFIG (IOCON_FUNC2 | IOCON_MODE_INACT | IOCON_ADMODE_EN)
+#define BRAKE_1_PIN_CONFIG (IOCON_FUNC2 | IOCON_MODE_INACT | IOCON_ADMODE_EN)
+#define BRAKE_2_PIN_CONFIG (IOCON_FUNC1 | IOCON_MODE_INACT | IOCON_ADMODE_EN)
+#define STEERING_PIN_CONFIG (IOCON_FUNC2 | IOCON_MODE_INACT | IOCON_ADMODE_EN)
+
 static ADC_CLOCK_SETUP_T adc_setup;
 
 void ADC_Init(void) {
-  const uint32_t ADC_PIN_CONFIG = IOCON_FUNC2 | IOCON_MODE_INACT | IOCON_ADMODE_EN;
-
   Chip_ADC_Init(LPC_ADC, &adc_setup);
 
   // Steering / AD0

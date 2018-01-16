@@ -51,11 +51,8 @@ Can_ErrorID_T write_can_wheel_speed_msg(Input_T *input) {
   return Can_FrontCanNodeWheelSpeed_Write(&msg);
 }
 
-// Copied from MY17
 void handle_can_error(Can_ErrorID_T error) {
   if (error != Can_Error_NONE && error != Can_Error_NO_RX) {
-    /* Serial_Print("can_write_err: "); */
-    /* Serial_PrintlnNumber(error, 16); */
     if (!resettingPeripheral) {
       resettingPeripheral = true;
       // TODO add this to CAN library

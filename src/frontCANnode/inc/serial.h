@@ -1,5 +1,3 @@
-// Basically copied from MY17
-
 #ifndef SERIAL_H
 #define SERIAL_H
 

@@ -6,8 +6,12 @@
 #include "Can_Library.h"
 
 typedef struct {
-  uint16_t accel_1;
+  // Raw accel values are read straight off of the adc
+  uint16_t accel_1_raw;
+  uint16_t accel_2_raw;
+  // These accel values have been scaled to between 0 and 1000
   uint16_t accel_2;
+
   uint16_t brake_1;
   uint16_t brake_2;
 
@@ -19,9 +23,9 @@ typedef struct {
   uint32_t front_left_wheel_speed;
 } Speed_Input_T;
 
-// Based off of subsribe fields in CAN spec
+// Should match subscribe fields in CAN spec
 typedef struct {
-  Can_VcuToDashID_T limp_state; // For limp mode
+  Can_VcuToDashID_T limp_state;
 } Can_Input_T;
 
 typedef struct {
@@ -47,8 +51,8 @@ typedef struct {
 } Rules_State_T;
 
 typedef struct {
-  // TODO fill this out with torque calculation stuff
-  // Torque based on throttle pedal
+  // TODO fill this out with other stuff for torque calculations if needed
+  // Torque based on accel pedal
   int16_t throttle_torque;
   // Torque that will actually be sent to the motor controller
   int16_t requested_torque;

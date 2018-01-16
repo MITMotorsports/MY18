@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 
-// From rules, see IC1.13.4 in the rules
+// See IC1.13.4 in the rules
 #define IMPLAUSIBILITY_REPORT_MS 100
 
 // 10% of 1000, see IC1.13.5 in the rules
@@ -19,9 +19,8 @@
 bool check_implausibility(uint16_t accel_1, uint16_t accel_2);
 
 void Rules_update_implausibility(ADC_Input_T *adc, Rules_State_T *rules, uint32_t msTicks) {
-  // TODO make these actually work with some reorganization of input.c to absorb transform
-  uint16_t accel_1 = 0;
-  uint16_t accel_2 = 0;
+  uint16_t accel_1 = adc->accel_1;
+  uint16_t accel_2 = adc->accel_2
 
   bool curr_implausible = check_implausibility(accel_1, accel_2);
   bool prev_implausible = rules->implausibility_observed;
@@ -54,9 +53,8 @@ void Rules_update_conflict(Input_T *input, Rules_State_T *rules) {
     return;
   }
 
-  // TODO make these actually work with some reorganization of input.c
-  const uint16_t accel_1 = 0;
-  const uint16_t accel_2 = 0;
+  const uint16_t accel_1 = adc->accel_1;
+  const uint16_t accel_2 = adc->accel_2;
 
   // Take minimum
   const uint16_t accel = (accel_1 > accel_2) ? accel_2 : accel_1;
@@ -70,7 +68,7 @@ void Rules_update_conflict(Input_T *input, Rules_State_T *rules) {
     return;
   }
 
-  // TODO Figure out why in MY17 this was set to be the same
+  // TODO Figure out why in MY17 this was set this way
   const uint16_t brake = adc->brake_1;
 
   // TODO adjust this setting based on LV voltage
