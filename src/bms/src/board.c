@@ -1,9 +1,8 @@
 #include "board.h"
 #include "../../../lib/lpc11cx4-library/lpc_chip_11cxx_lib/inc/chip.h"
 #include "../../../lib/lpc11cx4-library/evt_lib/inc/ltc6804.h"
-#include "can_library.h"
-#include "can.h"
-#include "ccand_11xx.h"
+#include "MY18_Can_Library.h"
+
 #include "pins.h"
 
 volatile uint32_t msTicks;
@@ -55,5 +54,8 @@ void Board_GPIO_Init(void) {
             (IOCON_FUNC0 | IOCON_MODE_INACT));
 }
 void Board_CAN_Init(uint32_t baudrate) {
-    //Can_Init(baudrate);
+    Can_Init(baudrate);
+}
+void Board_CAN_ProcessInput(/*asdasdasd*/){
+
 }

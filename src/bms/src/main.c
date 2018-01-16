@@ -2,9 +2,7 @@
 #include "../../../lib/lpc11cx4-library/lpc_chip_11cxx_lib/inc/chip.h"
 #include "../../../lib/lpc11cx4-library/evt_lib/inc/ltc6804.h"
 #include "board.h"
-#include "can_raw.h"
-#include "can.h"
-#include "ccand_11xx.h"
+
 
 #define CAN_BAUD 500000
 
