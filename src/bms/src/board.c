@@ -1,10 +1,14 @@
 #include "board.h"
 #include "../../../lib/lpc11cx4-library/lpc_chip_11cxx_lib/inc/chip.h"
 #include "../../../lib/lpc11cx4-library/evt_lib/inc/ltc6804.h"
+#include "can_library.h"
+#include "can.h"
+#include "ccand_11xx.h"
 #include "pins.h"
 
 volatile uint32_t msTicks;
-
+static Frame f;
+static Can_ErrorID_T ce;
 void SysTick_Handler(void) {
 	msTicks++;
 }
@@ -23,14 +27,14 @@ void Board_GPIO_Init(void) {
     //LED2
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_LED2);
     Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_LED2, IOCON_LED2_FUNC);
-    Chip_GPIO_SetPinState(LPC_GPIO, PIN_LED2, false);   
+    Chip_GPIO_SetPinState(LPC_GPIO, PIN_LED2, false);
 
     //LED3
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_LED3);
     Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_LED3, IOCON_LED3_FUNC);
     Chip_GPIO_SetPinState(LPC_GPIO, PIN_LED3, false);
 
-    //FSAE specific pin intializations   
+    //FSAE specific pin intializations
 
     //High Side Detect
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_HIGH_SIDE_DETECT);
@@ -49,4 +53,7 @@ void Board_GPIO_Init(void) {
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_BMS_FAULT);
     Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_BMS_FAULT,
             (IOCON_FUNC0 | IOCON_MODE_INACT));
+}
+void Board_CAN_Init(uint32_t baudrate) {
+    //Can_Init(baudrate);
 }
