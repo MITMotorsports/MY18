@@ -65,8 +65,8 @@ void Board_GPIO_Init(void) {
 void Board_CAN_Init(uint32_t baudrate) {
     Can_Init(baudrate);
 }
-void Board_CAN_ProcessInput(/*asdasdasd*/){
-    Can_Receive();
+void Board_CAN_ProcessInput(BMS_INPUT_T *bms_input){
+    Can_Receive(bms_input);
 }
 void Board_LTC6804_ProcessInputs(/*pack status*/){
     Board_LTC6804_GetCellVoltages();
