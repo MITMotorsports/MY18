@@ -31,6 +31,10 @@ void Can_Receive(){
         Can_CurrentSensor_Voltage_Read(&msg);
 
         //bms_input->pack_status->pack_voltage_mV = msg.voltage_mV > 0 ? msg.voltage_mV : -msg.voltage_mV;
+    } else if (msgType == Can_CurrentSensor_Power_Msg) {
+        Can_CurrentSensor_Power_T msg;
+        Can_CurrentSensor_Power_Read(&msg);
+
     } else if (msgType == Can_Dash_Request_Msg) {
         Can_Dash_Request_T msg;
         Can_Dash_Request_Read(&msg);

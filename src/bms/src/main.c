@@ -8,13 +8,24 @@
 
 extern volatile uint32_t msTicks;
 
+void Process_Input(/*bmsInput*/){
+    Board_CAN_ProcessInput();
+    //mode requests done through can ^^
 
+
+}
+
+void Process_Output(/*bms output*/){
+
+}
 int main(void){
 	Board_Chip_Init();
 	Board_GPIO_Init();
 	Board_CAN_Init(CAN_BAUD);
     //Can_Init(CAN_BAUD);
-
+    while(1){
+        Process_Input();
+    }
 	return 0;
 }
 

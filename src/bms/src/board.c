@@ -2,12 +2,21 @@
 #include "../../../lib/lpc11cx4-library/lpc_chip_11cxx_lib/inc/chip.h"
 #include "../../../lib/lpc11cx4-library/evt_lib/inc/ltc6804.h"
 #include "MY18_Can_Library.h"
-
+#include "fsae_can.h"
 #include "pins.h"
 
 volatile uint32_t msTicks;
-static Frame f;
-static Can_ErrorID_T ce;
+
+
+
+// ltc6804 timing variables
+static bool _ltc6804_gcv;
+static uint32_t _ltc6804_last_gcv;
+static uint32_t _ltc6804_gcv_tick_time;
+static bool _ltc6804_owt;
+static uint32_t _ltc6804_last_owt;
+static uint32_t _ltc6804_owt_tick_time;
+
 void SysTick_Handler(void) {
 	msTicks++;
 }
@@ -57,5 +66,18 @@ void Board_CAN_Init(uint32_t baudrate) {
     Can_Init(baudrate);
 }
 void Board_CAN_ProcessInput(/*asdasdasd*/){
+    Can_Receive();
+}
+void Board_LTC6804_ProcessInputs(/*pack status*/){
+    Board_LTC6804_GetCellVoltages();
+}
+void Board_LTC6804_GetCellVoltages(void/*pack_status*/){
+    if (msTicks - _ltc6804_last_gcv > _ltc6804_gcv_tick_time) {
+        _ltc6804_gcv = true;
+    }
+
+    if (!_ltc6804_gcv) {
+        return;
+    }
 
 }
