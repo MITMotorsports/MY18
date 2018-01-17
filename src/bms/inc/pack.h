@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #ifndef _PACK_H_
 #define _PACK_H_
 
@@ -45,5 +47,7 @@ typedef struct BMS_PACK_STATUS {
                                         // range: 0-MAX_NUM_MODULES*MAX_THERMISTORS_PER_MODULE
 
 } BMS_PACK_STATUS_T;
+
+uint16_t Pack_Config_Total_Cell_Count(BMS_PACK_CONFIG_T *config);
 
 #endif
