@@ -16,12 +16,13 @@ typedef struct BMS_PACK_CONFIG {
     uint32_t cv_min_current_ms;         // constant voltage time under minimum current (millisecond)
     uint32_t cc_cell_voltage_mV;        // constant current cell voltage
     // Size = 4*11 = 44 bytes
-    
+
     uint32_t cell_discharge_c_rating_cC;    // discharge C rating (centi-C) at 27 degrees C
     uint32_t max_cell_temp_dC;              // maximum cell temperature (decicelsius)
+    uint32_t min_cell_temp_dC;              // minimum cell temperature (decicelsius)
     uint8_t *module_cell_count;             // array of cell counts for each module
     // Total Size = 44 + 4 + 4 + 1= 53 bytes
-    
+
     int16_t fan_on_threshold_dC;    // threshold for turning fan on (decicelsius)
 } BMS_PACK_CONFIG_T;
 
