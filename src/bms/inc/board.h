@@ -1,18 +1,45 @@
-#include "../../../lib/lpc11cx4-library/lpc_chip_11cxx_lib/inc/chip.h"
+#include "chip.h"
 #include "state_types.h"
+#include "config.h"
+#include "ltc6804.h"
+#include <stdlib.h>
+
 #ifndef _BOARD_H_
 #define _BOARD_H_
 
 #define Hertz2Ticks(freq) SystemCoreClock / freq
+
+#define TIME_PER_THERMISTOR_MS 40
+
+#define UART_BUFFER_SIZE 100
+
+
+// ltc6804 constants
+#define LTC6804_SHIFT_REGISTER_DATA_IN 4
+#define LTC6804_SHIFT_REGISTER_CLOCK 3
+#define LTC6804_SHIFT_REGISTER_LATCH 2
+#define LTC6804_GPIO_COUNT 5
+
+typedef enum {
+    LTC6804_INIT_NONE, LTC6804_INIT_CFG, LTC6804_INIT_CVST, LTC6804_INIT_OWT, LTC6804_INIT_DONE
+} LTC6804_INIT_STATE_T;
+
+
 void Board_Chip_Init(void);
 void Board_GPIO_Init(void);
 void Board_CAN_Init(uint32_t baudrate);
 void Board_CAN_ProcessInput(BMS_INPUT_T* bms_input);
-void Board_LTC6804_ProcessInputs(void /*pack status*/);
-void Board_LTC6804_GetCellVoltages(void/*pack_status*/);
-void Board_LTC6804_GetCellTemperatures(void /*pack_status, bms_state->pack_config->num_modules*/);
-void Board_LTC6804_OpenWireTest(void);
 
+bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config, uint32_t *cell_voltages_mV);
+void Board_LTC6804_DeInit(void);
+void Board_LTC6804_ProcessInputs(BMS_PACK_STATUS_T *pack_status, BMS_STATE_T* bms_state);
+void Board_LTC6804_ProcessOutput(bool *balance_req);
+
+void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status);
+void Board_LTC6804_GetCellTemperatures(BMS_PACK_STATUS_T * pack_status, uint8_t num_modules);
+void Board_PrintThermistorTemperatures(uint8_t module, BMS_PACK_STATUS_T * pack_status);
+bool Board_LTC6804_OpenWireTest(void);
+void Board_UART_Init(uint32_t baudRateHz);
 
 
 void Board_Headroom_Toggle(void);
@@ -43,4 +70,7 @@ uint32_t Board_Read(char *charBuffer, uint32_t length);
 uint32_t Board_Print_BLOCKING(const char *str);
 
 uint32_t Board_Println_BLOCKING(const char *str);
+
+void Board_HandleLtc6804Status(LTC6804_STATUS_T status);
+
 #endif
