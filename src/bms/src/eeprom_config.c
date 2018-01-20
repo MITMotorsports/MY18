@@ -1,8 +1,8 @@
 #include "eeprom_config.h"
 #include "error_handler.h"
 #include "board.h"
-#include "../inc/eeprom_config.h"
-#include "../../../lib/lpc11cx4-library/evt_lib/inc/lc1024.h"
+
+#include <string.h>
 
 
 #define DATA_BLOCK_SIZE sizeof(BMS_PACK_CONFIG_T) + ERROR_BYTESIZE + CHECKSUM_BYTESIZE + VERSION_BYTESIZE + MAX_NUM_MODULES
