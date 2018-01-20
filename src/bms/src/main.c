@@ -6,6 +6,7 @@
 #include "pack.h"
 #include "state_types.h"
 #include "config.h"
+#include "console.h"
 
 #define CAN_BAUD 500000
 #define EEPROM_CS_PIN 0, 7

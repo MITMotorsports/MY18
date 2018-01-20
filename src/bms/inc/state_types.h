@@ -33,6 +33,8 @@ typedef enum {
 typedef struct BMS_STATE {
     BMS_SSM_MODE_T curr_mode;
 
+    BMS_PACK_CONFIG_T *pack_config;
+
     BMS_INIT_MODE_T init_state;
 } BMS_STATE_T;
 
