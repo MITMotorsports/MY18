@@ -507,6 +507,7 @@ buses:
             enum:
               CHARGE: 0x0
               BALANCE: 0x1
+              IDLE: 0x2
       ElconCommand:
         can_id: 0x1806E5F4
         frequency: 1Hz
