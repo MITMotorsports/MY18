@@ -38,12 +38,11 @@ typedef enum {
 typedef enum {
     ROL_state = (int)ROL_FIRST,
     ROL_cell_voltages_mV,
-    ROL_cell_temps_dC,
     ROL_pack_cell_max_mV,
     ROL_pack_cell_min_mV,
     ROL_pack_current_mA,
     ROL_pack_voltage_mV,
-    ROL_max_temp_dC,
+    ROL_max_cell_temp_dC,
     ROL_error,
     ROL_LENGTH
 } ro_loc_label_t;
