@@ -66,7 +66,7 @@ void Init_BMS_Structs(void){
 
 void Process_Input(BMS_INPUT_T* bms_input) {
     Board_CAN_ProcessInput(bms_input);
-    //Board_LTC6804_ProcessInputs(&pack_status);
+    Board_LTC6804_ProcessInputs(&pack_status,&bms_state);
 }
 
 void Process_Output(BMS_INPUT_T* bms_input,BMS_OUTPUT_T* bms_output, BMS_STATE_T* bms_state) {
@@ -96,7 +96,7 @@ int main(void) {
 	Board_GPIO_Init();
     Board_UART_Init(/*UART_BAUD*/500000);
 
-	//Board_CAN_Init(CAN_BAUD);
+	Board_CAN_Init(CAN_BAUD);
 
     EEPROM_Init(LPC_SSP1, EEPROM_BAUD, EEPROM_CS_PIN);
     SSM_Init(&bms_input,&bms_state, &bms_output);

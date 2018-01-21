@@ -64,11 +64,17 @@ void Can_Receive(BMS_INPUT_T *bms_input){
         } else if (msg.type == CAN_DASH_REQUEST_FAN_DISABLE) {
           bms_input->fan_override = false;
         }
-    } else if(msgType == Can_BMSState_Msg) {
-    	Can_BMSState_T msg;
-    	Can_BMSState_Read(&msg);
+    } else if(msgType == Can_BMS_VCU_State_Msg) {
+    	Can_BMS_VCU_State_T msg;
+    	Can_BMS_VCU_State_Read(&msg);
 
-        bms_input->state = msg.state;
+        if(msg.state == CAN_BMS_VCU_STATE_DISCHARGE_ENABLE) {
+            bms_input->can_mode_request = BMS_SSM_MODE_DISCHARGE;
+        } else if(msg.state == CAN_BMS_VCU_STATE_DISCHARGE_ENABLE) {
+            bms_input->can_mode_request = BMS_SSM_MODE_STANDBY;
+        } else {
+            //VCU sends No_Request;
+        }
     	//use this msg to change state//
     } else {
         // note other errors

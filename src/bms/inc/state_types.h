@@ -18,6 +18,7 @@ typedef enum BMS_SSM_MODE {
 typedef struct BMS_INPUT{
     BMS_PACK_STATUS_T *pack_status;
     BMS_SSM_MODE_T mode_request;
+    BMS_SSM_MODE_T can_mode_request;
     bool eeprom_packconfig_read_done;
     bool ltc_packconfig_check_done;
     bool state;
@@ -30,6 +31,7 @@ typedef enum {
     BMS_INIT_CHECK_PACKCONFIG,
     BMS_INIT_DONE
 } BMS_INIT_MODE_T;
+
 static const char * const BMS_INIT_MODE_NAMES[] = {
     "BMS_INIT_OFF",
     "BMS_INIT_READ_PACKCONFIG",
