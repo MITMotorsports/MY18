@@ -1,7 +1,7 @@
 #include <string.h>
 #include "eeprom_config.h"
-#include "../../../lib/lpc11cx4-library/lpc_chip_11cxx_lib/inc/chip.h"
-#include "../../../lib/lpc11cx4-library/evt_lib/inc/ltc6804.h"
+#include "chip.h"
+#include "ltc6804.h"
 #include "board.h"
 #include "pack.h"
 #include "state_types.h"
@@ -9,7 +9,7 @@
 #include "console.h"
 #include "ssm.h"
 
-#define CAN_BAUD 500000
+#define CAN_BAUD 57600
 #define EEPROM_CS_PIN 0, 7
 
 
@@ -67,6 +67,9 @@ void Init_BMS_Structs(void){
 void Process_Input(BMS_INPUT_T* bms_input) {
     Board_CAN_ProcessInput(bms_input);
     Board_LTC6804_ProcessInputs(&pack_status,&bms_state);
+
+    bms_input->msTicks = msTicks;
+
 }
 
 void Process_Output(BMS_INPUT_T* bms_input,BMS_OUTPUT_T* bms_output, BMS_STATE_T* bms_state) {
@@ -94,13 +97,12 @@ int main(void) {
     Init_BMS_Structs();
 	Board_Chip_Init();
 	Board_GPIO_Init();
-    Board_UART_Init(/*UART_BAUD*/500000);
-
+    Board_UART_Init(/*UART_BAUD*/9600);
 	Board_CAN_Init(CAN_BAUD);
 
     EEPROM_Init(LPC_SSP1, EEPROM_BAUD, EEPROM_CS_PIN);
     SSM_Init(&bms_input,&bms_state, &bms_output);
-
+    //EEPROM_WriteCCPage_Num(0,5);
     while(1) {
         Process_Input(&bms_input);
         SSM_Step(&bms_input, &bms_state, &bms_output);

@@ -11,6 +11,8 @@ void SSM_Init(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output){
 
     input->ltc_packconfig_check_done = false;
     input->eeprom_packconfig_read_done = false;
+
+    Discharge_Init();
 }
 
 void Init_Step(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output){
@@ -42,6 +44,8 @@ void Init_Step(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output){
             break;
     }
 }
+
+
 
 bool Is_Valid_Jump(BMS_SSM_MODE_T mode1, BMS_SSM_MODE_T mode2) {
 

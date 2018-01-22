@@ -23,6 +23,8 @@ typedef struct BMS_INPUT{
     bool ltc_packconfig_check_done;
     bool state;
     bool fan_override;
+    uint32_t msTicks;
+    bool contactors_closed;
 } BMS_INPUT_T;
 
 typedef enum {
@@ -38,10 +40,24 @@ static const char * const BMS_INIT_MODE_NAMES[] = {
     "BMS_INIT_CHECK_PACKCONFIG",
     "BMS_INIT_DONE"
 };
+typedef enum {
+    BMS_DISCHARGE_OFF,
+    BMS_DISCHARGE_INIT,
+    BMS_DISCHARGE_RUN,
+    BMS_DISCHARGE_DONE
+} BMS_DISCHARGE_MODE_T;
+
+static const char * const BMS_DISCHARGE_MODE_NAMES[] = {
+    "BMS_DISCHARGE_OFF",
+    "BMS_DISCHARGE_INIT",
+    "BMS_DISCHARGE_RUN",
+    "BMS_DISCHARGE_DONE"
+};
 
 typedef struct BMS_STATE {
     BMS_SSM_MODE_T curr_mode;
     BMS_INIT_MODE_T init_state;
+    BMS_DISCHARGE_MODE_T discharge_state;
     BMS_PACK_CONFIG_T *pack_config;
 } BMS_STATE_T;
 
