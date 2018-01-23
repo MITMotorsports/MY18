@@ -5,6 +5,11 @@
 #include <stdbool.h>
 #include "Can_Library.h"
 
+// Some wheel speed stuff
+#define NUM_TEETH 23
+#define SUM_ALL_TEETH (NUM_TEETH * (NUM_TEETH + 1) / 2)
+#define CYCLES_PER_MICROSECOND 48
+
 typedef struct {
   // Raw accel values are read straight off of the adc
   uint16_t accel_1_raw;
@@ -19,7 +24,33 @@ typedef struct {
   uint32_t last_updated;
 } ADC_Input_T;
 
+typedef enum {
+  LEFT,
+  RIGHT,
+  NUM_WHEELS
+} Wheel_T;
+
 typedef struct {
+  // Various arrays/numbers to keep track of timing
+  volatile uint32_t num_ticks[NUM_WHEELS];
+
+  // integers in [0:4294967296] representing the number of clock cycles between
+  // ticks from wheel speed sensors
+  volatile uint32_t last_tick[NUM_WHEELS][NUM_TEETH];
+  volatile uint64_t big_sum[NUM_WHEELS];
+
+  // Total number of ticks the wheel has had in the past cycle
+  // (i.e., the latest value for each tooth summed over the wheel)
+  volatile uint64_t little_sum[NUM_WHEELS];
+
+  // Time when interrupt was last called for each wheel
+  uint32_t last_updated[NUM_WHEELS];
+
+  volatile bool disregard[NUM_WHEELS];
+  uint32_t last_speed_read_ms;
+  bool wheel_stopped[NUM_WHEELS];
+
+  // Actual values
   uint32_t front_right_wheel_speed;
   uint32_t front_left_wheel_speed;
 } Speed_Input_T;
