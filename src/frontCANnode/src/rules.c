@@ -20,7 +20,7 @@ bool check_implausibility(uint16_t accel_1, uint16_t accel_2);
 
 void Rules_update_implausibility(ADC_Input_T *adc, Rules_State_T *rules, uint32_t msTicks) {
   uint16_t accel_1 = adc->accel_1;
-  uint16_t accel_2 = adc->accel_2
+  uint16_t accel_2 = adc->accel_2;
 
   bool curr_implausible = check_implausibility(accel_1, accel_2);
   bool prev_implausible = rules->implausibility_observed;

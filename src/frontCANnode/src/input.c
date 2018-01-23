@@ -16,6 +16,9 @@ void update_can(Input_T *input);
 
 void can_process_vcu_dash(Input_T *input);
 
+uint16_t transform1(uint32_t accel_1_raw);
+uint16_t transform2(uint32_t accel_2_raw);
+
 // TODO Add wheel speed stuff
 
 void Input_initialize(Input_T *input) {
@@ -45,8 +48,8 @@ void update_adc(Input_T *input) {
     adc->brake_2 = ADC_Read(BRAKE_2_CHANNEL);
     adc->last_updated = input->msTicks;
 
-    adc->accel_1 = transform1(accel_1_raw);
-    adc->accel_2 = transform2(accel_1_raw);
+    adc->accel_1 = transform1(adc->accel_1_raw);
+    adc->accel_2 = transform2(adc->accel_2_raw);
   }
 }
 
@@ -90,10 +93,10 @@ uint16_t linear_transfer_fn(uint32_t reading, uint16_t desired_width, uint16_t l
 
 uint16_t transform1(uint32_t accel_1_raw) {
   // Scale to between 0 and 1000
-  return linear_transfer_fn(reading, 1000, ACCEL_1_LOWER_BOUND, ACCEL_1_UPPER_BOUND);
+  return linear_transfer_fn(accel_1_raw, 1000, ACCEL_1_LOWER_BOUND, ACCEL_1_UPPER_BOUND);
 }
 
 uint16_t transform2(uint32_t accel_2_raw) {
   // Scale to between 0 and 1000
-  return linear_transfer_fn(reading, 1000, ACCEL_2_LOWER_BOUND, ACCEL_2_UPPER_BOUND);
+  return linear_transfer_fn(accel_2_raw, 1000, ACCEL_2_LOWER_BOUND, ACCEL_2_UPPER_BOUND);
 }
