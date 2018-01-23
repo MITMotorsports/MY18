@@ -562,3 +562,7 @@ buses:
             position: 35
             length: 1
             c_type: bool
+          elcon_is_comms_bad:
+            position: 36
+            length: 1
+            c_type: bool
