@@ -10,6 +10,7 @@ typedef struct {
   uint16_t accel_1_raw;
   uint16_t accel_2_raw;
   // These accel values have been scaled to between 0 and 1000
+  uint16_t accel_1;
   uint16_t accel_2;
 
   uint16_t brake_1;
