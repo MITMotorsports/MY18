@@ -1,10 +1,12 @@
 #include "board.h"
-#include "../../../lib/lpc11cx4-library/lpc_chip_11cxx_lib/inc/chip.h"
-#include "../../../lib/lpc11cx4-library/evt_lib/inc/ltc6804.h"
+#include "chip.h"
+#include "ltc6804.h"
 #include "MY18_Can_Library.h"
 #include "fsae_can.h"
 #include "pins.h"
 #include "cell_temperatures.h"
+
+#define TEST_HARDWARE
 
 volatile uint32_t msTicks;
 

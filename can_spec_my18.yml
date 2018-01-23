@@ -224,7 +224,7 @@ buses:
               OTHER: 0xE
       BMS_SOC:
         can_id: 0x0D5
-        frequency: 10Hz
+        frequency: .05Hz
         is_big_endian: true
         segments:
           soc_percentage:

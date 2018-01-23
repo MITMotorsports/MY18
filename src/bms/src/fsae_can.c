@@ -3,7 +3,9 @@
 #include "can.h"
 
 
+#define BMS_CAN_TEST_PERIOD 1000
 
+static uint32_t last_bms_can_test_time = 0;
 
 static bool isResetting = false;
 
@@ -78,5 +80,17 @@ void Can_Receive(BMS_INPUT_T *bms_input){
     	//use this msg to change state//
     } else {
         // note other errors
+    }
+}
+
+void Can_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output){
+
+    uint32_t msTicks = bms_input->msTicks;
+
+    if((msTicks - last_bms_can_test_time) > BMS_CAN_TEST_PERIOD) {
+        last_bms_can_test_time - msTicks;
+        Can_BMS_SOC_T bms_SOC;
+        bms_SOC.soc_percentage = 57;
+        handle_can_error(Can_BMS_SOC_Write(&bms_SOC));
     }
 }

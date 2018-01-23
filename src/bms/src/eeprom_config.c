@@ -163,7 +163,10 @@ bool EEPROM_LoadPackConfig(BMS_PACK_CONFIG_T *pack_config) {
     uint8_t checksum = eeprom_data_buf[DATA_BLOCK_SIZE - CHECKSUM_BYTESIZE - ERROR_BYTESIZE];
     saved_bms_error = eeprom_data_buf[DATA_BLOCK_SIZE - ERROR_BYTESIZE];
 
-    if (Validate_PackConfig(&eeprom_packconf_buf, version, checksum)) {
+
+//commented out for testing purposes, to directly use pre-configured defaults
+
+/*    if (Validate_PackConfig(&eeprom_packconf_buf, version, checksum)) {
         Board_Println_BLOCKING("Passed validation, using load from EEPROM...");
         // loading from eeprom driver packconfig buffer
         uint8_t * their_mccp = pack_config->module_cell_count;
@@ -179,7 +182,14 @@ bool EEPROM_LoadPackConfig(BMS_PACK_CONFIG_T *pack_config) {
         Write_PackConfig_EEPROM();
         Board_Println_BLOCKING("Wrote pre-configured defaults to EEPROM.");
         return true;
-    }
+    }*/
+        Board_Println_BLOCKING("Using pre-configured defaults...");
+        Load_PackConfig_Defaults(pack_config);
+        //Load_PackConfig_Defaults(&eeprom_packconf_buf);
+        Board_Println_BLOCKING("Finished loading pre-configured defaults...");
+        //Write_PackConfig_EEPROM();
+        Board_Println_BLOCKING("Wrote pre-configured defaults to EEPROM.");
+        return true;
 
 }
 
@@ -302,6 +312,7 @@ uint8_t EEPROM_ChangeConfig(rw_loc_label_t rw_loc, uint32_t val) {
 }
 
 static void Write_PackConfig_EEPROM(void) {
+
     // offset in the below line: we do not copy the module cell count ptr (1 byte)
     memcpy(eeprom_data_buf, &eeprom_packconf_buf, sizeof(BMS_PACK_CONFIG_T)-sizeof(void*));
     memcpy(&eeprom_data_buf[sizeof(BMS_PACK_CONFIG_T)], mcc, MAX_NUM_MODULES);

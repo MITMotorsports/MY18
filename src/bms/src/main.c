@@ -8,8 +8,8 @@
 #include "config.h"
 #include "console.h"
 #include "ssm.h"
+#include "fsae_can.h"
 
-#define CAN_BAUD 57600
 #define EEPROM_CS_PIN 0, 7
 
 
@@ -25,6 +25,9 @@ static BMS_PACK_CONFIG_T pack_config;
 static uint32_t cell_voltages[MAX_NUM_MODULES*MAX_CELLS_PER_MODULE];
 static int16_t cell_temperatures[MAX_NUM_MODULES*MAX_THERMISTORS_PER_MODULE];
 static uint8_t module_cell_count[MAX_NUM_MODULES];
+
+static char str[10];
+
 
 void Init_BMS_Structs(void){
 
@@ -65,7 +68,7 @@ void Init_BMS_Structs(void){
 }
 
 void Process_Input(BMS_INPUT_T* bms_input) {
-    Board_CAN_ProcessInput(bms_input);
+    Can_Receive(bms_input);
     Board_LTC6804_ProcessInputs(&pack_status,&bms_state);
 
     bms_input->msTicks = msTicks;
@@ -74,10 +77,7 @@ void Process_Input(BMS_INPUT_T* bms_input) {
 
 void Process_Output(BMS_INPUT_T* bms_input,BMS_OUTPUT_T* bms_output, BMS_STATE_T* bms_state) {
     if(bms_output->read_eeprom_packconfig){
-        if(/*console_output.config_default*/ 1) {
-            Write_EEPROM_PackConfig_Defaults();
-            //console_output.config_default = false;
-        }
+
         bms_input->eeprom_packconfig_read_done = EEPROM_LoadPackConfig(&pack_config);
         Print_EEPROM_Error();
         Set_EEPROM_Error(255); // magic # for no error
@@ -87,7 +87,7 @@ void Process_Output(BMS_INPUT_T* bms_input,BMS_OUTPUT_T* bms_output, BMS_STATE_T
         bms_input->ltc_packconfig_check_done = Board_LTC6804_Init(&pack_config, cell_voltages);
     } else {
         Board_LTC6804_ProcessOutput(bms_output->balance_req);
-
+        Can_Transmit(bms_input, bms_output);
     }
 
 
@@ -97,15 +97,19 @@ int main(void) {
     Init_BMS_Structs();
 	Board_Chip_Init();
 	Board_GPIO_Init();
-    Board_UART_Init(/*UART_BAUD*/9600);
+    Board_UART_Init(57600);
 	Board_CAN_Init(CAN_BAUD);
-
     EEPROM_Init(LPC_SSP1, EEPROM_BAUD, EEPROM_CS_PIN);
     SSM_Init(&bms_input,&bms_state, &bms_output);
-    //EEPROM_WriteCCPage_Num(0,5);
+    EEPROM_WriteCCPage_Num(0,11);
+
     while(1) {
         Process_Input(&bms_input);
         SSM_Step(&bms_input, &bms_state, &bms_output);
+        Process_Output(&bms_input,&bms_output,&bms_state);
+        //itoa(EEPROM_LoadCCPage_Num(0),str,10);
+        //Board_Println(str);
+        //Board_Println_BLOCKING("Inside");
     }
 	return 0;
 }

@@ -28,7 +28,8 @@ typedef enum {
 void Board_Chip_Init(void);
 void Board_GPIO_Init(void);
 void Board_CAN_Init(uint32_t baudrate);
-void Board_CAN_ProcessInput(BMS_INPUT_T* bms_input);
+
+
 
 bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config, uint32_t *cell_voltages_mV);
 void Board_LTC6804_DeInit(void);

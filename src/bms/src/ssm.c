@@ -18,11 +18,13 @@ void SSM_Init(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output){
 void Init_Step(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output){
     switch(state->init_state){
         case(BMS_INIT_OFF):
+            Board_Println_BLOCKING("In INIT_OFF");
             output->read_eeprom_packconfig = true;
             state->init_state = BMS_INIT_READ_PACKCONFIG;
             input->eeprom_packconfig_read_done = false;
             break;
         case(BMS_INIT_READ_PACKCONFIG):
+            Board_Println_BLOCKING("In INIT_READ_PACKCONFIG");
             if(input->eeprom_packconfig_read_done){
                 output->read_eeprom_packconfig = false;
                 output->check_packconfig_with_ltc = true;
@@ -32,14 +34,15 @@ void Init_Step(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output){
             }
             break;
         case(BMS_INIT_CHECK_PACKCONFIG):
+            Board_Println_BLOCKING("In INIT_CHECK_PACKCONFIG");
             if(input->ltc_packconfig_check_done) {
                 output->check_packconfig_with_ltc = false;
                 state->init_state = BMS_INIT_DONE;
-                state->curr_mode = BMS_SSM_MODE_STANDBY;
                 input->ltc_packconfig_check_done = false;
             }
             break;
         case(BMS_INIT_DONE):
+            Board_Println_BLOCKING("In INIT_DONE");
             state->curr_mode = BMS_SSM_MODE_STANDBY;
             break;
     }
@@ -84,6 +87,7 @@ bool Is_State_Done(BMS_STATE_T *state) {
 void SSM_Step(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output){
     switch(state->curr_mode){
         case BMS_SSM_MODE_STANDBY:
+            Board_Println_BLOCKING("IN STANDBY");
             break;
         case BMS_SSM_MODE_INIT:
             Init_Step(input,state,output);
