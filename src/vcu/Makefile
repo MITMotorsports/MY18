@@ -24,6 +24,8 @@ RM = rm -f
 OCD_DIR = /usr/local/share/openocd/scripts
 OCD = openocd
 
+CAN_LIB_DIR = ../../lib/CANlib
+
 #=============================================================================#
 # project configuration
 #=============================================================================#
@@ -53,7 +55,7 @@ AS_DEFS = -D__STARTUP_CLEAR_BSS
 
 # include directories (absolute or relative paths to additional folders with
 # headers, current folder is always included)
-INC_DIRS = inc inc/stm $(CUBE_DIR)/cmsis_inc $(CUBE_DIR)/cmsis_dev_inc $(CUBE_DIR)/hal_inc
+INC_DIRS = inc inc/stm $(CUBE_DIR)/cmsis_inc $(CUBE_DIR)/cmsis_dev_inc $(CUBE_DIR)/hal_inc $(CAN_LIB_DIR) $(CAN_LIB_DIR)/boards
 
 # library directories (absolute or relative paths to additional folders with
 # libraries)
@@ -66,7 +68,7 @@ LIBS =
 
 # additional directories with source files (absolute or relative paths to
 # folders with source files, current folder is always included)
-SRCS_DIRS = src src/stm src/system $(CUBE_DIR)/hal_src
+SRCS_DIRS = src src/stm src/system $(CUBE_DIR)/hal_src $(CAN_LIB_DIR)
 
 # extension of C files
 C_EXT = c

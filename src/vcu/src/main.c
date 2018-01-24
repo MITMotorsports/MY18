@@ -58,13 +58,6 @@ static void CAN_Init() {
     Error_Handler();
     }
       
-    /*##-3- Configure Transmission process #####################################*/
-    CanHandle.pTxMsg->StdId = 0x321;
-    CanHandle.pTxMsg->ExtId = 0x01;
-    CanHandle.pTxMsg->RTR = CAN_RTR_DATA;
-    CanHandle.pTxMsg->IDE = CAN_ID_STD;
-    CanHandle.pTxMsg->DLC = 2;
-
     // Start the reception process and enable reception interrupt
     if (HAL_CAN_Receive_IT(&CanHandle, CAN_FIFO0) != HAL_OK) {
         // Reception Error
@@ -126,6 +119,79 @@ static void init() {
 }
 
 void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* CanHandle) {
+
+    uint8_t output = 0;
+
+    if (CanHandle->pRxMsg->IDE == CAN_ID_STD) {
+        switch (CanHandle->pRxMsg->StdId) {
+            case FrontCanNodeOutput__MSG_ID:
+                output = 1;
+                break;
+            case FrontCanNodeWheelSpeed__MSG_ID:
+                output = 2;
+                break;
+            case BMSCellTemps__MSG_ID:
+                output = 3;
+                break;
+            case BmsPackStatus__MSG_ID:
+                output = 4;
+                break;
+            case BMSErrors__MSG_ID:
+                output = 5;
+                break;
+            case BMS_SOC__MSG_ID:
+                output = 6;
+                break;
+            case Dash_Request__MSG_ID:
+                output = 7;
+                break;
+            case BMSState__MSG_ID:
+                output = 8;
+                break;
+            case VcuToDash__MSG_ID:
+                output = 9;
+                break;
+            case RearCanNodeWheelSpeed__MSG_ID:
+                output = 10;
+                break;
+            case BMS_VCU_Switch__MSG_ID:
+                output = 11;
+                break;
+            case CurrentSensor_Current__MSG_ID:
+                output = 12;
+                break;
+            case CurrentSensor_Voltage__MSG_ID:
+                output = 13;
+                break;
+            case CurrentSensor_Power__MSG_ID:
+                output = 14;
+                break;
+            case MC_Command__MSG_ID:
+                output = 15;
+                break;
+            case BMS_CSB_Switch__MSG_ID:
+                output = 16;
+                break;
+            case BMS_Mode__MSG_ID:
+                output = 17;
+                break;
+            default:
+                output = 0;
+                break;
+        }
+
+        if (output != 0) {
+          CanHandle->pTxMsg->StdId = 0x321;
+          CanHandle->pTxMsg->RTR = CAN_RTR_DATA;
+          CanHandle->pTxMsg->IDE = CAN_ID_STD;
+          CanHandle->pTxMsg->DLC = 8;
+          CanHandle->pTxMsg->Data[0] = output;
+
+          if (HAL_CAN_Transmit_IT(CanHandle) != HAL_OK) {
+            // Error
+          }
+        }
+    } 
 
     // Receive
     if (HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0) != HAL_OK) {
