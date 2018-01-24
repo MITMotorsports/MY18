@@ -5,8 +5,6 @@
 
 #include "types.h"
 
-// TODO Add wheel speed stuff (maybe?)
-
 #define STEERING_CHANNEL ADC_CH0
 #define ACCEL_1_CHANNEL ADC_CH2
 #define ACCEL_2_CHANNEL ADC_CH3

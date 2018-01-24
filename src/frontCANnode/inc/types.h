@@ -21,6 +21,8 @@ typedef struct {
   uint16_t brake_1;
   uint16_t brake_2;
 
+  uint16_t steering_pot;
+
   uint32_t last_updated;
 } ADC_Input_T;
 

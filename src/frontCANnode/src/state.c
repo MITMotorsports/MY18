@@ -27,7 +27,16 @@ void State_initialize(State_T *state) {
 void State_update_state(Input_T *input, State_T *state) {
   Rules_update_implausibility(input->adc, state->rules, input->msTicks);
   Rules_update_conflict(input, state->rules);
+  update_torque_state(input, state);
   update_can_state(state->can_output, input->msTicks);
+}
+
+void update_torque_state(ADC_T *adc, State_T *state) {
+  min_accel = (adc->accel_1 > adc->accel_2) ? adc->accel_2 : adc->accel_1;
+
+  if (state->rules->implausibility_reported || state->rules->has_brake_throttle_conflict) {
+    state->torque->requested_torque = 0
+  }
 }
 
 void update_can_state(Can_Output_State_T *can_output, uint32_t msTicks) {

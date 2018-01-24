@@ -39,6 +39,7 @@ void Input_initialize(Input_T *input) {
   input->adc->accel_2_raw = 0;
   input->adc->brake_1 = 0;
   input->adc->brake_2 = 0;
+  input->adc->steering_pot = 0;
 
   input->can_input->limp_state = CAN_VCUTODASH_LIMP_NORMAL; // Based on CAN spec
 }
@@ -59,6 +60,7 @@ void update_adc(Input_T *input) {
     adc->accel_2_raw = ADC_Read(ACCEL_2_CHANNEL);
     adc->brake_1 = ADC_Read(BRAKE_1_CHANNEL);
     adc->brake_2 = ADC_Read(BRAKE_2_CHANNEL);
+    adc->steering_pot = ADC_READ(STEERING_CHANNEL);
     adc->last_updated = input->msTicks;
 
     adc->accel_1 = transform1(adc->accel_1_raw);
