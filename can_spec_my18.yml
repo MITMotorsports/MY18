@@ -40,6 +40,7 @@ boards:
       can0:
         - VcuToDash
         - BMSErrors
+        - BMS_SOC
         - FrontCanNodeOutput
         - RearCanNodeWheelSpeed
   bms:

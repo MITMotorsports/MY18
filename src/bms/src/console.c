@@ -21,13 +21,13 @@ static CONSOLE_OUTPUT_T *console_output;
 // [TODO] Fix to not parse strings falsely
 uint32_t my_atou(const char *str) {
     uint32_t res = 0; // Initialize result
-  
+
     // Iterate through all characters of input string and
     // update result
     uint32_t i;
     for ( i = 0; str[i] != '\0'; ++i)
         res = res*10 + str[i] - '0';
-  
+
     // return result.
     return res;
 }
@@ -41,7 +41,7 @@ uint32_t get_command_index(const char *name, bool *found) {
     for (cmd_idx = 0; cmd_idx < cmd_arraysize; cmd_idx++) {
         if (strcmp(name, commands[cmd_idx].name) == 0){
             if (found)
-                *found = true;  
+                *found = true;
             break;
         }
     }
@@ -58,7 +58,7 @@ static void get(const char * const * argv) {
     for (rwloc = 0; rwloc < RWL_LENGTH; ++rwloc){
         if (strcmp(argv[1], locstring[rwloc]) == 0){
             foundloc = true;
-            break; 
+            break;
         }
     }
 
@@ -91,15 +91,15 @@ static void get(const char * const * argv) {
             case RWL_cell_charge_c_rating_cC:
                 utoa(bms_state->pack_config->cell_charge_c_rating_cC, tempstr,10);
                 Board_Println(tempstr);
-                break;  
+                break;
             case RWL_bal_on_thresh_mV:
                 utoa(bms_state->pack_config->bal_on_thresh_mV, tempstr,10);
                 Board_Println(tempstr);
-                break;  
+                break;
             case RWL_bal_off_thresh_mV:
                 utoa(bms_state->pack_config->bal_off_thresh_mV, tempstr,10);
                 Board_Println(tempstr);
-                break; 
+                break;
             case RWL_pack_cells_p:
                 utoa(bms_state->pack_config->pack_cells_p, tempstr,10);
                 Board_Println(tempstr);
@@ -135,7 +135,7 @@ static void get(const char * const * argv) {
         for (roloc = (ro_loc_label_t)ROL_FIRST; roloc< ROL_LENGTH; ++roloc){
             if (strcmp(argv[1],locstring[roloc]) == 0){
                 foundloc = true;
-                break; 
+                break;
             }
         }
         if (foundloc) {
@@ -182,6 +182,10 @@ static void get(const char * const * argv) {
                     utoa(bms_input->pack_status->max_cell_temp_dC, tempstr,10);
                     Board_Println(tempstr);
                     break;
+                case ROL_soc:
+                    utoa(bms_input->pack_status->state_of_charge, tempstr,10);
+                    Board_Println(tempstr);
+                    break;
                 case ROL_error:
                     error_status_vector = Error_GetStatus(0);
                     for (i = 0; i < ERROR_NUM_ERRORS; ++i)
@@ -213,7 +217,7 @@ static void set(const char * const * argv) {
     for (rwloc = 0; rwloc < RWL_LENGTH; ++rwloc) {
         if (strcmp(argv[1],locstring[rwloc]) == 0) {
             foundloc = true;
-            break; 
+            break;
         }
     }
     if(foundloc) {
@@ -229,7 +233,7 @@ static void set(const char * const * argv) {
             if (strcmp(argv[1], locstring[roloc]) == 0) {
                 foundloc = true;
                 Board_Println("this location is read only");
-                return; 
+                return;
             }
         }
         Board_Println("invalid location");
@@ -275,7 +279,7 @@ static void config(const char * const * argv) {
 }
 
 static void measure(const char * const * argv) {
-    if (bms_state->curr_mode == BMS_SSM_MODE_STANDBY) { 
+    if (bms_state->curr_mode == BMS_SSM_MODE_STANDBY) {
         if (strcmp(argv[1],"on") == 0) {
             console_output->measure_on = true;
             Board_Println("Measure On!");
@@ -331,14 +335,14 @@ static void measure(const char * const * argv) {
     } else {
         Board_Println("Must be in standby");
     }
-}   
+}
 
 
 static void bal(const char * const * argv) {
     UNUSED(argv);
     if (bms_state->curr_mode == BMS_SSM_MODE_STANDBY ||
-            bms_state->curr_mode == BMS_SSM_MODE_BALANCE) { 
-        
+            bms_state->curr_mode == BMS_SSM_MODE_BALANCE) {
+
         if (strcmp(argv[1],"off") == 0) {
             console_output->valid_mode_request = false;
             console_output->balance_mV = UINT32_MAX;
@@ -352,12 +356,12 @@ static void bal(const char * const * argv) {
     } else {
         Board_Println("Must be in standby");
     }
-}   
+}
 
 static void chrg(const char * const * argv) {
     UNUSED(argv);
     if (bms_state->curr_mode == BMS_SSM_MODE_STANDBY ||
-            bms_state->curr_mode == BMS_SSM_MODE_CHARGE) {  
+            bms_state->curr_mode == BMS_SSM_MODE_CHARGE) {
         if (console_output->valid_mode_request) {
             console_output->valid_mode_request = false;
             Board_Println("chrg off");
@@ -369,12 +373,12 @@ static void chrg(const char * const * argv) {
     } else {
         Board_Println("Must be in standby");
     }
-}   
+}
 
 static void dis(const char * const * argv) {
     UNUSED(argv);
     if (bms_state->curr_mode == BMS_SSM_MODE_STANDBY ||
-            bms_state->curr_mode == BMS_SSM_MODE_DISCHARGE) {   
+            bms_state->curr_mode == BMS_SSM_MODE_DISCHARGE) {
         if (console_output->valid_mode_request) {
             console_output->valid_mode_request = false;
             Board_Println("dis off");
@@ -386,17 +390,8 @@ static void dis(const char * const * argv) {
     } else {
         Board_Println("Must be in standby");
     }
-}   
+}
 
-static void config_def(const char * const * argv) {
-    UNUSED(argv);
-    if (bms_state->curr_mode == BMS_SSM_MODE_STANDBY)
-    {
-        bms_state->curr_mode = BMS_SSM_MODE_INIT;
-        bms_state->init_state = BMS_INIT_OFF;
-        console_output->config_default = true;
-    }
-}              
 
 struct command_handler_pair {
     command_label_t label;
@@ -405,7 +400,7 @@ struct command_handler_pair {
 
 static const struct command_handler_pair handlers[] = {
     {C_GET, get}, {C_SET, set}, {C_HELP, help}, {C_CONFIG, config}, {C_BAL, bal},
-    {C_CHRG, chrg}, {C_DIS, dis}, {C_CONFIG_DEF, config_def}, {C_MEASURE, measure}
+    {C_CHRG, chrg}, {C_DIS, dis}, {C_MEASURE, measure}
 };
 
 /***************************************
@@ -418,7 +413,6 @@ void console_init(BMS_INPUT_T * input, BMS_STATE_T * state, CONSOLE_OUTPUT_T *co
     console_output = con_output;
     console_output->valid_mode_request = false;
     console_output->mode_request = BMS_SSM_MODE_STANDBY;
-    console_output->config_default = false;
 
     console_output->measure_on = false;
     console_output->measure_temp = false;
@@ -434,7 +428,7 @@ void executerl(int32_t argc, const char * const * argv) {
 
     if (found_command) {
         if (commands[cmd_idx].nargs == (uint32_t)(argc-1)) {
-            
+
             uint32_t handler_idx;
             uint32_t handler_count = sizeof(handlers)/sizeof(handlers[0]);
             for (handler_idx = 0; handler_idx < handler_count; handler_idx++) {

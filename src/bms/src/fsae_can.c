@@ -1,13 +1,16 @@
 #include "../inc/fsae_can.h"
 #include "MY18_Can_Library.h"
 #include "can.h"
-
+#include "board.h"
+#include <stdlib.h>
 
 #define BMS_CAN_TEST_PERIOD 1000
 
 static uint32_t last_bms_can_test_time = 0;
 
 static bool isResetting = false;
+
+static char str[100];
 
 
 void handle_can_error(Can_ErrorID_T err) {
@@ -50,6 +53,8 @@ void Can_Receive(BMS_INPUT_T *bms_input){
         Can_CurrentSensor_Current_T msg;
         Can_CurrentSensor_Current_Read(&msg);
         bms_input->pack_status->pack_current_mA = msg.pack_current > 0 ? msg.pack_current : -msg.pack_current;
+        itoa(msg.pack_current,str,10);
+        Board_Println_BLOCKING(str);
     } else if (msgType == Can_CurrentSensor_Voltage_Msg) {
         Can_CurrentSensor_Voltage_T msg;
         Can_CurrentSensor_Voltage_Read(&msg);
@@ -86,11 +91,12 @@ void Can_Receive(BMS_INPUT_T *bms_input){
 void Can_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output){
 
     uint32_t msTicks = bms_input->msTicks;
-
-    if((msTicks - last_bms_can_test_time) > BMS_CAN_TEST_PERIOD) {
-        last_bms_can_test_time - msTicks;
+    if((msTicks - last_bms_can_test_time) > BMS_CAN_TEST_PERIOD){
         Can_BMS_SOC_T bms_SOC;
-        bms_SOC.soc_percentage = 57;
-        handle_can_error(Can_BMS_SOC_Write(&bms_SOC));
+        bms_SOC.soc_percentage = 58;
+        Can_BMS_SOC_Write(&bms_SOC);
+        last_bms_can_test_time = msTicks;
+        Board_Println("Sending 58");
     }
+
 }

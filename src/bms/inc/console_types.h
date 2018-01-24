@@ -43,6 +43,7 @@ typedef enum {
     ROL_pack_current_mA,
     ROL_pack_voltage_mV,
     ROL_max_cell_temp_dC,
+    ROL_soc,
     ROL_error,
     ROL_LENGTH
 } ro_loc_label_t;

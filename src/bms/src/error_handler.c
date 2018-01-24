@@ -8,23 +8,16 @@
 #define LTC6802_PEC_timeout_count  		100
 #define LTC6802_CVST_timeout_count 		2
 #define LTC6802_OWT_timeout_count  		10
-//#define BRUSA_timeout_count  			5
 #define CAN_timeout_count 				5
 #define EEPROM_timeout_count  			5
 #define CONFLICTING_MODE_REQUESTS_count   2
 
-#ifdef FSAE_DRIVERS
 
-    #define CELL_OVER_TEMP_timeout_ms     10000
-    #define CELL_UNDER_TEMP_timeout_ms    10000
-    #define VCU_DEAD_count                1
-    #define CONTROL_FLOW_count            1
+#define CELL_OVER_TEMP_timeout_ms     10000
+#define CELL_UNDER_TEMP_timeout_ms    10000
+#define VCU_DEAD_count                1
+#define CONTROL_FLOW_count            1
 
-#else
-
-    #define CELL_OVER_TEMP_timeout_ms  		1000
-
-#endif
 
 static ERROR_STATUS_T error_vector[ERROR_NUM_ERRORS];
 
@@ -35,21 +28,16 @@ static ERROR_HANDLER error_handler_vector[ERROR_NUM_ERRORS] = {
                             {_Error_Handle_Count, 	LTC6802_PEC_timeout_count},
                             {_Error_Handle_Count,	LTC6802_CVST_timeout_count},
                             {_Error_Handle_Count,	LTC6802_OWT_timeout_count},
-                            {_Error_Handle_Count,	EEPROM_timeout_count},	
+                            {_Error_Handle_Count,	EEPROM_timeout_count},
                             {_Error_Handle_Timeout, CELL_UNDER_VOLTAGE_timeout_ms},
                             {_Error_Handle_Timeout,	CELL_OVER_VOLTAGE_timeout_ms},
-#ifdef FSAE_DRIVERS
                             {_Error_Handle_Timeout, CELL_UNDER_TEMP_timeout_ms},
-#endif
                             {_Error_Handle_Timeout, CELL_OVER_TEMP_timeout_ms},
                             {_Error_Handle_Timeout, OVER_CURRENT_timeout_ms},
-                           // {_Error_Handle_Count, 	BRUSA_timeout_count},
                             {_Error_Handle_Count, 	CAN_timeout_count},
                             {_Error_Handle_Count,   CONFLICTING_MODE_REQUESTS_count}
-#ifdef FSAE_DRIVERS
                             ,{_Error_Handle_Count,  VCU_DEAD_count}
                             ,{_Error_Handle_Count,  CONTROL_FLOW_count}
-#endif //FSAE_DRIVERS
                             };
 
 
@@ -116,7 +104,7 @@ static ERROR_HANDLER_STATUS_T _Error_Handle_Count(ERROR_STATUS_T* er_stat, uint3
 		er_stat->handling = false;
 		return HANDLER_FINE;
 	} else {
-		//[TODO] magic numbers changeme 
+		//[TODO] magic numbers changeme
 		if (er_stat->count < timeout_num) {
 			er_stat->handling = true;
 			return HANDLER_FINE;
@@ -142,7 +130,7 @@ ERROR_HANDLER_STATUS_T Error_Handle(uint32_t msTicks) {
 
 bool Error_ShouldHalt(ERROR_T i, uint32_t msTicks) {
     if (error_vector[i].error || error_vector[i].handling) {
-        if (error_handler_vector[i].handler(&error_vector[i], msTicks,error_handler_vector[i].timeout) 
+        if (error_handler_vector[i].handler(&error_vector[i], msTicks,error_handler_vector[i].timeout)
                 == HANDLER_HALT) {
             return true;
         }

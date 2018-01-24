@@ -46,7 +46,7 @@ typedef struct BMS_PACK_STATUS {
                                         // range: 0-MAX_NUM_MODULES*MAX_THERMISTORS_PER_MODULE
     uint16_t min_cell_temp_position;    // index of the cell with minimum temperature
                                         // range: 0-MAX_NUM_MODULES*MAX_THERMISTORS_PER_MODULE
-
+    uint8_t state_of_charge;            // range 0 - 100, percentage of charge
 } BMS_PACK_STATUS_T;
 
 uint16_t Pack_Config_Total_Cell_Count(BMS_PACK_CONFIG_T *config);

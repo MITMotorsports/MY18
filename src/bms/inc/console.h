@@ -25,7 +25,6 @@ static const BMS_COMMAND_T commands[] = {
     {"config",     C_CONFIG,  0, "Reinitialize BMS, reload EEPROM. Usage: config"},
     {"dis",        C_DIS,     0, "Go into discharge mode. Usage: dis [on|off]"},
     {"measure",    C_MEASURE, 1, "Start measurement printout mode. Usage: ..."},
-    {"config_def", C_CONFIG_DEF, 0, "Configure pack config defaults."}
 };
 
 static const char * const locstring[] =  {
@@ -51,10 +50,11 @@ static const char * const locstring[] =  {
                             "pack_current_mA",
                             "pack_voltage_mV",
                             "max_cell_temp_dC",
+                            "soc",
                             "error"
 };
 
-static const uint32_t locparam[ARRAY_SIZE(locstring)][3] = { 
+static const uint32_t locparam[ARRAY_SIZE(locstring)][3] = {
                             {1, 0,UINT32_MAX},//"cell_min_mV",
                             {1, 0,UINT32_MAX},//"cell_max_mV",
                             {1, 0,UINT32_MAX},//"cell_capacity_cAh",
@@ -84,7 +84,6 @@ typedef void (* const COMMAND_EXECUTE_HANDLER)(const char * const *);
 
 typedef struct {
     bool valid_mode_request;
-    bool config_default;
     BMS_SSM_MODE_T mode_request;
     uint32_t balance_mV;
     bool measure_on;
@@ -101,9 +100,8 @@ typedef struct console_t {
 } console_t;
 
 // static console_t console;
-
 void console_init(BMS_INPUT_T *bms_input, BMS_STATE_T *bms_state, CONSOLE_OUTPUT_T *console_output);
-void executerl(int32_t argc, const char * const * argv);  
+void executerl(int32_t argc, const char * const * argv);
 
 
 #endif

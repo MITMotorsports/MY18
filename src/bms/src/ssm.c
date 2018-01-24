@@ -42,8 +42,8 @@ void Init_Step(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output){
             }
             break;
         case(BMS_INIT_DONE):
-            Board_Println_BLOCKING("In INIT_DONE");
-            state->curr_mode = BMS_SSM_MODE_STANDBY;
+            //Board_Println_BLOCKING("In INIT_DONE");
+            //state->curr_mode = BMS_SSM_MODE_STANDBY;
             break;
     }
 }
@@ -87,7 +87,6 @@ bool Is_State_Done(BMS_STATE_T *state) {
 void SSM_Step(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output){
     switch(state->curr_mode){
         case BMS_SSM_MODE_STANDBY:
-            Board_Println_BLOCKING("IN STANDBY");
             break;
         case BMS_SSM_MODE_INIT:
             Init_Step(input,state,output);

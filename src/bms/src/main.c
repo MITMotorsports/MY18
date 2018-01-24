@@ -15,19 +15,21 @@
 
 extern volatile uint32_t msTicks;
 
+static char str[10];
+
 static BMS_PACK_STATUS_T pack_status;
 static BMS_INPUT_T bms_input;
 static BMS_OUTPUT_T bms_output;
 static BMS_STATE_T bms_state;
-//static CONSOLE_OUTPUT_T console_output;
 
 static BMS_PACK_CONFIG_T pack_config;
 static uint32_t cell_voltages[MAX_NUM_MODULES*MAX_CELLS_PER_MODULE];
 static int16_t cell_temperatures[MAX_NUM_MODULES*MAX_THERMISTORS_PER_MODULE];
 static uint8_t module_cell_count[MAX_NUM_MODULES];
 
-static char str[10];
-
+// memory for console
+static microrl_t rl;
+static CONSOLE_OUTPUT_T console_output;
 
 void Init_BMS_Structs(void){
 
@@ -76,6 +78,7 @@ void Process_Input(BMS_INPUT_T* bms_input) {
 }
 
 void Process_Output(BMS_INPUT_T* bms_input,BMS_OUTPUT_T* bms_output, BMS_STATE_T* bms_state) {
+    bms_input->msTicks = msTicks;
     if(bms_output->read_eeprom_packconfig){
 
         bms_input->eeprom_packconfig_read_done = EEPROM_LoadPackConfig(&pack_config);
@@ -92,6 +95,15 @@ void Process_Output(BMS_INPUT_T* bms_input,BMS_OUTPUT_T* bms_output, BMS_STATE_T
 
 
 }
+
+void Process_Keyboard(void) {
+    uint32_t readln = Board_Read(str,50);
+    uint32_t i;
+    for(i = 0; i < readln; i++) {
+        microrl_insert_char(&rl, str[i]);
+    }
+}
+
 int main(void) {
 
     Init_BMS_Structs();
@@ -103,13 +115,18 @@ int main(void) {
     SSM_Init(&bms_input,&bms_state, &bms_output);
     EEPROM_WriteCCPage_Num(0,11);
 
+    //setup readline/console
+    microrl_init(&rl, Board_Print);
+    microrl_set_execute_callback(&rl,executerl);
+    console_init(&bms_input, &bms_state, &console_output);
+
     while(1) {
-        Process_Input(&bms_input);
-        SSM_Step(&bms_input, &bms_state, &bms_output);
-        Process_Output(&bms_input,&bms_output,&bms_state);
-        //itoa(EEPROM_LoadCCPage_Num(0),str,10);
-        //Board_Println(str);
-        //Board_Println_BLOCKING("Inside");
+
+        Process_Keyboard(); //console input
+        Process_Input(&bms_input); //Processes Inputs(can messages, pin states, cell stats)
+        SSM_Step(&bms_input, &bms_state, &bms_output); //changes state based on inputs
+        Process_Output(&bms_input,&bms_output,&bms_state); //Transmits can messages, processes ltc output(update balance states)
+
     }
 	return 0;
 }

@@ -331,9 +331,7 @@ void Board_LTC6804_DeInit(void) {
 #endif
 }
 
-void Board_CAN_ProcessInput(BMS_INPUT_T *bms_input){
-    Can_Receive(bms_input);
-}
+
 void Board_LTC6804_ProcessInputs(BMS_PACK_STATUS_T *pack_status, BMS_STATE_T* bms_state) {
     Board_LTC6804_GetCellVoltages(pack_status);
     Board_LTC6804_GetCellTemperatures(pack_status, bms_state->pack_config->num_modules);
