@@ -4,6 +4,10 @@ External libraries are imported via submodules and found under the [`lib`](lib) 
 
 Development environment and toolchain installation scripts are also provided.
 
+# Getting Latest Changes
+Run the [`pull.sh`](pull.sh) script to get the latest version of this 
+repository and the appropriate submodules.
+
 # Development Environment
 On MY18, we are standardizing the build and flash toolchain for all embedded
 devices on the car.
