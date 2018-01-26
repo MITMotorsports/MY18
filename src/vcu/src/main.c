@@ -32,7 +32,7 @@ static void CAN_Init() {
     CanHandle.Init.SJW = CAN_SJW_1TQ;
     CanHandle.Init.BS1 = CAN_BS1_6TQ;
     CanHandle.Init.BS2 = CAN_BS2_8TQ;
-    CanHandle.Init.Prescaler = 2;
+    CanHandle.Init.Prescaler = 4;     // sets the width of the time quanta
 
     if(HAL_CAN_Init(&CanHandle) != HAL_OK)
     {
