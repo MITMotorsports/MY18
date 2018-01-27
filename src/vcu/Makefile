@@ -26,6 +26,8 @@ OCD = openocd
 
 CAN_LIB_DIR = ../../lib/CANlib
 
+CAN_DRIVER = CAN_ARCHITECTURE_STM32F2XX
+
 #=============================================================================#
 # project configuration
 #=============================================================================#
@@ -55,7 +57,7 @@ AS_DEFS = -D__STARTUP_CLEAR_BSS
 
 # include directories (absolute or relative paths to additional folders with
 # headers, current folder is always included)
-INC_DIRS = inc inc/stm $(CUBE_DIR)/cmsis_inc $(CUBE_DIR)/cmsis_dev_inc $(CUBE_DIR)/hal_inc $(CAN_LIB_DIR) $(CAN_LIB_DIR)/boards
+INC_DIRS = inc inc/stm $(CUBE_DIR)/cmsis_inc $(CUBE_DIR)/cmsis_dev_inc $(CUBE_DIR)/hal_inc $(CAN_LIB_DIR)
 
 # library directories (absolute or relative paths to additional folders with
 # libraries)
@@ -68,7 +70,7 @@ LIBS =
 
 # additional directories with source files (absolute or relative paths to
 # folders with source files, current folder is always included)
-SRCS_DIRS = src src/stm src/system $(CUBE_DIR)/hal_src $(CAN_LIB_DIR) $(CAN_LIB_DIR)/stm32f2xx_src
+SRCS_DIRS = src src/stm src/system $(CUBE_DIR)/hal_src $(CAN_LIB_DIR) 
 
 # extension of C files
 C_EXT = c
@@ -146,7 +148,7 @@ endif
 CORE_FLAGS = -mcpu=$(CORE) -mthumb
 
 # flags for C compiler
-C_FLAGS = -std=$(C_STD) -g -ggdb3 -fverbose-asm -Wa,-ahlms=$(OUT_DIR_F)$(notdir $(<:.$(C_EXT)=.lst))
+C_FLAGS = -std=$(C_STD) -g -ggdb3 -fverbose-asm -Wa,-ahlms=$(OUT_DIR_F)$(notdir $(<:.$(C_EXT)=.lst)) -D$(CAN_DRIVER)
 #			c standard	debug(?) 	extra comments	
 
 # flags for assembler
