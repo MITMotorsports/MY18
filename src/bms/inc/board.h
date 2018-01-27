@@ -2,6 +2,7 @@
 #include "state_types.h"
 #include "config.h"
 #include "ltc6804.h"
+#include "console.h"
 #include <stdlib.h>
 
 #ifndef _BOARD_H_
@@ -29,7 +30,7 @@ void Board_Chip_Init(void);
 void Board_GPIO_Init(void);
 void Board_CAN_Init(uint32_t baudrate);
 
-
+void Board_GetModeRequest(const CONSOLE_OUTPUT_T *console_output, BMS_INPUT_T* bms_input);
 
 bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config, uint32_t *cell_voltages_mV);
 void Board_LTC6804_DeInit(void);
@@ -42,8 +43,12 @@ void Board_PrintThermistorTemperatures(uint8_t module, BMS_PACK_STATUS_T * pack_
 bool Board_LTC6804_OpenWireTest(void);
 void Board_UART_Init(uint32_t baudRateHz);
 
+void Board_LED_On(uint8_t led_gpio, uint8_t led_pin);
+void Board_LED_Off(uint8_t led_gpio, uint8_t led_pin);
+void Board_LED_Toggle(uint8_t led_gpio, uint8_t led_pin);
 
-void Board_Headroom_Toggle(void);
+void Board_Contactors_Set(bool close_contactors);
+bool Board_Contactors_Closed(void);
 
 void Board_BlockingDelay(uint32_t dlyTicks);
 

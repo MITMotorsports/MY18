@@ -24,7 +24,7 @@ boards:
     publish:
       can0:
         - VcuToDash
-        - BMSState
+        - BMS_VCU_State
         - BMS_VCU_Switch
         - MC_Command
     subscribe:
@@ -53,7 +53,7 @@ boards:
         - BMSCellTemps
     subscribe:
       can0:
-        - BMSState
+        - BMS_VCU_State
         - BMS_VCU_Switch
         - BMS_CSB_Switch
   csb:
@@ -61,7 +61,7 @@ boards:
     publish:
       can0:
         - BMS_CSB_Switch
-        - BMS_Mode
+        - BMS_CSB_State
         - ElconCommand
     subscribe:
       can0:
@@ -225,7 +225,7 @@ buses:
               OTHER: 0xE
       BMS_SOC:
         can_id: 0x0D5
-        frequency: .05Hz
+        frequency: 1Hz
         is_big_endian: true
         segments:
           soc_percentage:
@@ -254,7 +254,7 @@ buses:
               ACTIVE_AERO_DISABLE: 0x8
               FAN_ENABLE: 0x9
               FAN_DISABLE: 0xA
-      BMSState:
+      BMS_VCU_State:
         can_id: 0x0D3
         frequency: 1Hz
         is_big_endian: true
@@ -262,7 +262,11 @@ buses:
           state:
             position: 0
             length: 1
-            c_type: bool
+            c_type: enum
+            enum:
+                DISCHARGE_ENABLE: 0x0
+                DISCHARGE_DISABLE: 0x1
+                NO_REQUEST: 0x2
       VcuToDash:
         can_id: 0x0F3
         frequency: 10Hz
@@ -496,7 +500,7 @@ buses:
             position: 0
             length: 1
             c_type: bool
-      BMS_Mode:
+      BMS_CSB_State:
         can_id: 0x601
         frequency: 1Hz
         is_big_endian: true
@@ -506,8 +510,11 @@ buses:
             length: 1
             c_type: enum
             enum:
-              CHARGE: 0x0
-              BALANCE: 0x1
+              CHARGE_ENABLE: 0x0
+              CHARGE_DISABLE: 0x1
+              BALANCE_ENABLE: 0x2
+              BALANCE_DISABLE: 0x3
+              NO_REQUEST: 0x4
       ElconCommand:
         can_id: 0x1806E5F4
         frequency: 1Hz

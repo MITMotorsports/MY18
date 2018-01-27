@@ -18,9 +18,14 @@ typedef enum BMS_SSM_MODE {
 typedef struct BMS_INPUT{
     BMS_PACK_STATUS_T *pack_status;
     BMS_SSM_MODE_T mode_request;
-    BMS_SSM_MODE_T can_mode_request;
+    BMS_SSM_MODE_T vcu_mode_request;
+    BMS_SSM_MODE_T csb_mode_request;
     bool eeprom_packconfig_read_done;
     bool ltc_packconfig_check_done;
+
+    bool eeprom_read_error;
+
+
     bool state;
     bool fan_override;
     uint32_t msTicks;
@@ -54,10 +59,18 @@ static const char * const BMS_DISCHARGE_MODE_NAMES[] = {
     "BMS_DISCHARGE_DONE"
 };
 
+typedef enum {
+    BMS_CHARGE_OFF,
+    BMS_CHARGE_INIT,
+    BMS_CHARGE_BAL,
+    BMS_CHARGE_DONE
+} BMS_CHARGE_MODE_T;
+
 typedef struct BMS_STATE {
     BMS_SSM_MODE_T curr_mode;
     BMS_INIT_MODE_T init_state;
     BMS_DISCHARGE_MODE_T discharge_state;
+    BMS_CHARGE_MODE_T charge_state;
     BMS_PACK_CONFIG_T *pack_config;
 } BMS_STATE_T;
 

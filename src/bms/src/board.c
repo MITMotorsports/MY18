@@ -1,10 +1,10 @@
 #include "board.h"
-#include "chip.h"
 #include "ltc6804.h"
 #include "MY18_Can_Library.h"
 #include "fsae_can.h"
 #include "pins.h"
 #include "cell_temperatures.h"
+#include "error_handler.h"
 
 #define TEST_HARDWARE
 
@@ -77,12 +77,12 @@ uint32_t Board_Println(const char *str) {
     return count + Board_Print("\r\n");
 
 }
-/*uint32_t Board_PrintNum(uint32_t a, uint8_t base) {
+uint32_t Board_PrintNum(uint32_t a, uint8_t base) {
 
     itoa(a, str, base);
     return Board_Print(str);
 
-}*/
+}
 
 uint32_t Board_Write(const char *str, uint32_t count) {
 
@@ -176,6 +176,25 @@ void Board_UART_Init(uint32_t baudRateHz){
     NVIC_EnableIRQ(UART0_IRQn);
 
 }
+void Board_LED_On(uint8_t led_gpio, uint8_t led_pin) {
+    Chip_GPIO_SetPinOutHigh(LPC_GPIO, led_gpio, led_pin);
+}
+
+void Board_LED_Off(uint8_t led_gpio, uint8_t led_pin) {
+    Chip_GPIO_SetPinOutLow(LPC_GPIO, led_gpio, led_pin);
+}
+
+void Board_LED_Toggle(uint8_t led_gpio, uint8_t led_pin) {
+    Chip_GPIO_SetPinState(LPC_GPIO, led_gpio, led_pin,
+        1 - Chip_GPIO_GetPinState(LPC_GPIO, led_gpio, led_pin));
+}
+void Board_Contactors_Set(bool close_contactors) {
+    Chip_GPIO_SetPinState(LPC_GPIO, PIN_BMS_FAULT, close_contactors);
+}
+bool Board_Contactors_Closed(void) {
+    return Chip_GPIO_GetPinState(LPC_GPIO, PIN_BMS_FAULT);
+}
+
 bool Board_LTC6804_CVST(void) {
 #ifdef TEST_HARDWARE
     return true;
@@ -186,15 +205,15 @@ bool Board_LTC6804_CVST(void) {
     switch (res) {
         case LTC6804_FAIL:
             Board_Println("CVST FAIL");
-            //Error_Assert(ERROR_LTC6804_CVST, msTicks);
+            Error_Assert(ERROR_LTC6804_CVST, msTicks);
             return false;
         case LTC6804_PEC_ERROR:
             Board_Println("CVST PEC_ERROR");
-            //Error_Assert(ERROR_LTC6804_PEC, msTicks);
+            Error_Assert(ERROR_LTC6804_PEC, msTicks);
             return false;
         case LTC6804_PASS:
             Board_Println("CVST PASS");
-            //Error_Pass(ERROR_LTC6804_CVST);
+            Error_Pass(ERROR_LTC6804_CVST);
             return true;
         case LTC6804_WAITING:
         case LTC6804_WAITING_REFUP:
@@ -240,17 +259,17 @@ bool Board_LTC6804_OpenWireTest(void) {
             Board_Print(" wire=");
             itoa(ltc6804_owt_res.failed_wire, str, 10);
             Board_Println(str);
-            //Error_Assert(ERROR_LTC6804_OWT, msTicks);
+            Error_Assert(ERROR_LTC6804_OWT, msTicks);
             return false;
         case LTC6804_PEC_ERROR:
             Board_Println("OWT PEC_ERROR");
-            //Error_Assert(ERROR_LTC6804_PEC,msTicks);
+            Error_Assert(ERROR_LTC6804_PEC,msTicks);
             return false;
         case LTC6804_PASS:
             Board_Println("OWT PASS");
             _ltc6804_owt = false;
             _ltc6804_last_owt = msTicks;
-            //Error_Pass(ERROR_LTC6804_OWT);
+            Error_Pass(ERROR_LTC6804_OWT);
             return true;
         case LTC6804_WAITING:
         case LTC6804_WAITING_REFUP:
@@ -331,7 +350,28 @@ void Board_LTC6804_DeInit(void) {
 #endif
 }
 
+void Board_GetModeRequest(const CONSOLE_OUTPUT_T *console_output, BMS_INPUT_T* bms_input) {
+    //create console mode request
+    BMS_SSM_MODE_T console_mode_request = BMS_SSM_MODE_STANDBY;
 
+    //then get console mode request
+    if(console_output->valid_mode_request) {
+        console_mode_request = console_output->mode_request;
+    }
+    if(console_mode_request == BMS_SSM_MODE_STANDBY && bms_input->csb_mode_request == BMS_SSM_MODE_STANDBY) {
+        bms_input->mode_request = bms_input->vcu_mode_request;
+    }
+    //if console mode request is standby vcu mode request is standby:
+        //mode request is charger mode request
+        //Error pass conflicting mode requests
+    //else if (charge mode request is standby and vcu mode requst is stadndby):
+        //mode request is console mode request
+        //Error pass conflicting mode requests
+    //else if console mode request is standby and charge mode reuqest is standby
+        //mode request is vcu mode request
+    //else if console mode request == discharge mode request or cosole mode request == charge mode request
+        //mode request is console
+}
 void Board_LTC6804_ProcessInputs(BMS_PACK_STATUS_T *pack_status, BMS_STATE_T* bms_state) {
     Board_LTC6804_GetCellVoltages(pack_status);
     Board_LTC6804_GetCellTemperatures(pack_status, bms_state->pack_config->num_modules);
@@ -361,7 +401,7 @@ void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status){
             break;
         case LTC6804_PEC_ERROR:
             Board_Println("Get Vol PEC_ERROR");
-            //Error_Assert(ERROR_LTC6804_PEC,msTicks);
+            Error_Assert(ERROR_LTC6804_PEC,msTicks);
             break;
         case LTC6804_PASS:
             pack_status->pack_cell_min_mV = ltc6804_adc_res.pack_cell_min_mV;
@@ -369,7 +409,7 @@ void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status){
             LTC6804_ClearCellVoltages(&ltc6804_config, &ltc6804_state, msTicks); // [TODO] Use this to your advantage
             _ltc6804_gcv = false;
             _ltc6804_last_gcv = msTicks;
-            //Error_Pass(ERROR_LTC6804_PEC);
+            Error_Pass(ERROR_LTC6804_PEC);
         case LTC6804_WAITING:
         case LTC6804_WAITING_REFUP:
             break;
@@ -428,7 +468,7 @@ void Board_LTC6804_GetCellTemperatures(BMS_PACK_STATUS_T * pack_status, uint8_t 
             thermistorAddress = currentThermistor + THERMISTOR_GROUP_THREE_OFFSET;
         } else {
             Board_Println("Invalid value of currentThermistor. You should never reach here");
-            //Error_Assert(ERROR_CONTROL_FLOW, msTicks);
+            Error_Assert(ERROR_CONTROL_FLOW, msTicks);
         }
 
         // shift bits into shift resgister
@@ -504,19 +544,19 @@ void Board_HandleLtc6804Status(LTC6804_STATUS_T status) {
         case LTC6804_WAITING:
             break;
         case LTC6804_PASS:
-            //Error_Pass(ERROR_LTC6804_PEC);
+            Error_Pass(ERROR_LTC6804_PEC);
             break;
         case LTC6804_FAIL:
             Board_Println("LTC6804 fail");
             break;
         case LTC6804_PEC_ERROR:
             Board_Println("LTC6804 PEC_ERROR");
-            //Error_Assert(ERROR_LTC6804_PEC, msTicks);
+            Error_Assert(ERROR_LTC6804_PEC, msTicks);
         case LTC6804_WAITING_REFUP:
             break;
         default:
             Board_Println("Entered default case in Board_HandleLtc6804Status(). You should never reach here");
-            //Error_Assert(ERROR_CONTROL_FLOW, msTicks);
+            Error_Assert(ERROR_CONTROL_FLOW, msTicks);
 
 
     }

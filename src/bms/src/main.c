@@ -16,6 +16,7 @@
 extern volatile uint32_t msTicks;
 
 static char str[10];
+static char testString[10];
 
 static BMS_PACK_STATUS_T pack_status;
 static BMS_INPUT_T bms_input;
@@ -35,23 +36,38 @@ void Init_BMS_Structs(void){
 
     bms_state.pack_config = &pack_config;
 
+    //Default pack configuration, from pack.h
     pack_config.module_cell_count = module_cell_count;
-    pack_config.cell_min_mV = 0;
-    pack_config.cell_max_mV = 0;
-    pack_config.cell_capacity_cAh = 0;
-    pack_config.num_modules = 0;
-    pack_config.cell_charge_c_rating_cC = 0;
-    pack_config.bal_on_thresh_mV = 0;
-    pack_config.bal_off_thresh_mV = 0;
-    pack_config.pack_cells_p = 0;
-    pack_config.cv_min_current_mA = 0;
-    pack_config.cv_min_current_ms = 0;
-    pack_config.cc_cell_voltage_mV = 0;
+    pack_config.cell_min_mV = CELL_MIN_mV;
+    pack_config.cell_max_mV = CELL_MAX_mV;
+    pack_config.cell_capacity_cAh = CELL_CAPACITY_cAh;
+    pack_config.num_modules = NUM_MODULES;
+    pack_config.cell_charge_c_rating_cC = CELL_CHARGE_C_RATING_cC;
+    pack_config.bal_on_thresh_mV = BALANCE_ON_THRESHOLD_mV;
+    pack_config.bal_off_thresh_mV = BALANCE_OFF_THRESHOLD_mV;
+    pack_config.pack_cells_p = PACK_CELLS_PARALLEL;
+    pack_config.cv_min_current_mA = CV_MIN_CURRENT_mA;
+    pack_config.cv_min_current_ms = CV_MIN_CURRENT_ms;
+    pack_config.cc_cell_voltage_mV = CC_CELL_VOLTAGE_mV;
+    pack_config.cell_discharge_c_rating_cC = CELL_DISCHARGE_C_RATING_cC; // at 27 degrees C
+    pack_config.max_cell_temp_dC = MAX_CELL_TEMP_dC;
+    pack_config.fan_on_threshold_dC = FAN_ON_THRESHOLD_dC;
+    pack_config.min_cell_temp_dC = MIN_CELL_TEMP_dC;
 
-    pack_config.cell_discharge_c_rating_cC = 0; // at 27 degrees C
-    pack_config.max_cell_temp_dC = 0;
+    uint8_t i;
+    for(i = 0; i < MAX_NUM_MODULES; i++) {
+        pack_config.module_cell_count[i] = MODULE_CELL_COUNT;
+    }
 
     bms_input.pack_status = &pack_status;
+    bms_input.mode_request = BMS_SSM_MODE_STANDBY;
+    bms_input.contactors_closed = false;
+    bms_input.msTicks = msTicks;
+    bms_input.vcu_mode_request = BMS_SSM_MODE_STANDBY;
+    bms_input.csb_mode_request = BMS_SSM_MODE_STANDBY;
+    bms_input.eeprom_packconfig_read_done = false;
+    bms_input.ltc_packconfig_check_done = false;
+    bms_input.eeprom_read_error = false;
 
     pack_status.cell_voltages_mV = cell_voltages;
     pack_status.cell_temperatures_dC = cell_temperatures;
@@ -70,15 +86,18 @@ void Init_BMS_Structs(void){
 }
 
 void Process_Input(BMS_INPUT_T* bms_input) {
-    Can_Receive(bms_input);
-    Board_LTC6804_ProcessInputs(&pack_status,&bms_state);
+    if(bms_state.curr_mode != BMS_SSM_MODE_INIT) {
+        Can_Receive(bms_input);
+        Board_GetModeRequest(&console_output, bms_input);
+        Board_LTC6804_ProcessInputs(&pack_status,&bms_state);
+    }
 
     bms_input->msTicks = msTicks;
-
+    bms_input->contactors_closed = Board_Contactors_Closed();
 }
 
 void Process_Output(BMS_INPUT_T* bms_input,BMS_OUTPUT_T* bms_output, BMS_STATE_T* bms_state) {
-    bms_input->msTicks = msTicks;
+    Board_Contactors_Set(bms_output->close_contactors);
     if(bms_output->read_eeprom_packconfig){
 
         bms_input->eeprom_packconfig_read_done = EEPROM_LoadPackConfig(&pack_config);
@@ -121,7 +140,6 @@ int main(void) {
     console_init(&bms_input, &bms_state, &console_output);
 
     while(1) {
-
         Process_Keyboard(); //console input
         Process_Input(&bms_input); //Processes Inputs(can messages, pin states, cell stats)
         SSM_Step(&bms_input, &bms_state, &bms_output); //changes state based on inputs

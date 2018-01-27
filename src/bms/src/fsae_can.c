@@ -30,8 +30,6 @@ void handle_can_error(Can_ErrorID_T err) {
 
 }
 
-
-
 void Can_Receive(BMS_INPUT_T *bms_input){
 	Can_MsgID_T msgType = Can_MsgType();
     if (msgType == Can_No_Msg) {
@@ -76,13 +74,28 @@ void Can_Receive(BMS_INPUT_T *bms_input){
     	Can_BMS_VCU_State_Read(&msg);
 
         if(msg.state == CAN_BMS_VCU_STATE_DISCHARGE_ENABLE) {
-            bms_input->can_mode_request = BMS_SSM_MODE_DISCHARGE;
-        } else if(msg.state == CAN_BMS_VCU_STATE_DISCHARGE_ENABLE) {
-            bms_input->can_mode_request = BMS_SSM_MODE_STANDBY;
+            bms_input->vcu_mode_request = BMS_SSM_MODE_DISCHARGE;
+        } else if(msg.state == CAN_BMS_VCU_STATE_DISCHARGE_DISABLE) {
+            bms_input->vcu_mode_request = BMS_SSM_MODE_STANDBY;
         } else {
             //VCU sends No_Request;
         }
     	//use this msg to change state//
+    } else if (msgType == Can_BMS_CSB_State_Msg){
+        Can_BMS_CSB_State_T msg;
+        Can_BMS_CSB_State_Read(&msg);
+
+        if(msg.requested_mode == CAN_BMS_CSB_STATE_CHARGE_ENABLE) {
+            bms_input->csb_mode_request = BMS_SSM_MODE_CHARGE;
+        } else if(msg.requested_mode == CAN_BMS_CSB_STATE_BALANCE_ENABLE) {
+            bms_input->csb_mode_request = BMS_SSM_MODE_BALANCE;
+        } else if(msg.requested_mode == CAN_BMS_CSB_STATE_CHARGE_DISABLE) {
+            bms_input->csb_mode_request = BMS_SSM_MODE_STANDBY;
+        } else if(msg.requested_mode == CAN_BMS_CSB_STATE_BALANCE_DISABLE) {
+            bms_input->csb_mode_request = BMS_SSM_MODE_STANDBY;
+        } else {
+            //no request, so don't change csb_mode_request
+        }
     } else {
         // note other errors
     }
@@ -96,7 +109,7 @@ void Can_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output){
         bms_SOC.soc_percentage = 58;
         Can_BMS_SOC_Write(&bms_SOC);
         last_bms_can_test_time = msTicks;
-        Board_Println("Sending 58");
+        //Board_Println("Sending 58");
     }
 
 }
