@@ -20,7 +20,6 @@ typedef struct BMS_INPUT{
     BMS_SSM_MODE_T mode_request;
     BMS_SSM_MODE_T vcu_mode_request;
     BMS_SSM_MODE_T csb_mode_request;
-    bool eeprom_packconfig_read_done;
     bool ltc_packconfig_check_done;
 
     bool eeprom_read_error;
@@ -78,7 +77,7 @@ typedef struct BMS_STATE {
 typedef struct BMS_OUTPUT {
     bool close_contactors;
     bool *balance_req;
-    bool read_eeprom_packconfig;
+    bool ltc_deinit;
     bool check_packconfig_with_ltc;
 } BMS_OUTPUT_T;
 #endif

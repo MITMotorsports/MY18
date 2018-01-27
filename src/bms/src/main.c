@@ -65,7 +65,6 @@ void Init_BMS_Structs(void){
     bms_input.msTicks = msTicks;
     bms_input.vcu_mode_request = BMS_SSM_MODE_STANDBY;
     bms_input.csb_mode_request = BMS_SSM_MODE_STANDBY;
-    bms_input.eeprom_packconfig_read_done = false;
     bms_input.ltc_packconfig_check_done = false;
     bms_input.eeprom_read_error = false;
 
@@ -98,13 +97,8 @@ void Process_Input(BMS_INPUT_T* bms_input) {
 
 void Process_Output(BMS_INPUT_T* bms_input,BMS_OUTPUT_T* bms_output, BMS_STATE_T* bms_state) {
     Board_Contactors_Set(bms_output->close_contactors);
-    if(bms_output->read_eeprom_packconfig){
-
-        bms_input->eeprom_packconfig_read_done = EEPROM_LoadPackConfig(&pack_config);
-        Print_EEPROM_Error();
-        Set_EEPROM_Error(255); // magic # for no error
+    if(bms_output->ltc_deinit){
         Board_LTC6804_DeInit();
-
     } else if(bms_output->check_packconfig_with_ltc) {
         bms_input->ltc_packconfig_check_done = Board_LTC6804_Init(&pack_config, cell_voltages);
     } else {

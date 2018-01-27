@@ -222,7 +222,7 @@ static void set(const char * const * argv) {
     }
     if(foundloc) {
         uint8_t ret;
-        ret = EEPROM_ChangeConfig(rwloc,my_atou(argv[2]));
+        //ret = EEPROM_ChangeConfig(rwloc,my_atou(argv[2]));
         if(ret != 0) {
             Board_Println("Set failed (command not yet implemented?)!");
         }

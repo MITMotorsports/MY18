@@ -6,11 +6,10 @@ void SSM_Init(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output){
     state->curr_mode = BMS_SSM_MODE_INIT;
     state->init_state = BMS_INIT_OFF;
 
-    output->read_eeprom_packconfig = false;
+    output->ltc_deinit = false;
     output->check_packconfig_with_ltc = false;
 
     input->ltc_packconfig_check_done = false;
-    input->eeprom_packconfig_read_done = false;
 
     Discharge_Init();
 }
@@ -19,19 +18,14 @@ void Init_Step(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output){
     switch(state->init_state){
         case(BMS_INIT_OFF):
             Board_Println_BLOCKING("In INIT_OFF");
-            output->read_eeprom_packconfig = true;
+            output->ltc_deinit = true;
             state->init_state = BMS_INIT_READ_PACKCONFIG;
-            input->eeprom_packconfig_read_done = false;
             break;
         case(BMS_INIT_READ_PACKCONFIG):
             Board_Println_BLOCKING("In INIT_READ_PACKCONFIG");
-            if(input->eeprom_packconfig_read_done){
-                output->read_eeprom_packconfig = false;
                 output->check_packconfig_with_ltc = true;
                 state->init_state = BMS_INIT_CHECK_PACKCONFIG;
                 input->ltc_packconfig_check_done = false;
-                input->eeprom_packconfig_read_done = false;
-            }
             break;
         case(BMS_INIT_CHECK_PACKCONFIG):
             Board_Println_BLOCKING("In INIT_CHECK_PACKCONFIG");

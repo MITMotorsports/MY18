@@ -338,7 +338,6 @@ bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config, uint32_t *cell_voltages_
         _ltc6804_init_state = 0;
         return true;
     }
-
     return false;
 #endif
 }
