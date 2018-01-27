@@ -1,3 +1,6 @@
+# Explicitly get rid of bin folders
+src/**/bin
+
 # vim
 *.swp
 
