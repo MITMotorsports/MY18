@@ -68,7 +68,7 @@ LIBS =
 
 # additional directories with source files (absolute or relative paths to
 # folders with source files, current folder is always included)
-SRCS_DIRS = src src/stm src/system $(CUBE_DIR)/hal_src $(CAN_LIB_DIR)
+SRCS_DIRS = src src/stm src/system $(CUBE_DIR)/hal_src $(CAN_LIB_DIR) $(CAN_LIB_DIR)/stm32f2xx_src
 
 # extension of C files
 C_EXT = c
