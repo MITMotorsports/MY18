@@ -1,3 +1,4 @@
+<<<<<<< 0fd9cb8e84ef1fea619b58039d36c67df47c2481
 # Explicitly get rid of bin folders
 src/**/bin
 
@@ -56,3 +57,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+=======
+**/bin
+>>>>>>> Fix .gitignore, remove bms/bin
