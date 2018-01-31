@@ -49,6 +49,8 @@ void Board_LED_Toggle(uint8_t led_gpio, uint8_t led_pin);
 
 void Board_Contactors_Set(bool close_contactors);
 bool Board_Contactors_Closed(void);
+bool Board_Contactor_Weld_One(void);
+bool Board_Contactor_Weld_Two(void);
 
 void Board_BlockingDelay(uint32_t dlyTicks);
 

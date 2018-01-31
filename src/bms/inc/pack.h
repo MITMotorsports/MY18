@@ -7,7 +7,7 @@
 #define CELL_MIN_mV 2500 // from datasheet, contact elliot
 #define CELL_MAX_mV 4250 // from datas,eet, contact elliot
 #define CELL_CAPACITY_cAh 250
-#define NUM_MODULES 6
+#define NUM_MODULES 6;
 #define CELL_CHARGE_C_RATING_cC 5
 #define BALANCE_ON_THRESHOLD_mV 4
 #define BALANCE_OFF_THRESHOLD_mV 1

@@ -9,6 +9,7 @@
 #include "console.h"
 #include "ssm.h"
 #include "fsae_can.h"
+#include "error_handler.h"
 
 #define EEPROM_CS_PIN 0, 7
 
@@ -93,6 +94,8 @@ void Process_Input(BMS_INPUT_T* bms_input) {
 
     bms_input->msTicks = msTicks;
     bms_input->contactors_closed = Board_Contactors_Closed();
+    bms_input->contactor_weld_one = Board_Contactor_Weld_One();
+    bms_input->contactor_weld_two = Board_Contactor_Weld_Two();
 }
 
 void Process_Output(BMS_INPUT_T* bms_input,BMS_OUTPUT_T* bms_output, BMS_STATE_T* bms_state) {
@@ -139,6 +142,23 @@ int main(void) {
         SSM_Step(&bms_input, &bms_state, &bms_output); //changes state based on inputs
         Process_Output(&bms_input,&bms_output,&bms_state); //Transmits can messages, processes ltc output(update balance states)
 
+
+
+        if (Error_Handle(bms_input.msTicks) == HANDLER_HALT) {
+            break; // Handler requested a Halt
+        }
     }
+    Board_Println("FORCED HANG");
+    Write_EEPROM_Error();
+
+    bms_output.close_contactors = false;
+
+    while(1) {
+        bms_input.msTicks = msTicks;
+        Process_Output(&bms_input, &bms_output, &bms_state);
+        Process_Keyboard();
+        bms_state.curr_mode = BMS_SSM_MODE_STANDBY;
+    }
+
 	return 0;
 }

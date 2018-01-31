@@ -15,13 +15,10 @@ static uint8_t eeprom_data_addr_cc[3];
 static uint8_t saved_bms_error;
 
 
-static bool Validate_PackConfig(BMS_PACK_CONFIG_T *pack_config, uint16_t version, uint8_t checksum);
 static uint8_t Calculate_Checksum(BMS_PACK_CONFIG_T *pack_config);
-static void Load_PackConfig_Defaults(BMS_PACK_CONFIG_T *pack_config);
 static void Zero_EEPROM_DataBuffer(void);
 static void Write_PackConfig_EEPROM(void);
-// static void Print_EEPROM_DataBuffer(void);
-// static void Run_EEPROM_Test(void);
+
 
 static void Zero_EEPROM_DataBuffer(void) {
     uint8_t i;
@@ -131,7 +128,22 @@ void Set_EEPROM_Error(uint8_t error) {
     }
     saved_bms_error = error;
 }
+static void Write_PackConfig_EEPROM(void) {
+    // offset in the below line: we do not copy the module cell count ptr (1 byte)
+    memcpy(eeprom_data_buf, &eeprom_packconf_buf, sizeof(BMS_PACK_CONFIG_T)-sizeof(void*));
+    memcpy(&eeprom_data_buf[sizeof(BMS_PACK_CONFIG_T)], mcc, MAX_NUM_MODULES);
+    eeprom_data_buf[DATA_BLOCK_SIZE - CHECKSUM_BYTESIZE - VERSION_BYTESIZE - ERROR_BYTESIZE] = STORAGE_VERSION;
+    eeprom_data_buf[DATA_BLOCK_SIZE - CHECKSUM_BYTESIZE - ERROR_BYTESIZE] = Calculate_Checksum(&eeprom_packconf_buf);
+    eeprom_data_buf[DATA_BLOCK_SIZE - ERROR_BYTESIZE] = saved_bms_error;
 
+
+    LC1024_WriteEnable();
+    LC1024_WriteEnable();
+
+    LC1024_WriteMem(eeprom_data_addr_pckcfg, eeprom_data_buf, DATA_BLOCK_SIZE);
+    Board_BlockingDelay(200);
+    Board_Println_BLOCKING("Finished writing pack config to EEPROM.");
+}
 void Write_EEPROM_Error(void) {
     Write_PackConfig_EEPROM();
 }

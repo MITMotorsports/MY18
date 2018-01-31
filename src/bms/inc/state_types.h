@@ -20,15 +20,18 @@ typedef struct BMS_INPUT{
     BMS_SSM_MODE_T mode_request;
     BMS_SSM_MODE_T vcu_mode_request;
     BMS_SSM_MODE_T csb_mode_request;
+
+    bool contactor_weld_one;
+    bool contactor_weld_two;
+    bool contactors_closed;
+
     bool ltc_packconfig_check_done;
-
     bool eeprom_read_error;
-
 
     bool state;
     bool fan_override;
     uint32_t msTicks;
-    bool contactors_closed;
+
 } BMS_INPUT_T;
 
 typedef enum {

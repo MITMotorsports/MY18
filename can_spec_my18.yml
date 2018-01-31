@@ -31,6 +31,7 @@ boards:
       can0:
         - FrontCanNodeOutput
         - Dash_Request
+        - Contactor_Weld
   dash:
     arch: avr
     publish:
@@ -51,6 +52,7 @@ boards:
         - BmsPackStatus
         - BMS_SOC
         - BMSCellTemps
+        - Contactor_Weld
     subscribe:
       can0:
         - BMS_VCU_State
@@ -233,6 +235,15 @@ buses:
             length: 10
             c_type: uint16_t
             signed: false
+      Contactor_Weld:
+        can_id: 0x0D6
+        frequency: 1Hz
+        is_big_endian: true
+        segments:
+          weld_detect:
+            position: 0
+            length: 1
+            c_type: bool
       Dash_Request:
         can_id: 0x0D2
         frequency: 50Hz

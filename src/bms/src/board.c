@@ -134,6 +134,13 @@ void Board_GPIO_Init(void) {
 
     //FSAE specific pin intializations
 
+    //Contactor Weld
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_CONTACTOR_WELD_1);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_1, (IOCON_FUNC0 | IOCON_MODE_INACT));
+
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_CONTACTOR_WELD_2);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_2, (IOCON_FUNC0 | IOCON_MODE_INACT));
+
     //High Side Detect
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_HIGH_SIDE_DETECT);
     Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_HIGH_SIDE_DETECT, (IOCON_FUNC0 | IOCON_MODE_INACT));
@@ -188,15 +195,25 @@ void Board_LED_Toggle(uint8_t led_gpio, uint8_t led_pin) {
     Chip_GPIO_SetPinState(LPC_GPIO, led_gpio, led_pin,
         1 - Chip_GPIO_GetPinState(LPC_GPIO, led_gpio, led_pin));
 }
+
 void Board_Contactors_Set(bool close_contactors) {
     Chip_GPIO_SetPinState(LPC_GPIO, PIN_BMS_FAULT, close_contactors);
 }
+
 bool Board_Contactors_Closed(void) {
     return Chip_GPIO_GetPinState(LPC_GPIO, PIN_BMS_FAULT);
 }
 
+bool Board_Contactor_Weld_One(void) {
+    return Chip_GPIO_GetPinState(LPC_GPIO, PIN_CONTACTOR_WELD_1);
+}
+
+bool Board_Contactor_Weld_Two(void) {
+    return Chip_GPIO_GetPinState(LPC_GPIO, PIN_CONTACTOR_WELD_2);
+}
+
 bool Board_LTC6804_CVST(void) {
-#ifdef TEST_HARDWARE
+#ifdef TEST_HARDWARE_CVST
     return true;
 #else
     LTC6804_STATUS_T res;
@@ -282,13 +299,14 @@ bool Board_LTC6804_OpenWireTest(void) {
 #endif
 }
 bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config, uint32_t *cell_voltages_mV){
-#ifdef TEST_HARDWARE
+#ifdef TEST_HARDWARE_LTC_INIT
     UNUSED(pack_config); UNUSED(cell_voltages_mV);
     return true;
 #else
     if (_ltc6804_initialized) return true;
 
     if (_ltc6804_init_state == LTC6804_INIT_NONE) {
+        Board_Println_BLOCKING("In init");
         ltc6804_config.pSSP = LPC_SSP0;
         ltc6804_config.baud = LTC6804_BAUD;
         ltc6804_config.cs_gpio = 0;
@@ -320,20 +338,25 @@ bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config, uint32_t *cell_voltages_
         _ltc6804_last_owt = 0;
         _ltc6804_owt_tick_time = 60000;
 
+
+
         LTC6804_Init(&ltc6804_config, &ltc6804_state, msTicks);
 
         _ltc6804_init_state = LTC6804_INIT_CFG;
     } else if (_ltc6804_init_state == LTC6804_INIT_CFG) {
+        //Board_Println_BLOCKING("CFG");
         bool res = Board_LTC6804_CVST();
         if (res) {
             _ltc6804_init_state = LTC6804_INIT_CVST;
         }
     } else if (_ltc6804_init_state == LTC6804_INIT_CVST) {
+        //Board_Println_BLOCKING("CVST");
         bool res = Board_LTC6804_OpenWireTest();
         if (res) {
             _ltc6804_init_state = LTC6804_INIT_DONE;
         }
     } else if (_ltc6804_init_state == LTC6804_INIT_DONE) {
+        Board_Println_BLOCKING("LTC DONE");
         _ltc6804_initialized = true;
         _ltc6804_init_state = 0;
         return true;
@@ -343,7 +366,8 @@ bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config, uint32_t *cell_voltages_
 }
 
 void Board_LTC6804_DeInit(void) {
-#ifndef TEST_HARDWARE
+#ifndef TEST_HARDWARE_LTC_DEINIT
+    Board_Println_BLOCKING("Deinit\n");
     _ltc6804_initialized = false;
     _ltc6804_init_state = LTC6804_INIT_NONE;
 #endif

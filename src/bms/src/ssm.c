@@ -17,18 +17,19 @@ void SSM_Init(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output){
 void Init_Step(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output){
     switch(state->init_state){
         case(BMS_INIT_OFF):
-            Board_Println_BLOCKING("In INIT_OFF");
+            //Board_Println_BLOCKING("In INIT_OFF");
             output->ltc_deinit = true;
             state->init_state = BMS_INIT_READ_PACKCONFIG;
             break;
         case(BMS_INIT_READ_PACKCONFIG):
-            Board_Println_BLOCKING("In INIT_READ_PACKCONFIG");
-                output->check_packconfig_with_ltc = true;
-                state->init_state = BMS_INIT_CHECK_PACKCONFIG;
-                input->ltc_packconfig_check_done = false;
+            //Board_Println_BLOCKING("In INIT_READ_PACKCONFIG");
+            output->ltc_deinit = false;
+            output->check_packconfig_with_ltc = true;
+            state->init_state = BMS_INIT_CHECK_PACKCONFIG;
+            input->ltc_packconfig_check_done = false;
             break;
         case(BMS_INIT_CHECK_PACKCONFIG):
-            Board_Println_BLOCKING("In INIT_CHECK_PACKCONFIG");
+            //Board_Println_BLOCKING("In INIT_CHECK_PACKCONFIG");
             if(input->ltc_packconfig_check_done) {
                 output->check_packconfig_with_ltc = false;
                 state->init_state = BMS_INIT_DONE;
@@ -36,7 +37,7 @@ void Init_Step(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output){
             }
             break;
         case(BMS_INIT_DONE):
-            Board_Println_BLOCKING("In INIT_DONE");
+            //Board_Println_BLOCKING("In INIT_DONE");
             state->curr_mode = BMS_SSM_MODE_STANDBY;
             break;
     }

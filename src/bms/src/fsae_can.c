@@ -5,8 +5,10 @@
 #include <stdlib.h>
 
 #define BMS_CAN_TEST_PERIOD 1000
+#define BMS_CONTACTOR_WELD_PERIOD 1000
 
 static uint32_t last_bms_can_test_time = 0;
+static uint32_t last_bms_contactor_weld_time = 0;
 
 static bool isResetting = false;
 
@@ -111,5 +113,15 @@ void Can_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output){
         last_bms_can_test_time = msTicks;
         //Board_Println("Sending 58");
     }
+    if((msTicks-last_bms_contactor_weld_time) > BMS_CONTACTOR_WELD_PERIOD) {
+        Can_Contactor_Weld_T contactor_weld;
+        if(bms_input->contactor_weld_one && bms_input->contactor_weld_two) {
+            contactor_weld.weld_detect = true;
+            Can_Contactor_Weld_Write(&contactor_weld);
+            last_bms_can_test_time = msTicks;
+        }
+    }
+
+
 
 }
