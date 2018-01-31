@@ -41,7 +41,7 @@ void Input_initialize(Input_T *input) {
   input->adc->brake_2 = 0;
   input->adc->steering_pot = 0;
 
-  input->can_input->limp_state = CAN_VCUTODASH_LIMP_NORMAL; // Based on CAN spec
+  input->can_input->limp_state = can0_VcuToDash_limp_state_LIMP_NORMAL; // Based on CAN spec
 }
 
 void Input_fill_input(Input_T *input) {
@@ -68,10 +68,13 @@ void update_adc(Input_T *input) {
   }
 }
 
+
+Frame latest;
 void update_can(Input_T *input) {
-  Can_MsgID_T msgID = Can_MsgType();
-  switch(msgID) {
-    case Can_VcuToDash_Msg:
+  Can_RawRead(&latest);
+  can0_T msgForm = identify_can0(&latest);
+  switch(msgForm) {
+    case can0_VcuToDash:
       can_process_vcu_dash(input);
       break;
     default:
@@ -138,8 +141,8 @@ void update_wheel_speed(Speed_Input_T *speed, uint32_t msTicks) {
 }
 
 void can_process_vcu_dash(Input_T *input) {
-  Can_VcuToDash_T msg;
-  Can_VcuToDash_Read(&msg);
+  can0_VcuToDash_T msg;
+  can0_VcuToDash_unpack(&latest, &msg);
   input->can_input->limp_state = msg.limp_state;
 }
 

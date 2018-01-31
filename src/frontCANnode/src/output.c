@@ -33,22 +33,22 @@ void Output_process_output(Input_T *input, State_T *state) {
 }
 
 Can_ErrorID_T write_can_output_msg(Input_T *input, State_T *state) {
-  Can_FrontCanNodeOutput_T msg;
+  can0_FrontCanNodeOutput_T msg;
 
   msg.has_brake_throttle_conflict = state->rules->has_brake_throttle_conflict;
   msg.is_throttle_implausible = state->rules->implausibility_reported;
   msg.requested_torque = state->torque->requested_torque;
 
-  return Can_FrontCanNodeOutput_Write(&msg);
+  return can0_FrontCanNodeOutput_Write(&msg);
 }
 
 Can_ErrorID_T write_can_wheel_speed_msg(Input_T *input) {
-  Can_FrontCanNodeWheelSpeed_T msg;
+  can0_FrontCanNodeWheelSpeed_T msg;
 
   msg.front_right_wheel_speed = input->speed->front_right_wheel_speed;
   msg.front_left_wheel_speed = input->speed->front_left_wheel_speed;
 
-  return Can_FrontCanNodeWheelSpeed_Write(&msg);
+  return can0_FrontCanNodeWheelSpeed_Write(&msg);
 }
 
 void handle_can_error(Can_ErrorID_T error) {

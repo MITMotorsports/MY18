@@ -5,8 +5,8 @@
 #include <Can_Library.h>
 
 // Both of these are in millisecods
-const uint8_t can_output_period = 1000 / FRONTCANNODEOUTPUT__freq;
-const uint8_t can_wheel_speed_period = 1000 / FRONTCANNODEWHEELSPEED__freq;
+const uint8_t can_output_period = 1000 / can0_FrontCanNodeOutput_frequency;
+const uint8_t can_wheel_speed_period = 1000 / can0_FrontCanNodeOutput_frequency;
 
 void update_can_state(Can_Output_State_T *can_output, uint32_t msTicks);
 

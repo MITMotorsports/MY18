@@ -84,6 +84,7 @@ boards:
 
 buses:
   can0:
+    is_extended: false
     messages:
       FrontCanNodeOutput:
         can_id: 0x0D0
