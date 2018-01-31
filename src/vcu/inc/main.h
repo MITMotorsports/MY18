@@ -32,4 +32,6 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
+void lastRxMsgToFrame(Frame *frame);
+
 #endif 

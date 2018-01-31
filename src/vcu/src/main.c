@@ -59,12 +59,18 @@ static void init() {
 }
 
 static void loop() {
-    Can_MsgID_T msgID = Can_MsgType();
+
+    Frame frame;
+
+    Can_RawRead(&frame);
+
+    can0_T msgForm;
+    msgForm = identify_can0(&frame);
 
     uint8_t output = 0;
 
-    switch(msgID) {
-      case Can_FrontCanNodeOutput_Msg:
+    switch(msgForm) {
+      case can0_FrontCanNodeOutput:
         output = 1;
         break;
       default:
@@ -74,7 +80,7 @@ static void loop() {
 
     if (output == 1) {
 
-      Can_MC_Command_T msg;
+      can0_MC_Command_T msg;
       msg.torque = 10000;
       msg.speed = 0;
       msg.direction_is_counterclockwise = 0;
@@ -82,7 +88,7 @@ static void loop() {
       msg.discharge_enabled = 0;
       msg.torque_limit = 0;
 
-      Can_MC_Command_Write(&msg);
+      can0_MC_Command_Write(&msg);
     }
 }
 
