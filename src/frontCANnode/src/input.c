@@ -60,7 +60,7 @@ void update_adc(Input_T *input) {
     adc->accel_2_raw = ADC_Read(ACCEL_2_CHANNEL);
     adc->brake_1 = ADC_Read(BRAKE_1_CHANNEL);
     adc->brake_2 = ADC_Read(BRAKE_2_CHANNEL);
-    adc->steering_pot = ADC_READ(STEERING_CHANNEL);
+    adc->steering_pot = ADC_Read(STEERING_CHANNEL);
     adc->last_updated = input->msTicks;
 
     adc->accel_1 = transform1(adc->accel_1_raw);

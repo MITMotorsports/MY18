@@ -8,6 +8,7 @@
 const uint8_t can_output_period = 1000 / FRONTCANNODEOUTPUT__freq;
 const uint8_t can_wheel_speed_period = 1000 / FRONTCANNODEWHEELSPEED__freq;
 
+void update_torque_state(ADC_Input_T *adc, State_T *state);
 void update_can_state(Can_Output_State_T *can_output, uint32_t msTicks);
 
 bool period_reached(uint32_t start, uint32_t period, uint32_t msTicks);
@@ -27,15 +28,15 @@ void State_initialize(State_T *state) {
 void State_update_state(Input_T *input, State_T *state) {
   Rules_update_implausibility(input->adc, state->rules, input->msTicks);
   Rules_update_conflict(input, state->rules);
-  update_torque_state(input, state);
+  update_torque_state(input->adc, state);
   update_can_state(state->can_output, input->msTicks);
 }
 
-void update_torque_state(ADC_T *adc, State_T *state) {
-  min_accel = (adc->accel_1 > adc->accel_2) ? adc->accel_2 : adc->accel_1;
+void update_torque_state(ADC_Input_T *adc, State_T *state) {
+  uint16_t min_accel = (adc->accel_1 > adc->accel_2) ? adc->accel_2 : adc->accel_1;
 
   if (state->rules->implausibility_reported || state->rules->has_brake_throttle_conflict) {
-    state->torque->requested_torque = 0
+    state->torque->requested_torque = 0;
   }
 }
 
