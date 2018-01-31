@@ -59,7 +59,7 @@ typedef struct {
 
 // Should match subscribe fields in CAN spec
 typedef struct {
-  Can_VcuToDashID_T limp_state;
+  can0_VcuToDash_limp_state_T limp_state;
 } Can_Input_T;
 
 typedef struct {
