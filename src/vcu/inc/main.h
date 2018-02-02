@@ -2,6 +2,7 @@
 #define __MAIN_H
 
 #include "stm32f2xx_hal.h"
+#include "Can_Library.h"
 
 #define CANx                            CAN1
 #define CANx_CLK_ENABLE()               __HAL_RCC_CAN1_CLK_ENABLE()
@@ -21,5 +22,7 @@
 /* Definition for USARTx's NVIC */
 #define CANx_RX_IRQn                   CAN1_RX0_IRQn
 #define CANx_RX_IRQHandler             CAN1_RX0_IRQHandler
+
+void lastRxMsgToFrame(Frame *frame);
 
 #endif /* __MAIN_H */

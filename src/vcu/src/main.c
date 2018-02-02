@@ -6,7 +6,7 @@
 CAN_HandleTypeDef    CanHandle;
 bool shouldSend = false;
 
-static void CAN_Config(void);
+// static void CAN_Config(void);
 static void SystemClock_Config(void);
 static void Error_Handler(void);
 
@@ -15,31 +15,23 @@ int main(void)
   HAL_Init();
   
   SystemClock_Config();
-    
-  CAN_Config();
   
-  if(HAL_CAN_Receive_IT(&CanHandle, CAN_FIFO0) != HAL_OK)
-  {
-    Error_Handler();
-  }
-    
+  Can_Init(500000);
+
   while(1)
   {
     if (shouldSend) {
-      /* Set the data to be transmitted */
-      CanHandle.pTxMsg->StdId = 0x321;
-      CanHandle.pTxMsg->RTR = CAN_RTR_DATA;
-      CanHandle.pTxMsg->IDE = CAN_ID_STD;
-      CanHandle.pTxMsg->DLC = 2;
-      CanHandle.pTxMsg->Data[0] = 0x01;
-      CanHandle.pTxMsg->Data[1] = 0xAD;
-      /*##-3- Start the Transmission process ###############################*/
-      if(HAL_CAN_Transmit(&CanHandle, 10) != HAL_OK)
-      {
-        /* Transmission Error */
-        Error_Handler();
-      }
-      HAL_Delay(10);
+
+      can0_MC_Command_T msg;
+      msg.torque_limit = 0;
+      msg.discharge_enabled = 0;
+      msg.direction_is_counterclockwise = 0;
+      msg.speed = 0;
+      msg.inverter_enabled = 1;
+      msg.torque = 10000;
+
+      can0_MC_Command_Write(&msg);
+
       shouldSend = false;
     }
   } 
@@ -103,60 +95,24 @@ static void Error_Handler(void)
   }
 }
 
-static void CAN_Config(void)
-{
-  CAN_FilterConfTypeDef  sFilterConfig;
-  static CanTxMsgTypeDef        TxMessage;
-  static CanRxMsgTypeDef        RxMessage;
-  
-  /*##-1- Configure the CAN peripheral #######################################*/
-  CanHandle.Instance = CAN1;
-  CanHandle.pTxMsg = &TxMessage;
-  CanHandle.pRxMsg = &RxMessage;
-    
-  CanHandle.Init.TTCM = DISABLE;
-  CanHandle.Init.ABOM = DISABLE;
-  CanHandle.Init.AWUM = DISABLE;
-  CanHandle.Init.NART = DISABLE;
-  CanHandle.Init.RFLM = DISABLE;
-  CanHandle.Init.TXFP = DISABLE;
-  CanHandle.Init.Mode = CAN_MODE_NORMAL;
-  CanHandle.Init.SJW = CAN_SJW_1TQ;
-  CanHandle.Init.BS1 = CAN_BS1_6TQ;
-  CanHandle.Init.BS2 = CAN_BS2_8TQ;
-  CanHandle.Init.Prescaler = 4;
-  
-  if(HAL_CAN_Init(&CanHandle) != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler();
-  }
-
-  /*##-2- Configure the CAN Filter ###########################################*/
-  sFilterConfig.FilterNumber = 0;
-  sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
-  sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
-  sFilterConfig.FilterIdHigh = 0x0000;
-  sFilterConfig.FilterIdLow = 0x0000;
-  sFilterConfig.FilterMaskIdHigh = 0x0000;
-  sFilterConfig.FilterMaskIdLow = 0x0000;
-  sFilterConfig.FilterFIFOAssignment = 0;
-  sFilterConfig.FilterActivation = ENABLE;
-  sFilterConfig.BankNumber = 14;
-  
-  if(HAL_CAN_ConfigFilter(&CanHandle, &sFilterConfig) != HAL_OK)
-  {
-    /* Filter configuration Error */
-    Error_Handler();
-  }
-      
-  /*##-3- Configure Transmission process #####################################*/
-}
-
 void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* CanHandle)
 {
-  shouldSend = true;
+  Frame frame;
+
+  lastRxMsgToFrame(&frame);
+
+  can0_T msgForm;
+  msgForm = identify_can0(&frame);
   
+  switch (msgForm) {
+    case can0_FrontCanNodeOutput:
+      shouldSend = 1;
+      break;
+
+    default:
+      break;
+  }
+
   /* Receive */
   if(HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0) != HAL_OK)
   {
