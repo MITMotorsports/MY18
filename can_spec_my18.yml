@@ -86,6 +86,8 @@ boards:
 
 buses:
   can0:
+    baudrate: 500000
+    is_extended: false
     messages:
       FrontCanNodeOutput:
         can_id: 0x0D0
