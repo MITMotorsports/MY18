@@ -1,25 +1,71 @@
+
 #include "main.h"
+
 #include <stdbool.h>
 
-CAN_HandleTypeDef CanHandle;
+CAN_HandleTypeDef    CanHandle;
+bool shouldSend = false;
 
-/////////////////////////////////////////////
+static void CAN_Config(void);
+static void SystemClock_Config(void);
+static void Error_Handler(void);
 
-static void Error_Handler();
-static void init();
-static void loop();
-static void SystemClock_Config();
-
-/////////////////////////////////////////////
-
-static void Error_Handler() {
-    while (1) {
-
+int main(void)
+{
+  HAL_Init();
+  
+  SystemClock_Config();
+    
+  CAN_Config();
+  
+  if(HAL_CAN_Receive_IT(&CanHandle, CAN_FIFO0) != HAL_OK)
+  {
+    Error_Handler();
+  }
+    
+  while(1)
+  {
+    if (shouldSend) {
+      /* Set the data to be transmitted */
+      CanHandle.pTxMsg->StdId = 0x321;
+      CanHandle.pTxMsg->RTR = CAN_RTR_DATA;
+      CanHandle.pTxMsg->IDE = CAN_ID_STD;
+      CanHandle.pTxMsg->DLC = 2;
+      CanHandle.pTxMsg->Data[0] = 0x01;
+      CanHandle.pTxMsg->Data[1] = 0xAD;
+      /*##-3- Start the Transmission process ###############################*/
+      if(HAL_CAN_Transmit(&CanHandle, 10) != HAL_OK)
+      {
+        /* Transmission Error */
+        Error_Handler();
+      }
+      HAL_Delay(10);
+      shouldSend = false;
     }
+  } 
 }
 
-static void SystemClock_Config(){
-
+/**
+  * @brief  System Clock Configuration
+  *         The system Clock is configured as follow : 
+  *            System Clock source            = PLL (HSE)
+  *            SYSCLK(Hz)                     = 120000000
+  *            HCLK(Hz)                       = 120000000
+  *            AHB Prescaler                  = 1
+  *            APB1 Prescaler                 = 4
+  *            APB2 Prescaler                 = 2
+  *            HSE Frequency(Hz)              = 25000000
+  *            PLL_M                          = 25
+  *            PLL_N                          = 240
+  *            PLL_P                          = 2
+  *            PLL_Q                          = 5
+  *            VDD(V)                         = 3.3
+  *            Flash Latency(WS)              = 3
+  * @param  None
+  * @retval None
+  */
+static void SystemClock_Config(void)
+{
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
   RCC_OscInitTypeDef RCC_OscInitStruct;
 
@@ -50,58 +96,76 @@ static void SystemClock_Config(){
   }
 }
 
-static void init() {
-    HAL_Init(); // high level libraries
-
-    SystemClock_Config(); // System Clock to 120 MHz
-
-    Can_Init(500000); // CAN
+static void Error_Handler(void)
+{
+  while(1)
+  {
+  }
 }
 
-static void loop() {
+static void CAN_Config(void)
+{
+  CAN_FilterConfTypeDef  sFilterConfig;
+  static CanTxMsgTypeDef        TxMessage;
+  static CanRxMsgTypeDef        RxMessage;
+  
+  /*##-1- Configure the CAN peripheral #######################################*/
+  CanHandle.Instance = CAN1;
+  CanHandle.pTxMsg = &TxMessage;
+  CanHandle.pRxMsg = &RxMessage;
+    
+  CanHandle.Init.TTCM = DISABLE;
+  CanHandle.Init.ABOM = DISABLE;
+  CanHandle.Init.AWUM = DISABLE;
+  CanHandle.Init.NART = DISABLE;
+  CanHandle.Init.RFLM = DISABLE;
+  CanHandle.Init.TXFP = DISABLE;
+  CanHandle.Init.Mode = CAN_MODE_NORMAL;
+  CanHandle.Init.SJW = CAN_SJW_1TQ;
+  CanHandle.Init.BS1 = CAN_BS1_6TQ;
+  CanHandle.Init.BS2 = CAN_BS2_8TQ;
+  CanHandle.Init.Prescaler = 4;
+  
+  if(HAL_CAN_Init(&CanHandle) != HAL_OK)
+  {
+    /* Initialization Error */
+    Error_Handler();
+  }
 
-    Frame frame;
-
-    Can_RawRead(&frame);
-
-    can0_T msgForm;
-    msgForm = identify_can0(&frame);
-
-    uint8_t output = 0;
-
-    switch(msgForm) {
-      case can0_FrontCanNodeOutput:
-        output = 1;
-        break;
-      default:
-        output = 0;
-        break;
-    }
-
-    if (output == 1) {
-
-      can0_MC_Command_T msg;
-      msg.torque = 10000;
-      msg.speed = 0;
-      msg.direction_is_counterclockwise = 0;
-      msg.inverter_enabled = 1;
-      msg.discharge_enabled = 0;
-      msg.torque_limit = 0;
-
-      can0_MC_Command_Write(&msg);
-    }
+  /*##-2- Configure the CAN Filter ###########################################*/
+  sFilterConfig.FilterNumber = 0;
+  sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
+  sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
+  sFilterConfig.FilterIdHigh = 0x0000;
+  sFilterConfig.FilterIdLow = 0x0000;
+  sFilterConfig.FilterMaskIdHigh = 0x0000;
+  sFilterConfig.FilterMaskIdLow = 0x0000;
+  sFilterConfig.FilterFIFOAssignment = 0;
+  sFilterConfig.FilterActivation = ENABLE;
+  sFilterConfig.BankNumber = 14;
+  
+  if(HAL_CAN_ConfigFilter(&CanHandle, &sFilterConfig) != HAL_OK)
+  {
+    /* Filter configuration Error */
+    Error_Handler();
+  }
+      
+  /*##-3- Configure Transmission process #####################################*/
 }
 
-int main() {
-    init();
-
-    while(1) {
-        loop();
-    }
+void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* CanHandle)
+{
+  shouldSend = true;
+  
+  /* Receive */
+  if(HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0) != HAL_OK)
+  {
+    /* Reception Error */
+    Error_Handler();
+  }
 }
 
 #ifdef  USE_FULL_ASSERT
-
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -120,3 +184,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   }
 }
 #endif
+

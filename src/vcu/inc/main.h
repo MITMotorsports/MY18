@@ -1,15 +1,8 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
-/* Includes ------------------------------------------------------------------*/
 #include "stm32f2xx_hal.h"
-#include "Can_Library.h"
 
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* User can use this section to tailor CANx instance used and associated 
-   resources */
-/* Definition for CANx clock resources */
 #define CANx                            CAN1
 #define CANx_CLK_ENABLE()               __HAL_RCC_CAN1_CLK_ENABLE()
 #define CANx_GPIO_CLK_ENABLE()          __HAL_RCC_GPIOD_CLK_ENABLE()
@@ -29,9 +22,4 @@
 #define CANx_RX_IRQn                   CAN1_RX0_IRQn
 #define CANx_RX_IRQHandler             CAN1_RX0_IRQHandler
 
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
-
-void lastRxMsgToFrame(Frame *frame);
-
-#endif 
+#endif /* __MAIN_H */
