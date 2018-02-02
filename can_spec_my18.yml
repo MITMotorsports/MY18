@@ -84,6 +84,10 @@ boards:
 
 buses:
   can0:
+<<<<<<< 290f16c63e3a0110ed07acf51d294cb012905f98
+=======
+    baudrate: 500000
+>>>>>>> CANlib updated + better scripts
     is_extended: false
     messages:
       FrontCanNodeOutput:
