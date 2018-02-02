@@ -13,11 +13,9 @@
 
 #define EEPROM_CS_PIN 0, 7
 
-
 extern volatile uint32_t msTicks;
 
 static char str[10];
-static char testString[10];
 
 static BMS_PACK_STATUS_T pack_status;
 static BMS_INPUT_T bms_input;
@@ -29,6 +27,11 @@ static uint32_t cell_voltages[MAX_NUM_MODULES*MAX_CELLS_PER_MODULE];
 static int16_t cell_temperatures[MAX_NUM_MODULES*MAX_THERMISTORS_PER_MODULE];
 static uint8_t module_cell_count[MAX_NUM_MODULES];
 
+// memory allocation for BMS_OUTPUT balancing
+static bool balance_reqs[MAX_NUM_MODULES*MAX_CELLS_PER_MODULE];
+static bool balance_waitingoff[MAX_NUM_MODULES*MAX_CELLS_PER_MODULE];
+static uint32_t balance_timeon[MAX_NUM_MODULES*MAX_CELLS_PER_MODULE];
+
 // memory for console
 static microrl_t rl;
 static CONSOLE_OUTPUT_T console_output;
@@ -36,6 +39,7 @@ static CONSOLE_OUTPUT_T console_output;
 void Init_BMS_Structs(void){
 
     bms_state.pack_config = &pack_config;
+    bms_state.curr_mode = BMS_SSM_MODE_INIT;
 
     //Default pack configuration, from pack.h
     pack_config.module_cell_count = module_cell_count;
@@ -62,12 +66,22 @@ void Init_BMS_Structs(void){
 
     bms_input.pack_status = &pack_status;
     bms_input.mode_request = BMS_SSM_MODE_STANDBY;
-    bms_input.contactors_closed = false;
-    bms_input.msTicks = msTicks;
     bms_input.vcu_mode_request = BMS_SSM_MODE_STANDBY;
     bms_input.csb_mode_request = BMS_SSM_MODE_STANDBY;
+    bms_input.contactor_weld_one = false;
+    bms_input.contactor_weld_two = false;
+    bms_input.contactors_closed = false;
+
     bms_input.ltc_packconfig_check_done = false;
     bms_input.eeprom_read_error = false;
+    bms_input.fan_override = false;
+    bms_input.msTicks = msTicks;
+
+    bms_output.close_contactors = false;
+    bms_output.balance_req = balance_reqs;
+    memset(balance_reqs, 0, sizeof(balance_reqs[0])*MAX_NUM_MODULES*MAX_CELLS_PER_MODULE);
+    bms_output.ltc_deinit = false;
+    bms_output.check_packconfig_with_ltc = false;
 
     pack_status.cell_voltages_mV = cell_voltages;
     pack_status.cell_temperatures_dC = cell_temperatures;
@@ -82,7 +96,6 @@ void Init_BMS_Structs(void){
     pack_status.min_cell_temp_position = 0;
     pack_status.max_cell_temp_position = 0;
 
-    bms_state.curr_mode = BMS_SSM_MODE_INIT;
 }
 
 void Process_Input(BMS_INPUT_T* bms_input) {
@@ -100,16 +113,14 @@ void Process_Input(BMS_INPUT_T* bms_input) {
 
 void Process_Output(BMS_INPUT_T* bms_input,BMS_OUTPUT_T* bms_output, BMS_STATE_T* bms_state) {
     Board_Contactors_Set(bms_output->close_contactors);
-    if(bms_output->ltc_deinit){
+    if(bms_output->ltc_deinit) {
         Board_LTC6804_DeInit();
     } else if(bms_output->check_packconfig_with_ltc) {
         bms_input->ltc_packconfig_check_done = Board_LTC6804_Init(&pack_config, cell_voltages);
     } else {
-        Board_LTC6804_ProcessOutput(bms_output->balance_req);
+        Board_LTC6804_UpdateBalanceStates(bms_output->balance_req);
         Can_Transmit(bms_input, bms_output);
     }
-
-
 }
 
 void Process_Keyboard(void) {
@@ -141,8 +152,6 @@ int main(void) {
         Process_Input(&bms_input); //Processes Inputs(can messages, pin states, cell stats)
         SSM_Step(&bms_input, &bms_state, &bms_output); //changes state based on inputs
         Process_Output(&bms_input,&bms_output,&bms_state); //Transmits can messages, processes ltc output(update balance states)
-
-
 
         if (Error_Handle(bms_input.msTicks) == HANDLER_HALT) {
             break; // Handler requested a Halt

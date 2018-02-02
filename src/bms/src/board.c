@@ -34,20 +34,16 @@ static uint32_t _ltc6804_gcv_tick_time;
 static bool _ltc6804_owt;
 static uint32_t _ltc6804_last_owt;
 static uint32_t _ltc6804_owt_tick_time;
+static uint32_t board_lastThermistorShiftTime_ms = 0;
+
+uint8_t currentThermistor = 0;
+static bool ltc6804_setMultiplexerAddressFlag = false;
+static bool ltc6804_getThermistorVoltagesFlag = false;
 
 static bool _ltc6804_initialized;
 static LTC6804_INIT_STATE_T _ltc6804_init_state;
 
-
 static char str[10];
-
-//Cell temperature sensing stuff
-static uint32_t board_lastThermistorShiftTime_ms = 0;
-uint8_t currentThermistor = 0;
-
-//Cell temperature sensing stuff
-static bool ltc6804_setMultiplexerAddressFlag = false;
-static bool ltc6804_getThermistorVoltagesFlag = false;
 
 void UART_IRQHandler(void) {
     Chip_UART_IRQRBHandler(LPC_USART, &uart_rx_ring, &uart_tx_ring);
@@ -62,9 +58,7 @@ void Board_Chip_Init(void) {
 }
 
 uint32_t Board_Print(const char *str) {
-
     return Chip_UART_SendRB(LPC_USART, &uart_tx_ring, str, strlen(str));
-
 }
 
 void Board_BlockingDelay(uint32_t dlyTicks) {
@@ -72,30 +66,24 @@ void Board_BlockingDelay(uint32_t dlyTicks) {
     while ((msTicks - curTicks) < dlyTicks);
 }
 uint32_t Board_Println(const char *str) {
-
     uint32_t count = Board_Print(str);
     return count + Board_Print("\r\n");
-
 }
-uint32_t Board_PrintNum(uint32_t a, uint8_t base) {
 
+uint32_t Board_PrintNum(uint32_t a, uint8_t base) {
     itoa(a, str, base);
     return Board_Print(str);
-
 }
 
 uint32_t Board_Write(const char *str, uint32_t count) {
-
     return Chip_UART_SendRB(LPC_USART, &uart_tx_ring, str, count);
 }
 
 uint32_t Board_Read(char *charBuffer, uint32_t length) {
-
     return Chip_UART_ReadRB(LPC_USART, &uart_rx_ring, charBuffer, length);
 }
 
 uint32_t Board_Print_BLOCKING(const char *str) {
-
     return Chip_UART_SendBlocking(LPC_USART, str, strlen(str));
 }
 uint32_t Board_Println_BLOCKING(const char *str) {
@@ -366,6 +354,7 @@ bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config, uint32_t *cell_voltages_
 }
 
 void Board_LTC6804_DeInit(void) {
+
 #ifndef TEST_HARDWARE_LTC_DEINIT
     Board_Println_BLOCKING("Deinit\n");
     _ltc6804_initialized = false;
@@ -374,6 +363,7 @@ void Board_LTC6804_DeInit(void) {
 }
 
 void Board_GetModeRequest(const CONSOLE_OUTPUT_T *console_output, BMS_INPUT_T* bms_input) {
+
     //create console mode request
     BMS_SSM_MODE_T console_mode_request = BMS_SSM_MODE_STANDBY;
 
@@ -400,9 +390,7 @@ void Board_LTC6804_ProcessInputs(BMS_PACK_STATUS_T *pack_status, BMS_STATE_T* bm
     Board_LTC6804_GetCellTemperatures(pack_status, bms_state->pack_config->num_modules);
     Board_LTC6804_OpenWireTest();
 }
-void Board_LTC6804_ProcessOutput(bool *balance_req) {
-    Board_LTC6804_UpdateBalanceStates(balance_req);
-}
+
 void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status){
 #ifdef TEST_HARDWARE
     UNUSED(pack_status);
@@ -531,7 +519,6 @@ void Board_LTC6804_GetCellTemperatures(BMS_PACK_STATUS_T * pack_status, uint8_t 
 
     }
 
-
     // Get thermistor voltages
     // if flag is not true, return
     if (!ltc6804_getThermistorVoltagesFlag) {
@@ -563,6 +550,7 @@ void Board_LTC6804_GetCellTemperatures(BMS_PACK_STATUS_T * pack_status, uint8_t 
 
 #ifndef TEST_HARDWARE
 void Board_HandleLtc6804Status(LTC6804_STATUS_T status) {
+
     switch (status) {
         case LTC6804_WAITING:
             break;

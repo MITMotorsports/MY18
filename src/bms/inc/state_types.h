@@ -27,8 +27,6 @@ typedef struct BMS_INPUT{
 
     bool ltc_packconfig_check_done;
     bool eeprom_read_error;
-
-    bool state;
     bool fan_override;
     uint32_t msTicks;
 

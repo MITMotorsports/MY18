@@ -121,7 +121,4 @@ void Can_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output){
             last_bms_can_test_time = msTicks;
         }
     }
-
-
-
 }
