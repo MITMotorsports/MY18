@@ -1,5 +1,1 @@
-# vim
-*.swp
-
-# bms specific
-src/bms/bin
+**/bin
