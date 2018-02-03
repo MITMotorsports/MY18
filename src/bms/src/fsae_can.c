@@ -115,8 +115,12 @@ void Can_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output){
     }
     if((msTicks-last_bms_contactor_weld_time) > BMS_CONTACTOR_WELD_PERIOD) {
         Can_Contactor_Weld_T contactor_weld;
-        if(bms_input->contactor_weld_one && bms_input->contactor_weld_two) {
+        if(!(bms_input->contactor_weld_one && bms_input->contactor_weld_two)) {
             contactor_weld.weld_detect = true;
+            Can_Contactor_Weld_Write(&contactor_weld);
+            last_bms_can_test_time = msTicks;
+        } else if(bms_input->contactor_weld_one && bms_input->cotnactor_weld_two) {
+            contactor_weld.weld_detect = false;
             Can_Contactor_Weld_Write(&contactor_weld);
             last_bms_can_test_time = msTicks;
         }
