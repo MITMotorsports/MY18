@@ -14,6 +14,7 @@ boards:
         - RearCanNodeWheelSpeed
         - VcuToDash
         - BMS_SOC
+        - MC_MotorPositionInformation
   rear_can_node:
     arch: arm
     publish:
@@ -67,6 +68,9 @@ boards:
         - BmsPackStatus
         - ElconHeartbeat
   mc:
+    publish:
+      can0:
+        - MC_MotorPositionInformation
     subscribe:
       can0:
         - MC_Command
@@ -456,20 +460,20 @@ buses:
             unit: W
       MC_Command:
         can_id: 0x0C0 # From manual
-        frequency: 2.5Hz # MC needs a message at 2 Hz or higher
+        frequency: 100 # Good idea for good controls
         is_big_endian: true
         segments:
           torque:
             position: 0
             length: 16
-            c_type: uint16_t
-            signed: false
+            c_type: int16_t
+            signed: true
             unit: daJ # 10 joules
           speed:
             position: 16
             length: 16
-            c_type: uint16_t
-            signed: false
+            c_type: int16_t
+            signed: true
             unit: RPM
           direction_is_counterclockwise: # when viewed from shaft end of motor
             position: 32
@@ -486,8 +490,37 @@ buses:
           torque_limit:
             position: 48
             length: 16
-            c_type: uint16_t
+            c_type: int16_t
+            signed: true
             unit: daJ # 10 joules
+      MC_MotorPositionInformation:
+        can_id: 0x0A5
+        is_big_endian: true
+        segments:
+          motor_angle:
+            position: 0
+            length: 16
+            c_type: int16_t # Ranges from -359.9 to 359.9
+            signed: true
+            unit: daDegree # SI prefixes + degrees looks a bit weird...
+          motor_speed:
+            position: 16
+            length: 16
+            c_type: int16_t
+            signed: true
+            unit: rpm
+          electrical_output_frequency:
+            position: 32
+            length: 16
+            c_type: int16_t
+            signed: true
+            unit: daHz
+          delta_resolver_filtered:
+            position: 48
+            length: 16
+            c_type: int16_t # Ranges from -359.9 to 359.9
+            signed: true
+            unit: daDegree # SI prefixes + degrees looks a bit weird...
       BMS_CSB_Switch: # Switch baudrate
         can_id: 0x600
         frequency: 0.1Hz # Just picked this to be less than the Elcon stuff
