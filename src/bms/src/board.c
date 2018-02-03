@@ -201,7 +201,7 @@ bool Board_Contactor_Weld_Two(void) {
 }
 
 bool Board_LTC6804_CVST(void) {
-#ifdef TEST_HARDWARE_CVST
+#ifdef TEST_HARDWARE
     return true;
 #else
     LTC6804_STATUS_T res;
@@ -287,14 +287,13 @@ bool Board_LTC6804_OpenWireTest(void) {
 #endif
 }
 bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config, uint32_t *cell_voltages_mV){
-#ifdef TEST_HARDWARE_LTC_INIT
+#ifdef TEST_HARDWARE
     UNUSED(pack_config); UNUSED(cell_voltages_mV);
     return true;
 #else
     if (_ltc6804_initialized) return true;
 
     if (_ltc6804_init_state == LTC6804_INIT_NONE) {
-        Board_Println_BLOCKING("In init");
         ltc6804_config.pSSP = LPC_SSP0;
         ltc6804_config.baud = LTC6804_BAUD;
         ltc6804_config.cs_gpio = 0;
@@ -344,7 +343,6 @@ bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config, uint32_t *cell_voltages_
             _ltc6804_init_state = LTC6804_INIT_DONE;
         }
     } else if (_ltc6804_init_state == LTC6804_INIT_DONE) {
-        Board_Println_BLOCKING("LTC DONE");
         _ltc6804_initialized = true;
         _ltc6804_init_state = 0;
         return true;
@@ -354,9 +352,7 @@ bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config, uint32_t *cell_voltages_
 }
 
 void Board_LTC6804_DeInit(void) {
-
-#ifndef TEST_HARDWARE_LTC_DEINIT
-    Board_Println_BLOCKING("Deinit\n");
+#ifndef TEST_HARDWARE
     _ltc6804_initialized = false;
     _ltc6804_init_state = LTC6804_INIT_NONE;
 #endif
