@@ -263,7 +263,7 @@ buses:
               FAN_ENABLE: 0x9
               FAN_DISABLE: 0xA
       DriverResetButton:
-        can_id: 0x0D3
+        can_id: 0x0D7
         is_big_endian: true
         segments:
           is_pressed:
@@ -271,7 +271,7 @@ buses:
             length: 1
             c_type: bool
       RTDButton:
-        can_id: 0x0D4
+        can_id: 0x0D8
         is_big_endian: true
         segments:
           is_pressed:
@@ -279,7 +279,7 @@ buses:
             length: 1
             c_type: bool
       ScrollSelectButton:
-        can_id: 0x0D5
+        can_id: 0x0D9
         is_big_endian: true
         segments:
           is_pressed:
