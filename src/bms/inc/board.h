@@ -3,6 +3,7 @@
 #include "config.h"
 #include "ltc6804.h"
 #include "console.h"
+#include "pins.h"
 #include <stdlib.h>
 
 #ifndef _BOARD_H_
@@ -29,6 +30,8 @@ typedef enum {
 void Board_Chip_Init(void);
 
 void Board_GPIO_Init(void);
+
+void Board_ADC_Init(void);
 
 void Board_LED_On(uint8_t led_gpio, uint8_t led_pin);
 
@@ -77,9 +80,13 @@ void Board_Contactors_Set(bool close_contactors);
 //Gets pin states
 bool Board_Contactors_Closed(void);
 
+//Digital
 bool Board_Contactor_Weld_One(void);
-
 bool Board_Contactor_Weld_Two(void);
+
+//Analog
+// void Board_Contactor_Weld_One(int16_t* adc_data);
+// void Board_Contactor_Weld_Two(int16_t* adc_data);
 
 //Non-Blocking
 uint32_t Board_Print(const char *str);

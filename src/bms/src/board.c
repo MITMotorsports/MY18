@@ -2,9 +2,9 @@
 #include "ltc6804.h"
 #include "Can_Library.h"
 #include "fsae_can.h"
-#include "pins.h"
 #include "cell_temperatures.h"
 #include "error_handler.h"
+#include "chip.h"
 
 #define TEST_HARDWARE
 
@@ -45,6 +45,8 @@ static LTC6804_INIT_STATE_T _ltc6804_init_state;
 
 static char str[10];
 
+static ADC_CLOCK_SETUP_T adc_setup;
+
 void UART_IRQHandler(void) {
     Chip_UART_IRQRBHandler(LPC_USART, &uart_rx_ring, &uart_tx_ring);
 }
@@ -72,7 +74,7 @@ uint32_t Board_Println(const char *str) {
 
 uint32_t Board_PrintNum(uint32_t a, uint8_t base) {
     itoa(a, str, base);
-    return Board_Print(str);
+    return Board_Println_BLOCKING(str);
 }
 
 uint32_t Board_Write(const char *str, uint32_t count) {
@@ -123,11 +125,11 @@ void Board_GPIO_Init(void) {
     //FSAE specific pin intializations
 
     //Contactor Weld
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_CONTACTOR_WELD_1);
-    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_1, (IOCON_FUNC0 | IOCON_MODE_INACT));
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_CONTACTOR_WELD_1);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_1, (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_PULLDOWN));
 
-    Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_CONTACTOR_WELD_2);
-    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_2, (IOCON_FUNC0 | IOCON_MODE_INACT));
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_CONTACTOR_WELD_2);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_2, (IOCON_FUNC1 | IOCON_DIGMODE_EN | IOCON_MODE_PULLDOWN));
 
     //High Side Detect
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_HIGH_SIDE_DETECT);
@@ -171,6 +173,7 @@ void Board_UART_Init(uint32_t baudRateHz){
     NVIC_EnableIRQ(UART0_IRQn);
 
 }
+
 void Board_LED_On(uint8_t led_gpio, uint8_t led_pin) {
     Chip_GPIO_SetPinOutHigh(LPC_GPIO, led_gpio, led_pin);
 }
@@ -191,14 +194,37 @@ void Board_Contactors_Set(bool close_contactors) {
 bool Board_Contactors_Closed(void) {
     return Chip_GPIO_GetPinState(LPC_GPIO, PIN_BMS_FAULT);
 }
+//Analog
+/*void Board_ADC_Init() {
+    Chip_ADC_Init(LPC_ADC, &adc_setup);
 
+    Chip_ADC_EnableChannel(LPC_ADC, ADC_CH5, ENABLE);
+    Chip_ADC_EnableChannel(LPC_ADC, ADC_CH4, ENABLE);
+    Chip_ADC_SetBurstCmd(LPC_ADC, 1);
+    Chip_ADC_SetStartMode(LPC_ADC, ADC_START_NOW, ADC_TRIGGERMODE_RISING);
+
+}
+
+void Board_Contactor_Weld_One(int16_t* adc_data) {
+    while (!Chip_ADC_ReadStatus(LPC_ADC, ADC_CH5, ADC_DR_DONE_STAT)) {}
+    Chip_ADC_ReadValue(LPC_ADC, ADC_CH5, adc_data);
+
+}
+void Board_Contactor_Weld_Two(int16_t* adc_data) {
+    while (!Chip_ADC_ReadStatus(LPC_ADC, ADC_CH4, ADC_DR_DONE_STAT)) {}
+    Chip_ADC_ReadValue(LPC_ADC, ADC_CH4, adc_data);
+}*/
+
+//Digital
 bool Board_Contactor_Weld_One(void) {
+
     return Chip_GPIO_GetPinState(LPC_GPIO, PIN_CONTACTOR_WELD_1);
 }
-
 bool Board_Contactor_Weld_Two(void) {
+
     return Chip_GPIO_GetPinState(LPC_GPIO, PIN_CONTACTOR_WELD_2);
 }
+
 
 bool Board_LTC6804_CVST(void) {
 #ifdef TEST_HARDWARE

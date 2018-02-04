@@ -11,6 +11,7 @@ static uint32_t max_pack_current_mA;
 static uint16_t max_cell_temp_thres_C;
 
 void Discharge_Init(BMS_STATE_T *state) {
+
     state->discharge_state = BMS_DISCHARGE_OFF;
 }
 void Discharge_Config(BMS_PACK_CONFIG_T *pack_config) {
@@ -21,6 +22,7 @@ void Discharge_Config(BMS_PACK_CONFIG_T *pack_config) {
     max_pack_current_mA = MAX_CURRENT;
 }
 void Discharge_Step(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output){
+
     switch(input->mode_request) {
         case BMS_SSM_MODE_DISCHARGE:
             if(state->discharge_state == BMS_DISCHARGE_OFF) {

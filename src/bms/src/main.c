@@ -36,6 +36,10 @@ static uint32_t balance_timeon[MAX_NUM_MODULES*MAX_CELLS_PER_MODULE];
 static microrl_t rl;
 static CONSOLE_OUTPUT_T console_output;
 
+uint32_t heartbeat = 0;
+int16_t contactor_one = 0;
+int16_t contactor_two = 0;
+
 void Init_BMS_Structs(void){
 
     bms_state.pack_config = &pack_config;
@@ -107,8 +111,26 @@ void Process_Input(BMS_INPUT_T* bms_input) {
 
     bms_input->msTicks = msTicks;
     bms_input->contactors_closed = Board_Contactors_Closed();
+    //Board_Println_BLOCKING("Before reads");
+
+/*    Board_Println_BLOCKING("Before First Read");
+    Board_Contactor_Weld_One(&contactor_one);
+    itoa(contactor_one, str, 10);
+    Board_Println_BLOCKING(str);
+    Board_Println_BLOCKING("Before Second Read");
+    Board_Contactor_Weld_Two(&contactor_two);
+    itoa(contactor_two, str, 10);
+    Board_Println_BLOCKING(str);
+    Board_Println_BLOCKING("After Reads");*/
+
+
+    //Board_PrintNum(contactor_two,10);
+
     bms_input->contactor_weld_one = Board_Contactor_Weld_One();
     bms_input->contactor_weld_two = Board_Contactor_Weld_Two();
+
+
+
 }
 
 void Process_Output(BMS_INPUT_T* bms_input,BMS_OUTPUT_T* bms_output, BMS_STATE_T* bms_state) {
@@ -141,18 +163,20 @@ int main(void) {
     EEPROM_Init(LPC_SSP1, EEPROM_BAUD, EEPROM_CS_PIN);
     SSM_Init(&bms_input,&bms_state, &bms_output);
     EEPROM_WriteCCPage_Num(0,11);
+    //Board_ADC_Init();
 
     //setup readline/console
     microrl_init(&rl, Board_Print);
     microrl_set_execute_callback(&rl,executerl);
     console_init(&bms_input, &bms_state, &console_output);
 
+
     while(1) {
         Process_Keyboard(); //console input
         Process_Input(&bms_input); //Processes Inputs(can messages, pin states, cell stats)
+        Board_Println_BLOCKING("OUT OF INPUT");
         SSM_Step(&bms_input, &bms_state, &bms_output); //changes state based on inputs
         Process_Output(&bms_input,&bms_output,&bms_state); //Transmits can messages, processes ltc output(update balance states)
-
         if (Error_Handle(bms_input.msTicks) == HANDLER_HALT) {
             break; // Handler requested a Halt
         }
