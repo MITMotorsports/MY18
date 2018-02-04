@@ -1,6 +1,6 @@
 #include "sysinit.h"
 #include "chip.h"
-#include "Can_Library.h"
+#include "CANlib.h"
 
 #define SERIAL_BAUDRATE 57600
 #define CAN_BAUDRATE 500000
@@ -60,21 +60,21 @@ bool read_pin(uint32_t port, uint8_t bit) {
 }
 
 Can_ErrorID_T write_can_driver_reset(bool state) {
-  Can_DriverResetButton_T msg;
+  can0_DriverResetButton_T msg;
   msg.is_pressed = state;
-  return Can_DriverResetButton_Write(&msg);
+  return can0_DriverResetButton_Write(&msg);
 }
 
 Can_ErrorID_T write_can_rtd(bool state) {
-  Can_RTDButton_T msg;
+  can0_RTDButton_T msg;
   msg.is_pressed = state;
-  return Can_RTDButton_Write(&msg);
+  return can0_RTDButton_Write(&msg);
 }
 
 Can_ErrorID_T write_can_scroll_select(bool state) {
-  Can_ScrollSelectButton_T msg;
+  can0_ScrollSelectButton_T msg;
   msg.is_pressed = state;
-  return Can_ScrollSelectButton_Write(&msg);
+  return can0_ScrollSelectButton_Write(&msg);
 }
 
 void handle_can_error(Can_ErrorID_T error) {
