@@ -106,13 +106,6 @@ void Can_Receive(BMS_INPUT_T *bms_input){
 void Can_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output){
 
     uint32_t msTicks = bms_input->msTicks;
-    if((msTicks - last_bms_can_test_time) > BMS_CAN_TEST_PERIOD){
-        Can_BMS_SOC_T bms_SOC;
-        bms_SOC.soc_percentage = 58;
-        Can_BMS_SOC_Write(&bms_SOC);
-        last_bms_can_test_time = msTicks;
-        //Board_Println("Sending 58");
-    }
     if((msTicks-last_bms_contactor_weld_time) > BMS_CONTACTOR_WELD_PERIOD) {
         Can_Contactor_Weld_T contactor_weld;
         if(!(bms_input->contactor_weld_two && bms_input->contactor_weld_two)) {
