@@ -5,9 +5,15 @@
 #define SERIAL_BAUDRATE 57600
 #define CAN_BAUDRATE 500000
 
-#define DRIVER_RESET_PIN 1, 1
-#define RTD_PIN 1, 2
-#define SCROLL_SELECT_PIN 1, 3
+#define DRIVER_RESET_PIN_AND_PORT 1, 1
+#define RTD_PIN_AND_PORT 1, 2
+#define SCROLL_SELECT_PIN_AND_PORT 1, 3
+
+#define DRIVER_RESET_PIN_IOCON IOCON_PIO1_1
+#define RTD_PIN_PIN_IOCON IOCON_PIO1_2
+#define SCROLL_SELECT_PIN_IOCON IOCON_PIO1_3
+
+#define PIN_CONFIG IOCON_FUNC1 | IOCON_DIGMODE_EN | IOCON_MODE_PULLDOWN // Fix pull
 
 Can_ErrorID_T write_can_driver_reset(bool state);
 Can_ErrorID_T write_can_rtd(bool state);
@@ -37,10 +43,14 @@ void print(const char* str) {
 }
 
 void GPIO_Init() {
+  Chip_IOCON_PinMuxSet(LPC_IOCON, DRIVER_RESET_PIN_IOCON, PIN_CONFIG);
+  Chip_IOCON_PinMuxSet(LPC_IOCON, RTD_PIN_PIN_IOCON, PIN_CONFIG);
+  Chip_IOCON_PinMuxSet(LPC_IOCON, SCROLL_SELECT_PIN_IOCON, PIN_CONFIG);
+
   // Configure pins as inputs
-  Chip_GPIO_SetPinDIR(LPC_GPIO, DRIVER_RESET_PIN, false);
-  Chip_GPIO_SetPinDIR(LPC_GPIO, RTD_PIN, false);
-  Chip_GPIO_SetPinDIR(LPC_GPIO, SCROLL_SELECT_PIN, false);
+  Chip_GPIO_SetPinDIR(LPC_GPIO, DRIVER_RESET_PIN_AND_PORT, false);
+  Chip_GPIO_SetPinDIR(LPC_GPIO, RTD_PIN_AND_PORT, false);
+  Chip_GPIO_SetPinDIR(LPC_GPIO, SCROLL_SELECT_PIN_AND_PORT, false);
 
   Chip_GPIO_Init(LPC_GPIO);
 }
@@ -143,19 +153,19 @@ int main(void) {
   bool curr_scroll_select_pressed = false;
 
   while(1) {
-    curr_driver_reset_pressed = read_pin(DRIVER_RESET_PIN);
+    curr_driver_reset_pressed = read_pin(DRIVER_RESET_PIN_AND_PORT);
     if (curr_driver_reset_pressed != last_driver_reset_pressed) {
       write_can_driver_reset(curr_driver_reset_pressed);
     }
     last_driver_reset_pressed = curr_driver_reset_pressed;
 
-    curr_rtd_pressed = read_pin(RTD_PIN);
+    curr_rtd_pressed = read_pin(RTD_PIN_AND_PORT);
     if (curr_rtd_pressed != last_rtd_pressed) {
       write_can_driver_reset(curr_rtd_pressed);
     }
     last_rtd_pressed = curr_rtd_pressed;
 
-    curr_scroll_select_pressed = read_pin(SCROLL_SELECT_PIN);
+    curr_scroll_select_pressed = read_pin(SCROLL_SELECT_PIN_AND_PORT);
     if (curr_scroll_select_pressed != last_scroll_select_pressed) {
       write_can_driver_reset(curr_scroll_select_pressed);
     }
