@@ -17,8 +17,8 @@ flash code from.
 ## Native
 On Ubuntu or Ubuntu Bash on Windows 10, you can run the included
 set up scripts, that will fetch the toolchain using `apt` and `git`.
-Run the [`scripts/toolchain/all.sh`](scripts/toolchain/all.sh) script to set up the toolchain.
-Equivalently, if you already have make run `make toolchain`.
+Run the [`scripts/toolchain/all.sh`](scripts/toolchain/all.sh) script as **root** (with `sudo`) to set up the toolchain.
+Equivalently, if you already have make run `sudo make toolchain`.
 
 Although discouraged, check [here](https://github.com/MITMotorsports/MY18/wiki/Installing-the-toolchain-on-Windows)
 for Windows installation instructions, if Ubuntu Bash on Windows 10 is not an option.
