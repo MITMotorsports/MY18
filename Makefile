@@ -6,3 +6,6 @@ prepare:
 
 pull:
 	scripts/pull.sh
+
+toolchain:
+	scripts/toolchain.sh
