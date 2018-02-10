@@ -125,10 +125,8 @@ void Process_Input(BMS_INPUT_T* bms_input) {
 
     //Board_PrintNum(contactor_two,10);
 
-    bms_input->contactor_weld_one = Board_Contactor_Weld_One();
-    bms_input->contactor_weld_two = Board_Contactor_Weld_Two();
-
-
+    bms_input->contactor_weld_one = Board_Contactor_One_Welded();
+    bms_input->contactor_weld_two = Board_Contactor_Two_Welded();
 
 }
 

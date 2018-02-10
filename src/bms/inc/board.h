@@ -103,8 +103,9 @@ void Board_Contactors_Set(bool close_contactors);
 bool Board_Contactors_Closed(void);
 
 //Digital
-bool Board_Contactor_Weld_One(void);
-bool Board_Contactor_Weld_Two(void);
+bool Board_Contactor_One_Welded(void);
+
+bool Board_Contactor_Two_Welded(void);
 
 //Analog
 // void Board_Contactor_Weld_One(int16_t* adc_data);

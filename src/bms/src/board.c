@@ -163,6 +163,59 @@ void Board_GPIO_Init(void) {
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_BMS_FAULT);
     Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_BMS_FAULT,
             (IOCON_FUNC0 | IOCON_MODE_INACT));
+
+    //Enable pull down resistors on unused pins
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_23);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_23, (IOCON_PIN_23_FUNC | IOCON_MODE_PULLDOWN));
+    Chip_GPIO_SetPinState(LPC_GPIO, PIN_23, false);
+
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_29);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_29, (IOCON_PIN_29_FUNC | IOCON_MODE_PULLDOWN));
+    Chip_GPIO_SetPinState(LPC_GPIO, PIN_29, false);
+
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_32);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_32, (IOCON_PIN_32_FUNC | IOCON_MODE_PULLDOWN));
+    Chip_GPIO_SetPinState(LPC_GPIO, PIN_32, false);
+
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_33);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_33, (IOCON_PIN_33_FUNC | IOCON_MODE_PULLDOWN));
+    Chip_GPIO_SetPinState(LPC_GPIO, PIN_33, false);
+
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_9);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_9, (IOCON_PIN_9_FUNC | IOCON_MODE_PULLDOWN));
+    Chip_GPIO_SetPinState(LPC_GPIO, PIN_9, false);
+
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_17);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_17, (IOCON_PIN_17_FUNC | IOCON_MODE_PULLDOWN));
+    Chip_GPIO_SetPinState(LPC_GPIO, PIN_17, false);
+
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_2);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_2, (IOCON_PIN_2_FUNC | IOCON_MODE_PULLDOWN));
+    Chip_GPIO_SetPinState(LPC_GPIO, PIN_2, false);
+
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_21);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_21, (IOCON_PIN_21_FUNC | IOCON_MODE_PULLDOWN));
+    Chip_GPIO_SetPinState(LPC_GPIO, PIN_21, false);
+
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_1);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_1, (IOCON_PIN_1_FUNC | IOCON_MODE_PULLDOWN));
+    Chip_GPIO_SetPinState(LPC_GPIO, PIN_1, false);
+
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_11);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_11, (IOCON_PIN_11_FUNC | IOCON_MODE_PULLDOWN));
+    Chip_GPIO_SetPinState(LPC_GPIO, PIN_11, false);
+
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_12);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_12, (IOCON_PIN_12_FUNC | IOCON_MODE_PULLDOWN));
+    Chip_GPIO_SetPinState(LPC_GPIO, PIN_12, false);
+
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_25);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_25, (IOCON_PIN_25_FUNC | IOCON_MODE_PULLDOWN));
+    Chip_GPIO_SetPinState(LPC_GPIO, PIN_25, false);
+
+    Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_48);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_48, (IOCON_PIN_48_FUNC | IOCON_MODE_PULLDOWN));
+    Chip_GPIO_SetPinState(LPC_GPIO, PIN_48, false);
 }
 void Board_CAN_Init(uint32_t baudrate) {
     init_can0_bms();
@@ -231,11 +284,11 @@ void Board_Contactor_Weld_Two(int16_t* adc_data) {
 }*/
 
 //Digital
-bool Board_Contactor_Weld_One(void) {
+bool Board_Contactor_One_Welded(void) {
 
     return Chip_GPIO_GetPinState(LPC_GPIO, PIN_CONTACTOR_WELD_1);
 }
-bool Board_Contactor_Weld_Two(void) {
+bool Board_Contactor_Two_Welded(void) {
 
     return Chip_GPIO_GetPinState(LPC_GPIO, PIN_CONTACTOR_WELD_2);
 }
