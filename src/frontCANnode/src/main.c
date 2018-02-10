@@ -10,7 +10,7 @@
 #include "sysinit.h"
 #include "chip.h"
 
-#include "Can_Library.h"
+#include "CANlib.h"
 
 #define SERIAL_BAUDRATE 57600
 #define CAN_BAUDRATE 500000
@@ -86,7 +86,7 @@ int main(void) {
   SystemCoreClockUpdate();
 
   Serial_Init(SERIAL_BAUDRATE);
-  Can_Init(CAN_BAUDRATE);
+  init_can0_can_node();
 
   ADC_Init();
 

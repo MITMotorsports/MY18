@@ -3,7 +3,7 @@
 #include "chip.h"
 #include "can.h"
 
-#include <Can_Library.h>
+#include <CANlib.h>
 
 static bool resettingPeripheral = false;
 

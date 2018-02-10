@@ -1,7 +1,7 @@
 #include "input.h"
 #include "adc.h"
 
-#include <Can_Library.h>
+#include <CANlib.h>
 
 #define ADC_UPDATE_PERIOD_MS 10
 
@@ -142,7 +142,7 @@ void update_wheel_speed(Speed_Input_T *speed, uint32_t msTicks) {
 
 void can_process_vcu_dash(Input_T *input) {
   can0_VcuToDash_T msg;
-  can0_VcuToDash_unpack(&latest, &msg);
+  unpack_can0_VcuToDash(&latest, &msg);
   input->can_input->limp_state = msg.limp_state;
 }
 

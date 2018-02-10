@@ -2,7 +2,7 @@
 #include "types.h"
 #include "rules.h"
 
-#include <Can_Library.h>
+#include <CANlib.h>
 
 // Both of these are in millisecods
 const uint8_t can_output_period = 1000 / can0_FrontCanNodeOutput_frequency;
