@@ -56,6 +56,7 @@ typedef struct BMS_PACK_STATUS {
     uint32_t pack_current_mA;       // charging pack current reported by BRUSA (milliamps)
     uint32_t pack_voltage_mV;       // charging pack voltage reported by BRUSA (millivolts)
     int16_t max_cell_temp_dC;       // maximum cell temperature (decicelsius)
+    int16_t pack_energy_wH;         // energy used in watthours 
 
     //FSAE specific pack status variables
     int16_t min_cell_temp_dC;       // minimum cell temperature (decicelsius)

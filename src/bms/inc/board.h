@@ -43,6 +43,28 @@ void Board_UART_Init(uint32_t baudRateHz);
 
 void Board_CAN_Init(uint32_t baudrate);
 
+void Board_CAN_Receive(BMS_INPUT_T *bms_input);
+
+void can_receive_bms_state(BMS_INPUT_T *bms_input);
+
+void can_proces_vcu_switch(BMS_INPUT_T *bms_input);
+
+void can_receive_current(BMS_INPUT_T *bms_input);
+
+void can_receive_voltage(BMS_INPUT_T *bms_input);
+
+void can_receive_energy(BMS_INPUT_T *bms_input);
+
+void Board_CAN_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output);
+
+void can_transmit_contactor_weld(BMS_INPUT_T *bms_input, uint32_t msTicks);
+
+void can_transmit_bms_errors(BMS_INPUT_T *bms_input, uint32_t msTicks);
+
+void can_transmit_pack_status(BMS_INPUT_T *bms_input, uint32_t msTicks);
+
+void can_transmit_bms_soc(BMS_INPUT_T *bms_input, uint32_t msTicks);
+
 //Get state machine mode request from console
 void Board_GetModeRequest(const CONSOLE_OUTPUT_T *console_output, BMS_INPUT_T* bms_input);
 

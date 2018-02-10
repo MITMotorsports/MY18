@@ -8,7 +8,6 @@
 #include "config.h"
 #include "console.h"
 #include "ssm.h"
-#include "fsae_can.h"
 #include "error_handler.h"
 
 #define EEPROM_CS_PIN 0, 7
@@ -104,7 +103,7 @@ void Init_BMS_Structs(void){
 
 void Process_Input(BMS_INPUT_T* bms_input) {
     if(bms_state.curr_mode != BMS_SSM_MODE_INIT) {
-        Can_Receive(bms_input);
+        Board_CAN_Receive(bms_input);
         Board_GetModeRequest(&console_output, bms_input);
         Board_LTC6804_ProcessInputs(&pack_status,&bms_state);
     }
@@ -141,7 +140,7 @@ void Process_Output(BMS_INPUT_T* bms_input,BMS_OUTPUT_T* bms_output, BMS_STATE_T
         bms_input->ltc_packconfig_check_done = Board_LTC6804_Init(&pack_config, cell_voltages);
     } else {
         Board_LTC6804_UpdateBalanceStates(bms_output->balance_req);
-        Can_Transmit(bms_input, bms_output);
+        //Can_Transmit(bms_input, bms_output);
     }
 }
 

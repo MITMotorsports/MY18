@@ -24,14 +24,13 @@ boards:
     publish:
       can0:
         - VcuToDash
-        - BMS_VCU_State
-        - BMS_VCU_Switch
+        - BMSState
+        - BmsVcuSwitch
         - MC_Command
     subscribe:
       can0:
         - FrontCanNodeOutput
         - Dash_Request
-        - Contactor_Weld
   dash:
     arch: avr
     publish:
@@ -41,7 +40,6 @@ boards:
       can0:
         - VcuToDash
         - BMSErrors
-        - BMS_SOC
         - FrontCanNodeOutput
         - RearCanNodeWheelSpeed
   bms:
@@ -52,18 +50,21 @@ boards:
         - BmsPackStatus
         - BMS_SOC
         - BMSCellTemps
-        - Contactor_Weld
+        - ContactorWeld
     subscribe:
       can0:
-        - BMS_VCU_State
-        - BMS_VCU_Switch
+        - BMSState
+        - BmsVcuSwitch
         - BMS_CSB_Switch
+        - CurrentSensor_Current
+        - CurrentSensor_Voltage
+        - CurrentSensor_Power
   csb:
     arch: arm
     publish:
       can0:
         - BMS_CSB_Switch
-        - BMS_CSB_State
+        - BMS_Mode
         - ElconCommand
     subscribe:
       can0:
@@ -89,6 +90,8 @@ boards:
 
 buses:
   can0:
+    baudrate: 500000
+    is_extended: false
     messages:
       FrontCanNodeOutput:
         can_id: 0x0D0
@@ -227,7 +230,7 @@ buses:
               OTHER: 0xE
       BMS_SOC:
         can_id: 0x0D5
-        frequency: 1Hz
+        frequency: 10Hz
         is_big_endian: true
         segments:
           soc_percentage:
@@ -235,13 +238,17 @@ buses:
             length: 10
             c_type: uint16_t
             signed: false
-      Contactor_Weld:
+      ContactorWeld:
         can_id: 0x0D6
-        frequency: 1Hz
+        frequency: 10HZ
         is_big_endian: true
         segments:
-          weld_detect:
+          one:
             position: 0
+            length: 1
+            c_type: bool
+          two:
+            position: 1
             length: 1
             c_type: bool
       Dash_Request:
@@ -265,7 +272,7 @@ buses:
               ACTIVE_AERO_DISABLE: 0x8
               FAN_ENABLE: 0x9
               FAN_DISABLE: 0xA
-      BMS_VCU_State:
+      BMSState:
         can_id: 0x0D3
         frequency: 1Hz
         is_big_endian: true
@@ -275,9 +282,9 @@ buses:
             length: 1
             c_type: enum
             enum:
-                DISCHARGE_ENABLE: 0x0
-                DISCHARGE_DISABLE: 0x1
-                NO_REQUEST: 0x2
+              DISCHARGE_ENABLE: 0x0
+              DISCHARGE_DISABLE: 0x1
+              NO_REQUEST: 0x2
       VcuToDash:
         can_id: 0x0F3
         frequency: 10Hz
@@ -426,7 +433,7 @@ buses:
             c_type: uint32_t
             signed: false
             unit: mRPM
-      BMS_VCU_Switch: # Switch CAN bus and baudrate
+      BmsVcuSwitch: # Switch CAN bus and baudrate
         can_id: 0x0F4
         frequency: 1Hz
         is_big_endian: true
@@ -468,6 +475,17 @@ buses:
             c_type: int32_t
             signed: false
             unit: W
+      CurrentSensor_Energy:
+        can_id: 0x527
+        frequency: 20Hz
+        is_big_endian: true
+        segments:
+          pack_energy:
+            position: 16
+            length: 32
+            c_type: int32_t
+            signed: false
+            unit: Whrs
       MC_Command:
         can_id: 0x0C0 # From manual
         frequency: 2.5Hz # MC needs a message at 2 Hz or higher
@@ -511,7 +529,7 @@ buses:
             position: 0
             length: 1
             c_type: bool
-      BMS_CSB_State:
+      BMS_Mode:
         can_id: 0x601
         frequency: 1Hz
         is_big_endian: true
@@ -521,11 +539,8 @@ buses:
             length: 1
             c_type: enum
             enum:
-              CHARGE_ENABLE: 0x0
-              CHARGE_DISABLE: 0x1
-              BALANCE_ENABLE: 0x2
-              BALANCE_DISABLE: 0x3
-              NO_REQUEST: 0x4
+              CHARGE: 0x0
+              BALANCE: 0x1
       ElconCommand:
         can_id: 0x1806E5F4
         frequency: 1Hz

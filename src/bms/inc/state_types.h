@@ -21,6 +21,8 @@ typedef struct BMS_INPUT{
     BMS_SSM_MODE_T vcu_mode_request;
     BMS_SSM_MODE_T csb_mode_request;
 
+    bool vcu_switch;
+
     bool contactor_weld_one;
     bool contactor_weld_two;
     bool contactors_closed;
