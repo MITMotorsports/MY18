@@ -32,7 +32,7 @@ boards:
         - FrontCanNodeOutput
         - Dash_Request
   dash:
-    arch: avr
+    arch: arm
     publish:
       can0:
         - Dash_Request
