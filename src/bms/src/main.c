@@ -171,7 +171,10 @@ int main(void) {
     while(1) {
         //Setting fault pin high
         Board_Contactors_Set(true);
-        
+        if(Board_Contactors_Closed()) {
+            Board_Println("Fault Pin high");
+        }
+
         Process_Keyboard(); //console input
         Process_Input(&bms_input); //Processes Inputs(can messages, pin states, cell stats)
         SSM_Step(&bms_input, &bms_state, &bms_output); //changes state based on inputs

@@ -162,7 +162,7 @@ void Board_GPIO_Init(void) {
     //Fault Pin
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_BMS_FAULT);
     Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_BMS_FAULT,
-            (IOCON_FUNC0 | IOCON_MODE_INACT));
+            (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_PULLDOWN));
 
     //Enable pull down resistors on unused pins
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_23);
@@ -381,7 +381,7 @@ bool Board_LTC6804_OpenWireTest(void) {
 #endif
 }
 bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config, uint32_t *cell_voltages_mV){
-#ifdef TEST_HARDWARE_LTC_TEST
+#ifdef TEST_HARDWARE
     UNUSED(pack_config); UNUSED(cell_voltages_mV);
     return true;
 #else
