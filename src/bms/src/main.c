@@ -156,7 +156,8 @@ int main(void) {
 	Board_Chip_Init();
 	Board_GPIO_Init();
     Board_UART_Init(57600);
-	Board_CAN_Init(CAN_BAUD);
+
+	Board_CAN_Init();
     EEPROM_Init(LPC_SSP1, EEPROM_BAUD, EEPROM_CS_PIN);
     SSM_Init(&bms_input,&bms_state, &bms_output);
     EEPROM_WriteCCPage_Num(0,11);

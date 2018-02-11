@@ -217,7 +217,7 @@ void Board_GPIO_Init(void) {
     Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_48, (IOCON_PIN_48_FUNC | IOCON_MODE_PULLDOWN));
     Chip_GPIO_SetPinState(LPC_GPIO, PIN_48, false);
 }
-void Board_CAN_Init(uint32_t baudrate) {
+void Board_CAN_Init() {
     init_can0_bms();
 }
 
@@ -673,14 +673,19 @@ void Board_CAN_Receive(BMS_INPUT_T *bms_input){
             can_receive_bms_state(bms_input);
             break;
         case can0_BmsVcuSwitch:
-            can_proces_vcu_switch(bms_input);
+            can_receive_vcu_switch(bms_input);
             break;
         case can0_CurrentSensor_Current:
             can_receive_current(bms_input);
+            break;
         case can0_CurrentSensor_Voltage:
             can_receive_voltage(bms_input);
+            break;
         case can0_CurrentSensor_Energy:
             can_receive_energy(bms_input);
+            break;
+        case CAN_UNKNOWN_MSG:
+            break;
         default:
             break;
     }
@@ -692,7 +697,7 @@ void can_receive_bms_state(BMS_INPUT_T *bms_input) {
     bms_input->vcu_mode_request = msg.state;
 }
 
-void can_proces_vcu_switch(BMS_INPUT_T *bms_input) {
+void can_receive_vcu_switch(BMS_INPUT_T *bms_input) {
     can0_BmsVcuSwitch_T msg;
     unpack_can0_BmsVcuSwitch(&can_input,&msg);
     bms_input->vcu_switch = msg.always_true;
@@ -723,21 +728,8 @@ void Board_CAN_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output){
     can_transmit_contactor_weld(bms_input, msTicks);
     can_transmit_pack_status(bms_input, msTicks);
     can_transmit_bms_soc(bms_input, msTicks);
-    can_transmt_bms_error(bms_input, msTicks);
-    // if((msTicks-last_bms_contactor_weld_time) > BMS_CONTACTOR_WELD_PERIOD) {
-    //     Can_Contactor_Weld_T contactor_weld;
-    //     if(!(bms_input->contactor_weld_two && bms_input->contactor_weld_two)) {
-    //         //Board_Println_BLOCKING("Welded");
-    //         contactor_weld.weld_detect = true;
-    //         Can_Contactor_Weld_Write(&contactor_weld);
-    //         last_bms_can_test_time = msTicks;
-    //     } else if(bms_input->contactor_weld_two && bms_input->contactor_weld_two) {
-    //         //Board_Println_BLOCKING("Not Welded");
-    //         contactor_weld.weld_detect = false;
-    //         Can_Contactor_Weld_Write(&contactor_weld);
-    //         last_bms_can_test_time = msTicks;
-    //     }
-    // }
+    can_transmit_bms_errors(bms_input, msTicks);
+
 }
 
 void can_transmit_contactor_weld(BMS_INPUT_T *bms_input, uint32_t msTicks) {
@@ -745,23 +737,49 @@ void can_transmit_contactor_weld(BMS_INPUT_T *bms_input, uint32_t msTicks) {
         can0_ContactorWeld_T msg;
         msg.one = bms_input->contactor_weld_one;
         msg.two = bms_input->contactor_weld_two;
-        pack_can0_ContactorWeld(&msg, &can_output);
+        can0_ContactorWeld_Write(&msg);
         last_bms_contactor_weld_time = bms_input-> msTicks;
     }
 }
 
 void can_transmit_pack_status(BMS_INPUT_T *bms_input, uint32_t msTicks) {
     if((msTicks - last_bms_pack_status_time) > BMS_PACK_STATUS_PERIOD) {
+        can0_BmsPackStatus_T msg;
+        /*
 
+            Fill msg
+    
+        */
+
+        can0_BmsPackStatus_Write(&msg);
+        last_bms_pack_status_time = bms_input->msTicks;
     }
 }
 
 void can_transmit_bms_soc(BMS_INPUT_T *bms_input, uint32_t msTicks) {
     if((msTicks - last_bms_soc_time) > BMS_SOC_PERIOD) {
+        can0_BMS_SOC_T msg;
+        /*
 
+            Fill msg
+    
+        */
+
+        can0_BMS_SOC_Write(&msg);
+        last_bms_soc_time = bms_input->msTicks;
     }
 }
 
 void can_transmit_bms_errors(BMS_INPUT_T *bms_input, uint32_t msTicks) {
-    if((msTicks - last_bms_errors_time) > BMS_ERRORS_PERIOD) {}
+    if((msTicks - last_bms_errors_time) > BMS_ERRORS_PERIOD) {
+        can0_BMSErrors_T msg;
+        /*
+
+            Fill msg
+    
+        */
+
+        can0_BmsErrors_Write(&msg);
+        last_bms_errors_time = bms_input->msTicks;
+    }
 }

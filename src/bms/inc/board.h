@@ -41,13 +41,13 @@ void Board_LED_Toggle(uint8_t led_gpio, uint8_t led_pin);
 
 void Board_UART_Init(uint32_t baudRateHz);
 
-void Board_CAN_Init(uint32_t baudrate);
+void Board_CAN_Init(void);
 
 void Board_CAN_Receive(BMS_INPUT_T *bms_input);
 
 void can_receive_bms_state(BMS_INPUT_T *bms_input);
 
-void can_proces_vcu_switch(BMS_INPUT_T *bms_input);
+void can_receive_vcu_switch(BMS_INPUT_T *bms_input);
 
 void can_receive_current(BMS_INPUT_T *bms_input);
 
