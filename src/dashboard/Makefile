@@ -160,7 +160,7 @@ endif
 #=============================================================================#
 
 # core flags
-CORE_FLAGS = -mcpu=$(CORE) -mthumb
+CORE_FLAGS = -mcpu=$(CORE) -mthumb -DCAN_ARCHITECTURE_LPC11CX4
 
 # flags for C compiler
 C_FLAGS = -fdiagnostics-color=always -std=$(C_STD) -g -ggdb3 -fverbose-asm -Wa,-ahlms=$(OUT_DIR_F)$(notdir $(<:.$(C_EXT)=.lst)) -DUART_BAUD=$(BAUDRATE)

@@ -1,12 +1,15 @@
 #include "board.h"
 #include "config.h"
 #include "NHD_US2066.h"
+#include "CANlib.h"
 
 NHD_US2066_OLED oled;
 
 int main(void) {
     Board_Chip_Init();
     Board_GPIO_Init();
+
+    init_can0_dash();
 
     Pin_Write(PIN_OLED_CS, 0);
     Pin_Write(PIN_OLED_RS, 1);
@@ -24,6 +27,31 @@ int main(void) {
     Delay(100);
 
     oled_init_commands(&oled);
+    oled_print(&oled, "Testing CAN");
+    oled_update(&oled);
+
+    Frame frame;
+    memset(&frame, 0, sizeof(frame));
+    int counter = 0;
+    while (1) {
+        can0_FrontCanNodeWheelSpeed_T msg;
+        msg.front_right_wheel_speed = 420;
+        msg.front_left_wheel_speed = 21;
+
+        pack_can0_FrontCanNodeWheelSpeed(&msg, &frame);
+        can0_FrontCanNodeWheelSpeed_Write(&msg);
+
+        //can0_T msgType;
+        // identify_can0(&frame);
+        //Can_RawRead(&frame);
+
+        oled_set_pos(&oled, 1, 0);
+        oled_print(&oled, "the ID ");
+        oled_print_num(&oled, frame.id);
+        oled_update(&oled);
+
+        Delay(50);
+    }
 
     while (1) {
         char str[20] = {'\0'};

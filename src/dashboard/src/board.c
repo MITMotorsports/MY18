@@ -1,5 +1,6 @@
 #include "board.h"
 
+const uint32_t OscRateIn = 12000000;
 volatile uint32_t msTicks;
 
 void SysTick_Handler(void) {
