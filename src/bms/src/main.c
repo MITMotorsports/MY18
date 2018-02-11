@@ -160,7 +160,6 @@ int main(void) {
 	Board_CAN_Init();
     EEPROM_Init(LPC_SSP1, EEPROM_BAUD, EEPROM_CS_PIN);
     SSM_Init(&bms_input,&bms_state, &bms_output);
-    EEPROM_WriteCCPage_Num(0,11);
     //Board_ADC_Init();
 
     //setup readline/console
@@ -170,12 +169,15 @@ int main(void) {
 
 
     while(1) {
+        //Setting fault pin high
+        Board_Contactors_Set(true);
+        
         Process_Keyboard(); //console input
         Process_Input(&bms_input); //Processes Inputs(can messages, pin states, cell stats)
-        Board_Println_BLOCKING("OUT OF INPUT");
         SSM_Step(&bms_input, &bms_state, &bms_output); //changes state based on inputs
         Process_Output(&bms_input,&bms_output,&bms_state); //Transmits can messages, processes ltc output(update balance states)
         if (Error_Handle(bms_input.msTicks) == HANDLER_HALT) {
+            Board_Println("Requesting Halt...");
             break; // Handler requested a Halt
         }
     }

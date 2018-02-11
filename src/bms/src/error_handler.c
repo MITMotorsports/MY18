@@ -10,8 +10,8 @@
 #define LTC6802_OWT_timeout_count  		10
 #define CAN_timeout_count 				5
 #define EEPROM_timeout_count  			5
-#define CONFLICTING_MODE_REQUESTS_count   2
-#define BLOWN_FUSE_timeout_count 1
+#define CONFLICTING_MODE_REQUESTS_count 2
+#define BLOWN_FUSE_timeout_count        1
 
 
 #define CELL_OVER_TEMP_timeout_ms     10000

@@ -295,7 +295,7 @@ bool Board_Contactor_Two_Welded(void) {
 
 
 bool Board_LTC6804_CVST(void) {
-#ifdef TEST_HARDWARE
+#ifdef TEST_HARDWARE_LTC_TEST
     return true;
 #else
     LTC6804_STATUS_T res;
@@ -381,7 +381,7 @@ bool Board_LTC6804_OpenWireTest(void) {
 #endif
 }
 bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config, uint32_t *cell_voltages_mV){
-#ifdef TEST_HARDWARE
+#ifdef TEST_HARDWARE_LTC_TEST
     UNUSED(pack_config); UNUSED(cell_voltages_mV);
     return true;
 #else
@@ -446,7 +446,7 @@ bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config, uint32_t *cell_voltages_
 }
 
 void Board_LTC6804_DeInit(void) {
-#ifndef TEST_HARDWARE
+#ifndef TEST_HARDWARE_LTC_TEST
     _ltc6804_initialized = false;
     _ltc6804_init_state = LTC6804_INIT_NONE;
 #endif
