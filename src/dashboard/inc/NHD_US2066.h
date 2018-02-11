@@ -1,3 +1,8 @@
+// FSAE 2018
+// August Trollback
+//
+// Interface for OLEDs driven by an US2066 chip.
+
 #ifndef _NHD_US2066_H_
 #define _NHD_US2066_H_
 
@@ -18,17 +23,31 @@ typedef struct {
     int nlines, ncols;
 } NHD_US2066_OLED;
 
+// Initialize an oled struct for a screen with nlines and ncols
 void oled_init(NHD_US2066_OLED *oled, int nlines, int ncols);
 
+// Run the commands needed to initialize the oled for viewing
 void oled_init_commands(NHD_US2066_OLED *oled);
 
+// Set the position to print next
 void oled_set_pos(NHD_US2066_OLED *oled, int line, int col);
 
-// print a null terminated string
+// Print a null terminated string at the current position with wrapping
 void oled_print_wrap(NHD_US2066_OLED *oled, char *str);
+
+// Print a null terminated string at the current position (no wrapping)
 void oled_print(NHD_US2066_OLED *oled, char *str);
 
+// Print an integer number at the current position
+void oled_print_num(NHD_US2066_OLED *oled, int num);
+
+// Clear the oled screen
 void oled_clear(NHD_US2066_OLED *oled);
+
+// Clear a single oled line
+void oled_clearline(NHD_US2066_OLED *oled, int line);
+
+// Display updates to the screen
 void oled_update(NHD_US2066_OLED *oled);
 
 #endif

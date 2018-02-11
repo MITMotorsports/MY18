@@ -1,6 +1,8 @@
 #include "NHD_US2066.h"
 #include "board.h"
 
+#include <stdlib.h>
+
 #define __pos2idx(___oled, ___line, ___col) (___line*___oled->ncols + ___col)
 
 void _OLED_send_serial(unsigned char c, unsigned char temp) {
@@ -114,6 +116,13 @@ void oled_print(NHD_US2066_OLED *oled, char *str) {
     _oled_print_generic(oled, str, false);
 }
 
+void oled_print_num(NHD_US2066_OLED *oled, int num) {
+    char str[30] = {'\0'};
+    itoa(num, str, 10);
+
+    oled_print(oled, str);
+}
+
 void _oled_writeline(NHD_US2066_OLED *oled, int line) {
     int i;
     for (i = 0; i < oled->ncols; i++) {
@@ -129,6 +138,16 @@ void oled_clear(NHD_US2066_OLED *oled) {
     int i;
     for (i = 0; i < oled->nlines * oled->ncols; i++) {
         oled->buf[i] = ' ';
+    }
+}
+
+void oled_clearline(NHD_US2066_OLED *oled, int line) {
+    oled->lineupdates[line] = true;
+    
+    int i;
+    for (i = 0; i < oled->ncols; i++) {
+        int idx = __pos2idx(oled, line, i);
+        oled->buf[idx] = ' ';
     }
 }
 
