@@ -1,6 +1,8 @@
 #ifndef _CARSTATS_H_
 #define _CARSTATS_H_
 
+#include "CANLib.h"
+
 #include <stdbool.h>
 
 typedef struct {
@@ -18,6 +20,8 @@ typedef struct {
     int front_right_wheel_speed;
     int rear_left_wheel_speed;
     int rear_right_wheel_speed;
+
+    can0_VcuToDash_T vcu_data;
 } carstats_t;
 
 void can_update_carstats(carstats_t *cs);

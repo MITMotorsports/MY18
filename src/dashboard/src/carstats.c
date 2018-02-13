@@ -1,6 +1,8 @@
 #include "carstats.h"
 #include "CANLib.h"
 
+#include <string.h>
+
 Frame frame;
 
 void can_handle_front_wheel_speed(carstats_t *cs) {
@@ -34,6 +36,28 @@ void can_handle_bms_pack_status(carstats_t *cs) {
     cs->lowest_cell_voltage = msg.min_cell_voltage;
 }
 
+void can_handle_current_sensor_power(carstats_t *cs) {
+    can0_CurrentSensor_Power_T msg;
+    unpack_can0_CurrentSensor_Power(&frame, &msg);
+
+    cs->power = msg.power;
+}
+
+void can_handle_mc_command(carstats_t *cs) {
+    can0_MC_Command_T msg;
+    unpack_can0_MC_Command(&frame, &msg);
+
+    cs->torque = msg.torque;
+    cs->motor_rpm = msg.speed;
+}
+
+void can_handle_vcu_to_dash(carstats_t *cs) {
+    can0_VcuToDash_T msg;
+    unpack_can0_VcuToDash(&frame, &msg);
+
+    memcpy(&(cs->vcu_data), &msg, sizeof(msg));
+}
+
 void can_update_carstats(carstats_t *cs) {
 
     can0_T msgType; 
@@ -52,6 +76,12 @@ void can_update_carstats(carstats_t *cs) {
         case can0_BmsPackStatus:
             can_handle_bms_pack_status(cs);
             break;
+        case can0_CurrentSensor_Power:
+            can_handle_current_sensor_power(cs);
+        case can0_MC_Command:
+            can_handle_mc_command(cs);
+        case can0_VcuToDash:
+            can_handle_vcu_to_dash(cs);
         default:
             // do nothing
             break;
