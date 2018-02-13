@@ -36,4 +36,9 @@ void Board_GPIO_Init(void) {
     Pin_Init(PIN_OLED_BS0);
     Pin_Init(PIN_OLED_BS1);
     Pin_Init(PIN_OLED_BS2);
+    
+    Pin_Init(PIN_LED_HV);
+    Pin_Init(PIN_LED_RTD);
+    Pin_Init(PIN_LED_IMD);
+    Pin_Init(PIN_LED_AMS);
 }
