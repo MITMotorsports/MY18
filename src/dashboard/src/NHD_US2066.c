@@ -123,6 +123,12 @@ void oled_print_num(NHD_US2066_OLED *oled, int num) {
     oled_print(oled, str);
 }
 
+void oled_print_char(NHD_US2066_OLED *oled, char chr) {
+    // just create a one char string
+    char str[2] = {chr, '\0'};
+    oled_print(oled, str);
+}
+
 void _oled_writeline(NHD_US2066_OLED *oled, int line) {
     int i;
     for (i = 0; i < oled->ncols; i++) {

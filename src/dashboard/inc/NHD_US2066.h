@@ -41,6 +41,10 @@ void oled_print(NHD_US2066_OLED *oled, char *str);
 // Print an integer number at the current position
 void oled_print_num(NHD_US2066_OLED *oled, int num);
 
+// Print a single character at the current position.
+// Useful for printing special symbols defined in NHD_US2066_charset.h
+void oled_print_char(NHD_US2066_OLED *oled, char chr);
+
 // Clear the oled screen
 void oled_clear(NHD_US2066_OLED *oled);
 
