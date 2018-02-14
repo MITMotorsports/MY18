@@ -54,4 +54,21 @@ void oled_clearline(NHD_US2066_OLED *oled, int line);
 // Display updates to the screen
 void oled_update(NHD_US2066_OLED *oled);
 
+typedef enum {
+    // lines: normal, normal, double
+    NHD_US2066_DOUBLE_HEIGHT_BOTTOM = 0b00,
+
+    // lines: normal, double, normal
+    NHD_US2066_DOUBLE_HEIGHT_MIDDLE = 0b01,
+
+    // lines: double, normal, normal
+    NHD_US2066_DOUBLE_HEIGHT_TOP = 0b10,
+    
+    // lines: double, double
+    NHD_US2066_DOUBLE_HEIGHT_BOTH = 0b11
+} NHD_US2066_double_height_mode;
+
+void oled_set_double_height_mode(NHD_US2066_OLED *oled,
+    NHD_US2066_double_height_mode mode);
+
 #endif
