@@ -240,6 +240,8 @@ void oled_init_commands(NHD_US2066_OLED *oled) {
 void oled_set_double_height_mode(NHD_US2066_OLED *oled,
     NHD_US2066_double_height_mode mode) {
 
+    UNUSED(oled);
+
     uint8_t disp_shift = 1;
     uint8_t UD = mode;
     unsigned char cmd = disp_shift | (UD << 2) | (1 << 4);
