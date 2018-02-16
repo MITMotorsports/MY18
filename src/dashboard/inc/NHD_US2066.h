@@ -38,8 +38,17 @@ void oled_print_wrap(NHD_US2066_OLED *oled, char *str);
 // Print a null terminated string at the current position (no wrapping)
 void oled_print(NHD_US2066_OLED *oled, char *str);
 
+// Print a right justified string
+void oled_rprint(NHD_US2066_OLED *oled, char *str);
+// Print a right justified string with `pad` padding to the right
+void oled_rprint_pad(NHD_US2066_OLED *oled, char *str, int pad);
+
 // Print an integer number at the current position
 void oled_print_num(NHD_US2066_OLED *oled, int num);
+// Print a right justified number
+void oled_rprint_num(NHD_US2066_OLED *oled, int num);
+// Print a right justified number with `pad` padding to the right
+void oled_rprint_num_pad(NHD_US2066_OLED *oled, int num, int pad);
 
 // Print a single character at the current position.
 // Useful for printing special symbols defined in NHD_US2066_charset.h

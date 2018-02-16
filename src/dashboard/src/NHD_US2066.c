@@ -2,6 +2,7 @@
 #include "board.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 #define __pos2idx(___oled, ___line, ___col) (___line*___oled->ncols + ___col)
 
@@ -126,6 +127,37 @@ void oled_print_num(NHD_US2066_OLED *oled, int num) {
 void oled_print_char(NHD_US2066_OLED *oled, char chr) {
     // just create a one char string
     char str[2] = {chr, '\0'};
+    oled_print(oled, str);
+}
+
+void _right_justified_pos(NHD_US2066_OLED *oled, int len) {
+    int col = oled->ncols - len;
+    if (col < 0)
+        col = 0;
+
+    oled->col = col;
+}
+
+void oled_rprint(NHD_US2066_OLED *oled, char *str) {
+    oled_rprint_pad(oled, str, 0);
+}
+
+void oled_rprint_pad(NHD_US2066_OLED *oled, char *str, int pad) {
+    int len = strlen(str);
+    _right_justified_pos(oled, len + pad);
+    oled_print(oled, str);
+}
+
+void oled_rprint_num(NHD_US2066_OLED *oled, int num) {
+    oled_rprint_num_pad(oled, num, 0);    
+}
+
+void oled_rprint_num_pad(NHD_US2066_OLED *oled, int num, int pad) {
+    char str[30] = {'\0'};
+    itoa(num, str, 10);
+
+    int len = strlen(str);
+    _right_justified_pos(oled, len + pad);
     oled_print(oled, str);
 }
 
