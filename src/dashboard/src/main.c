@@ -3,6 +3,8 @@
 #include "NHD_US2066.h"
 #include "CANlib.h"
 
+#include "led.h"
+
 NHD_US2066_OLED oled;
 
 int main(void) {
@@ -21,6 +23,11 @@ int main(void) {
     Pin_Write(PIN_OLED_BS2, 0);
 
 
+    LED_HV_off();
+    LED_RTD_off();
+    LED_IMD_off();
+    LED_AMS_off();
+
 
     Delay(100);
     oled_init(&oled, NHD_0420CW_NLINES, NHD_0420CW_NCOLS);
@@ -33,6 +40,55 @@ int main(void) {
     Frame frame;
     memset(&frame, 0, sizeof(frame));
     int counter = 0;
+
+
+    oled_clear(&oled);
+    oled_set_double_height_mode(&oled, NHD_US2066_DOUBLE_HEIGHT_MIDDLE); 
+
+    oled_set_pos(&oled, 0, 0);
+    oled_print(&oled, "  Big Text !");
+    oled_print_char(&oled, CHAR_ARROW_UP);
+    oled_set_pos(&oled, 1, 0);
+    oled_print(&oled, "BMS FAULT");
+
+    oled_update(&oled);
+
+    int n = 0;
+    int r = 2;
+    while (1) {
+        if (n % 6 < 3) {
+            oled_clearline(&oled, 1);
+        } else {
+            oled_set_pos(&oled, 1, 0);
+            oled_print(&oled, "BMS FAULT");
+        }
+
+        oled_clearline(&oled, 0);
+        oled_set_pos(&oled, 0, 5);
+        oled_print_num(&oled, n++);
+        oled_print(&oled, "KPH");
+        oled_update(&oled);
+
+        r = abs((r * 48373) % 947185);
+        oled_set_pos(&oled, 2, 0);
+        oled_rprint_num_pad(&oled, r % 300, 1);
+        oled_rprint(&oled, "V");
+
+        char arr[4] = {CHAR_FORWARD_SLASH,
+                    CHAR_PIPE,
+                    CHAR_BACKWARD_SLASH,
+                    CHAR_MINUS};
+
+        oled_set_pos(&oled, 2, 2);
+        int j = 0;
+        for (; j < 10; j++) {
+            oled_print_char(&oled, arr[n % 4]);
+        }
+
+        Delay(100);
+    }
+
+
     while (1) {
         can0_FrontCanNodeWheelSpeed_T msg;
         msg.front_right_wheel_speed = 420;
