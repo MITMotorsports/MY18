@@ -37,6 +37,9 @@ void update_torque_state(ADC_Input_T *adc, State_T *state) {
 
   if (state->rules->implausibility_reported || state->rules->has_brake_throttle_conflict) {
     state->torque->requested_torque = 0;
+  } else {
+    // TODO figure out actual conversion
+    state->torque->requested_torque = min_accel;
   }
 }
 

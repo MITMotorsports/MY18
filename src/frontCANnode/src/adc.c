@@ -44,7 +44,6 @@ void ADC_Init(void) {
   Chip_ADC_EnableChannel(LPC_ADC, BRAKE_2_CHANNEL, ENABLE);
 
   // Disable all other channels
-  // TODO re-enable ones for wheel speed
   Chip_ADC_EnableChannel(LPC_ADC, UNUSED_1_CHANNEL, DISABLE);
   Chip_ADC_EnableChannel(LPC_ADC, UNUSED_2_CHANNEL, DISABLE);
   Chip_ADC_EnableChannel(LPC_ADC, UNUSED_3_CHANNEL, DISABLE);
