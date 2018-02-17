@@ -6,11 +6,13 @@
 #ifndef _NHD_US2066_H_
 #define _NHD_US2066_H_
 
-#define NHD_0420CW_NLINES 4
-#define NHD_0420CW_NCOLS  20
-
 #include <stdint.h>
 #include <stdbool.h>
+
+#include "NHD_US2066_charset.h"
+
+#define NHD_0420CW_NLINES 4
+#define NHD_0420CW_NCOLS  20
 
 typedef struct {
     // need to be nlines * ncols long
@@ -71,10 +73,12 @@ typedef enum {
     NHD_US2066_DOUBLE_HEIGHT_MIDDLE = 0b01,
 
     // lines: double, normal, normal
-    NHD_US2066_DOUBLE_HEIGHT_TOP = 0b10,
+    NHD_US2066_DOUBLE_HEIGHT_TOP = 0b11,
     
     // lines: double, double
-    NHD_US2066_DOUBLE_HEIGHT_BOTH = 0b11
+    NHD_US2066_DOUBLE_HEIGHT_BOTH = 0b10,
+
+    NHD_US2066_DOUBLE_HEIGHT_NONE
 } NHD_US2066_double_height_mode;
 
 void oled_set_double_height_mode(NHD_US2066_OLED *oled,

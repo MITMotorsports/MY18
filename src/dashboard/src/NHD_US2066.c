@@ -242,10 +242,19 @@ void oled_set_double_height_mode(NHD_US2066_OLED *oled,
 
     UNUSED(oled);
 
+    if (mode == NHD_US2066_DOUBLE_HEIGHT_NONE) {
+        OLED_command(0x28);
+        return;
+    }
+
     uint8_t disp_shift = 1;
     uint8_t UD = mode;
     unsigned char cmd = disp_shift | (UD << 2) | (1 << 4);
 
-	OLED_command(0x28);  //function set (fundamental command set)
+    //cmd = 0b00011001;
+
+	//OLED_command(0x28);  //function set (fundamental command set)
+    OLED_command(0b00101110);
     OLED_command(cmd);
+    OLED_command(0b00101100);
 }
