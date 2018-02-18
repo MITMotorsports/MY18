@@ -5,12 +5,12 @@
 // debouncing
 #define MIN_PRESS_DURATION 10
 
-#define BUTTON_HOLD_DURATION 750
+#define BUTTON_HOLD_DURATION 350
 
 void init_button_state(button_state_t *state) {
     state->is_pressed = false;
-    state->lockout = false;
-    state->button_state = BUTTON_ACTION_NONE;
+    state->lockout    = false;
+    state->action     = BUTTON_ACTION_NONE;
 }
 
 void update_button_state(button_state_t *state, bool newval) {
@@ -23,17 +23,18 @@ void update_button_state(button_state_t *state, bool newval) {
         state->is_pressed = true;
         state->press_start_ms = msTicks;
         state->lockout = false;
+        duration = 0;
 
     // on button up
-    } else if (state->is_pressed && newval && !lockout) {
+    } else if (state->is_pressed && !newval) {
         state->is_pressed = false;
 
-        if (duration > MIN_PRESS_DURATION) {
+        if (!state->lockout && duration > MIN_PRESS_DURATION) {
            state->action = BUTTON_ACTION_TAP;
         }
 
     }
-    if (state->is_pressed && duration > BUTTON_HOLD_DURATION) {
+    if (state->is_pressed && duration > BUTTON_HOLD_DURATION && !state->lockout) {
         state->lockout = true;
         state->action = BUTTON_ACTION_HOLD;
     }

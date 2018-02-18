@@ -4,6 +4,8 @@
 #include "chip.h"
 #include "pins.h"
 
+extern volatile uint32_t msTicks;
+
 void Board_Chip_Init(void);
 void Board_GPIO_Init(void);
 
