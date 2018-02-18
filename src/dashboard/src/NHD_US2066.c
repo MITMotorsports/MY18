@@ -102,10 +102,13 @@ void _oled_print_generic(NHD_US2066_OLED *oled, char *str, bool wrap) {
 
         int idx = __pos2idx(oled, oled->line, oled->col);
         unsigned char c = str[i];
-        oled->buf[idx] = c;
+
+        if (oled->buf[idx] != c) {
+            oled->buf[idx] = c;
+            oled->lineupdates[oled->line] = true;
+        }
 
         oled->col += 1;
-        oled->lineupdates[oled->line] = true;
     }
 }
 
