@@ -4,6 +4,10 @@
 #include "CANlib.h"
 
 #include "led.h"
+#include "dispatch.h"
+
+#include <string.h>
+#include <math.h>
 
 NHD_US2066_OLED oled;
 
@@ -27,6 +31,13 @@ int main(void) {
     LED_RTD_off();
     LED_IMD_off();
     LED_AMS_off();
+
+    dispatch_init();
+
+    while (1) {
+        dispatch_update();
+        Delay(1);
+    }
 
 
     Delay(100);
@@ -55,6 +66,28 @@ int main(void) {
 
     int n = 0;
     int r = 2;
+
+    oled_clear(&oled);
+    oled_set_double_height_mode(&oled, NHD_US2066_DOUBLE_HEIGHT_NONE);
+    int buttonMs = 0;
+    while (1) {
+        oled_set_pos(&oled, 1, 0);
+        oled_print(&oled, "Button 1: ");
+        int num = Pin_Read(PIN_BUTTON1) ? 1 : 0;
+        oled_print_num(&oled, num);
+
+        oled_set_pos(&oled, 2, 0);
+        oled_print(&oled, "Button 2: ");
+        if (Pin_Read(PIN_BUTTON2)) {
+            
+        }
+        oled_print_num(&oled, num);
+
+        oled_update(&oled);
+
+        Delay(50);
+    }
+
     while (1) {
         if (n % 6 < 3) {
             oled_clearline(&oled, 1);
@@ -88,32 +121,14 @@ int main(void) {
         Delay(100);
     }
 
-
-    while (1) {
-        can0_FrontCanNodeWheelSpeed_T msg;
-        msg.front_right_wheel_speed = 420;
-        msg.front_left_wheel_speed = 21;
-
-        pack_can0_FrontCanNodeWheelSpeed(&msg, &frame);
-        can0_FrontCanNodeWheelSpeed_Write(&msg);
-
-        //can0_T msgType;
-        // identify_can0(&frame);
-        //Can_RawRead(&frame);
-
-        oled_set_pos(&oled, 1, 0);
-        oled_print(&oled, "the ID ");
-        oled_print_num(&oled, frame.id);
-        oled_update(&oled);
-
-        Delay(50);
-    }
+    oled_set_pos(&oled, 0, 0);
+    oled_print(&oled, "Testing CAN");
 
     while (1) {
         char str[20] = {'\0'};
         int i, j;
         oled_set_pos(&oled, 0, 0);
-        oled_print(&oled, "   Starting Unity");
+        oled_print(&oled, "      Loading");
 
         for (i = 0; i < 20; i++) {
             for (j = 0; j < 5; j++) {
