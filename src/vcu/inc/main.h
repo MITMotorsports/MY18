@@ -2,7 +2,7 @@
 #define __MAIN_H
 
 #include "stm32f2xx_hal.h"
-#include "Can_Library.h"
+#include "CANlib.h"
 
 #define CANx                            CAN1
 #define CANx_CLK_ENABLE()               __HAL_RCC_CAN1_CLK_ENABLE()
