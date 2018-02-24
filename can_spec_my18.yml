@@ -100,7 +100,7 @@ buses:
             c_type: uint16_t
             signed: false
           brake_1:
-            position: 48
+            position: 32
             length: 16
             c_type: uint16_t
             signed: false
