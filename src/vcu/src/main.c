@@ -4,7 +4,6 @@
 #include <stdbool.h>
 
 CAN_HandleTypeDef    CanHandle;
-bool shouldSend = false;
 
 // static void CAN_Config(void);
 static void SystemClock_Config(void);
@@ -15,25 +14,14 @@ int main(void)
   HAL_Init();
   
   SystemClock_Config();
-  
+
   Can_Init(500000);
+
+  setupVCU();
 
   while(1)
   {
-    if (shouldSend) {
-
-      can0_MC_Command_T msg;
-      msg.torque_limit = 0;
-      msg.discharge_enabled = 0;
-      msg.direction_is_counterclockwise = 0;
-      msg.speed = 0;
-      msg.inverter_enabled = 1;
-      msg.torque = 10000;
-
-      can0_MC_Command_Write(&msg);
-
-      shouldSend = false;
-    }
+    loopVCU();
   } 
 }
 
@@ -97,21 +85,7 @@ static void Error_Handler(void)
 
 void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* CanHandle)
 {
-  Frame frame;
-
-  lastRxMsgToFrame(&frame);
-
-  can0_T msgForm;
-  msgForm = identify_can0(&frame);
-  
-  switch (msgForm) {
-    case can0_FrontCanNodeOutput:
-      shouldSend = 1;
-      break;
-
-    default:
-      break;
-  }
+  handleCanVCU(CanHandle);
 
   /* Receive */
   if(HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0) != HAL_OK)
