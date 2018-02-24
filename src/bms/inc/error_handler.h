@@ -20,6 +20,7 @@ typedef enum error {
     ERROR_VCU_DEAD,
     ERROR_CONTROL_FLOW,
     ERROR_BLOWN_FUSE,
+    ERROR_CONTACTOR_WELDED,
     ERROR_NUM_ERRORS
 } ERROR_T;
 
@@ -37,7 +38,8 @@ static const char * const ERROR_NAMES[ERROR_NUM_ERRORS] = {
     "ERROR_CONFLICTING_MODE_REQUESTS",
     "ERROR_VCU_DEAD",
     "ERROR_CONTROL_FLOW",
-    "BLOWN_FUSE"
+    "ERROR_BLOWN_FUSE",
+    "ERROR_CONTACTOR_WELDED"
 };
 
 typedef enum hbeats {

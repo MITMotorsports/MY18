@@ -1,6 +1,6 @@
 #include "error_handler.h"
 #include "eeprom_config.h"
-#include "../inc/error_handler.h"
+#include "error_handler.h"
 
 #define CELL_OVER_VOLTAGE_timeout_ms  	1000
 #define CELL_UNDER_VOLTAGE_timeout_ms  	1000
@@ -12,6 +12,7 @@
 #define EEPROM_timeout_count  			5
 #define CONFLICTING_MODE_REQUESTS_count 2
 #define BLOWN_FUSE_timeout_count        1
+#define CONTACTOR_WELDED_timeout_count  1
 
 
 #define CELL_OVER_TEMP_timeout_ms     10000
@@ -24,6 +25,9 @@ static ERROR_STATUS_T error_vector[ERROR_NUM_ERRORS];
 
 static ERROR_HANDLER_STATUS_T _Error_Handle_Timeout(ERROR_STATUS_T* er_stat, uint32_t msTicks, uint32_t timeout_ms);
 static ERROR_HANDLER_STATUS_T _Error_Handle_Count(ERROR_STATUS_T* er_stat, uint32_t msTicks, uint32_t timeout_num);
+
+static ERROR_HANDLER_STATUS_T _Error_Handle_Count_and_Timeout(ERROR_STATUS_T* er_stat, uint32_t msTicks, uint32_t timeout_ms, uint32_t timeout_num);
+
 
 static ERROR_HANDLER error_handler_vector[ERROR_NUM_ERRORS] = {
                             {_Error_Handle_Count, 	LTC6802_PEC_timeout_count},
@@ -39,7 +43,8 @@ static ERROR_HANDLER error_handler_vector[ERROR_NUM_ERRORS] = {
                             {_Error_Handle_Count,   CONFLICTING_MODE_REQUESTS_count},
                             {_Error_Handle_Count,  VCU_DEAD_count},
                             {_Error_Handle_Count,  CONTROL_FLOW_count},
-                            {_Error_Handle_Count, BLOWN_FUSE_timeout_count}
+                            {_Error_Handle_Count, BLOWN_FUSE_timeout_count},
+                            {_Error_Handle_Count, CONTACTOR_WELDED_timeout_count}
                             };
 
 
@@ -117,6 +122,22 @@ static ERROR_HANDLER_STATUS_T _Error_Handle_Count(ERROR_STATUS_T* er_stat, uint3
 
 }
 
+static ERROR_HANDLER_STATUS_T _Error_Handle_Count_and_Timeout(ERROR_STATUS_T* er_stat, uint32_t msTicks, uint32_t timeout_ms, uint32_t timeout_num) {
+    if (er_stat->error == false) {
+        er_stat->handling = false;
+        return HANDLER_FINE;
+    } else {
+        //[TODO] magic numbers changem
+        if ((msTicks - er_stat->time_stamp < timeout_ms) && (er_stat->count < timeout_num)) {
+            er_stat->handling = true;
+            return HANDLER_FINE;
+        } else {
+            return HANDLER_HALT;
+        }
+    }  
+}
+
+
 ERROR_HANDLER_STATUS_T Error_Handle(uint32_t msTicks) {
     ERROR_T i;
     for (i = 0; i < ERROR_NUM_ERRORS; ++i) {
@@ -142,4 +163,8 @@ bool Error_ShouldHalt(ERROR_T i, uint32_t msTicks) {
 
 const ERROR_STATUS_T * Error_GetStatus(ERROR_T er_t) {
 	return &error_vector[er_t];
+}
+
+ERROR_STATUS_T* Get_Errors(void) {
+    return error_vector;
 }

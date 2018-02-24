@@ -227,7 +227,9 @@ buses:
               CONFLICTING_MODE_REQUESTS: 0xB
               VCU_DEAD: 0xC
               CONTROL_FLOW: 0xD
-              OTHER: 0xE
+              BLOWN_FUSE: 0xE
+              CONTACTOR_WELDED: 0xF
+              OTHER: 0x10
       BMS_SOC:
         can_id: 0x0D5
         frequency: 10Hz

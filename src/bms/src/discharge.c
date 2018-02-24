@@ -23,6 +23,7 @@ void Discharge_Config(BMS_PACK_CONFIG_T *pack_config) {
 }
 void Discharge_Step(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output){
 
+handler:
     switch(input->mode_request) {
         case BMS_SSM_MODE_DISCHARGE:
             if(state->discharge_state == BMS_DISCHARGE_OFF) {
@@ -45,6 +46,7 @@ void Discharge_Step(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output
             //checking if the fault pin has correctly been set to high
             if(input->contactors_closed == output->close_contactors) {
                 state->discharge_state = BMS_DISCHARGE_RUN;
+                goto handler;
             }
             break;
         case BMS_DISCHARGE_RUN:

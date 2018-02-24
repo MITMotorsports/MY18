@@ -105,11 +105,11 @@ bool Board_Contactors_Closed(void);
 //Digital
 bool Board_Contactor_One_Welded(void);
 
-bool Board_Contactor_Two_Welded(void);
+// bool Board_Contactor_Two_Welded(void);
 
 //Analog
 // void Board_Contactor_Weld_One(int16_t* adc_data);
-// void Board_Contactor_Weld_Two(int16_t* adc_data);
+bool Board_Contactor_Weld_Two(int16_t* adc_data);
 
 //Non-Blocking
 uint32_t Board_Print(const char *str);

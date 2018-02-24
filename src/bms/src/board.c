@@ -132,19 +132,24 @@ void Board_GPIO_Init(void) {
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_1, (IOCON_FUNC2 | IOCON_MODE_INACT));    /* SCK1 */
 
     //SSP for LTC6804
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_8, (IOCON_FUNC1 | IOCON_MODE_PULLUP));   /* MISO0 */
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_9, (IOCON_FUNC1 | IOCON_MODE_PULLUP));   /* MOSI0 */
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_8, (IOCON_FUNC1 | IOCON_MODE_INACT));   /* MISO0 */
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_9, (IOCON_FUNC1 | IOCON_MODE_INACT));   /* MOSI0 */
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_6, (IOCON_FUNC2 | IOCON_MODE_INACT));    /* SCK0 */
     Chip_IOCON_PinLocSel(LPC_IOCON, IOCON_SCKLOC_PIO0_6);
+
+    //is the cs pin supposed to be initialized
+    //Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_2, (IOCON_FUNC0 | IOCON_MODE_INACT));
 
     //FSAE specific pin intializations
 
     //Contactor Weld
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_CONTACTOR_WELD_1);
-    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_1, (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_PULLDOWN));
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_1, (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_PULLUP));
 
     Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_CONTACTOR_WELD_2);
-    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_2, (IOCON_FUNC1 | IOCON_DIGMODE_EN | IOCON_MODE_PULLDOWN));
+    // Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_2, (IOCON_FUNC1 | IOCON_DIGMODE_EN | IOCON_MODE_PULLUP));
+    //for analog mode
+    Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_2, (IOCON_FUNC2 | IOCON_ADMODE_EN));
 
     //High Side Detect
     Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_HIGH_SIDE_DETECT);
@@ -263,39 +268,44 @@ bool Board_Contactors_Closed(void) {
     return Chip_GPIO_GetPinState(LPC_GPIO, PIN_BMS_FAULT);
 }
 //Analog
-/*void Board_ADC_Init() {
+void Board_ADC_Init() {
     Chip_ADC_Init(LPC_ADC, &adc_setup);
-
-    Chip_ADC_EnableChannel(LPC_ADC, ADC_CH5, ENABLE);
     Chip_ADC_EnableChannel(LPC_ADC, ADC_CH4, ENABLE);
     Chip_ADC_SetBurstCmd(LPC_ADC, 1);
     Chip_ADC_SetStartMode(LPC_ADC, ADC_START_NOW, ADC_TRIGGERMODE_RISING);
 
-}
+}/*
 
 void Board_Contactor_Weld_One(int16_t* adc_data) {
     while (!Chip_ADC_ReadStatus(LPC_ADC, ADC_CH5, ADC_DR_DONE_STAT)) {}
     Chip_ADC_ReadValue(LPC_ADC, ADC_CH5, adc_data);
 
-}
-void Board_Contactor_Weld_Two(int16_t* adc_data) {
-    while (!Chip_ADC_ReadStatus(LPC_ADC, ADC_CH4, ADC_DR_DONE_STAT)) {}
-    Chip_ADC_ReadValue(LPC_ADC, ADC_CH4, adc_data);
 }*/
+bool Board_Contactor_Two_Welded() {
+    int16_t adc_data;
+    while (!Chip_ADC_ReadStatus(LPC_ADC, ADC_CH4, ADC_DR_DONE_STAT)) {}
+    Chip_ADC_ReadValue(LPC_ADC, ADC_CH4, &adc_data);
+    return (adc_data<800);
+}
 
 //Digital
 bool Board_Contactor_One_Welded(void) {
+    //returns False when shorted
 
     return Chip_GPIO_GetPinState(LPC_GPIO, PIN_CONTACTOR_WELD_1);
 }
-bool Board_Contactor_Two_Welded(void) {
-
-    return Chip_GPIO_GetPinState(LPC_GPIO, PIN_CONTACTOR_WELD_2);
-}
+// bool Board_Contactor_Two_Welded(void) {
+//     if(Chip_GPIO_GetPinState(LPC_GPIO, PIN_CONTACTOR_WELD_2) == true) {
+//         Board_Println_BLOCKING("2 is true");
+//     } else {
+//         Board_Println_BLOCKING("2 is false");
+//     }
+//     return Chip_GPIO_GetPinState(LPC_GPIO, PIN_CONTACTOR_WELD_2);
+// }
 
 
 bool Board_LTC6804_CVST(void) {
-#ifdef TEST_HARDWARE_LTC_TEST
+#ifdef TEST_HARDWARE
     return true;
 #else
     LTC6804_STATUS_T res;
@@ -325,6 +335,7 @@ bool Board_LTC6804_CVST(void) {
     return false;
 #endif
 }
+
 void Board_LTC6804_UpdateBalanceStates(bool *balance_req) {
 #ifdef TEST_HARDWARE
     UNUSED(balance_req);
@@ -446,7 +457,7 @@ bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config, uint32_t *cell_voltages_
 }
 
 void Board_LTC6804_DeInit(void) {
-#ifndef TEST_HARDWARE_LTC_TEST
+#ifndef TEST_HARDWARE
     _ltc6804_initialized = false;
     _ltc6804_init_state = LTC6804_INIT_NONE;
 #endif
@@ -728,7 +739,7 @@ void Board_CAN_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output){
     can_transmit_contactor_weld(bms_input, msTicks);
     can_transmit_pack_status(bms_input, msTicks);
     can_transmit_bms_soc(bms_input, msTicks);
-    can_transmit_bms_errors(bms_input, msTicks);
+    //can_transmit_bms_errors(bms_input, msTicks);
 
 }
 
@@ -772,14 +783,23 @@ void can_transmit_bms_soc(BMS_INPUT_T *bms_input, uint32_t msTicks) {
 
 void can_transmit_bms_errors(BMS_INPUT_T *bms_input, uint32_t msTicks) {
     if((msTicks - last_bms_errors_time) > BMS_ERRORS_PERIOD) {
-        can0_BMSErrors_T msg;
         /*
 
             Fill msg
     
         */
 
-        can0_BmsErrors_Write(&msg);
+        ERROR_STATUS_T* start_index = Get_Errors();
+
+        int i;
+        for(i =0; i<(ERROR_NUM_ERRORS+2); i++) {
+            can0_BMSErrors_T msg;
+            if((*(start_index+i)).error == true) {
+                msg.type = i+1;
+                can0_BMSErrors_Write(&msg);
+            }
+        }
+
         last_bms_errors_time = bms_input->msTicks;
     }
 }

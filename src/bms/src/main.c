@@ -11,6 +11,7 @@
 #include "error_handler.h"
 
 #define EEPROM_CS_PIN 0, 7
+#define PRE_ERROR_CHECK_TIMEOUT 500
 
 extern volatile uint32_t msTicks;
 
@@ -39,7 +40,7 @@ uint32_t heartbeat = 0;
 int16_t contactor_one = 0;
 int16_t contactor_two = 0;
 
-void Init_BMS_Structs(void){
+void Init_BMS_Structs(void) {
 
     bms_state.pack_config = &pack_config;
     bms_state.curr_mode = BMS_SSM_MODE_INIT;
@@ -110,23 +111,13 @@ void Process_Input(BMS_INPUT_T* bms_input) {
 
     bms_input->msTicks = msTicks;
     bms_input->contactors_closed = Board_Contactors_Closed();
-    //Board_Println_BLOCKING("Before reads");
 
-/*    Board_Println_BLOCKING("Before First Read");
-    Board_Contactor_Weld_One(&contactor_one);
-    itoa(contactor_one, str, 10);
-    Board_Println_BLOCKING(str);
-    Board_Println_BLOCKING("Before Second Read");
-    Board_Contactor_Weld_Two(&contactor_two);
-    itoa(contactor_two, str, 10);
-    Board_Println_BLOCKING(str);
-    Board_Println_BLOCKING("After Reads");*/
-
-
-    //Board_PrintNum(contactor_two,10);
-
-    bms_input->contactor_weld_one = Board_Contactor_One_Welded();
+    bms_input->contactor_weld_one = !Board_Contactor_One_Welded();
     bms_input->contactor_weld_two = Board_Contactor_Two_Welded();
+
+    if(bms_input->contactor_weld_one || bms_input->contactor_weld_two) {
+        Error_Assert(ERROR_CONTACTOR_WELDED, msTicks);
+    }
 
 }
 
@@ -138,7 +129,7 @@ void Process_Output(BMS_INPUT_T* bms_input,BMS_OUTPUT_T* bms_output, BMS_STATE_T
         bms_input->ltc_packconfig_check_done = Board_LTC6804_Init(&pack_config, cell_voltages);
     } else {
         Board_LTC6804_UpdateBalanceStates(bms_output->balance_req);
-        //Can_Transmit(bms_input, bms_output);
+        Board_CAN_Transmit(bms_input, bms_output);
     }
 }
 
@@ -150,15 +141,18 @@ void Process_Keyboard(void) {
     }
 }
 
+
 int main(void) {
 
     Init_BMS_Structs();
 	Board_Chip_Init();
 	Board_GPIO_Init();
     Board_UART_Init(57600);
-
+    Board_ADC_Init();
 	Board_CAN_Init();
     EEPROM_Init(LPC_SSP1, EEPROM_BAUD, EEPROM_CS_PIN);
+
+    Error_Init();
     SSM_Init(&bms_input,&bms_state, &bms_output);
     //Board_ADC_Init();
 
@@ -166,19 +160,27 @@ int main(void) {
     microrl_init(&rl, Board_Print);
     microrl_set_execute_callback(&rl,executerl);
     console_init(&bms_input, &bms_state, &console_output);
-
-
+    int count = msTicks;
     while(1) {
+        //preliminary error checks
+        // while(msTicks - count < PRE_ERROR_CHECK_TIMEOUT) {
+        //     if(Board_Contactor_One_Welded() || Board_Contactor_Two_Welded()) {
+        //         Error_Assert(ERROR_CONTACTOR_WELDED,msTicks);
+        //         goto handler;
+        //     }
+        // }
+
         //Setting fault pin high
         Board_Contactors_Set(true);
-        if(Board_Contactors_Closed()) {
-            Board_Println("Fault Pin high");
-        }
+        // if(Board_Contactors_Closed()) {
+        //     Board_Println_BLOCKING("Fault Pin high");
+        // }
 
         Process_Keyboard(); //console input
         Process_Input(&bms_input); //Processes Inputs(can messages, pin states, cell stats)
         SSM_Step(&bms_input, &bms_state, &bms_output); //changes state based on inputs
         Process_Output(&bms_input,&bms_output,&bms_state); //Transmits can messages, processes ltc output(update balance states)
+        // handler:
         if (Error_Handle(bms_input.msTicks) == HANDLER_HALT) {
             Board_Println("Requesting Halt...");
             break; // Handler requested a Halt
