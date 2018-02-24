@@ -94,7 +94,7 @@ buses:
             length: 16
             c_type: uint16_t
             signed: false
-          accel_1:
+          accel_2:
             position: 16
             length: 16
             c_type: uint16_t
