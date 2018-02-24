@@ -488,7 +488,7 @@ buses:
             unit: daJ # 10 joules
       BMS_CSB_Switch: # Switch baudrate
         can_id: 0x600
-        frequency: 0.1Hz # Just picked this to be less than the on stuff
+        frequency: 0.1Hz # Just picked this to be less than the Elcon stuff
         is_big_endian: true
         segments:
           always_true:
