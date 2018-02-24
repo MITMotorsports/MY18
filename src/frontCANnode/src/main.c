@@ -1,7 +1,6 @@
 #include "serial.h"
 #include "types.h"
 #include "input.h"
-#include "state.h"
 #include "output.h"
 #include "adc.h"
 
@@ -20,13 +19,9 @@ volatile uint32_t msTicks;
 
 static ADC_Input_T adc;
 static Speed_Input_T speed;
-static Can_Input_T can_input;
 static Input_T input;
 
-static Rules_State_T rules;
-static Torque_State_T torque;
-static Can_Output_State_T can_output;
-static State_T state;
+static Output_T output;
 
 void SysTick_Handler(void) {
   msTicks++;
@@ -62,11 +57,6 @@ void Set_Interrupt_Priorities(void) {
 void initialize_structs(void) {
   input.adc = &adc;
   input.speed = &speed;
-  input.can_input = &can_input;
-
-  state.rules = &rules;
-  state.torque = &torque;
-  state.can_output = &can_output;
 }
 
 void fill_input(void) {
@@ -74,12 +64,8 @@ void fill_input(void) {
   Input_fill_input(&input);
 }
 
-void update_state(void) {
-  State_update_state(&input, &state);
-}
-
 void process_output(void) {
-  Output_process_output(&input, &state);
+  Output_process_output(&input, &output);
 }
 
 int main(void) {
@@ -101,7 +87,6 @@ int main(void) {
 
   while(1) {
     fill_input();
-    update_state();
     process_output();
   }
 }

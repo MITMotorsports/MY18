@@ -6,41 +6,56 @@
 
 #include <CANlib.h>
 
+const uint8_t can_brakethrottle_period = 1000 / can0_FrontCanNodeBrakeThrottle_frequency;
+const uint8_t can_wheel_speed_period = 1000 / can0_FrontCanNodeWheelSpeed_frequency;
+
 static bool resettingPeripheral = false;
 
-Can_ErrorID_T write_can_output_msg(Input_T *input, State_T *state);
+Can_ErrorID_T write_can_brakethrottle_msg(Input_T *input);
 Can_ErrorID_T write_can_wheel_speed_msg(Input_T *input);
 void handle_can_error(Can_ErrorID_T error);
+bool period_reached(uint32_t start, uint32_t period, uint32_t msTicks);
 
-void Output_initialize(Can_Output_State_T *output) {
-  output->can_output_ms = 0;
+void Output_initialize(Output_T *output) {
+  output->can_brakethrottle_ms = 0;
   output->can_wheel_speed_ms = 0;
-  output->send_output_msg = false;
+  output->send_brakethrottle_msg = false;
   output->send_wheel_speed_msg = false;
 }
 
-void Output_process_output(Input_T *input, State_T *state) {
-  if(state->can_output->send_output_msg) {
-    state->can_output->send_output_msg = false;
-    Can_ErrorID_T error = write_can_output_msg(input, state);
+void Output_process_output(Input_T *input, Output_T *output) {
+  if(period_reached(output->can_brakethrottle_ms, can_brakethrottle_period, input->msTicks)) {
+    output->can_brakethrottle_ms = input->msTicks;
+    output->send_brakethrottle_msg = true;
+  }
+
+  if(period_reached(output->can_wheel_speed_ms, can_wheel_speed_period, input->msTicks)) {
+    output->can_wheel_speed_ms = input->msTicks;
+    output->send_wheel_speed_msg = true;
+  }
+
+  if(output->send_brakethrottle_msg) {
+    output->send_brakethrottle_msg = false;
+    Can_ErrorID_T error = write_can_brakethrottle_msg(input);
     handle_can_error(error);
   }
 
-  if(state->can_output->send_wheel_speed_msg) {
-    state->can_output->send_wheel_speed_msg = false;
+  if(output->send_wheel_speed_msg) {
+    output->send_wheel_speed_msg = false;
     Can_ErrorID_T error = write_can_wheel_speed_msg(input);
     handle_can_error(error);
   }
 }
 
-Can_ErrorID_T write_can_output_msg(Input_T *input, State_T *state) {
-  can0_FrontCanNodeOutput_T msg;
+Can_ErrorID_T write_can_brakethrottle_msg(Input_T *input) {
+  can0_FrontCanNodeBrakeThrottle_T msg;
 
-  msg.has_brake_throttle_conflict = state->rules->has_brake_throttle_conflict;
-  msg.is_throttle_implausible = state->rules->implausibility_reported;
-  msg.requested_torque = state->torque->requested_torque;
+  msg.brake_1 = input->adc->brake_1;
+  msg.brake_2 = input->adc->brake_2;
+  msg.accel_1 = input->adc->accel_1;
+  msg.accel_2 = input->adc->accel_2;
 
-  return can0_FrontCanNodeOutput_Write(&msg);
+  return can0_FrontCanNodeBrakeThrottle_Write(&msg);
 }
 
 Can_ErrorID_T write_can_wheel_speed_msg(Input_T *input) {
@@ -114,4 +129,9 @@ void handle_can_error(Can_ErrorID_T error) {
   } else {
     resettingPeripheral = false;
   }
+}
+
+bool period_reached(uint32_t start, uint32_t period, uint32_t msTicks) {
+  const uint32_t next_time = start + period;
+  return next_time < msTicks;
 }
