@@ -47,7 +47,7 @@ void can_handle_mc_command(carstats_t *cs) {
     can0_MC_Command_T msg;
     unpack_can0_MC_Command(&frame, &msg);
 
-    cs->torque = msg.torque;
+    cs->torque_mc = msg.torque;
     cs->motor_rpm = msg.speed;
 }
 
@@ -58,6 +58,13 @@ void can_handle_vcu_to_dash(carstats_t *cs) {
     memcpy(&(cs->vcu_data), &msg, sizeof(msg));
 }
 
+void can_handle_front_can_node_output(carstats_t *cs) {
+    can0_FrontCanNodeOutput_T msg;
+    unpack_can0_FrontCanNodeOutput(&frame, &msg);
+
+    cs->torque_requested = msg.requested_torque;
+}
+
 void can_update_carstats(carstats_t *cs) {
 
     can0_T msgType; 
@@ -66,6 +73,9 @@ void can_update_carstats(carstats_t *cs) {
     switch (msgType) {
         case can0_FrontCanNodeWheelSpeed:
             can_handle_front_wheel_speed(cs);            
+            break;
+        case can0_FrontCanNodeOutput:
+            can_handle_front_can_node_output(cs);
             break;
         case can0_RearCanNodeWheelSpeed:
             can_handle_rear_wheel_speed(cs);
