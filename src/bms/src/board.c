@@ -304,11 +304,15 @@ bool Board_Contactor_One_Welded(void) {
 // }
 
 
-bool Board_LTC6804_CVST(void) {
+bool Board_LTC6804_CVST() {
 #ifdef TEST_HARDWARE_LTC_TEST
     return true;
 #else
     LTC6804_STATUS_T res;
+    uint32_t count = msTicks;
+    // while(msTicks - count < 2000) {
+    //     Board_PrintNum(msTicks,10);
+    // }
     res = LTC6804_CVST(&ltc6804_config, &ltc6804_state, msTicks);
 
     switch (res) {
