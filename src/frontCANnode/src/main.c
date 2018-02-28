@@ -55,6 +55,12 @@ void Set_Interrupt_Priorities(void) {
 }
 
 void initialize_structs(void) {
+  adc.accel_1_raw = 0;
+  adc.accel_2_raw = 0;
+  adc.accel_1 = 0;
+  adc.accel_2 = 0;
+  adc.brake_1 = 0;
+  adc.brake_2 = 0;
   input.adc = &adc;
   input.speed = &speed;
 }

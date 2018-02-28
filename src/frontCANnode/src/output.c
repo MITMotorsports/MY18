@@ -6,8 +6,8 @@
 
 #include <CANlib.h>
 
-const uint8_t can_brakethrottle_period = 1000 / can0_FrontCanNodeBrakeThrottle_frequency;
-const uint8_t can_wheel_speed_period = 1000 / can0_FrontCanNodeWheelSpeed_frequency;
+const uint8_t can_brakethrottle_period = 20; //1000 / can0_FrontCanNodeBrakeThrottle_frequency;
+const uint8_t can_wheel_speed_period = 100; //1000 / can0_FrontCanNodeWheelSpeed_frequency;
 
 static bool resettingPeripheral = false;
 

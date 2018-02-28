@@ -1,13 +1,11 @@
 #include "input.h"
 #include "adc.h"
 
-#include <CANlib.h>
-
 #define ADC_UPDATE_PERIOD_MS 10
 
 // TODO these are garbage numbers (taken from MY17, need fixing)
-#define ACCEL_1_LOWER_BOUND 105
-#define ACCEL_1_UPPER_BOUND 645
+#define ACCEL_1_LOWER_BOUND 255 // Not connectorized
+#define ACCEL_1_UPPER_BOUND 799
 #define ACCEL_2_LOWER_BOUND 71
 #define ACCEL_2_UPPER_BOUND 340
 
