@@ -109,7 +109,7 @@ bool Board_Contactor_One_Welded(void);
 
 //Analog
 // void Board_Contactor_Weld_One(int16_t* adc_data);
-bool Board_Contactor_Weld_Two(int16_t* adc_data);
+bool Board_Contactor_Two_Welded(void);
 
 //Non-Blocking
 uint32_t Board_Print(const char *str);
@@ -129,5 +129,7 @@ uint32_t Board_Print_BLOCKING(const char *str);
 uint32_t Board_Println_BLOCKING(const char *str);
 
 void Board_BlockingDelay(uint32_t dlyTicks);
+
+
 
 #endif

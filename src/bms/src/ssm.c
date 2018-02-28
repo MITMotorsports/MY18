@@ -37,7 +37,6 @@ void Init_Step(BMS_INPUT_T *input, BMS_STATE_T *state, BMS_OUTPUT_T *output){
             }
             break;
         case(BMS_INIT_DONE):
-            //Board_Println_BLOCKING("In INIT_DONE");
             state->curr_mode = BMS_SSM_MODE_STANDBY;
             break;
     }

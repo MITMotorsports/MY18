@@ -130,6 +130,7 @@ void Process_Output(BMS_INPUT_T* bms_input,BMS_OUTPUT_T* bms_output, BMS_STATE_T
     } else {
         Board_LTC6804_UpdateBalanceStates(bms_output->balance_req);
         Board_CAN_Transmit(bms_input, bms_output);
+        //Board_Println("PACKCONFIG CHECK DONE");
     }
 }
 
@@ -192,6 +193,7 @@ int main(void) {
     bms_output.close_contactors = false;
 
     while(1) {
+        Board_Println("Halting");
         bms_input.msTicks = msTicks;
         Process_Output(&bms_input, &bms_output, &bms_state);
         Process_Keyboard();

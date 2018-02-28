@@ -132,8 +132,8 @@ void Board_GPIO_Init(void) {
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_1, (IOCON_FUNC2 | IOCON_MODE_INACT));    /* SCK1 */
 
     //SSP for LTC6804
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_8, (IOCON_FUNC1 | IOCON_MODE_INACT));   /* MISO0 */
-    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_9, (IOCON_FUNC1 | IOCON_MODE_INACT));   /* MOSI0 */
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_8, (IOCON_FUNC1 | IOCON_MODE_PULLUP));   /* MISO0 */
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_9, (IOCON_FUNC1 | IOCON_MODE_PULLUP));   /* MOSI0 */
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_6, (IOCON_FUNC2 | IOCON_MODE_INACT));    /* SCK0 */
     Chip_IOCON_PinLocSel(LPC_IOCON, IOCON_SCKLOC_PIO0_6);
 
@@ -305,7 +305,7 @@ bool Board_Contactor_One_Welded(void) {
 
 
 bool Board_LTC6804_CVST(void) {
-#ifdef TEST_HARDWARE
+#ifdef TEST_HARDWARE_LTC_TEST
     return true;
 #else
     LTC6804_STATUS_T res;
@@ -346,7 +346,7 @@ void Board_LTC6804_UpdateBalanceStates(bool *balance_req) {
 }
 
 bool Board_LTC6804_OpenWireTest(void) {
-#ifdef TEST_HARDWARE
+#ifdef TEST_HARDWARE_LTC_TEST
     return true; // Change to simulate during test
 #else
 
@@ -392,7 +392,7 @@ bool Board_LTC6804_OpenWireTest(void) {
 #endif
 }
 bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config, uint32_t *cell_voltages_mV){
-#ifdef TEST_HARDWARE
+#ifdef TEST_HARDWARE_LTC_TEST
     UNUSED(pack_config); UNUSED(cell_voltages_mV);
     return true;
 #else
@@ -436,18 +436,21 @@ bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config, uint32_t *cell_voltages_
 
         _ltc6804_init_state = LTC6804_INIT_CFG;
     } else if (_ltc6804_init_state == LTC6804_INIT_CFG) {
-        //Board_Println_BLOCKING("CFG");
+        //Board_Println("CFG");
         bool res = Board_LTC6804_CVST();
         if (res) {
+            //Board_Println("CVST passed");
             _ltc6804_init_state = LTC6804_INIT_CVST;
         }
     } else if (_ltc6804_init_state == LTC6804_INIT_CVST) {
-        //Board_Println_BLOCKING("CVST");
+        //Board_Println("CVST state");
         bool res = Board_LTC6804_OpenWireTest();
         if (res) {
+          //  Board_Println("OWT passed");
             _ltc6804_init_state = LTC6804_INIT_DONE;
         }
     } else if (_ltc6804_init_state == LTC6804_INIT_DONE) {
+        //Board_Println("ltc init done");
         _ltc6804_initialized = true;
         _ltc6804_init_state = 0;
         return true;
@@ -493,11 +496,11 @@ void Board_LTC6804_ProcessInputs(BMS_PACK_STATUS_T *pack_status, BMS_STATE_T* bm
 }
 
 void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status){
-#ifdef TEST_HARDWARE
+#ifdef TEST_HARDWARE_LTC_TEST
     UNUSED(pack_status);
     return;
 #else
-
+    Board_Println("In get cell voltages");
     if (msTicks - _ltc6804_last_gcv > _ltc6804_gcv_tick_time) {
         _ltc6804_gcv = true;
     }
@@ -512,10 +515,11 @@ void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status){
             Board_Println("Get Vol FAIL");
             break;
         case LTC6804_PEC_ERROR:
-            Board_Println("Get Vol PEC_ERROR");
+            Board_Println_BLOCKING("Get Vol PEC_ERROR");
             Error_Assert(ERROR_LTC6804_PEC,msTicks);
             break;
         case LTC6804_PASS:
+            Board_Println_BLOCKING("Get Vol Success");
             pack_status->pack_cell_min_mV = ltc6804_adc_res.pack_cell_min_mV;
             pack_status->pack_cell_max_mV = ltc6804_adc_res.pack_cell_max_mV;
             LTC6804_ClearCellVoltages(&ltc6804_config, &ltc6804_state, msTicks); // [TODO] Use this to your advantage
@@ -532,7 +536,8 @@ void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status){
 }
 
 void Board_LTC6804_GetCellTemperatures(BMS_PACK_STATUS_T * pack_status, uint8_t num_modules) {
-#ifndef TEST_HARDWARE
+#ifndef TEST_HARDWARE_LTC_TEST
+    Board_Println("In get cell temperatures");
     if ((msTicks - board_lastThermistorShiftTime_ms) > TIME_PER_THERMISTOR_MS) {
         board_lastThermistorShiftTime_ms = msTicks;
 
@@ -550,7 +555,6 @@ void Board_LTC6804_GetCellTemperatures(BMS_PACK_STATUS_T * pack_status, uint8_t 
         }
 
     }
-
      LTC6804_STATUS_T status;
 
     // set multiplexer address
@@ -649,7 +653,7 @@ void Board_LTC6804_GetCellTemperatures(BMS_PACK_STATUS_T * pack_status, uint8_t 
 #endif //TEST_HARDWARE
 }
 
-#ifndef TEST_HARDWARE
+#ifndef TEST_HARDWARE_LTC_TEST
 void Board_HandleLtc6804Status(LTC6804_STATUS_T status) {
 
     switch (status) {
