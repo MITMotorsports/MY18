@@ -24,6 +24,9 @@ void loopVCU() {
     if (HAL_GetTick() - board_heartbeats_state.frontCanNode > CAN_DEAD_DURATION) {
         HAL_Delay(1); // Just for debugging
     }
+
+    update_implausibility(VCU_BreakandThrottle, &VCU_ImplausibilityConflict);
+    update_brake_throttle_conflict(VCU_BreakandThrottle, &VCU_ImplausibilityConflict, board_heartbeats_state.frontCanNode);
 }
 
 void handleCanVCU(CAN_HandleTypeDef* CanHandle) {
