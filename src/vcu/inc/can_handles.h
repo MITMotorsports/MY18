@@ -5,6 +5,8 @@
 #include "CANlib.h"
 #include "state.h"
 
-void handleBreakThrottleMsg(Frame* msg);
+void handleBrakeThrottleMsg(Frame* msg);
+
+void sendTorqueCmdMsg(int16_t torque);
 
 #endif

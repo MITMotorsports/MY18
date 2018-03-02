@@ -6,27 +6,18 @@ void setupVCU() {
 }
 
 void loopVCU() {
-    // if (shouldSend) {
-
- //      can0_MC_Command_T msg;
- //      msg.torque_limit = 0;
- //      msg.discharge_enabled = 0;
- //      msg.direction_is_counterclockwise = 0;
- //      msg.speed = 0;
- //      msg.inverter_enabled = 1;
- //      msg.torque = 10000;
-
- //      can0_MC_Command_Write(&msg);
-
- //      shouldSend = false;
- //    }
-
     if (HAL_GetTick() - board_heartbeats_state.frontCanNode > CAN_DEAD_DURATION) {
         HAL_Delay(1); // Just for debugging
     }
 
-    update_implausibility(VCU_BreakandThrottle, &VCU_ImplausibilityConflict);
-    update_brake_throttle_conflict(VCU_BreakandThrottle, &VCU_ImplausibilityConflict, board_heartbeats_state.frontCanNode);
+    // Send torque commands
+    VCU_BrakeAndThrottle localBTState = brake_and_throttle_state;
+
+    update_implausibility(localBTState, &implaus_conflict_state);
+    update_brake_throttle_conflict(localBTState, &implaus_conflict_state, board_heartbeats_state.frontCanNode);
+
+    // do some calc
+    sendTorqueCmdMsg(10);
 }
 
 void handleCanVCU(CAN_HandleTypeDef* CanHandle) {
@@ -39,7 +30,7 @@ void handleCanVCU(CAN_HandleTypeDef* CanHandle) {
 
     switch (msgForm) {
         case can0_FrontCanNodeBrakeThrottle:
-          handleBreakThrottleMsg(&frame);
+          handleBrakeThrottleMsg(&frame);
           break;
 
         default:

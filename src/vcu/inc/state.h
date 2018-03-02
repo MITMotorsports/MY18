@@ -17,7 +17,8 @@ typedef struct
 	int16_t accel_2;
 	int16_t brake_1;
 	int16_t brake_2;
-} VCU_BreakandThrottle;
+
+} VCU_BrakeAndThrottle;
 
 typedef struct
 {
@@ -30,10 +31,10 @@ typedef struct
 
 VCU_BoardHeartbeats board_heartbeats_state;
 
-VCU_BreakandThrottle break_and_throttle_state;
+VCU_BrakeAndThrottle brake_and_throttle_state;
 
 VCU_ImplausibilityConflict implaus_conflict_state;
 
-void initVCUState();
+void initVCUState(void);
 
 #endif

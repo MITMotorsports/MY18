@@ -14,14 +14,14 @@
 
 #define CONFLICT_BRAKE_RAW 600
 
-void update_brake_throttle_conflict(VCU_BreakandThrottle break_throttle, VCU_ImplausibilityConflict* implaus_conflict) {
+void update_brake_throttle_conflict(VCU_BrakeAndThrottle brake_throttle, VCU_ImplausibilityConflict* implaus_conflict) {
   if (implaus_conflict->actual_implausibility) {
     // Checking conflict is pointless if implausibility
     return;
   }
 
   // Take minimum
-  const uint16_t accel = (break_throttle.accel_1 > break_throttle.accel_2) ? break_throttle.accel_2 : break_throttle.accel_1;
+  const uint16_t accel = (brake_throttle.accel_1 > brake_throttle.accel_2) ? brake_throttle.accel_2 : brake_throttle.accel_1;
 
   bool curr_conflict = implaus_conflict->has_brake_throttle_conflict;
 
@@ -30,14 +30,14 @@ void update_brake_throttle_conflict(VCU_BreakandThrottle break_throttle, VCU_Imp
     implaus_conflict->has_brake_throttle_conflict =  accel >= CONFLICT_END_THROTTLE_TRAVEL;
   }
 
-  bool brake_engaged = break_throttle.brake_1 > CONFLICT_BRAKE_RAW;
+  bool brake_engaged = brake_throttle.brake_1 > CONFLICT_BRAKE_RAW;
 
   bool throttle_engaged = accel > CONFLICT_BEGIN_THROTTLE_TRAVEL;
 
   implaus_conflict->has_brake_throttle_conflict = brake_engaged && throttle_engaged;
 }
 
-void update_implausibility(VCU_BreakandThrottle brake_throttle, VCU_ImplausibilityConflict *implaus_conflict, uint32_t msg_ticks) {
+void update_implausibility(VCU_BrakeAndThrottle brake_throttle, VCU_ImplausibilityConflict *implaus_conflict, uint32_t msg_ticks, uint32_t current_ticks) {
   uint16_t max_travel = (brake_throttle.accel_1 > brake_throttle.accel_2) ? brake_throttle.accel_1 : brake_throttle.accel_2;
   uint16_t min_travel = (brake_throttle.accel_1 > brake_throttle.accel_2) ? brake_throttle.accel_2 : brake_throttle.accel_1;
   bool curr_implausible =  max_travel - min_travel >= IMPLAUSIBILITY_THROTTLE_TRAVEL;
