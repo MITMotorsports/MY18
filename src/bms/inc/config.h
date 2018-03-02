@@ -9,4 +9,4 @@
 #define CAN_BAUD 500000
 #define EEPROM_BAUD 600000
 
-#endif
+#endif // ifndef _CONFIG_H_
