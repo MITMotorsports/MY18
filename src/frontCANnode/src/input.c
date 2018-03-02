@@ -6,8 +6,8 @@
 // TODO these are garbage numbers (taken from MY17, need fixing)
 #define ACCEL_1_LOWER_BOUND 255 // Not connectorized
 #define ACCEL_1_UPPER_BOUND 799
-#define ACCEL_2_LOWER_BOUND 71
-#define ACCEL_2_UPPER_BOUND 340
+#define ACCEL_2_LOWER_BOUND 257
+#define ACCEL_2_UPPER_BOUND 677
 
 // Some wheel speed stuff (copied from MY17)
 #define WHEEL_SPEED_TIMEOUT_MS 100
