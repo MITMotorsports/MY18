@@ -13,14 +13,16 @@ void loopVCU(USART_HandleTypeDef* uhandle) {
     // Send torque commands
     VCU_BrakeAndThrottle localBTState = brake_and_throttle_state;
 
-    update_implausibility(localBTState, &implaus_conflict_state);
-    update_brake_throttle_conflict(localBTState, &implaus_conflict_state, board_heartbeats_state.frontCanNode);
+    update_implausibility(localBTState, &implaus_conflict_state, board_heartbeats_state.frontCanNode);
+    update_brake_throttle_conflict(localBTState, &implaus_conflict_state);
 
     printf("\r\n");
+    printf("\r\nbrake1: %d\r\n", localBTState.brake_1);
     printf("\r\nhas_brake_throttle_conflict: %d\r\n", implaus_conflict_state.has_brake_throttle_conflict);
     printf("\r\nobserved_implausibility: %d\r\n", implaus_conflict_state.observed_implausibility);
     printf("\r\nactual_implausibility: %d\r\n", implaus_conflict_state.actual_implausibility);
     printf("\r\nimplausibility_ticks: %d\r\n", implaus_conflict_state.implausibility_ticks);
+    printf("\r\nfrontCanNode_heartbeat: %d\r\n", board_heartbeats_state.frontCanNode);
     printf("\r\n");
     HAL_Delay(1000);
 

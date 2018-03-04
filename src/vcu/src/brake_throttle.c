@@ -37,7 +37,7 @@ void update_brake_throttle_conflict(VCU_BrakeAndThrottle brake_throttle, VCU_Imp
   implaus_conflict->has_brake_throttle_conflict = brake_engaged && throttle_engaged;
 }
 
-void update_implausibility(VCU_BrakeAndThrottle brake_throttle, VCU_ImplausibilityConflict *implaus_conflict, uint32_t msg_ticks, uint32_t current_ticks) {
+void update_implausibility(VCU_BrakeAndThrottle brake_throttle, VCU_ImplausibilityConflict *implaus_conflict, uint32_t msg_ticks) {
   uint16_t max_travel = (brake_throttle.accel_1 > brake_throttle.accel_2) ? brake_throttle.accel_1 : brake_throttle.accel_2;
   uint16_t min_travel = (brake_throttle.accel_1 > brake_throttle.accel_2) ? brake_throttle.accel_2 : brake_throttle.accel_1;
   bool curr_implausible =  max_travel - min_travel >= IMPLAUSIBILITY_THROTTLE_TRAVEL;
