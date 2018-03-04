@@ -17,6 +17,19 @@ int main(void)
 
   Can_Init(500000);
 
+  // Setup an LED for debugging
+  LED_CLK_ENABLE();
+  GPIO_InitTypeDef gpioinit;
+  gpioinit.Pin = LED_PIN;
+  gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
+  gpioinit.Pull = GPIO_PULLUP;
+  gpioinit.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(LED_PORT, &gpioinit);
+
+  HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
+  HAL_Delay(1000);
+  HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
+
   setupVCU();
 
   while(1)
@@ -54,7 +67,7 @@ static void SystemClock_Config(void)
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 25;
+  RCC_OscInitStruct.PLL.PLLM = 24;
   RCC_OscInitStruct.PLL.PLLN = 240;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 5;

@@ -93,7 +93,7 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef* hcan)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Alternate =  CANx_RX_AF;
   
-  HAL_GPIO_Init(CANx_TX_GPIO_PORT, &GPIO_InitStruct);
+  HAL_GPIO_Init(CANx_RX_GPIO_PORT, &GPIO_InitStruct);
   
   /*##-3- Configure the NVIC #################################################*/
   /* NVIC configuration for CAN1 Reception complete interrupt */

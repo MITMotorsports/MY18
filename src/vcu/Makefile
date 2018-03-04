@@ -39,7 +39,7 @@ PROJECT = vcu
 CORE = cortex-m3
 
 # device family
-FAMILY = STM32F207xx
+FAMILY = STM32F205xx
 
 CUBE_DIR = ../../lib/stm32f2_libs/stm32f2_cube
 
@@ -335,7 +335,7 @@ debug_start:
 	$(OCD) -s $(OCD_DIR) $(OCD_FLAGS) -c "init" -c "reset halt" -c 'sleep 10'
 
 debug:
-	$(GDB) -x ./uart_hal.gdbinit
+	$(GDB) -x ./vcu.gdbinit
 
 
 #=============================================================================#
