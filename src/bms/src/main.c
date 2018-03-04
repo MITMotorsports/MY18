@@ -13,8 +13,6 @@
 #define EEPROM_CS_PIN 0, 7
 #define PRE_ERROR_CHECK_TIMEOUT 500
 
-extern volatile uint32_t msTicks;
-
 static char str[10];
 
 static BMS_PACK_STATUS_T pack_status;
@@ -163,7 +161,7 @@ int main(void) {
   SSM_Init(&bms_input, &bms_state, &bms_output);
 
   // Board_ADC_Init();
-
+  Board_Print("123"); // TODO: REMOVE
   // setup readline/console
   microrl_init(&rl, Board_Print);
   microrl_set_execute_callback(&rl, executerl);
