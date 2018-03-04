@@ -10,7 +10,7 @@
 #include "console.h"
 #include "pins.h"
 
-#include "can.h"
+#include "canmgr.h"
 #include "gpio.h"
 #include "uart.h"
 
