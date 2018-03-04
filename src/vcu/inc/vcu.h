@@ -4,8 +4,9 @@
 #include "stm32f2xx_hal.h"
 #include "CANlib.h"
 #include "state.h"
+#include "torque_calc.h"
 
-#define CAN_DEAD_DURATION 100
+#define CAN_DEAD_DURATION 400
 
 void setupVCU();
 

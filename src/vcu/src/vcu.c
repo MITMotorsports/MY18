@@ -1,13 +1,17 @@
 
 #include "vcu.h"
 
+uint16_t torque_command;
+
 void setupVCU() {
     initVCUState();
 }
 
 void loopVCU(USART_HandleTypeDef* uhandle) {
     if (HAL_GetTick() - board_heartbeats_state.frontCanNode > CAN_DEAD_DURATION) {
-        HAL_Delay(1); // Just for debugging
+        torque_command = 0;
+        brake_and_throttle_state.accel_1 = 0;
+        brake_and_throttle_state.accel_2 = 0;
     }
 
     // Send torque commands
@@ -16,18 +20,20 @@ void loopVCU(USART_HandleTypeDef* uhandle) {
     update_implausibility(localBTState, &implaus_conflict_state, board_heartbeats_state.frontCanNode);
     update_brake_throttle_conflict(localBTState, &implaus_conflict_state);
 
-    printf("\r\n");
-    printf("\r\nbrake1: %d\r\n", localBTState.brake_1);
-    printf("\r\nhas_brake_throttle_conflict: %d\r\n", implaus_conflict_state.has_brake_throttle_conflict);
-    printf("\r\nobserved_implausibility: %d\r\n", implaus_conflict_state.observed_implausibility);
-    printf("\r\nactual_implausibility: %d\r\n", implaus_conflict_state.actual_implausibility);
-    printf("\r\nimplausibility_ticks: %d\r\n", implaus_conflict_state.implausibility_ticks);
-    printf("\r\nfrontCanNode_heartbeat: %d\r\n", board_heartbeats_state.frontCanNode);
-    printf("\r\n");
-    HAL_Delay(1000);
+    torque_command = calcTorque(localBTState.accel_1, localBTState.accel_2);
 
-    // do some calc
-    sendTorqueCmdMsg(10);
+    if (implaus_conflict_state.actual_implausibility || implaus_conflict_state.has_brake_throttle_conflict) {
+        torque_command = 0;
+    }
+
+    // printf("\r\nbrkcflct: %d\r\n", implaus_conflict_state.has_brake_throttle_conflict);
+    // printf("\r\nhrt: %d\r\n", board_heartbeats_state.frontCanNode);
+    // printf("\r\naccel: %d\r\n", localBTState.accel_1);
+    // printf("\r\ntrq: %d\r\n", torque_command);
+
+    // HAL_Delay(500);
+
+    sendTorqueCmdMsg(torque_command, implaus_conflict_state.has_brake_throttle_conflict);
 }
 
 void handleCanVCU(CAN_HandleTypeDef* CanHandle) {

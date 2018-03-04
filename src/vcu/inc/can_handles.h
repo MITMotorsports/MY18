@@ -7,6 +7,6 @@
 
 void handleBrakeThrottleMsg(Frame* msg);
 
-void sendTorqueCmdMsg(int16_t torque);
+void sendTorqueCmdMsg(int16_t torque, int16_t break_and_throttle_conflict);
 
 #endif
