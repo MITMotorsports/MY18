@@ -38,24 +38,32 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-/** @addtogroup STM32F2xx_HAL_Examples
-  * @{
-  */
+void HAL_USART_MspInit(USART_HandleTypeDef *husart) {
+  GPIO_InitTypeDef GPIO_InitStruct;
 
-/** @defgroup CAN_Networking
-  * @{
-  */
+  USARTx_CLK_ENABLE();
+  USARTx_GPIO_CLK_ENABLE();
 
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-/* Private function prototypes -----------------------------------------------*/
-/* Private functions ---------------------------------------------------------*/
+  GPIO_InitStruct.Pin = USARTx_TX_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Alternate = USARTx_TX_AF;
 
-/** @defgroup HAL_MSP_Private_Functions
-  * @{
-  */
+  HAL_GPIO_Init(USARTx_TX_GPIO_PORT, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = USARTx_RX_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Alternate = USARTx_RX_AF;
+
+  HAL_GPIO_Init(USARTx_RX_GPIO_PORT, &GPIO_InitStruct);
+
+  // YOU WOULD PUT INTERRUPT INIT CODE HERE IF YOU NEEDED TO USE IT
+
+  // YOU WOULD PUT DMA INIT CODE HERE IF YOU NEEDED TO USE IT
+}
 
 /**
   * @brief CAN MSP Initialization 

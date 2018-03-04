@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 
+USART_HandleTypeDef  USARTHandle;
 CAN_HandleTypeDef    CanHandle;
 
 // static void CAN_Config(void);
@@ -23,9 +24,27 @@ int main(void)
   gpioinit.Pin = LED_PIN;
   gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
   gpioinit.Pull = GPIO_PULLUP;
-  gpioinit.Speed = GPIO_SPEED_FREQ_HIGH;
+  gpioinit.Speed = GPIO_SPEED_FAST;
   HAL_GPIO_Init(LED_PORT, &gpioinit);
 
+  // Setup USART for debugging
+  USARTHandle.Instance = USARTx_INSTANCE;
+  USARTHandle.Init.BaudRate = 115200;
+  USARTHandle.Init.WordLength = USART_WORDLENGTH_8B;
+  USARTHandle.Init.StopBits = USART_STOPBITS_1;
+  USARTHandle.Init.Parity = USART_PARITY_NONE;
+  USARTHandle.Init.Mode = USART_MODE_TX_RX;
+  USARTHandle.Init.CLKPolarity = USART_POLARITY_LOW;
+  USARTHandle.Init.CLKPhase = USART_PHASE_1EDGE;
+  USARTHandle.Init.CLKLastBit = USART_LASTBIT_DISABLE;
+
+  if(HAL_USART_Init(&USARTHandle) != HAL_OK)
+  {
+    /* Initialization Error */
+    Error_Handler();
+  }
+
+  // Toggle the LED after this regular setup
   HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
   HAL_Delay(1000);
   HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
@@ -34,7 +53,7 @@ int main(void)
 
   while(1)
   {
-    loopVCU();
+    loopVCU(&USARTHandle);
   } 
 }
 

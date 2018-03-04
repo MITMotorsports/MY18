@@ -5,7 +5,7 @@ void setupVCU() {
     initVCUState();
 }
 
-void loopVCU() {
+void loopVCU(USART_HandleTypeDef* uhandle) {
     if (HAL_GetTick() - board_heartbeats_state.frontCanNode > CAN_DEAD_DURATION) {
         HAL_Delay(1); // Just for debugging
     }

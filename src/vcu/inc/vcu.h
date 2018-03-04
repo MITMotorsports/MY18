@@ -9,7 +9,7 @@
 
 void setupVCU();
 
-void loopVCU();
+void loopVCU(USART_HandleTypeDef* USARTHandle);
 
 void handleCanVCU(CAN_HandleTypeDef* CanHandle);
 
