@@ -117,7 +117,7 @@ C_SRCS_TEST = $(wildcard $(patsubst %, %/*.$(C_EXT), . $(TEST_SRCS_DIRS))) src/s
 
 COMPORT = $(word 1, $(wildcard /dev/tty.usbserial-*) $(wildcard /dev/ttyUSB*))
 BAUDRATE = 57600
-CLOCK_OSC = 12000000
+CLOCK_OSC = 0
 
 #=============================================================================#
 # Lint Configuration
