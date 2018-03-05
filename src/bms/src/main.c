@@ -160,8 +160,7 @@ int main(void) {
   Error_Init();
   SSM_Init(&bms_input, &bms_state, &bms_output);
 
-  // Board_ADC_Init();
-  Board_Print("123"); // TODO: REMOVE
+  Board_ADC_Init();
   // setup readline/console
   microrl_init(&rl, Board_Print);
   microrl_set_execute_callback(&rl, executerl);

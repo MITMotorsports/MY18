@@ -1,5 +1,5 @@
-// #ifdef _CAN_H
-// #define _CAN_H
+#define _CANMGR_H
+#ifdef _CANMGR_H
 
 #include <stdint.h>
 
@@ -46,4 +46,4 @@ void can_transmit_pack_status(BMS_INPUT_T *bms_input,
 void can_transmit_bms_soc(BMS_INPUT_T *bms_input,
                           uint32_t     msTicks);
 
-// #endif // ifdef _CAN_H
+#endif // ifdef _CANMGR_H

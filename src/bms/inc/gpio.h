@@ -1,5 +1,5 @@
-// #ifndef _GPIO_H_
-// #define _GPIO_H_
+#ifndef _GPIO_H_
+#define _GPIO_H_
 
 #include <stdint.h>
 
@@ -38,4 +38,4 @@ bool Board_Contactor_One_Welded(void);
 
 bool Board_Contactor_Two_Welded(void);
 
-// #endif // ifndef _GPIO_H_
+#endif // ifndef _GPIO_H_

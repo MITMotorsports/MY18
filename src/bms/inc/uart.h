@@ -1,5 +1,5 @@
-// #ifdef _UART_H_
-// #define _UART_H_
+#define _UART_H_
+#ifdef _UART_H_
 
 #include "chip.h"
 
@@ -38,4 +38,4 @@ uint32_t Board_Write(const char *str,
 uint32_t Board_Read(char    *charBuffer,
                     uint32_t length);
 
-// #endif // ifdef _UART_H_
+#endif // ifdef _UART_H_
