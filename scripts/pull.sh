@@ -1,5 +1,5 @@
 #!/bin/bash
-ROOT="${0%/*}"
+ROOT="${0%/*}/.."
 
 cd ${ROOT}
 
