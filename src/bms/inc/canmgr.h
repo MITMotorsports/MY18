@@ -3,8 +3,6 @@
 
 #include <stdint.h>
 
-#include <stdint.h>
-
 #include "CANlib.h"
 #include "state_types.h"
 #include "error_handler.h"

@@ -119,8 +119,7 @@ C_SRCS_TEST = $(wildcard $(patsubst %, %/*.$(C_EXT), . $(TEST_SRCS_DIRS))) src/c
 # Write Configuration
 #=============================================================================#
 
-COMPORT = $(word 1, $(wildcard /dev/tty.usbserial-*) $(wildcard /dev/ttyUSB*))
-# COMPORT = COM5
+COMPORT ?= $(word 1, $(wildcard /dev/tty.usbserial-*) $(wildcard /dev/ttyUSB*))
 BAUDRATE = 57600
 CLOCK_OSC = 0
 
@@ -197,10 +196,10 @@ C_OBJS = $(addprefix $(OUT_DIR_F), $(notdir $(C_SRCS:.$(C_EXT)=.o)))
 AS_OBJS = $(addprefix $(OUT_DIR_F), $(notdir $(AS_SRCS:.$(AS_EXT)=.o)))
 OBJS = $(AS_OBJS) $(C_OBJS) $(USER_OBJS)
 DEPS = $(OBJS:.o=.d)
-INC_DIRS_F = -I. $(patsubst %, -I%, $(INC_DIRS_CROSS))
+INC_DIRS_F = -I. $(patsubst %, -I %, $(INC_DIRS_CROSS))
 LIB_DIRS_F = $(patsubst %, -L%, $(LIB_DIRS))
 
-INC_DIRS_F_TEST = -I. $(patsubst %, -I%, $(INC_DIRS_TEST))
+INC_DIRS_F_TEST = -I. $(patsubst %, -I %, $(INC_DIRS_TEST))
 
 ELF = $(OUT_DIR_F)$(PROJECT).elf
 HEX = $(OUT_DIR_F)$(PROJECT).hex
