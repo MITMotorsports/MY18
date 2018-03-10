@@ -8,6 +8,14 @@
 #=============================================================================#
 
 #=============================================================================#
+# hash based versioning
+#=============================================================================#
+
+GIT_HASH = $(shell git rev-parse --verify HEAD | cut -c 1-8)
+SRC_HASH = $(shell tar c src inc Makefile | sha1sum | cut -c 1-8)
+HASH = G$(GIT_HASH)S$(SRC_HASH)
+
+#=============================================================================#
 # toolchain configuration
 #=============================================================================#
 
@@ -24,7 +32,7 @@ RM = rm -f
 # test configuration
 #=============================================================================#
 
-UNITY_BASE=../Unity
+UNITY_BASE = ../Unity
 CC_TEST = gcc
 AS_TEST = gcc -x assembler-with-cpp
 SIZE_TEST = size
@@ -48,16 +56,16 @@ OUT_DIR = bin
 
 # include directories (absolute or relative paths to additional folders with
 # headers, current folder is always included)
-INC_DIRS_CROSS = inc/ inc/fsae_drivers/ ../../lib/lpc11cx4-library/lpc_chip_11cxx_lib/inc ../../lib/lpc11cx4-library/evt_lib/inc/ ../../lib/CANlib
+INC_DIRS_CROSS = inc/ ../../lib/lpc11cx4-library/lpc_chip_11cxx_lib/inc ../../lib/lpc11cx4-library/evt_lib/inc/ ../../lib/CANlib
 
 # additional directories with source files (absolute or relative paths to
 # folders with source files, current folder is always included)
-SRCS_DIRS = src/ src/fsae_drivers/ ../../lib/lpc11cx4-library/lpc_chip_11cxx_lib/src ../../lib/lpc11cx4-library/evt_lib/src/ ../../lib/CANlib
+SRCS_DIRS = src/ ../../lib/lpc11cx4-library/lpc_chip_11cxx_lib/src  ../../lib/lpc11cx4-library/evt_lib/src/ ../../lib/CANlib
 
 SPECIAL_FSAE_FLAGS = -DFSAE_DRIVERS -DCAN_ARCHITECTURE_ARM
 
 # C definitions
-C_DEFS = -DCORE_M0 -DDEBUG_ENABLE $(SPECIAL_FSAE_FLAGS) -DCAN_ARCHITECTURE_LPC11CX4
+C_DEFS = -DHASH=\"$(HASH)\" -DCORE_M0 -DDEBUG_ENABLE $(SPECIAL_FSAE_FLAGS) -DCAN_ARCHITECTURE_LPC11CX4
 
 # ASM definitions
 AS_DEFS = -D__STARTUP_CLEAR_BSS -D__START=main
@@ -197,7 +205,7 @@ AS_OBJS = $(addprefix $(OUT_DIR_F), $(notdir $(AS_SRCS:.$(AS_EXT)=.o)))
 OBJS = $(AS_OBJS) $(C_OBJS) $(USER_OBJS)
 DEPS = $(OBJS:.o=.d)
 INC_DIRS_F = -I. $(patsubst %, -I %, $(INC_DIRS_CROSS))
-LIB_DIRS_F = $(patsubst %, -L%, $(LIB_DIRS))
+LIB_DIRS_F = $(patsubst %, -L %, $(LIB_DIRS))
 
 INC_DIRS_F_TEST = -I. $(patsubst %, -I %, $(INC_DIRS_TEST))
 

@@ -167,6 +167,7 @@ int main(void) {
   console_init(&bms_input, &bms_state, &console_output);
   int count = msTicks;
 
+  Board_Println("Currently running: "HASH);
   while (1) {
     // preliminary error checks
     // while(msTicks - count < PRE_ERROR_CHECK_TIMEOUT) {
