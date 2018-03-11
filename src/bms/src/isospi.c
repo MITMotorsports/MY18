@@ -263,11 +263,12 @@ void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status) {
     break;
 
   case LTC6804_PASS:
-    Board_Println("Get Vol Success");
     pack_status->pack_cell_min_mV = ltc6804_adc_res.pack_cell_min_mV;
     pack_status->pack_cell_max_mV = ltc6804_adc_res.pack_cell_max_mV;
-    // Board_PrintNum(pack_status->pack_cell_max_mV, 10);
-    // Board_PrintNum(pack_status->pack_cell_min_mV, 10);
+    Board_Print_BLOCKING("MIN voltage: ");
+    Board_PrintNum(pack_status->pack_cell_min_mV, 10);
+    Board_Print_BLOCKING("MAX voltage: ");
+    Board_PrintNum(pack_status->pack_cell_max_mV, 10);
     LTC6804_ClearCellVoltages(&ltc6804_config, &ltc6804_state, msTicks); // [TODO]
                                                                          // Use
                                                                          // this

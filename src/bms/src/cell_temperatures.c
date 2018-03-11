@@ -84,6 +84,10 @@ void getThermistorTemperatures(uint32_t *gpioVoltages,
     // (in mV) to temperatures in (dC)
     thermistorTemperatures[i] =
       (gpioVoltages[i * LTC6804_GPIO_COUNT] >> SHIFT_VOLTAGE) + A0;
+
+    Board_Print_BLOCKING("Temp At module: ");
+    Board_PrintNum(i, 10);
+    Board_PrintNum(thermistorTemperatures[i], 10);
   }
 }
 
