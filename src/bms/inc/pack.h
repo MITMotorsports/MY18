@@ -1,25 +1,25 @@
+#ifndef _PACK_H_
+#define _PACK_H_
+
 #include <stdint.h>
 
-#ifndef _PACK_H_
-# define _PACK_H_
-
 // Default Pack Configuration
-# define CELL_MIN_mV 2500 // from datasheet, contact elliot
-# define CELL_MAX_mV 4250 // from datas,eet, contact elliot
-# define CELL_CAPACITY_cAh 250
-# define NUM_MODULES 6
-# define CELL_CHARGE_C_RATING_cC 5
-# define BALANCE_ON_THRESHOLD_mV 4
-# define BALANCE_OFF_THRESHOLD_mV 1
-# define PACK_CELLS_PARALLEL 12
-# define CV_MIN_CURRENT_mA 100
-# define CV_MIN_CURRENT_ms 60000
-# define CC_CELL_VOLTAGE_mV 4300
-# define CELL_DISCHARGE_C_RATING_cC 200 // at 27 degrees C
-# define MAX_CELL_TEMP_dC 600
-# define MODULE_CELL_COUNT 12
-# define MIN_CELL_TEMP_dC -30
-# define FAN_ON_THRESHOLD_dC 450
+#define CELL_MIN_mV 2500 // from datasheet, contact elliot
+#define CELL_MAX_mV 4250 // from datasheet, contact elliot
+#define CELL_CAPACITY_cAh 250
+#define NUM_MODULES 6
+#define CELL_CHARGE_C_RATING_cC 5
+#define BALANCE_ON_THRESHOLD_mV 4
+#define BALANCE_OFF_THRESHOLD_mV 1
+#define PACK_CELLS_PARALLEL 12
+#define CV_MIN_CURRENT_mA 100
+#define CV_MIN_CURRENT_ms 60000
+#define CC_CELL_VOLTAGE_mV 4300
+#define CELL_DISCHARGE_C_RATING_cC 200 // at 27 degrees C
+#define MAX_CELL_TEMP_dC 600
+#define MODULE_CELL_COUNT 12
+#define MIN_CELL_TEMP_dC -30
+#define FAN_ON_THRESHOLD_dC 450
 
 typedef struct BMS_PACK_CONFIG {
   uint32_t cell_min_mV;                // minimum cell voltage (millivolts)
@@ -61,8 +61,8 @@ typedef struct BMS_PACK_STATUS {
                                    // (milliamps)
   uint32_t pack_voltage_mV;        // charging pack voltage reported by BRUSA
                                    // (millivolts)
-  int16_t  max_cell_temp_dC;       // maximum cell temperature (decicelsius)
-  int16_t  pack_energy_wH;         // energy used in watthours
+  int16_t max_cell_temp_dC;        // maximum cell temperature (decicelsius)
+  int16_t pack_energy_wH;          // energy used in watthours
 
   // FSAE specific pack status variables
   int16_t  min_cell_temp_dC;       // minimum cell temperature (decicelsius)
@@ -76,6 +76,13 @@ typedef struct BMS_PACK_STATUS {
   uint8_t state_of_charge;         // range 0 - 100, percentage of charge
 } BMS_PACK_STATUS_T;
 
-uint16_t Pack_Config_Total_Cell_Count(BMS_PACK_CONFIG_T *config);
+typedef struct {
+  uint32_t pack_voltage_mV_upper;
+  uint32_t pack_voltage_mV_lower;
+} BMS_VOLTAGE_ESTIMATE_T;
+
+const uint16_t         Pack_Config_Total_Cell_Count(BMS_PACK_CONFIG_T *config);
+BMS_VOLTAGE_ESTIMATE_T Pack_Estimate_Total_Voltage(BMS_PACK_CONFIG_T *config,
+                                                   BMS_PACK_STATUS_T *state);
 
 #endif // ifndef _PACK_H_

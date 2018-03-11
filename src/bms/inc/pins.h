@@ -1,5 +1,5 @@
-// #ifndef _PINS_H_
-// #define _PINS_H_
+#ifndef _PINS_H_
+#define _PINS_H_
 
 #define PIN_EEPROM_CS           2, 9
 #define PIN_GPIO1               1, 1
@@ -76,4 +76,4 @@
 #define IOCON_PIN_48_FUNC IOCON_FUNC0
 
 
-// #endif // ifndef _PINS_H_
+#endif // ifndef _PINS_H_

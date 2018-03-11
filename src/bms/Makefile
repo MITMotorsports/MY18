@@ -15,6 +15,8 @@ GIT_HASH = $(shell git rev-parse --verify HEAD | cut -c 1-8)
 SRC_HASH = $(shell tar c src inc Makefile | sha1sum | cut -c 1-8)
 HASH = G$(GIT_HASH)S$(SRC_HASH)
 
+AUTHOR = $(shell git config user.name)
+
 #=============================================================================#
 # toolchain configuration
 #=============================================================================#
@@ -65,7 +67,7 @@ SRCS_DIRS = src/ ../../lib/lpc11cx4-library/lpc_chip_11cxx_lib/src  ../../lib/lp
 SPECIAL_FSAE_FLAGS = -DFSAE_DRIVERS -DCAN_ARCHITECTURE_ARM
 
 # C definitions
-C_DEFS = -DHASH=\"$(HASH)\" -DCORE_M0 -DDEBUG_ENABLE $(SPECIAL_FSAE_FLAGS) -DCAN_ARCHITECTURE_LPC11CX4
+C_DEFS = -DHASH="\"$(HASH)\"" -DAUTHOR="\"$(AUTHOR)\"" -DCORE_M0 -DDEBUG_ENABLE $(SPECIAL_FSAE_FLAGS) -DCAN_ARCHITECTURE_LPC11CX4
 
 # ASM definitions
 AS_DEFS = -D__STARTUP_CLEAR_BSS -D__START=main
@@ -135,7 +137,7 @@ CLOCK_OSC = 0
 # Lint Configuration
 #=============================================================================#
 
-MAX_LINE_SIZE = 140
+MAX_LINE_SIZE = 80
 
 #=============================================================================#
 # set the VPATH according to SRCS_DIRS
@@ -367,9 +369,11 @@ lint: $(C_SRCS)
 # Write to flash of chip
 #-----------------------------------------------------------------------------#
 
-writeflash: all
+flash: all
 	@echo "Writing to" $(COMPORT)
 	lpc21isp -NXPARM -control $(HEX) $(COMPORT) $(BAUDRATE) $(CLOCK_OSC)
+
+writeflash: flash
 
 #-----------------------------------------------------------------------------#
 # Open up in picocom
@@ -378,6 +382,13 @@ writeflash: all
 com:
 	@echo "Opening" $(COMPORT)
 	lpc21isp -NXPARM -control -termonly $(HEX) $(COMPORT) $(BAUDRATE) $(CLOCK_OSC)
+
+
+#-----------------------------------------------------------------------------#
+# Flash and then open in com
+#-----------------------------------------------------------------------------#
+
+fc: flash com
 
 #=============================================================================#
 # make clean

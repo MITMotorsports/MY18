@@ -24,8 +24,7 @@ boards:
     publish:
       can0:
         - VcuToDash
-        - BMSState
-        - BmsVcuSwitch
+        - BMSRequest
         - MC_Command
     subscribe:
       can0:
@@ -47,14 +46,13 @@ boards:
     publish:
       can0:
         - BMSErrors
-        - BmsPackStatus
+        - BMSPackStatus
         - BMS_SOC
         - BMSCellTemps
         - ContactorWeld
     subscribe:
       can0:
-        - BMSState
-        - BmsVcuSwitch
+        - BMSRequest
         - BMS_CSB_Switch
         - CurrentSensor_Current
         - CurrentSensor_Voltage
@@ -68,7 +66,7 @@ boards:
         - ElconCommand
     subscribe:
       can0:
-        - BmsPackStatus
+        - BMSPackStatus
         - ElconHeartbeat
   mc:
     subscribe:
@@ -162,7 +160,7 @@ buses:
             length: 9
             c_type: uint16_t
             signed: false
-      BmsPackStatus:
+      BMSPackStatus:
         can_id: 0x0F2
         frequency: 10Hz
         is_big_endian: true
@@ -274,7 +272,7 @@ buses:
               ACTIVE_AERO_DISABLE: 0x8
               FAN_ENABLE: 0x9
               FAN_DISABLE: 0xA
-      BMSState:
+      BMSRequest:
         can_id: 0x0D3
         frequency: 1Hz
         is_big_endian: true
@@ -435,15 +433,6 @@ buses:
             c_type: uint32_t
             signed: false
             unit: mRPM
-      BmsVcuSwitch: # Switch CAN bus and baudrate
-        can_id: 0x0F4
-        frequency: 1Hz
-        is_big_endian: true
-        segments:
-          always_true:
-            position: 0
-            length: 1
-            c_type: bool
       CurrentSensor_Current:
         can_id: 0x521
         frequency: 20Hz

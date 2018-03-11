@@ -108,6 +108,13 @@ void Process_Input(BMS_INPUT_T *bms_input) {
     Board_CAN_Receive(bms_input);
     Board_GetModeRequest(&console_output, bms_input);
     Board_LTC6804_ProcessInputs(&pack_status, &bms_state);
+
+    // Pack voltage estimation
+    BMS_VOLTAGE_ESTIMATE_T vol = Pack_Estimate_Total_Voltage(&pack_config, &pack_status);
+    Board_Print_BLOCKING("LOWER bound: ");
+    Board_PrintNum(vol.pack_voltage_mV_lower, 10);
+    Board_Print_BLOCKING("UPPER bound: ");
+    Board_PrintNum(vol.pack_voltage_mV_upper, 10);
   }
 
   bms_input->msTicks           = msTicks;
@@ -168,6 +175,8 @@ int main(void) {
   int count = msTicks;
 
   Board_Println("Currently running: "HASH);
+  Board_Println("Flashed by: "AUTHOR);
+
   while (1) {
     // preliminary error checks
     // while(msTicks - count < PRE_ERROR_CHECK_TIMEOUT) {
@@ -206,8 +215,8 @@ int main(void) {
 
   bms_output.close_contactors = false;
 
+  Board_Println("Halting...");
   while (1) {
-    Board_Println("Halting");
     bms_input.msTicks = msTicks;
     Process_Output(&bms_input, &bms_output, &bms_state);
     Process_Keyboard();

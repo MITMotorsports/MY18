@@ -75,13 +75,13 @@ void Board_GPIO_Init(void) {
 
   // Charge Enable Pin
   Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_CHARGER_ENABLE);
-  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CHARGER_ENABLE,
-                       (IOCON_FUNC0 | IOCON_MODE_INACT));
+  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CHARGER_ENABLE, IOCON_FUNC0);
+  Chip_GPIO_SetPinState(LPC_GPIO, PIN_CHARGER_ENABLE, false);
 
   // Fault Pin
   Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_BMS_FAULT);
-  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_BMS_FAULT,
-                       (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_PULLDOWN));
+  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_BMS_FAULT, IOCON_FUNC0);
+  Chip_GPIO_SetPinState(LPC_GPIO, PIN_BMS_FAULT, false);
 
   // Enable pull down resistors on unused pins
   Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_23);
@@ -150,12 +150,12 @@ void Board_GPIO_Init(void) {
   Chip_GPIO_SetPinState(LPC_GPIO, PIN_48, false);
 }
 
-void Board_LED_On(uint8_t led_gpio, uint8_t led_pin) {
-  Chip_GPIO_SetPinOutHigh(LPC_GPIO, led_gpio, led_pin);
+void Board_LED_Set(uint8_t led_gpio, uint8_t led_pin, bool state) {
+  Chip_GPIO_SetPinState(LPC_GPIO, led_gpio, led_pin, state);
 }
 
-void Board_LED_Off(uint8_t led_gpio, uint8_t led_pin) {
-  Chip_GPIO_SetPinOutLow(LPC_GPIO, led_gpio, led_pin);
+void Board_FAULT_Set(bool state) {
+  Chip_GPIO_SetPinState(LPC_GPIO, PIN_BMS_FAULT, state);
 }
 
 void Board_LED_Toggle(uint8_t led_gpio, uint8_t led_pin) {
