@@ -75,19 +75,18 @@ void CellTemperatures_UpdateMaxMinAvgCellTemperatures(
  * Private Functions
  * ***********************************************************************************/
 void getThermistorTemperatures(uint32_t *gpioVoltages,
-                               int16_t  *thermistorTemperatures,
+                               int16_t  *temperatures,
                                uint8_t   num_modules) {
-  uint8_t i;
-
-  for (i = 0; i < num_modules; i++) {
+  for (uint8_t i = 0; i < num_modules; i++) {
     // calculate temperature using linear curve fit relating thermistor voltages
     // (in mV) to temperatures in (dC)
-    thermistorTemperatures[i] =
-      (gpioVoltages[i * LTC6804_GPIO_COUNT] >> SHIFT_VOLTAGE) + A0;
+    temperatures[i] = (gpioVoltages[i * LTC6804_GPIO_COUNT] >> SHIFT_VOLTAGE) + A0;
 
-    Board_Print_BLOCKING("Temp At module: ");
+#ifdef DEBUG_PRINT
+    Board_Print_BLOCKING("Temp at module: ");
     Board_PrintNum(i, 10);
-    Board_PrintNum(thermistorTemperatures[i], 10);
+    Board_PrintNum(temperatures[i], 10);
+#endif
   }
 }
 

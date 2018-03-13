@@ -23,7 +23,7 @@ typedef struct BMS_INPUT {
 
   bool vcu_switch;
 
-  bool contactor_weld_one;
+  bool contactor_weld_one; // TODO: Move to proper location in status.
   bool contactor_weld_two;
   bool contactors_closed;
 
@@ -33,12 +33,14 @@ typedef struct BMS_INPUT {
   uint32_t msTicks;
 } BMS_INPUT_T;
 
+
 typedef enum {
   BMS_INIT_OFF,
   BMS_INIT_READ_PACKCONFIG,
   BMS_INIT_CHECK_PACKCONFIG,
   BMS_INIT_DONE
 } BMS_INIT_MODE_T;
+
 
 static const char *const BMS_INIT_MODE_NAMES[] = {
   "BMS_INIT_OFF",
@@ -47,12 +49,14 @@ static const char *const BMS_INIT_MODE_NAMES[] = {
   "BMS_INIT_DONE",
 };
 
+
 typedef enum {
   BMS_DISCHARGE_OFF,
   BMS_DISCHARGE_INIT,
   BMS_DISCHARGE_RUN,
   BMS_DISCHARGE_DONE,
 } BMS_DISCHARGE_MODE_T;
+
 
 static const char *const BMS_DISCHARGE_MODE_NAMES[] = {
   "BMS_DISCHARGE_OFF",
@@ -61,12 +65,14 @@ static const char *const BMS_DISCHARGE_MODE_NAMES[] = {
   "BMS_DISCHARGE_DONE",
 };
 
+
 typedef enum {
   BMS_CHARGE_OFF,
   BMS_CHARGE_INIT,
   BMS_CHARGE_BAL,
   BMS_CHARGE_DONE,
 } BMS_CHARGE_MODE_T;
+
 
 typedef struct BMS_STATE {
   BMS_SSM_MODE_T       curr_mode;
@@ -83,4 +89,6 @@ typedef struct BMS_OUTPUT {
   bool  ltc_deinit;
   bool  check_packconfig_with_ltc;
 } BMS_OUTPUT_T;
+
+
 #endif // ifndef _STATE_TYPES_H

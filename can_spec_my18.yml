@@ -116,31 +116,25 @@ buses:
         period: 0.1s
         is_big_endian: true
         segments:
-          avg_cell_temp:
+          min:
             position: 0
             length: 10
             c_type: int16_t
             signed: false
-            unit: C
-          min_cell_temp:
+            unit: dC
+          argmin:
             position: 10
-            length: 10
-            c_type: int16_t
-            signed: false
-            unit: C
-          min_cell_temp_id:
-            position: 20
             length: 9
             c_type: uint16_t
             signed: false
-          max_cell_temp:
-            position: 29
+          max:
+            position: 19
             length: 10
             c_type: int16_t
             signed: false
-            unit: C
-          max_cell_temp_id:
-            position: 39
+            unit: dC
+          argmax:
+            position: 29
             length: 9
             c_type: uint16_t
             signed: false
@@ -149,22 +143,24 @@ buses:
         period: 0.1s
         is_big_endian: true
         segments:
-          min_cell_voltage:
+          min:
             position: 30
             length: 10
             c_type: uint16_t
             signed: false
-          min_cell_voltage_id:
+            unit: mV
+          argmin:
             position: 40
             length: 7
             c_type: uint8_t
             signed: false
-          max_cell_voltage:
+          max:
             position: 47
             length: 10
             c_type: uint16_t
             signed: false
-          max_cell_voltage_id:
+            unit: mV
+          argmax:
             position: 57
             length: 7
             c_type: uint8_t

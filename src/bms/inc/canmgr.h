@@ -2,8 +2,10 @@
 #ifdef _CANMGR_H
 
 #include <stdint.h>
-
 #include "CANlib.h"
+
+#include "board.h"
+#include "pack.h"
 #include "state_types.h"
 #include "error_handler.h"
 #include "config.h"
@@ -18,9 +20,7 @@ void Board_CAN_Init(void);
 // - Receive
 void Board_CAN_Receive(BMS_INPUT_T *bms_input);
 
-void can_receive_bms_state(BMS_INPUT_T *bms_input);
-
-void can_receive_vcu_switch(BMS_INPUT_T *bms_input);
+void can_receive_bms_request(BMS_INPUT_T *bms_input);
 
 void can_receive_current(BMS_INPUT_T *bms_input);
 
@@ -32,16 +32,10 @@ void can_receive_energy(BMS_INPUT_T *bms_input);
 void Board_CAN_Transmit(BMS_INPUT_T  *bms_input,
                         BMS_OUTPUT_T *bms_output);
 
-void can_transmit_contactor_weld(BMS_INPUT_T *bms_input,
-                                 uint32_t     msTicks);
+void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input);
 
-void can_transmit_bms_errors(BMS_INPUT_T *bms_input,
-                             uint32_t     msTicks);
+void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input);
 
-void can_transmit_pack_status(BMS_INPUT_T *bms_input,
-                              uint32_t     msTicks);
-
-void can_transmit_bms_soc(BMS_INPUT_T *bms_input,
-                          uint32_t     msTicks);
+void can_transmit_cell_voltages(BMS_INPUT_T *bms_input);
 
 #endif // ifdef _CANMGR_H

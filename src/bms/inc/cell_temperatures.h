@@ -82,7 +82,7 @@ void CellTemperatures_UpdateMaxMinAvgCellTemperatures(
  * thermistorTemperature_GPIO1_modulen, ...}
  */
 void getThermistorTemperatures(uint32_t *gpioVoltages,
-                               int16_t  *thermistorTemperatures,
+                               int16_t  *temperatures,
                                uint8_t   num_modules);
 
 #endif // CELL_TEMPERATURES

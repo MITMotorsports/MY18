@@ -265,16 +265,17 @@ void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status) {
   case LTC6804_PASS:
     pack_status->pack_cell_min_mV = ltc6804_adc_res.pack_cell_min_mV;
     pack_status->pack_cell_max_mV = ltc6804_adc_res.pack_cell_max_mV;
+
+#ifdef DEBUG_PRINT
     Board_Print_BLOCKING("MIN voltage: ");
     Board_PrintNum(pack_status->pack_cell_min_mV, 10);
     Board_Print_BLOCKING("MAX voltage: ");
     Board_PrintNum(pack_status->pack_cell_max_mV, 10);
-    LTC6804_ClearCellVoltages(&ltc6804_config, &ltc6804_state, msTicks); // [TODO]
-                                                                         // Use
-                                                                         // this
-                                                                         // to
-                                                                         // your
-                                                                         // advantage
+#endif
+
+    // TODO: Use this to your advantage.
+    LTC6804_ClearCellVoltages(&ltc6804_config, &ltc6804_state, msTicks);
+
     _ltc6804_gcv      = false;
     _ltc6804_last_gcv = msTicks;
     Error_Pass(ERROR_LTC6804_PEC);
@@ -284,7 +285,7 @@ void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status) {
     break;
 
   default:
-    Board_Println("WTF");
+    Board_Println("Unhandled case in Board_LTC6804_GetCellVoltages.");
   }
 #endif /* ifdef TEST_HARDWARE_LTC_TEST */
 }

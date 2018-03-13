@@ -48,6 +48,7 @@ typedef struct BMS_PACK_CONFIG {
                                        // (decicelsius)
 } BMS_PACK_CONFIG_T;
 
+
 typedef struct BMS_PACK_STATUS {
   uint32_t *cell_voltages_mV;      // array of cell voltages (millivolts)
                                    // array size = #modules * cells/module
@@ -76,13 +77,16 @@ typedef struct BMS_PACK_STATUS {
   uint8_t state_of_charge;         // range 0 - 100, percentage of charge
 } BMS_PACK_STATUS_T;
 
+
 typedef struct {
   uint32_t pack_voltage_mV_upper;
   uint32_t pack_voltage_mV_lower;
 } BMS_VOLTAGE_ESTIMATE_T;
 
+
 const uint16_t         Pack_Config_Total_Cell_Count(BMS_PACK_CONFIG_T *config);
 BMS_VOLTAGE_ESTIMATE_T Pack_Estimate_Total_Voltage(BMS_PACK_CONFIG_T *config,
                                                    BMS_PACK_STATUS_T *state);
+
 
 #endif // ifndef _PACK_H_

@@ -111,10 +111,6 @@ void Process_Input(BMS_INPUT_T *bms_input) {
 
     // Pack voltage estimation
     BMS_VOLTAGE_ESTIMATE_T vol = Pack_Estimate_Total_Voltage(&pack_config, &pack_status);
-    Board_Print_BLOCKING("LOWER bound: ");
-    Board_PrintNum(vol.pack_voltage_mV_lower, 10);
-    Board_Print_BLOCKING("UPPER bound: ");
-    Board_PrintNum(vol.pack_voltage_mV_upper, 10);
   }
 
   bms_input->msTicks           = msTicks;

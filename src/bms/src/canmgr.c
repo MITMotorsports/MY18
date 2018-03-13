@@ -68,33 +68,18 @@ void can_receive_energy(BMS_INPUT_T *bms_input) {
 
 Frame can_output;
 void Board_CAN_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
-  uint32_t msTicks = bms_input->msTicks;
+  can_transmit_bms_heartbeat(bms_input);
+  can_transmit_cell_voltages(bms_input);
+  can_transmit_cell_temperatures(bms_input);
 
-  can_transmit_bms_heartbeat(bms_input, msTicks);
+  // TODO: agree upon resending only if updated or
+  // repeating existing info on bus (bms_input0->msTicks)
 }
 
-// void can_transmit_contactor_weld(BMS_INPUT_T *bms_input, uint32_t msTicks) {
-//   static uint32_t last_bms_contactor_weld_time = 0;
-//
-//   if ((msTicks - last_bms_contactor_weld_time) > BMS_CONTACTOR_WELD_PERIOD) {
-//     can0_ContactorWeld_T msg;
-//     msg.one = bms_input->contactor_weld_one;
-//     msg.two = bms_input->contactor_weld_two;
-//     can0_ContactorWeld_Write(&msg);
-//     last_bms_contactor_weld_time = bms_input->msTicks;
-//   }
-// }
+void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
+  static uint32_t last_time = 0;
 
-void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input, uint32_t msTicks) {
-  static uint32_t last_bms_errors_time = 0;
-
-  if ((msTicks - last_bms_errors_time) > can0_BMSHeartbeat_period) {
-    /*
-
-        Fill msg
-
-     */
-
+  if ((msTicks - last_time) > can0_BMSHeartbeat_period) {
     ERROR_STATUS_T *start_index = Get_Errors();
 
     for (int i = 0; i < (ERROR_NUM_ERRORS + 2); i++) {
@@ -106,7 +91,42 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input, uint32_t msTicks) {
       }
     }
 
-    last_bms_errors_time = msTicks; // TODO: agree upon resending only if
-                                    // updated or repeating existing info on bus (bms_input0>msTicks)
+    last_time = msTicks;
+  }
+}
+
+void can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
+  static uint32_t last_time = 0;
+
+  if ((msTicks - last_time) > can0_CellVoltages_period) {
+    const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
+
+    can0_CellVoltages_T msg;
+    msg.min = ps->pack_cell_min_mV;
+    msg.argmin = 1;
+    msg.max = ps->pack_cell_max_mV;
+    msg.argmax = 1;
+
+    can0_CellVoltages_Write(&msg);
+
+    last_time = msTicks;
+  }
+}
+
+void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
+  static uint32_t last_time = 0;
+
+  if ((msTicks - last_time) > can0_CellTemperatures_period) {
+    const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
+
+    can0_CellTemperatures_T msg;
+    msg.min = ps->min_cell_temp_dC;
+    msg.argmin = ps->min_cell_temp_position;
+    msg.max = ps->max_cell_temp_dC;
+    msg.argmax = ps->max_cell_temp_position;
+
+    can0_CellTemperatures_Write(&msg);
+
+    last_time = msTicks;
   }
 }
