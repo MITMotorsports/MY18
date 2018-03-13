@@ -10,12 +10,8 @@ void Board_CAN_Receive(BMS_INPUT_T *bms_input) {
   can0_T msgForm = identify_can0(&can_input);
 
   switch (msgForm) {
-  case can0_BMSState:
-    can_receive_bms_state(bms_input);
-    break;
-
-  case can0_BmsVcuSwitch:
-    can_receive_vcu_switch(bms_input);
+  case can0_BMSRequest:
+    can_receive_bms_request(bms_input);
     break;
 
   case can0_CurrentSensor_Current:
@@ -38,18 +34,11 @@ void Board_CAN_Receive(BMS_INPUT_T *bms_input) {
   }
 }
 
-void can_receive_bms_state(BMS_INPUT_T *bms_input) {
-  can0_BMSState_T msg;
+void can_receive_bms_request(BMS_INPUT_T *bms_input) {
+  can0_BMSRequest_T msg;
 
-  unpack_can0_BMSState(&can_input, &msg);
+  unpack_can0_BMSRequest(&can_input, &msg);
   bms_input->vcu_mode_request = msg.state;
-}
-
-void can_receive_vcu_switch(BMS_INPUT_T *bms_input) {
-  can0_BmsVcuSwitch_T msg;
-
-  unpack_can0_BmsVcuSwitch(&can_input, &msg);
-  bms_input->vcu_switch = msg.always_true;
 }
 
 void can_receive_current(BMS_INPUT_T *bms_input) {
@@ -81,63 +70,25 @@ Frame can_output;
 void Board_CAN_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
   uint32_t msTicks = bms_input->msTicks;
 
-  can_transmit_contactor_weld(bms_input, msTicks);
-  can_transmit_pack_status(bms_input, msTicks);
-  can_transmit_bms_soc(bms_input, msTicks);
-
-  // can_transmit_bms_errors(bms_input, msTicks);
+  can_transmit_bms_heartbeat(bms_input, msTicks);
 }
 
-void can_transmit_contactor_weld(BMS_INPUT_T *bms_input, uint32_t msTicks) {
-  static uint32_t last_bms_contactor_weld_time = 0;
+// void can_transmit_contactor_weld(BMS_INPUT_T *bms_input, uint32_t msTicks) {
+//   static uint32_t last_bms_contactor_weld_time = 0;
+//
+//   if ((msTicks - last_bms_contactor_weld_time) > BMS_CONTACTOR_WELD_PERIOD) {
+//     can0_ContactorWeld_T msg;
+//     msg.one = bms_input->contactor_weld_one;
+//     msg.two = bms_input->contactor_weld_two;
+//     can0_ContactorWeld_Write(&msg);
+//     last_bms_contactor_weld_time = bms_input->msTicks;
+//   }
+// }
 
-  if ((msTicks - last_bms_contactor_weld_time) > BMS_CONTACTOR_WELD_PERIOD) {
-    can0_ContactorWeld_T msg;
-    msg.one = bms_input->contactor_weld_one;
-    msg.two = bms_input->contactor_weld_two;
-    can0_ContactorWeld_Write(&msg);
-    last_bms_contactor_weld_time = bms_input->msTicks;
-  }
-}
-
-void can_transmit_pack_status(BMS_INPUT_T *bms_input, uint32_t msTicks) {
-  static uint32_t last_bms_pack_status_time = 0;
-
-  if ((msTicks - last_bms_pack_status_time) > BMS_PACK_STATUS_PERIOD) {
-    can0_BmsPackStatus_T msg;
-
-    /*
-
-        Fill msg
-
-     */
-
-    can0_BmsPackStatus_Write(&msg);
-    last_bms_pack_status_time = bms_input->msTicks;
-  }
-}
-
-void can_transmit_bms_soc(BMS_INPUT_T *bms_input, uint32_t msTicks) {
-  static uint32_t last_bms_soc_time = 0;
-
-  if ((msTicks - last_bms_soc_time) > BMS_SOC_PERIOD) {
-    can0_BMS_SOC_T msg;
-
-    /*
-
-        Fill msg
-
-     */
-
-    can0_BMS_SOC_Write(&msg);
-    last_bms_soc_time = bms_input->msTicks;
-  }
-}
-
-void can_transmit_bms_errors(BMS_INPUT_T *bms_input, uint32_t msTicks) {
+void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input, uint32_t msTicks) {
   static uint32_t last_bms_errors_time = 0;
 
-  if ((msTicks - last_bms_errors_time) > BMS_ERRORS_PERIOD) {
+  if ((msTicks - last_bms_errors_time) > can0_BMSHeartbeat_period) {
     /*
 
         Fill msg
@@ -146,17 +97,16 @@ void can_transmit_bms_errors(BMS_INPUT_T *bms_input, uint32_t msTicks) {
 
     ERROR_STATUS_T *start_index = Get_Errors();
 
-    int i;
+    for (int i = 0; i < (ERROR_NUM_ERRORS + 2); i++) {
+      can0_BMSHeartbeat_T msg;
 
-    for (i = 0; i < (ERROR_NUM_ERRORS + 2); i++) {
-      can0_BMSErrors_T msg;
-
-      if ((*(start_index + i)).error == true) { // TODO: Use arrow operator.
+      if ((start_index + i)->error == true) { // TODO: Use arrow operator.
         msg.type = i + 1;
-        can0_BMSErrors_Write(&msg);
+        can0_BMSHeartbeat_Write(&msg);
       }
     }
 
-    last_bms_errors_time = bms_input->msTicks;
+    last_bms_errors_time = msTicks; // TODO: agree upon resending only if
+                                    // updated or repeating existing info on bus (bms_input0>msTicks)
   }
 }
