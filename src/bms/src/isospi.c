@@ -39,12 +39,12 @@ bool Board_LTC6804_CVST() {
   switch (res) {
   case LTC6804_FAIL:
     Board_Println("CVST FAIL");
-    Error_Assert(ERROR_LTC6804_CVST, msTicks);
+    Error_Assert(ERROR_LTC6804_CVST);
     return false;
 
   case LTC6804_PEC_ERROR:
     Board_Println("CVST PEC_ERROR");
-    Error_Assert(ERROR_LTC6804_PEC, msTicks);
+    Error_Assert(ERROR_LTC6804_PEC);
     return false;
 
   case LTC6804_PASS:
@@ -107,12 +107,12 @@ bool Board_LTC6804_OpenWireTest(void) {
     Board_Print(" wire=");
     itoa(ltc6804_owt_res.failed_wire, str, 10);
     Board_Println(str);
-    Error_Assert(ERROR_LTC6804_OWT, msTicks);
+    Error_Assert(ERROR_LTC6804_OWT);
     return false;
 
   case LTC6804_PEC_ERROR:
     Board_Println("OWT PEC_ERROR");
-    Error_Assert(ERROR_LTC6804_PEC, msTicks);
+    Error_Assert(ERROR_LTC6804_PEC);
     return false;
 
   case LTC6804_PASS:
@@ -259,7 +259,7 @@ void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status) {
 
   case LTC6804_PEC_ERROR:
     Board_Println("Get Vol PEC_ERROR");
-    Error_Assert(ERROR_LTC6804_PEC, msTicks);
+    Error_Assert(ERROR_LTC6804_PEC);
     break;
 
   case LTC6804_PASS:
@@ -343,7 +343,7 @@ void Board_LTC6804_GetCellTemperatures(BMS_PACK_STATUS_T *pack_status,
     } else {
       Board_Println(
         "Invalid value of currentThermistor Board_LTC6804_GetCellTemperatures");
-      Error_Assert(ERROR_CONTROL_FLOW, msTicks);
+      Error_Assert(ERROR_CONTROL_FLOW);
     }
 
     // shift bits into shift resgister
@@ -436,7 +436,7 @@ void Board_HandleLtc6804Status(LTC6804_STATUS_T status) {
 
   case LTC6804_PEC_ERROR:
     Board_Println("LTC6804 PEC_ERROR");
-    Error_Assert(ERROR_LTC6804_PEC, msTicks);
+    Error_Assert(ERROR_LTC6804_PEC);
     break;
 
   case LTC6804_WAITING_REFUP:
@@ -444,7 +444,7 @@ void Board_HandleLtc6804Status(LTC6804_STATUS_T status) {
 
   default:
     Board_Println("Unhandled case in Board_HandleLtc6804Status.");
-    Error_Assert(ERROR_CONTROL_FLOW, msTicks);
+    Error_Assert(ERROR_CONTROL_FLOW);
   }
 }
 
