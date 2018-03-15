@@ -87,6 +87,7 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
 
       if ((start_index + i)->error == true) { // TODO: Use arrow operator.
         msg.type = i + 1;
+        msg.soc = ps->state_of_charge;
         can0_BMSHeartbeat_Write(&msg);
       }
     }
