@@ -6,8 +6,8 @@
 
 #include <CANlib.h>
 
-const uint8_t can_brakethrottle_period = can0_FrontCanNodeBrakeThrottle_period; //20; //1000 / can0_FrontCanNodeBrakeThrottle_frequency;
-const uint8_t can_wheel_speed_period = can0_FrontCanNodeWheelSpeed_period; //100; //1000 / can0_FrontCanNodeWheelSpeed_frequency;
+const uint8_t can_brakethrottle_period = can0_FrontCanNodeBrakeThrottle_period;
+const uint8_t can_wheel_speed_period = can0_FrontCanNodeWheelSpeed_period;
 
 static bool resettingPeripheral = false;
 
@@ -114,7 +114,7 @@ void handle_can_error(Can_ErrorID_T error) {
         Serial_Print("Can_Error_UNRECOGNIZED_ERROR\n");
         break;
       case Can_Error_TX_BUFFER_FULL:
-        //Serial_Print("Can_Error_TX_BUFFER_FULL\n");
+        Serial_Print("Can_Error_TX_BUFFER_FULL\n");
         break;
       case Can_Error_RX_BUFFER_FULL:
         Serial_Print("Can_Error_RX_BUFFER_FULL\n");
@@ -122,7 +122,6 @@ void handle_can_error(Can_ErrorID_T error) {
     }
     if (!resettingPeripheral) {
       resettingPeripheral = true;
-      // TODO add this to CAN library
       CAN_ResetPeripheral();
       Can_Init(500000);
     }

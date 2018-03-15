@@ -3,8 +3,7 @@
 
 #define ADC_UPDATE_PERIOD_MS 10
 
-// TODO these are garbage numbers (taken from MY17, need fixing)
-#define ACCEL_1_LOWER_BOUND 255 // Not connectorized
+#define ACCEL_1_LOWER_BOUND 255
 #define ACCEL_1_UPPER_BOUND 799
 #define ACCEL_2_LOWER_BOUND 257
 #define ACCEL_2_UPPER_BOUND 677
@@ -17,7 +16,6 @@
 #define MICROSECONDS_PER_SECOND_F 1000000.0
 // 1000 millirevs = 1 rev
 #define MILLIREVS_PER_REV_F 1000.0
-// Pointless comment to not break pattern
 #define SECONDS_PER_MINUTE 60
 
 void update_adc(Input_T *input);
