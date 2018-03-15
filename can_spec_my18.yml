@@ -74,7 +74,7 @@ buses:
     messages:
       FrontCanNodeBrakeThrottle:
         can_id: 0x0D0
-        period: .2s
+        period: 0.2s
         is_big_endian: true
         segments:
           accel_1:
