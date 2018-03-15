@@ -2,13 +2,13 @@ FROM debian:stretch-slim
 
 WORKDIR /root/
 
-COPY toolchain/ toolchain/
+COPY scripts/ scripts/
 
 # Installing packages
-RUN toolchain/apt.sh clean
+RUN scripts/toolchain/apt.sh clean
 
 # Getting and making lpc21isp
-RUN toolchain/lpc.sh
+RUN scripts/toolchain/lpc.sh
 
 # Getting repos
 COPY ./ MY18/
