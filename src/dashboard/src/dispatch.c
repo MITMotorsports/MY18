@@ -25,8 +25,10 @@ void dispatch_init() {
 
     page_manager_init(&page_manager, &carstats);
 
-    oled_init(&oled, NHD_0420CW_NLINES, NHD_0420CW_NCOLS);
+    oled_init(&oled);
+    Delay(100);
     oled_init_commands(&oled);
+    Delay(100);
     oled_clear(&oled);
     Delay(100);
 

@@ -6,6 +6,8 @@
 
 #define __pos2idx(___oled, ___line, ___col) (___line*___oled->ncols + ___col)
 
+#define NHD_0420CW_NLINES 4
+
 void _OLED_send_serial(unsigned char c, unsigned char temp) {
     unsigned char i;
     uint8_t val;
@@ -55,9 +57,9 @@ void OLED_data(unsigned char c) {
     _OLED_send_serial(c, 0xFA);
 }
 
-void oled_init(NHD_US2066_OLED *oled, int nlines, int ncols) {
-    oled->nlines = nlines;
-    oled->ncols = ncols;
+void oled_init(NHD_US2066_OLED *oled) {
+    oled->nlines = OLED_NLINES;
+    oled->ncols = OLED_NCOLS;
 
     oled->line = 0;
     oled->col = 0;

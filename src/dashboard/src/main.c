@@ -9,8 +9,6 @@
 #include <string.h>
 #include <math.h>
 
-NHD_US2066_OLED oled;
-
 int main(void) {
     Board_Chip_Init();
     Board_GPIO_Init();
@@ -31,12 +29,6 @@ int main(void) {
     LED_AMS_off();
 
     dispatch_init();
-
-    Delay(100);
-    oled_init(&oled, NHD_0420CW_NLINES, NHD_0420CW_NCOLS);
-    Delay(100);
-    oled_init_commands(&oled);
-    Delay(100);
 
     while (1) {
         dispatch_update();

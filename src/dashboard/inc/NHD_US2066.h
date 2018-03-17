@@ -11,13 +11,12 @@
 
 #include "NHD_US2066_charset.h"
 
-#define NHD_0420CW_NLINES 4
-#define NHD_0420CW_NCOLS  20
+#include "oled_config.h"
 
 typedef struct {
     // need to be nlines * ncols long
-    char buf[NHD_0420CW_NLINES * NHD_0420CW_NCOLS];
-    bool lineupdates[NHD_0420CW_NLINES];
+    char buf[OLED_NLINES * OLED_NCOLS];
+    bool lineupdates[OLED_NLINES];
 
     uint8_t contrast;
 
@@ -26,7 +25,7 @@ typedef struct {
 } NHD_US2066_OLED;
 
 // Initialize an oled struct for a screen with nlines and ncols
-void oled_init(NHD_US2066_OLED *oled, int nlines, int ncols);
+void oled_init(NHD_US2066_OLED *oled);
 
 // Run the commands needed to initialize the oled for viewing
 void oled_init_commands(NHD_US2066_OLED *oled);
