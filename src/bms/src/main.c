@@ -152,7 +152,7 @@ int main(void) {
     // }
 
     // Setting fault pin high
-    Board_Contactors_Set(true);
+    // Board_Contactors_Set(true);
 
     // if(Board_Contactors_Closed()) {
     //     Board_Println_BLOCKING("Fault Pin high");
