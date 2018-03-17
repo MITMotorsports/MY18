@@ -9,7 +9,6 @@ void SOC_Init(BMS_PACK_STATUS_T *ps) {
 
 void SOC_Estimate(BMS_PACK_STATUS_T *ps) {
 	ps->state_of_charge = init_soc - (((ps->pack_energy_wH*100)/(MAX_CHARGE)));
-
 	if(ps->state_of_charge > 100) {
 		ps->state_of_charge = 100;
 	}

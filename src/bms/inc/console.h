@@ -20,7 +20,7 @@ typedef struct {
 
 static const BMS_COMMAND_T commands[] = {
   { "get",     C_GET,            1, "Get a value. Usage: get [field]"                },
-  { "set",     C_GET,            2, "Set a value. Usage: set [field] [value]"        },
+  { "set",     C_SET,            2, "Set a value. Usage: set [field] [value]"        },
   { "help",    C_HELP,           1, "Get help. Usage: help [command name]"           },
   { "config",  C_CONFIG,         0, "Reinitialize BMS, reload EEPROM. Usage: config" },
   { "dis",     C_DIS,            0, "Go into discharge mode. Usage: dis [on|off]"    },
