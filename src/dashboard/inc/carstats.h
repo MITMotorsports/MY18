@@ -16,8 +16,6 @@ typedef struct {
 
     // motor controller torque
     int torque_mc;
-    // torque from can node
-    int torque_requested;
     int motor_rpm;
     int front_left_wheel_speed;
     int front_right_wheel_speed;
