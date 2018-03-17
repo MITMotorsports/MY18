@@ -89,7 +89,7 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
 
       if ((start_index + i)->error == true) {
         msg.type = i + 1;
-        ms.soc = ps->state_of_charge;
+        msg.soc = ps->state_of_charge;
         can0_BMSHeartbeat_Write(&msg);
       }
     }
