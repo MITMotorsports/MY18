@@ -6,7 +6,10 @@ void initReadyToDrive() {
 }
 
 void loopReadyToDrive() {
-	if (buttons.rtdBtnPressed && brake_and_throttle_state.brake_1 && brake_and_throttle_state.brake_2) {
+	if (button_presses.RTD && 
+		(brake_and_throttle_state.brake_1 > CONFLICT_BRAKE_RAW || 
+		brake_and_throttle_state.brake_2 > CONFLICT_BRAKE_RAW)) {
+
 		changeCarMode(CAR_STATE_DRIVING);
 	}
 }

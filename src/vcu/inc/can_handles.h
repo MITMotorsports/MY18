@@ -7,12 +7,21 @@
 #include "state.h"
 
 #define CAN_DEAD_DURATION 400 // TODO: Should be able to read this from CAN spec for each message
+#define SEND_DASH_MSG_WAIT_DURATION 200 // ms
+
+uint32_t lastDashMsgTime;
 
 void handleBrakeThrottleMsg(Frame* msg);
 
 void handleMCVoltageMsg(Frame* msg);
 
 void handleBMSHeartbeatMsg(Frame* msg);
+
+void handleCellVoltagesMsg(Frame* msg);
+
+void handleButtonRequest(Frame* msg);
+
+void sendDashMsg();
 
 void sendTorqueCmdMsg(int16_t torque, int16_t break_and_throttle_conflict);
 

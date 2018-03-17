@@ -17,7 +17,7 @@ void beforeLoop();
 
 void afterLoop();
 
-void loopVCU(USART_HandleTypeDef* USARTHandle);
+void loopVCU();
 
 void handleCanVCU(CAN_HandleTypeDef* CanHandle);
 

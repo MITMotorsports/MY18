@@ -25,12 +25,18 @@
 #define USARTx_CLK_ENABLE()			  __HAL_RCC_USART1_CLK_ENABLE()
 #define USARTx_GPIO_CLK_ENABLE()	  __HAL_RCC_GPIOB_CLK_ENABLE()
 
+#define USARTx_FORCE_RESET()          __HAL_RCC_USART1_FORCE_RESET()
+#define USARTx_RELEASE_RESET()        __HAL_RCC_USART1_RELEASE_RESET()
+
 #define USARTx_TX_PIN                 GPIO_PIN_6
 #define USARTx_TX_GPIO_PORT           GPIOB
 #define USARTx_TX_AF                  GPIO_AF7_USART1
 #define USARTx_RX_PIN                 GPIO_PIN_7
 #define USARTx_RX_GPIO_PORT           GPIOB
 #define USARTx_RX_AF                  GPIO_AF7_USART1
+
+#define USARTx_RX_IRQn                USART1_IRQn
+#define USARTx_RX_IRQHandler          USART1_IRQHandler
 
 // CAN ------------------------------------------------------------
 #define CANx                            CAN1

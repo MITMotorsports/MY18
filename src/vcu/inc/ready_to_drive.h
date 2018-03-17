@@ -4,6 +4,7 @@
 
 #include "stdio.h"
 #include "state.h"
+#include "brake_throttle.h"
 
 void initReadyToDrive();
 void loopReadyToDrive();

@@ -77,6 +77,8 @@ int main(void)
   HAL_Delay(1000);
   HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
 
+  printf("\r\nMEGALV PERIPHERALS ONLINE\r\n");
+
   setupVCU();
 
   while(1)
@@ -94,7 +96,7 @@ PUTCHAR_PROTOTYPE
 {
   /* Place your implementation of fputc here */
   /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
-  HAL_USART_Transmit(&USARTHandle, (uint8_t *)&ch, 1, 0xFFFF); 
+  HAL_USART_Transmit_IT(&USARTHandle, (uint8_t *)&ch, 0xFFFF); 
 
   return ch;
 }

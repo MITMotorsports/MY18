@@ -14,6 +14,10 @@
 
 uint8_t carMode;
 
+typedef struct {
+	int16_t packVoltage;
+} BMS_CellVoltage;
+
 typedef struct
 {
 	int16_t busVoltage;
@@ -26,7 +30,6 @@ typedef struct
 typedef struct
 {
 	uint32_t frontCanNode;
-	uint32_t dash;
 	uint32_t bms;
 	uint32_t mc;
 
@@ -49,12 +52,23 @@ typedef struct
 	uint32_t implausibility_ticks;
 } VCU_ImplausibilityConflict;
 
+typedef struct
+{
+	bool RTD;
+	bool DriverReset;
+	bool ScrollSelect;
+} ButtonBank_Presses;
+
 // ACTUAL OBJECTS
 VCU_BoardHeartbeats board_heartbeats_state;
 VCU_BrakeAndThrottle brake_and_throttle_state;
 VCU_ImplausibilityConflict implaus_conflict_state;
 
 MC_Voltage mc_voltage;
+
+BMS_CellVoltage bms_voltage;
+
+ButtonBank_Presses button_presses;
 
 void initVCUState(void);
 

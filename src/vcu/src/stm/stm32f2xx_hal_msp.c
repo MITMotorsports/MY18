@@ -1,39 +1,3 @@
-/**
-  ******************************************************************************
-  * @file    CAN/CAN_Networking/Src/stm32f2xx_hal_msp.c
-  * @author  MCD Application Team
-  * @version V1.1.3
-  * @date    17-March-2017
-  * @brief   HAL MSP module.    
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
-  *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  *
-  ******************************************************************************  
-  */ 
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -60,20 +24,29 @@ void HAL_USART_MspInit(USART_HandleTypeDef *husart) {
 
   HAL_GPIO_Init(USARTx_RX_GPIO_PORT, &GPIO_InitStruct);
 
-  // YOU WOULD PUT INTERRUPT INIT CODE HERE IF YOU NEEDED TO USE IT
+  /*##-3- Configure the NVIC #################################################*/
+  /* NVIC configuration for CAN1 Reception complete interrupt */
+  HAL_NVIC_SetPriority(USARTx_RX_IRQn, 2, 0);
+  HAL_NVIC_EnableIRQ(USARTx_RX_IRQn);
 
   // YOU WOULD PUT DMA INIT CODE HERE IF YOU NEEDED TO USE IT
 }
 
-/**
-  * @brief CAN MSP Initialization 
-  *        This function configures the hardware resources used in this example: 
-  *           - Peripheral's clock enable
-  *           - Peripheral's GPIO Configuration  
-  *           - NVIC configuration for DMA interrupt request enable
-  * @param hcan: CAN handle pointer
-  * @retval None
-  */
+void HAL_USART_MspDeInit(USART_HandleTypeDef *husart) {
+  /*##-1- Reset peripherals ##################################################*/
+  USARTx_FORCE_RESET();
+  USARTx_RELEASE_RESET();
+
+  /*##-2- Disable peripherals and GPIO Clocks ################################*/
+  /* De-initialize the USART1 TX GPIO pin */
+  HAL_GPIO_DeInit(USARTx_TX_GPIO_PORT, USARTx_TX_PIN);
+  /* De-initialize the USART1 RX GPIO pin */
+  HAL_GPIO_DeInit(USARTx_RX_GPIO_PORT, USARTx_RX_PIN);
+  
+  /*##-4- Disable the NVIC for CAN reception #################################*/
+  HAL_NVIC_DisableIRQ(USARTx_RX_IRQn);
+}
+
 void HAL_CAN_MspInit(CAN_HandleTypeDef* hcan)
 {
   GPIO_InitTypeDef   GPIO_InitStruct;
@@ -109,14 +82,6 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef* hcan)
   HAL_NVIC_EnableIRQ(CANx_RX_IRQn);
 }
 
-/**
-  * @brief CAN MSP De-Initialization 
-  *        This function frees the hardware resources used in this example:
-  *          - Disable the Peripheral's clock
-  *          - Revert GPIO to their default state
-  * @param hcan: CAN handle pointer
-  * @retval None
-  */
 void HAL_CAN_MspDeInit(CAN_HandleTypeDef *hcan)
 {
   /*##-1- Reset peripherals ##################################################*/
@@ -133,16 +98,3 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef *hcan)
   HAL_NVIC_DisableIRQ(CANx_RX_IRQn);
 }
 
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -9,7 +9,6 @@
 void initVCUState(void) {
 	// BOARD HEARTBEATS
 	board_heartbeats_state.frontCanNode = HAL_GetTick();
-	board_heartbeats_state.dash = HAL_GetTick();
 	board_heartbeats_state.bms = HAL_GetTick();
     board_heartbeats_state.mc = HAL_GetTick();
 
@@ -30,6 +29,14 @@ void initVCUState(void) {
     mc_voltage.outVoltage = 0;
     mc_voltage.VAB_Vd_Voltage = 0;
     mc_voltage.VBC_Vq_Voltage = 0;
+
+    // BMS PACK VOLTAGE
+    bms_voltage.packVoltage = 0;
+
+    // BUTTON PRESSES
+    button_presses.RTD = 0;
+    button_presses.DriverReset = 0;
+    button_presses.ScrollSelect = 0;
 
 	// CAR Mode
 	changeCarMode(CAR_STATE_LV_ONLY);

@@ -6,7 +6,7 @@ void initLVOnly() {
 }
 
 void loopLVOnly() {
-	if (buttons.driverResetPressed) {
+	if (button_presses.DriverReset) {
 		changeCarMode(CAR_STATE_PRECHARGING);
 	}
 }

@@ -7,14 +7,16 @@
 #include "state.h"
 
 #define PRECHARGE_TOO_LONG_DURATION		10 * 1000 // seconds
-#define DC_BUS_VOLTAGE_THRESHOLD		// NOPE, NEED TO GET BMS VOLTAGE TO CALC 90% OF THAT
 #define DC_BUS_VOLTAGE_SCALE_FACTOR		10
 
 void initPrecharge();
 
 void loopPrecharge();
 
+int16_t calcTargetVoltage(int16_t packVoltage);
+
 uint32_t prechargeStartTime;
+int16_t targetVoltage;
 
 
 #endif
