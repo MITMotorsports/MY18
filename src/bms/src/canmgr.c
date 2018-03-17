@@ -82,17 +82,34 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
   if ((msTicks - last_time) > can0_BMSHeartbeat_period) {
     const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
-    ERROR_STATUS_T *start_index = Get_Errors();
+    ERROR_STATUS_T *errors = Get_Errors();
+    can0_BMSHeartbeat_T msg;
 
-    for (int i = 0; i < (ERROR_NUM_ERRORS + 2); i++) {
-      can0_BMSHeartbeat_T msg;
+    bool* first_error = (bool*)&msg;
 
-      if ((start_index + i)->error == true) {
-        msg.type = i + 1;
-        msg.soc = ps->state_of_charge;
-        can0_BMSHeartbeat_Write(&msg);
+    int i;
+
+    for (i = 0; i<15;i++) {
+      if((errors+i)->error == true) {
+        *(first_error + i) = true; //iterate through bools in msg struct
+      } else {
+        *(first_error + i) = false;
       }
     }
+    msg.soc = ps->state_of_charge;
+    can0_BMSHeartbeat_Write(&msg);
+
+    // ERROR_STATUS_T *start_index = Get_Errors();
+
+    // for (int i = 0; i < (ERROR_NUM_ERRORS + 2); i++) {
+    //   can0_BMSHeartbeat_T msg;
+
+    //   if ((start_index + i)->error == true) {
+    //     msg.type = i + 1;
+    //     msg.soc = ps->state_of_charge;
+    //     can0_BMSHeartbeat_Write(&msg);
+    //   }
+    // }
 
     last_time = msTicks;
   }
