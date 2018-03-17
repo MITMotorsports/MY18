@@ -3,6 +3,7 @@
 #include "main.h"
 
 void initPrecharge() {
+	printf("\r\nSTARTING PRECHARGE\r\n");
 	prechargeStartTime = HAL_GetTick();
 }
 

@@ -34,14 +34,6 @@ void handleBMSHeartbeatMsg(Frame* msg) {
 	board_heartbeats_state.bms = HAL_GetTick();
 }
 
-void handleDashRequestMsg(Frame* msg) {
-	can0_DashRequest_T unpacked_msg;
-	unpack_can0_DashRequest(msg, &unpacked_msg);
-
-	switch()
-
-	board_heartbeats_state.dash = HAL_GetTick();
-}
 
 void sendTorqueCmdMsg(int16_t torque, int16_t break_and_throttle_conflict) {
 	can0_MCCommand_T msg;

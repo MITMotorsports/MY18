@@ -1,6 +1,9 @@
 
 #include "state.h"
+#include "lv_only.h"
 #include "precharge.h"
+#include "charge_fault.h"
+#include "ready_to_drive.h"
 #include "driving.h"
 
 void initVCUState(void) {
@@ -27,9 +30,6 @@ void initVCUState(void) {
     mc_voltage.outVoltage = 0;
     mc_voltage.VAB_Vd_Voltage = 0;
     mc_voltage.VBC_Vq_Voltage = 0;
-
-    // DASH BUTTONS
-    buttons.rtdBtnPressed = 0;
 
 	// CAR Mode
 	changeCarMode(CAR_STATE_LV_ONLY);

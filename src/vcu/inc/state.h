@@ -49,28 +49,12 @@ typedef struct
 	uint32_t implausibility_ticks;
 } VCU_ImplausibilityConflict;
 
-typedef struct
-{
-	uint8_t rtd_enable;
-	uint8_t rtd_disable;
-	uint8_t limp_mode_enable;
-	uint8_t limp_mode_disable;
-	uint8_t traction_control_enable;
-	uint8_t traction_control_disable;
-	uint8_t active_aero_enable;
-	uint8_t active_aero_disable;
-	uint8_t fan_enable;
-	uint8_t fan_disable;
-} DashRequestState;
-
 // ACTUAL OBJECTS
 VCU_BoardHeartbeats board_heartbeats_state;
 VCU_BrakeAndThrottle brake_and_throttle_state;
 VCU_ImplausibilityConflict implaus_conflict_state;
 
 MC_Voltage mc_voltage;
-
-DashRequestState dashRequestState;
 
 void initVCUState(void);
 

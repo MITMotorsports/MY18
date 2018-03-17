@@ -14,8 +14,6 @@ void handleMCVoltageMsg(Frame* msg);
 
 void handleBMSHeartbeatMsg(Frame* msg);
 
-void handleDashRequestMsg(Frame* msg);
-
 void sendTorqueCmdMsg(int16_t torque, int16_t break_and_throttle_conflict);
 
 #endif
