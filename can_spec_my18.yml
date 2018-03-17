@@ -7,8 +7,12 @@ boards:
     arch: arm
     publish:
       can0:
-        - FrontCanNodeBrakeThrottle
+        - FrontCanNodeOutput
         - FrontCanNodeWheelSpeed
+    subscribe:
+      can0:
+        - RearCanNodeWheelSpeed
+        - VcuToDash
   rear_can_node:
     arch: arm
     publish:
@@ -20,13 +24,14 @@ boards:
       can0:
         - VcuToDash
         - BMSRequest
-        - MC_Command
+        - MCCommand
     subscribe:
       can0:
-        - FrontCanNodeBrakeThrottle
+        - FrontCanNodeOutput
         - Dash_Request
+        - MCVoltage
   dash:
-    arch: arm
+    arch: avr
     publish:
       can0:
         - Dash_Request
@@ -34,7 +39,7 @@ boards:
       can0:
         - VcuToDash
         - BMSHeartbeat
-        - FrontCanNodeBrakeThrottle
+        - FrontCanNodeOutput
         - RearCanNodeWheelSpeed
   bms:
     arch: arm
@@ -52,51 +57,40 @@ boards:
   mc:
     subscribe:
       can0:
-        - MC_Command
+        - MCCommand
+    publish:
+      can0:
+        - MCVoltage
   current_sensor:
     publish:
       can0:
         - CurrentSensor_Current
         - CurrentSensor_Voltage
         - CurrentSensor_Power
-  elcon:
-    publish:
-      can0:
-        - ElconHeartbeat
-    subscribe:
-      can0:
-        - ElconCommand
 
 buses:
   can0:
     baudrate: 500000
     is_extended: false
     messages:
-      FrontCanNodeBrakeThrottle:
+      FrontCanNodeOutput:
         can_id: 0x0D0
-        period: 0.2s
         is_big_endian: true
         segments:
-          accel_1:
+          requested_torque:
             position: 0
             length: 16
-            c_type: uint16_t
-            signed: false
-          accel_2:
+            c_type: int16_t
+            signed: true
+            unit: daJ # From motor controller manual
+          is_throttle_implausible:
             position: 16
-            length: 16
-            c_type: uint16_t
-            signed: false
-          brake_1:
-            position: 32
-            length: 16
-            c_type: uint16_t
-            signed: false
-          brake_2:
-            position: 48
-            length: 16
-            c_type: uint16_t
-            signed: false
+            length: 1
+            c_type: bool
+          has_brake_throttle_conflict:
+            position: 17
+            length: 1
+            c_type: bool
       FrontCanNodeWheelSpeed:
         can_id: 0x0F0
         is_big_endian: true
@@ -425,9 +419,9 @@ buses:
             c_type: int32_t
             signed: false
             unit: Whrs
-      MC_Command:
+      MCCommand:
         can_id: 0x0C0 # From manual
-        period: 0.4s  # MC needs a message at 2 Hz or higher
+        period: 50ms  # MC needs a message at 2 Hz or higher
         is_big_endian: true
         segments:
           torque:
@@ -459,76 +453,32 @@ buses:
             length: 16
             c_type: uint16_t
             unit: daJ # 10 joules
-      BMS_Mode:
-        can_id: 0x601
-        period: 1s
+      MCVoltage:
+        can_id: 0x0A7
+        period: 1cs
         is_big_endian: true
         segments:
-          requested_mode:
-            position: 0
-            length: 1
-            c_type: enum
-            enum:
-              CHARGE: 0x0
-              BALANCE: 0x1
-      ElconCommand:
-        can_id: 0x1806E5F4
-        period: 1s
-        is_big_endian: true
-        segments:
-          max_terminal_voltage:
+          busVoltage:
             position: 0
             length: 16
-            c_type: uint16_t
-            signed: false
             unit: dV
-          max_current:
+            signed: true
+            c_type: int16_t
+          outVoltage:
             position: 16
             length: 16
-            c_type: uint16_t
-            signed: false
-            unit: dA
-          control:
-            position: 32
-            length: 1
-            c_type: enum
-            enum:
-              stop: 0x0
-              start: 0x1
-      ElconHeartbeat:
-        can_id: 0x18FF50E5
-        period: 1s
-        is_big_endian: true
-        segments:
-          output_voltage:
-            position: 0
-            length: 16
-            c_type: uint16_t
-            signed: false
             unit: dV
-          output_current:
-            position: 16
-            length: 16
-            c_type: uint16_t
-            signed: false
-            unit: dA
-          has_hardware_failure:
+            signed: true
+            c_type: int16_t
+          VAB_Vd_Voltage:
             position: 32
-            length: 1
-            c_type: bool
-          over_temp_protection_on:
-            position: 33
-            length: 1
-            c_type: bool
-          is_input_voltage_wrong:
-            position: 34
-            length: 1
-            c_type: bool
-          battery_voltage_not_detected: # If battery voltage is not detected, the charger stays turned off the prevent reverse polarity
-            position: 35
-            length: 1
-            c_type: bool
-          elcon_is_comms_bad:
-            position: 36
-            length: 1
-            c_type: bool
+            length: 16
+            unit: dV
+            signed: true
+            c_type: int16_t
+          VBC_Vq_Voltage:
+            position: 48
+            length: 16
+            unit: dV
+            signed: true
+            c_type: int16_t
