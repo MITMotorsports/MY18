@@ -61,8 +61,6 @@ void draw_traction_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 void draw_wheel_speed_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 
 void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
-    draw_nav_line(pm, oled);
-
     switch (pm->page) {
         case DASH_PAGE_CRITICAL:
             draw_critical_page(pm, oled);
@@ -82,15 +80,26 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
 }
 
 void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
-    oled_clearline(oled, 0);
-    oled_set_pos(oled, 0, 0);
-    oled_print(oled, "PWR  50kW");
-    oled_rprint(oled, "PACK 300V");
+    oled_set_pos(oled, 0, 1);
+    oled_print_char(oled, CHAR_LEFT_BRACKET);
+    oled_print(oled, "AERO");
+    oled_print_char(oled, CHAR_RIGHT_BRACKET);
 
     oled_clearline(oled, 1);
     oled_set_pos(oled, 1, 0);
-    oled_print(oled, "TEMP 30C");
+    oled_print(oled, "TRQ 30/50");
+    oled_rprint(oled, "PACK 300V");
+
+    oled_clearline(oled, 2);
+    oled_set_pos(oled, 2, 0);
+    oled_print(oled, "PWR 50kW");
     oled_rprint(oled, "CELL 3.3V");
+
+    
+    oled_clearline(oled, 3);
+    oled_set_pos(oled, 3, 0);
+    oled_print(oled, "SPD 100kph");
+    oled_rprint(oled, "TEMP  30C");
 }
 
 void draw_takeover_page(page_manager_t *pm, NHD_US2066_OLED *oled) {

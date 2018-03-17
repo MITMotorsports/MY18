@@ -17,7 +17,7 @@ static NHD_US2066_OLED oled;
 static uint32_t nextOLEDUpdate;
 
 #define BUTTON_DOWN false
-#define OLED_UPDATE_INTERVAL_MS 30
+#define OLED_UPDATE_INTERVAL_MS 100
 
 void dispatch_init() {
     init_button_state(&left_button);
