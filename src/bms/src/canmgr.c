@@ -81,9 +81,6 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
 
   if ((msTicks - last_time) > can0_BMSHeartbeat_period) {
     const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
-    can0_BMSHeartbeat_T msg;
-    msg.soc = ps->state_of_charge;
-    can0_BMSHeartbeat_Write(&msg);
 
     ERROR_STATUS_T *start_index = Get_Errors();
 
@@ -92,6 +89,7 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
 
       if ((start_index + i)->error == true) {
         msg.type = i + 1;
+        ms.soc = ps->state_of_charge;
         can0_BMSHeartbeat_Write(&msg);
       }
     }
