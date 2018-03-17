@@ -14,6 +14,9 @@ NHD_US2066_OLED oled;
 int main(void) {
     Board_Chip_Init();
     Board_GPIO_Init();
+    // need a delay after init or the display
+    // will sometimes be messed up
+    Delay(100);
 
     init_can0_dash();
 
@@ -34,15 +37,13 @@ int main(void) {
 
     dispatch_init();
 
-    while (1) {
-        dispatch_update();
-        Delay(1);
-    }
-
-
     Delay(100);
     oled_init(&oled, NHD_0420CW_NLINES, NHD_0420CW_NCOLS);
     Delay(100);
+
+    while (1) {
+        dispatch_update();
+    }
 
     oled_init_commands(&oled);
     oled_print(&oled, "Testing CAN");
