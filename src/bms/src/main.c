@@ -75,6 +75,7 @@ void Process_Input(BMS_INPUT_T *bms_input) {
     Board_CAN_Receive(bms_input);
     Board_GetModeRequest(&console_output, bms_input);
     Board_LTC6804_ProcessInputs(&pack_status, &bms_state);
+    SOC_Estimate(&pack_status);
 
     // Pack voltage estimation
     BMS_VOLTAGE_ESTIMATE_T vol = Pack_Estimate_Total_Voltage(&pack_config, &pack_status);
@@ -126,6 +127,7 @@ int main(void) {
   Board_ADC_Init();
   Board_CAN_Init();
   EEPROM_Init(LPC_SSP1, EEPROM_BAUD, EEPROM_CS_PIN);
+  SOC_Init(&pack_status);
 
   Error_Init();
   SSM_Init(&bms_input, &bms_state, &bms_output);

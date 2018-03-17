@@ -9,6 +9,7 @@
 #include "console.h"
 #include "ssm.h"
 #include "error_handler.h"
+#include "soc.h"
 
 #define EEPROM_CS_PIN 0, 7
 #define PRE_ERROR_CHECK_TIMEOUT 500
