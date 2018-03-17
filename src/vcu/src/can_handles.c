@@ -1,8 +1,6 @@
 
 #include "can_handles.h"
 
-int16_t disabled;
-
 void handleBrakeThrottleMsg(Frame* msg) {
 	can0_FrontCanNodeBrakeThrottle_T unpacked_msg;
 	unpack_can0_FrontCanNodeBrakeThrottle(msg, &unpacked_msg);
@@ -16,15 +14,11 @@ void handleBrakeThrottleMsg(Frame* msg) {
 }
 
 void sendTorqueCmdMsg(int16_t torque, int16_t break_and_throttle_conflict) {
-	if (break_and_throttle_conflict) {
-		disabled = 1;
-	}
-
 	can0_MC_Command_T msg;
 	msg.torque = torque;
 	msg.speed = 0;
 	msg.direction_is_counterclockwise = 0;
-	msg.inverter_enabled = 1 - disabled;
+	msg.inverter_enabled = 1;
 	msg.discharge_enabled = 0;
 	msg.torque_limit = 0;
 

@@ -30,8 +30,9 @@ void loopVCU(USART_HandleTypeDef* uhandle) {
     // printf("\r\nhrt: %d\r\n", board_heartbeats_state.frontCanNode);
     // printf("\r\naccel: %d\r\n", localBTState.accel_1);
     // printf("\r\ntrq: %d\r\n", torque_command);
+    printf("\r\nticks: %d\r\n", HAL_GetTick());
 
-    // HAL_Delay(500);
+    HAL_Delay(50);
 
     sendTorqueCmdMsg(torque_command, implaus_conflict_state.has_brake_throttle_conflict);
 }
