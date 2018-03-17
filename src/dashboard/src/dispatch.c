@@ -47,6 +47,8 @@ void dispatch_update() {
         page_manager_prev_page(&page_manager);
     }
 
+    can_update_carstats(&carstats);
+
     if (msTicks > nextOLEDUpdate) {
         nextOLEDUpdate = msTicks + OLED_UPDATE_INTERVAL_MS;
         page_manager_update(&page_manager, &oled);
