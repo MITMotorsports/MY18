@@ -48,10 +48,34 @@ void dispatch_update() {
     }
 
     can_update_carstats(&carstats);
+    update_lights();
 
     if (msTicks > nextOLEDUpdate) {
         nextOLEDUpdate = msTicks + OLED_UPDATE_INTERVAL_MS;
         page_manager_update(&page_manager, &oled);
         oled_update(&oled);
     }
+}
+
+void update_lights() {
+    if (carstats->vcu_data.rtd_light_on)
+        LED_RTD_on();
+    else
+        LED_RTD_off();
+
+    if (carstats->vcu_data.hv_light_on)
+        LED_HV_on();
+    else
+        LED_HV_off();
+
+    if (carstats->vcu_data.imd_light_on)
+        LED_IMD_on();
+    else
+        LED_IMD_off();
+
+    if (carstats->vcu_data.ams_light_on)
+        LED_AMS_on();
+    else
+        LED_AMS_off();
+
 }
