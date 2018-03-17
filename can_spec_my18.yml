@@ -9,6 +9,10 @@ boards:
       can0:
         - FrontCanNodeBrakeThrottle
         - FrontCanNodeWheelSpeed
+    subscribe:
+      can0:
+        - RearCanNodeWheelSpeed
+        - VcuToDash
   rear_can_node:
     arch: arm
     publish:
@@ -19,44 +23,31 @@ boards:
     publish:
       can0:
         - VcuToDash
-        - BMSState
-        - BMS_VCU_Switch
-        - MC_Command
+        - BMSRequest
+        - MCCommand
     subscribe:
       can0:
         - FrontCanNodeBrakeThrottle
-        - Dash_Request
+        - DashRequest
+        - MCVoltage
   dash:
     arch: avr
     publish:
       can0:
-        - Dash_Request
+        - DashRequest
     subscribe:
       can0:
         - VcuToDash
-        - BMSErrors
+        - BMSHeartbeat
         - FrontCanNodeBrakeThrottle
         - RearCanNodeWheelSpeed
   bms:
     arch: arm
     publish:
       can0:
-        - BMSErrors
-        - BmsPackStatus
-        - BMS_SOC
-        - BMSCellTemps
-    subscribe:
-      can0:
-        - BMSState
-        - BMS_VCU_Switch
-        - BMS_CSB_Switch
-  csb:
-    arch: arm
-    publish:
-      can0:
-        - BMS_CSB_Switch
-        - BMS_Mode
-        - ElconCommand
+        - BMSHeartbeat
+        - CellVoltages
+        - CellTemperatures
     subscribe:
       can0:
         - BmsPackStatus
@@ -71,20 +62,16 @@ boards:
   mc:
     subscribe:
       can0:
-        - MC_Command
+        - MCCommand
+    publish:
+      can0:
+        - MCVoltage
   current_sensor:
     publish:
       can0:
         - CurrentSensor_Current
         - CurrentSensor_Voltage
         - CurrentSensor_Power
-  elcon:
-    publish:
-      can0:
-        - ElconHeartbeat
-    subscribe:
-      can0:
-        - ElconCommand
 
 buses:
   can0:
@@ -93,7 +80,7 @@ buses:
     messages:
       FrontCanNodeBrakeThrottle:
         can_id: 0x0D0
-        frequency: 50Hz
+        period: 0.2s
         is_big_endian: true
         segments:
           accel_1:
@@ -118,8 +105,8 @@ buses:
             signed: false
       FrontCanNodeWheelSpeed:
         can_id: 0x0F0
-        frequency: 10Hz
         is_big_endian: true
+        period: 0.2s
         segments:
           front_right_wheel_speed:
             position: 0
@@ -133,83 +120,63 @@ buses:
             c_type: uint32_t
             signed: false
             unit: mRPM
-      BMSCellTemps:
+      CellTemperatures:
         can_id: 0x0F1
-        frequency: 10Hz
+        period: 0.1s
         is_big_endian: true
         segments:
-          avg_cell_temp:
+          min:
             position: 0
-            length: 15
+            length: 10
             c_type: int16_t
             signed: false
-            unit: C
-          min_cell_temp:
-            position: 15
-            length: 15
-            c_type: int16_t
-            signed: false
-            unit: C
-          min_cell_temp_id:
-            position: 30
+            unit: dC
+          argmin:
+            position: 10
             length: 9
             c_type: uint16_t
             signed: false
-          max_cell_temp:
-            position: 39
-            length: 5
+          max:
+            position: 19
+            length: 10
             c_type: int16_t
             signed: false
-            unit: C
-          max_cell_temp_id:
-            position: 54
+            unit: dC
+          argmax:
+            position: 29
             length: 9
             c_type: uint16_t
             signed: false
-      BmsPackStatus:
+      CellVoltages:
         can_id: 0x0F2
-        frequency: 10Hz
+        period: 0.1s
         is_big_endian: true
         segments:
-          pack_voltage:
-            position: 0
-            length: 9
-            c_type: uint16_t
-            signed: false
-            unit: mV # check
-          pack_current:
-            position: 9
-            length: 11
-            c_type: int16_t
-            signed: true
-          balancing_needed:
-            position: 20
-            length: 1
-            c_type: bool
-            signed: false
-          min_cell_voltage:
+          min:
             position: 30
             length: 10
             c_type: uint16_t
             signed: false
-          min_cell_voltage_id:
+            unit: mV
+          argmin:
             position: 40
             length: 7
             c_type: uint8_t
             signed: false
-          max_cell_voltage:
+          max:
             position: 47
             length: 10
             c_type: uint16_t
             signed: false
-          max_cell_voltage_id:
+            unit: mV
+          argmax:
             position: 57
             length: 7
             c_type: uint8_t
             signed: false
-      BMSErrors:
+      BMSHeartbeat:
         can_id: 0x0D4
-        frequency: 50Hz
+        period: 0.02s
         is_big_endian: true
         segments:
           type:
@@ -231,6 +198,7 @@ buses:
               CONFLICTING_MODE_REQUESTS: 0xB
               VCU_DEAD: 0xC
               CONTROL_FLOW: 0xD
+<<<<<<< HEAD
               OTHER: 0xE
       BMS_SOC:
         can_id: 0x0D5
@@ -290,15 +258,31 @@ buses:
       BMSState:
         can_id: 0x0D6
         frequency: 1Hz
+=======
+              BLOWN_FUSE: 0xE
+              CONTACTOR_WELDED: 0xF
+              OTHER: 0x10
+          soc:
+            position: 4
+            length: 8
+            c_type: uint8_t
+      BMSRequest:
+        can_id: 0x0D3
+        period: 1s
+>>>>>>> vcu
         is_big_endian: true
         segments:
           state:
             position: 0
             length: 1
-            c_type: bool
+            c_type: enum
+            enum:
+              DISCHARGE_ENABLE: 0x0
+              DISCHARGE_DISABLE: 0x1
+              NO_REQUEST: 0x2
       VcuToDash:
         can_id: 0x0F3
-        frequency: 10Hz
+        period: 0.1s
         is_big_endian: true
         segments:
           rtd_light_on:
@@ -429,7 +413,7 @@ buses:
               LIMP_25: 0x3
       RearCanNodeWheelSpeed:
         can_id: 0x0D1
-        frequency: 50Hz
+        period: 0.02s
         is_big_endian: true
         segments:
           rear_right_wheel_speed:
@@ -444,18 +428,9 @@ buses:
             c_type: uint32_t
             signed: false
             unit: mRPM
-      BMS_VCU_Switch: # Switch CAN bus and baudrate
-        can_id: 0x0F4
-        frequency: 1Hz
-        is_big_endian: true
-        segments:
-          always_true:
-            position: 0
-            length: 1
-            c_type: bool
       CurrentSensor_Current:
         can_id: 0x521
-        frequency: 20Hz
+        period: 0.05s
         is_big_endian: true
         segments:
           pack_current:
@@ -466,7 +441,7 @@ buses:
             unit: mA
       CurrentSensor_Voltage:
         can_id: 0x522
-        frequency: 20Hz
+        period: 0.05s
         is_big_endian: true
         segments:
           pack_voltage:
@@ -477,7 +452,7 @@ buses:
             unit: mV
       CurrentSensor_Power:
         can_id: 0x526
-        frequency: 20Hz
+        period: 0.05s
         is_big_endian: true
         segments:
           power:
@@ -486,9 +461,55 @@ buses:
             c_type: int32_t
             signed: false
             unit: W
-      MC_Command:
+      CurrentSensor_Energy:
+        can_id: 0x527
+        period: 0.05s
+        is_big_endian: true
+        segments:
+          pack_energy:
+            position: 16
+            length: 32
+            c_type: int32_t
+            signed: false
+            unit: Whrs
+      DashRequest:
+        can_id: 0x0D2
+        is_big_endian: true
+        segments:
+          type:
+            position: 0
+            length: 3
+            c_type: enum
+            enum:
+              NO_REQUEST: 0x0
+              TRACTION_CONTROL_ENABLE: 0x5
+              TRACTION_CONTROL_DISABLE: 0x6
+              ACTIVE_AERO_ENABLE: 0x7
+              ACTIVE_AERO_DISABLE: 0x8
+              FAN_ENABLE: 0x9
+              FAN_DISABLE: 0xA
+      ButtonRequest:
+        can_id: 0x0D8
+        is_big_endian: true
+        segments:
+          RTD:
+            position: 0
+            length: 1
+            c_type: bool
+            unit: pressed
+          DriverReset:
+            position: 1
+            length: 1
+            c_type: bool
+            unit: pressed
+          ScrollSelect:
+            position: 2
+            length: 1
+            c_type: bool
+            unit: pressed
+      MCCommand:
         can_id: 0x0C0 # From manual
-        frequency: 2.5Hz # MC needs a message at 2 Hz or higher
+        period: 0.4s  # MC needs a message at 2 Hz or higher
         is_big_endian: true
         segments:
           torque:
@@ -520,85 +541,32 @@ buses:
             length: 16
             c_type: uint16_t
             unit: daJ # 10 joules
-      BMS_CSB_Switch: # Switch baudrate
-        can_id: 0x600
-        frequency: 0.1Hz # Just picked this to be less than the Elcon stuff
+      MCVoltage:
+        can_id: 0x0A7
+        period: 1cs
         is_big_endian: true
         segments:
-          always_true:
-            position: 0
-            length: 1
-            c_type: bool
-      BMS_Mode:
-        can_id: 0x601
-        frequency: 1Hz
-        is_big_endian: true
-        segments:
-          requested_mode:
-            position: 0
-            length: 1
-            c_type: enum
-            enum:
-              CHARGE: 0x0
-              BALANCE: 0x1
-      ElconCommand:
-        can_id: 0x1806E5F4
-        frequency: 1Hz
-        is_big_endian: true
-        segments:
-          max_terminal_voltage:
+          busVoltage:
             position: 0
             length: 16
-            c_type: uint16_t
-            signed: false
             unit: dV
-          max_current:
+            signed: true
+            c_type: int16_t
+          outVoltage:
             position: 16
             length: 16
-            c_type: uint16_t
-            signed: false
-            unit: dA
-          control:
-            position: 32
-            length: 1
-            c_type: enum
-            enum:
-              stop: 0x0
-              start: 0x1
-      ElconHeartbeat:
-        can_id: 0x18FF50E5
-        frequency: 1Hz
-        is_big_endian: true
-        segments:
-          output_voltage:
-            position: 0
-            length: 16
-            c_type: uint16_t
-            signed: false
             unit: dV
-          output_current:
-            position: 16
-            length: 16
-            c_type: uint16_t
-            signed: false
-            unit: dA
-          has_hardware_failure:
+            signed: true
+            c_type: int16_t
+          VAB_Vd_Voltage:
             position: 32
-            length: 1
-            c_type: bool
-          over_temp_protection_on:
-            position: 33
-            length: 1
-            c_type: bool
-          is_input_voltage_wrong:
-            position: 34
-            length: 1
-            c_type: bool
-          battery_voltage_not_detected: # If battery voltage is not detected, the charger stays turned off the prevent reverse polarity
-            position: 35
-            length: 1
-            c_type: bool
-          elcon_is_comms_bad:
-            position: 36
-            length: 1
-            c_type: bool
+            length: 16
+            unit: dV
+            signed: true
+            c_type: int16_t
+          VBC_Vq_Voltage:
+            position: 48
+            length: 16
+            unit: dV
+            signed: true
+            c_type: int16_t

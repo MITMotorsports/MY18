@@ -1,6 +1,7 @@
 #ifndef __TORQUE_CALC
 #define __TORQUE_CALC
 
+#include "stdio.h"
 #include "stm32f2xx_hal.h"
 
 #define MAX_TORQUE              5 // N-m

@@ -13,8 +13,84 @@ void handleBrakeThrottleMsg(Frame* msg) {
 	board_heartbeats_state.frontCanNode = HAL_GetTick();
 }
 
+void handleMCVoltageMsg(Frame* msg) {
+	can0_MCVoltage_T unpacked_msg;
+	unpack_can0_MCVoltage(msg, &unpacked_msg);
+
+	mc_voltage.busVoltage = unpacked_msg.busVoltage;
+	mc_voltage.outVoltage = unpacked_msg.outVoltage;
+	mc_voltage.VAB_Vd_Voltage = unpacked_msg.VAB_Vd_Voltage;
+	mc_voltage.VBC_Vq_Voltage = unpacked_msg.VBC_Vq_Voltage;
+
+	board_heartbeats_state.mc = HAL_GetTick();
+}
+
+void handleBMSHeartbeatMsg(Frame* msg) {
+	can0_BMSHeartbeat_T unpacked_msg;
+	unpack_can0_BMSHeartbeat(msg, &unpacked_msg);
+
+	// Load into local struct if needed ...
+
+	board_heartbeats_state.bms = HAL_GetTick();
+}
+
+void handleCellVoltagesMsg(Frame* msg) {
+	can0_CellVoltages_T unpacked_msg;
+	unpack_can0_CellVoltages(msg, &unpacked_msg);
+
+	// So we take the cell voltage of the minimum cell and use that
+	// to estimate the lower bound on the back voltage 
+	// (12 per cell, 6 cells, millivolts)
+	bms_voltage.packVoltage = unpacked_msg.min * 12 * 6 / 1000;
+}
+
+void handleButtonRequest(Frame* msg) {
+	can0_ButtonRequest_T unpacked_msg;
+	unpack_can0_ButtonRequest(msg, &unpacked_msg);
+
+	button_presses.RTD = unpacked_msg.RTD;
+	button_presses.DriverReset = unpacked_msg.DriverReset;
+	button_presses.ScrollSelect = unpacked_msg.ScrollSelect;
+}
+
+void sendDashMsg() {
+	can0_VcuToDash_T msg;
+	// msg.rtd_light_on = //is this right? (carMode == CAR_STATE_READY_TO_DRIVE || carMode == CAR_STATE_DRIVING);
+	// msg.ams_light_on = //what;
+	// msg.imd_light_on = //what;
+	// msg.hv_light_on = //what;
+	// msg.traction_control = //what;
+	// msg.limp_mode_on = //what;
+	// msg.lv_warning_on = //what;
+	// msg.active_aero_on = //what;
+	// msg.regen_on = //what;
+	// msg.shutdown_esd_drain_open = //what;
+	// msg.shutdown_bms_open = //hwat;
+	// msg.shutdown_imd_open = //what;
+	// msg.shutdown_bspd_open = //what;
+	// msg.shutdown_vcu_open = //what;
+	// msg.shutdown_precharge_open = //what;
+	// msg.shutdown_master_reset_open = //what;
+	// msg.shutdown_driver_reset_open = //what;
+	// msg.heartbeat_front_can_node_dead = //what;
+	// msg.heartbeat_rear_can_node_dead = //what;
+	// msg.heartbeat_bms_dead = //what;
+	// msg.heartbeat_dash_dead = //what;
+	// msg.heartbeat_mc_dead = //what;
+	// msg.heartbeat_current_sensor_dead = //what;
+	// msg.tsms_off = //what;
+	// msg.reset_latch_open = //what;
+	// msg.precharge_running = //what;
+	// msg.master_reset_not_initialized = //what;
+	// msg.driver_reset_not_initialized = //what;
+	// msg.lv_battery_voltage = //what;
+	// msg.limp_state = //what;
+
+	can0_VcuToDash_Write(&msg);
+}
+
 void sendTorqueCmdMsg(int16_t torque, int16_t break_and_throttle_conflict) {
-	can0_MC_Command_T msg;
+	can0_MCCommand_T msg;
 	msg.torque = torque;
 	msg.speed = 0;
 	msg.direction_is_counterclockwise = 0;
@@ -22,5 +98,5 @@ void sendTorqueCmdMsg(int16_t torque, int16_t break_and_throttle_conflict) {
 	msg.discharge_enabled = 0;
 	msg.torque_limit = 0;
 
-	can0_MC_Command_Write(&msg);
+	can0_MCCommand_Write(&msg);
 }
