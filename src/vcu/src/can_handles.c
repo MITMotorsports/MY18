@@ -13,8 +13,38 @@ void handleBrakeThrottleMsg(Frame* msg) {
 	board_heartbeats_state.frontCanNode = HAL_GetTick();
 }
 
+void handleMCVoltageMsg(Frame* msg) {
+	can0_MCVoltage_T unpacked_msg;
+	unpack_can0_MCVoltage(msg, &unpacked_msg);
+
+	mc_voltage.busVoltage = unpacked_msg.busVoltage;
+	mc_voltage.outVoltage = unpacked_msg.outVoltage;
+	mc_voltage.VAB_Vd_Voltage = unpacked_msg.VAB_Vd_Voltage;
+	mc_voltage.VBC_Vq_Voltage = unpacked_msg.VBC_Vq_Voltage;
+
+	board_heartbeats_state.mc = HAL_GetTick();
+}
+
+void handleBMSHeartbeatMsg(Frame* msg) {
+	can0_BMSHeartbeat_T unpacked_msg;
+	unpack_can0_BMSHeartbeat(msg, &unpacked_msg);
+
+	// Load into local struct if needed ...
+
+	board_heartbeats_state.bms = HAL_GetTick();
+}
+
+void handleDashRequestMsg(Frame* msg) {
+	can0_DashRequest_T unpacked_msg;
+	unpack_can0_DashRequest(msg, &unpacked_msg);
+
+	switch()
+
+	board_heartbeats_state.dash = HAL_GetTick();
+}
+
 void sendTorqueCmdMsg(int16_t torque, int16_t break_and_throttle_conflict) {
-	can0_MC_Command_T msg;
+	can0_MCCommand_T msg;
 	msg.torque = torque;
 	msg.speed = 0;
 	msg.direction_is_counterclockwise = 0;
@@ -22,5 +52,5 @@ void sendTorqueCmdMsg(int16_t torque, int16_t break_and_throttle_conflict) {
 	msg.discharge_enabled = 0;
 	msg.torque_limit = 0;
 
-	can0_MC_Command_Write(&msg);
+	can0_MCCommand_Write(&msg);
 }

@@ -7,7 +7,7 @@ boards:
     arch: arm
     publish:
       can0:
-        - FrontCanNodeOutput
+        - FrontCanNodeBrakeThrottle
         - FrontCanNodeWheelSpeed
     subscribe:
       can0:
@@ -27,7 +27,7 @@ boards:
         - MCCommand
     subscribe:
       can0:
-        - FrontCanNodeOutput
+        - FrontCanNodeBrakeThrottle
         - Dash_Request
         - MCVoltage
   dash:
@@ -39,7 +39,7 @@ boards:
       can0:
         - VcuToDash
         - BMSHeartbeat
-        - FrontCanNodeOutput
+        - FrontCanNodeBrakeThrottle
         - RearCanNodeWheelSpeed
   bms:
     arch: arm
@@ -73,24 +73,31 @@ buses:
     baudrate: 500000
     is_extended: false
     messages:
-      FrontCanNodeOutput:
+      FrontCanNodeBrakeThrottle:
         can_id: 0x0D0
+        period: 0.2s
         is_big_endian: true
         segments:
-          requested_torque:
+          accel_1:
             position: 0
             length: 16
-            c_type: int16_t
-            signed: true
-            unit: daJ # From motor controller manual
-          is_throttle_implausible:
+            c_type: uint16_t
+            signed: false
+          accel_2:
             position: 16
-            length: 1
-            c_type: bool
-          has_brake_throttle_conflict:
-            position: 17
-            length: 1
-            c_type: bool
+            length: 16
+            c_type: uint16_t
+            signed: false
+          brake_1:
+            position: 32
+            length: 16
+            c_type: uint16_t
+            signed: false
+          brake_2:
+            position: 48
+            length: 16
+            c_type: uint16_t
+            signed: false
       FrontCanNodeWheelSpeed:
         can_id: 0x0F0
         is_big_endian: true
@@ -421,7 +428,7 @@ buses:
             unit: Whrs
       MCCommand:
         can_id: 0x0C0 # From manual
-        period: 50ms  # MC needs a message at 2 Hz or higher
+        period: 0.4s  # MC needs a message at 2 Hz or higher
         is_big_endian: true
         segments:
           torque:
