@@ -28,13 +28,13 @@ boards:
     subscribe:
       can0:
         - FrontCanNodeBrakeThrottle
-        - Dash_Request
+        - DashRequest
         - MCVoltage
   dash:
     arch: avr
     publish:
       can0:
-        - Dash_Request
+        - DashRequest
     subscribe:
       can0:
         - VcuToDash
@@ -200,27 +200,6 @@ buses:
             position: 4
             length: 8
             c_type: uint8_t
-      Dash_Request:
-        can_id: 0x0D2
-        period: 0.02s
-        is_big_endian: true
-        segments:
-          type:
-            position: 0
-            length: 3
-            c_type: enum
-            enum:
-              NO_REQUEST: 0x0
-              RTD_ENABLE: 0x1
-              RTD_DISABLE: 0x2
-              LIMP_MODE_ENABLE: 0x3
-              LIMP_MODE_DISABLE: 0x4
-              TRACTION_CONTROL_ENABLE: 0x5
-              TRACTION_CONTROL_DISABLE: 0x6
-              ACTIVE_AERO_ENABLE: 0x7
-              ACTIVE_AERO_DISABLE: 0x8
-              FAN_ENABLE: 0x9
-              FAN_DISABLE: 0xA
       BMSRequest:
         can_id: 0x0D3
         period: 1s
@@ -426,6 +405,41 @@ buses:
             c_type: int32_t
             signed: false
             unit: Whrs
+      DashRequest:
+        can_id: 0x0D2
+        is_big_endian: true
+        segments:
+          type:
+            position: 0
+            length: 3
+            c_type: enum
+            enum:
+              NO_REQUEST: 0x0
+              TRACTION_CONTROL_ENABLE: 0x5
+              TRACTION_CONTROL_DISABLE: 0x6
+              ACTIVE_AERO_ENABLE: 0x7
+              ACTIVE_AERO_DISABLE: 0x8
+              FAN_ENABLE: 0x9
+              FAN_DISABLE: 0xA
+      ButtonRequest:
+        can_id: 0x0D8
+        is_big_endian: true
+        segments:
+          RTD:
+            position: 0
+            length: 1
+            c_type: bool
+            unit: pressed
+          DriverReset:
+            position: 1
+            length: 1
+            c_type: bool
+            unit: pressed
+          ScrollSelect:
+            position: 2
+            length: 1
+            c_type: bool
+            unit: pressed
       MCCommand:
         can_id: 0x0C0 # From manual
         period: 0.4s  # MC needs a message at 2 Hz or higher
