@@ -7,7 +7,7 @@
 #define CELL_MIN_mV 2500 // from datasheet, contact elliot
 #define CELL_MAX_mV 4250 // from datasheet, contact elliot
 #define CELL_CAPACITY_cAh 250
-#define NUM_MODULES 6
+#define NUM_MODULES 1
 #define CELL_CHARGE_C_RATING_cC 5
 #define BALANCE_ON_THRESHOLD_mV 4
 #define BALANCE_OFF_THRESHOLD_mV 1
@@ -20,7 +20,7 @@
 #define MODULE_CELL_COUNT 12
 #define MIN_CELL_TEMP_dC -30
 #define FAN_ON_THRESHOLD_dC 450
-#define MAX_CHARGE 7100.0
+#define MAX_CHARGE 7100
 
 typedef struct BMS_PACK_CONFIG {
   uint32_t cell_min_mV;                // minimum cell voltage (millivolts)

@@ -3,19 +3,19 @@
 
 void SOC_Init(BMS_PACK_STATUS_T *ps) {
 	ps->state_of_charge = EEPROM_LoadCCPage_Num(SOC_EEPROM_INDEX);
+	// ps->state_of_charge = 100;
 	init_soc = ps->state_of_charge;
-	count = msTicks;
 }
 
 void SOC_Estimate(BMS_PACK_STATUS_T *ps) {
-	ps->state_of_charge = init_soc - ((float)ps->pack_energy_wH/(MAX_CHARGE));
-	Board_PrintNum(ps->state_of_charge,10);
-	
+	ps->state_of_charge = init_soc - (((ps->pack_energy_wH*100)/(MAX_CHARGE)));
+
 	if(ps->state_of_charge > 100) {
 		ps->state_of_charge = 100;
 	}
 	if(msTicks - count > SOC_WRITE_PERIOD) {
 		SOC_Write(ps);
+		Board_PrintNum(ps->state_of_charge,10);
 	}
 
 }
