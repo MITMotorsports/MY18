@@ -4,8 +4,8 @@
 
 // Depends on whether LPC is being used to sink current
 // or switching fets.
-#define _LED_ON 0
-#define _LED_OFF 1
+#define _LED_ON 1
+#define _LED_OFF 0
 
 void LED_HV_on() {
     Pin_Write(PIN_LED_HV, _LED_ON);

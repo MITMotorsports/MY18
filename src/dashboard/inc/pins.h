@@ -4,18 +4,23 @@
 #define PIN_OLED_RS     3, 1
 #define PIN_OLED_CS     3, 3
 
-#define PIN_OLED_SCLK   2, 4
-#define PIN_OLED_SDI    2, 5
-#define PIN_OLED_SDO    2, 6 
+#define PIN_OLED_SCLK   1, 0
+#define PIN_OLED_SDI    1, 1
+#define PIN_OLED_SDO    1, 2 
 
+#define IOCON_PIN_OLED_SCLK IOCON_PIO1_0
+#define IOCON_PIN_OLED_SDI  IOCON_PIO1_1
+#define IOCON_PIN_OLED_SDO  IOCON_PIO1_2
+
+// these don't exist anymore...
 #define PIN_OLED_BS0    2, 0
 #define PIN_OLED_BS1    2, 1
 #define PIN_OLED_BS2    2, 2
 
-#define PIN_LED_HV      2, 3
-#define PIN_LED_RTD     1, 11
-#define PIN_LED_IMD     1, 8
-#define PIN_LED_AMS     1, 9
+#define PIN_LED_HV      0, 8
+#define PIN_LED_RTD     0, 9
+#define PIN_LED_IMD     2, 10
+#define PIN_LED_AMS     2, 2
 
 #define PIN_BUTTON1     1, 3
 #define PIN_BUTTON2     1, 5 
