@@ -25,11 +25,6 @@ int main(void) {
     Pin_Write(PIN_OLED_SCLK, 1);
     Pin_Write(PIN_OLED_SDI, 1);
 
-    Pin_Write(PIN_OLED_BS0, 0);
-    Pin_Write(PIN_OLED_BS1, 0);
-    Pin_Write(PIN_OLED_BS2, 0);
-
-
     LED_HV_off();
     LED_RTD_off();
     LED_IMD_off();

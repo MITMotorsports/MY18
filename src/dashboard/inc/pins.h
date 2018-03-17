@@ -12,11 +12,6 @@
 #define IOCON_PIN_OLED_SDI  IOCON_PIO1_1
 #define IOCON_PIN_OLED_SDO  IOCON_PIO1_2
 
-// these don't exist anymore...
-#define PIN_OLED_BS0    2, 0
-#define PIN_OLED_BS1    2, 1
-#define PIN_OLED_BS2    2, 2
-
 #define PIN_LED_HV      0, 8
 #define PIN_LED_RTD     0, 9
 #define PIN_LED_IMD     2, 10
