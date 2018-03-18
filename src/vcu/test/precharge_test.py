@@ -6,7 +6,15 @@ import time
 
 class ShutdownLoop(object):
 
+    START = 0
+    DRIVER_RESET = 1
+    CHARGING = 2
+    READY_TO_DRIVE = 3
+    PRESSING_PEDALS = 4
+    STOPPED = 5
+
     def __init__(self, stop_event):
+        self.state = ShutdownLoop.START
         self.bus = can.interface.Bus(bustype='pcan', channel='PCAN_USBBUS1', bitrate=500000)
         self.stop_event = stop_event
         self.send_thread = threading.Thread(target=self.send, args=(self.bus, self.stop_event))
