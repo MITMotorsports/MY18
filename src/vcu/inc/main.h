@@ -13,11 +13,11 @@
 // MISC GPIOs ---------------------------------------------------
 
 #define MCU_ON_CLK_ENABLE()       		__HAL_RCC_GPIOC_CLK_ENABLE()
-#define MCU_ON_PIN                		GPIO_PIN_11
+#define MCU_ON_PIN                		GPIO_PIN_7
 #define MCU_ON_PORT						GPIOC
 
 #define CLOSE_CONTACTORS_CLK_ENABLE()  	__HAL_RCC_GPIOC_CLK_ENABLE()
-#define CLOSE_CONTACTORS_PIN			GPIO_PIN_11
+#define CLOSE_CONTACTORS_PIN			GPIO_PIN_8
 #define CLOSE_CONTACTORS_PORT			GPIOC
 
 // USART -------------------------------------------------------

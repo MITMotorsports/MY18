@@ -96,7 +96,7 @@ PUTCHAR_PROTOTYPE
 {
   /* Place your implementation of fputc here */
   /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
-  HAL_USART_Transmit_IT(&USARTHandle, (uint8_t *)&ch, 0xFFFF); 
+  HAL_USART_Transmit(&USARTHandle, (uint8_t *)&ch, 1, 0xFFFF); 
 
   return ch;
 }
