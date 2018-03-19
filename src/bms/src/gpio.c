@@ -167,7 +167,7 @@ void Board_Contactors_Set(bool close_contactors) {
   Chip_GPIO_SetPinState(LPC_GPIO, PIN_BMS_FAULT, close_contactors);
 }
 
-bool Board_Contactors_Closed(void) {
+bool Board_FAULT_Asserted(void) {
   return Chip_GPIO_GetPinState(LPC_GPIO, PIN_BMS_FAULT);
 }
 
@@ -175,11 +175,12 @@ bool Board_Contactors_Closed(void) {
 void Board_ADC_Init() {
   Chip_ADC_Init(LPC_ADC, &adc_setup);
   Chip_ADC_EnableChannel(LPC_ADC, ADC_CH4, ENABLE);
+  Chip_ADC_EnableChannel(LPC_ADC, ADC_CH5, ENABLE);
   Chip_ADC_SetBurstCmd(LPC_ADC, 1);
   Chip_ADC_SetStartMode(LPC_ADC, ADC_START_NOW, ADC_TRIGGERMODE_RISING);
 }
 
-bool Board_Contactor_Two_Welded() {
+bool Board_Contactor_Low_Closed() {
   int16_t adc_data;
 
   while (!Chip_ADC_ReadStatus(LPC_ADC, ADC_CH4, ADC_DR_DONE_STAT)) {}
@@ -187,9 +188,10 @@ bool Board_Contactor_Two_Welded() {
   return adc_data < 800;
 }
 
-// Digital
-bool Board_Contactor_One_Welded(void) {
-  // returns False when shorted
+bool Board_Contactor_High_Closed(void) {
+  int16_t adc_data;
 
-  return Chip_GPIO_GetPinState(LPC_GPIO, PIN_CONTACTOR_WELD_1);
+  while(!Chip_ADC_ReadStatus(LPC_ADC, ADC_CH5, ADC_DR_DONE_STAT)) {}
+  Chip_ADC_ReadValue(LPC_ADC, ADC_CH5, &adc_data);
+  return adc_data < 800;
 }

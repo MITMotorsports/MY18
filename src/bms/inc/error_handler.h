@@ -14,7 +14,7 @@
 #define EEPROM_timeout_count                    5
 #define CONFLICTING_MODE_REQUESTS_count 2
 #define BLOWN_FUSE_timeout_count        1
-#define CONTACTOR_WELDED_timeout_count  1
+#define CONTACTOR_CLOSED_timeout_count  1
 
 
 #define CELL_OVER_TEMP_timeout_ms     10000
@@ -38,7 +38,7 @@ typedef enum error {
   ERROR_VCU_DEAD,
   ERROR_CONTROL_FLOW,
   ERROR_BLOWN_FUSE,
-  ERROR_CONTACTOR_WELDED,
+  ERROR_CONTACTOR_CLOSED,
   ERROR_NUM_ERRORS
 } ERROR_T;
 
@@ -58,7 +58,7 @@ static const char *const ERROR_NAMES[ERROR_NUM_ERRORS] = {
   "ERROR_VCU_DEAD",
   "ERROR_CONTROL_FLOW",
   "ERROR_BLOWN_FUSE",
-  "ERROR_CONTACTOR_WELDED"
+  "ERROR_CONTACTOR_CLOSED"
 };
 
 
@@ -148,7 +148,7 @@ const static ERROR_HANDLER error_handler_vector[ERROR_NUM_ERRORS] = {
   { _Error_Handle_Count,   VCU_DEAD_count                              },
   { _Error_Handle_Count,   CONTROL_FLOW_count                          },
   { _Error_Handle_Count,   BLOWN_FUSE_timeout_count                    },
-  { _Error_Handle_Count,   CONTACTOR_WELDED_timeout_count              }
+  { _Error_Handle_Count,   CONTACTOR_CLOSED_timeout_count              }
 };
 
 #endif // ifndef _ERROR_HANDLER_H

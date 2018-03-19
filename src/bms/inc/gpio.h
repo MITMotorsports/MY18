@@ -34,8 +34,8 @@ void Board_Contactors_Set(bool close_contactors);
 // --- Get Contactor States
 bool Board_Contactors_Closed(void);
 
-bool Board_Contactor_One_Welded(void);
+bool Board_Contactor_High_Closed(void);
 
-bool Board_Contactor_Two_Welded(void);
+bool Board_Contactor_Low_Closed(void);
 
 #endif // ifndef _GPIO_H_

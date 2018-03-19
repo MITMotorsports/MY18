@@ -23,9 +23,10 @@ typedef struct BMS_INPUT {
 
   bool vcu_switch;
 
-  bool contactor_weld_one; // TODO: Move to proper location in status.
-  bool contactor_weld_two;
-  bool contactors_closed;
+  bool contactor_closed_high; // TODO: Move to proper location in status.
+  bool contactor_closed_low;
+
+  bool fault_asserted;
 
   bool     ltc_packconfig_check_done;
   bool     eeprom_read_error;
@@ -84,7 +85,7 @@ typedef struct BMS_STATE {
 
 
 typedef struct BMS_OUTPUT {
-  bool  close_contactors;
+  bool  assert_fault;
   bool *balance_req;
   bool  ltc_deinit;
   bool  check_packconfig_with_ltc;

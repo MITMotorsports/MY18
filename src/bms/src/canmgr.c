@@ -100,7 +100,7 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
     msg.error_vcu_dead = errors[ERROR_VCU_DEAD].error == true;
     msg.error_control_flow = errors[ERROR_CONTROL_FLOW].error == true;
     msg.error_blown_fuse = errors[ERROR_BLOWN_FUSE].error == true;
-    msg.error_contactor_welded = errors[ERROR_CONTACTOR_WELDED].error == true;
+    msg.error_contactor_closed = errors[ERROR_CONTACTOR_CLOSED].error == true;
 
     msg.soc = ps->state_of_charge;
     can0_BMSHeartbeat_Write(&msg);

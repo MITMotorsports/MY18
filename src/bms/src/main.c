@@ -39,16 +39,16 @@ void Init_BMS_Structs(void) {
   bms_input.mode_request       = BMS_SSM_MODE_STANDBY;
   bms_input.vcu_mode_request   = BMS_SSM_MODE_STANDBY;
   bms_input.csb_mode_request   = BMS_SSM_MODE_STANDBY;
-  bms_input.contactor_weld_one = false;
-  bms_input.contactor_weld_two = false;
-  bms_input.contactors_closed  = false;
+  bms_input.contactor_closed_high = false;
+  bms_input.contactor_closed_low = false;
+  bms_input.fault_asserted  = false;
 
   bms_input.ltc_packconfig_check_done = false;
   bms_input.eeprom_read_error         = false;
   bms_input.fan_override              = false;
   bms_input.msTicks                   = msTicks;
 
-  bms_output.close_contactors = false;
+  bms_output.assert_fault = false;
   bms_output.balance_req      = balance_reqs;
   memset(balance_reqs,
          0,
@@ -82,20 +82,20 @@ void Process_Input(BMS_INPUT_T *bms_input) {
   }
 
   bms_input->msTicks           = msTicks;
-  bms_input->contactors_closed = Board_Contactors_Closed();
+  bms_input->fault_asserted = Board_FAULT_Asserted();
 
-  bms_input->contactor_weld_one = !Board_Contactor_One_Welded();
-  bms_input->contactor_weld_two = Board_Contactor_Two_Welded();
+  bms_input->contactor_closed_high = !Board_Contactor_High_Closed();
+  bms_input->contactor_closed_low = Board_Contactor_Low_Closed();
 
-  if (bms_input->contactor_weld_one || bms_input->contactor_weld_two) {
-    Error_Assert(ERROR_CONTACTOR_WELDED);
+  if (bms_input->contactor_closed_high || bms_input->contactor_closed_low) {
+    Error_Assert(ERROR_CONTACTOR_CLOSED);
   }
 }
 
 void Process_Output(BMS_INPUT_T  *bms_input,
                     BMS_OUTPUT_T *bms_output,
                     BMS_STATE_T  *bms_state) {
-  Board_Contactors_Set(bms_output->close_contactors);
+  Board_FAULT_Set(bms_output->assert_fault);
 
   if (bms_output->ltc_deinit) {
     Board_LTC6804_DeInit();
@@ -137,10 +137,15 @@ int main(void) {
   microrl_init(&rl, Board_Print);
   microrl_set_execute_callback(&rl, executerl);
   console_init(&bms_input, &bms_state, &console_output);
-  int count = msTicks;
+  int32_t count = msTicks;
 
   Board_Println("Currently running: "HASH);
   Board_Println("Flashed by: "AUTHOR);
+
+  //Check for contactor weld in first 5 seconds
+  while (msTicks - count < 5000) {
+    Process_Input(&bms_input);
+  }
 
   while (1) {
     // preliminary error checks
@@ -178,7 +183,7 @@ int main(void) {
   Board_Println("FORCED HANG");
   Write_EEPROM_Error();
 
-  bms_output.close_contactors = false;
+  bms_output.assert_fault = false;
 
   Board_Println("Halting...");
   while (1) {

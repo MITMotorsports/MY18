@@ -223,7 +223,7 @@ buses:
             position: 13
             length: 1
             c_type: bool
-          error_contactor_welded:
+          error_contactor_closed:
             position: 14
             length: 1
             c_type: bool
