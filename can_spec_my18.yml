@@ -198,67 +198,6 @@ buses:
               CONFLICTING_MODE_REQUESTS: 0xB
               VCU_DEAD: 0xC
               CONTROL_FLOW: 0xD
-<<<<<<< HEAD
-              OTHER: 0xE
-      BMS_SOC:
-        can_id: 0x0D5
-        frequency: 10Hz
-        is_big_endian: true
-        segments:
-          soc_percentage:
-            position: 1
-            length: 10
-            c_type: uint16_t
-            signed: false
-      Dash_Request:
-        can_id: 0x0D2
-        frequency: 50Hz
-        is_big_endian: true
-        segments:
-          type:
-            position: 0
-            length: 3
-            c_type: enum
-            enum:
-              NO_REQUEST: 0x0
-              RTD_ENABLE: 0x1
-              RTD_DISABLE: 0x2
-              LIMP_MODE_ENABLE: 0x3
-              LIMP_MODE_DISABLE: 0x4
-              TRACTION_CONTROL_ENABLE: 0x5
-              TRACTION_CONTROL_DISABLE: 0x6
-              ACTIVE_AERO_ENABLE: 0x7
-              ACTIVE_AERO_DISABLE: 0x8
-              FAN_ENABLE: 0x9
-              FAN_DISABLE: 0xA
-      DriverResetButton:
-        can_id: 0x0D7
-        is_big_endian: true
-        segments:
-          is_pressed:
-            position: 0
-            length: 1
-            c_type: bool
-      RTDButton:
-        can_id: 0x0D8
-        is_big_endian: true
-        segments:
-          is_pressed:
-            position: 0
-            length: 1
-            c_type: bool
-      ScrollSelectButton:
-        can_id: 0x0D9
-        is_big_endian: true
-        segments:
-          is_pressed:
-            position: 0
-            length: 1
-            c_type: bool
-      BMSState:
-        can_id: 0x0D6
-        frequency: 1Hz
-=======
               BLOWN_FUSE: 0xE
               CONTACTOR_WELDED: 0xF
               OTHER: 0x10
@@ -269,7 +208,6 @@ buses:
       BMSRequest:
         can_id: 0x0D3
         period: 1s
->>>>>>> vcu
         is_big_endian: true
         segments:
           state:
