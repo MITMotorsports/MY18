@@ -4,6 +4,8 @@
 #include "stm32f2xx_hal.h"
 #include "CANlib.h"
 
+#define PIN(name) (name ## _PORT), (name ## _PIN)
+
 // LEDs --------------------------------------------------------
 
 #define LED_CLK_ENABLE()               __HAL_RCC_GPIOC_CLK_ENABLE()
@@ -42,7 +44,7 @@
 #define CANx                            CAN1
 #define CANx_CLK_ENABLE()               __HAL_RCC_CAN1_CLK_ENABLE()
 #define CANx_GPIO_CLK_ENABLE()          __HAL_RCC_GPIOB_CLK_ENABLE()
-     
+
 #define CANx_FORCE_RESET()              __HAL_RCC_CAN1_FORCE_RESET()
 #define CANx_RELEASE_RESET()            __HAL_RCC_CAN1_RELEASE_RESET()
 

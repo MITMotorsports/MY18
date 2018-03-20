@@ -44,7 +44,7 @@ int main(void)
   gpioinit.Pull = GPIO_PULLUP;
   gpioinit.Speed = GPIO_SPEED_FAST;
   HAL_GPIO_Init(L_CONTACTOR_PORT, &gpioinit);
-  HAL_GPIO_WritePin(L_CONTACTOR_PORT, L_CONTACTOR_PIN, GPIO_PIN_SET); // ON
+  HAL_GPIO_WritePin(PIN(L_CONTACTOR), GPIO_PIN_SET); // ON
 
   // Setup GPIO for Close contactors signal (initially off)
   H_CONTACTOR_CLK_ENABLE();
@@ -53,7 +53,7 @@ int main(void)
   gpioinit.Pull = GPIO_PULLUP;
   gpioinit.Speed = GPIO_SPEED_FAST;
   HAL_GPIO_Init(H_CONTACTOR_PORT, &gpioinit);
-  HAL_GPIO_WritePin(H_CONTACTOR_PORT, H_CONTACTOR_PIN, GPIO_PIN_RESET); // OFF
+  HAL_GPIO_WritePin(PIN(H_CONTACTOR), GPIO_PIN_RESET); // OFF
 
   // Setup USART for debugging
   USARTHandle.Instance = USARTx_INSTANCE;
@@ -73,9 +73,9 @@ int main(void)
   }
 
   // Toggle the LED after this regular setup
-  HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
+  HAL_GPIO_TogglePin(PIN(LED));
   HAL_Delay(1000);
-  HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
+  HAL_GPIO_TogglePin(PIN(LED));
 
   printf("\r\nMEGALV PERIPHERALS ONLINE\r\n");
 
