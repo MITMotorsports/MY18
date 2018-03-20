@@ -22,7 +22,7 @@ static void Error_Handler(void);
 int main(void)
 {
   HAL_Init();
-  
+
   SystemClock_Config();
 
   Can_Init(500000);
@@ -38,22 +38,22 @@ int main(void)
   HAL_GPIO_Init(LED_PORT, &gpioinit);
 
   // Setup GPIO for MCU On signal (And set it to be on)
-  MCU_ON_CLK_ENABLE();
-  gpioinit.Pin = MCU_ON_PIN;
+  L_CONTACTOR_CLK_ENABLE();
+  gpioinit.Pin = L_CONTACTOR_PIN;
   gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
   gpioinit.Pull = GPIO_PULLUP;
   gpioinit.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(MCU_ON_PORT, &gpioinit);
-  HAL_GPIO_WritePin(MCU_ON_PORT, MCU_ON_PIN, GPIO_PIN_SET); // ON
+  HAL_GPIO_Init(L_CONTACTOR_PORT, &gpioinit);
+  HAL_GPIO_WritePin(L_CONTACTOR_PORT, L_CONTACTOR_PIN, GPIO_PIN_SET); // ON
 
   // Setup GPIO for Close contactors signal (initially off)
-  CLOSE_CONTACTORS_CLK_ENABLE();
-  gpioinit.Pin = CLOSE_CONTACTORS_PIN;
+  H_CONTACTOR_CLK_ENABLE();
+  gpioinit.Pin = H_CONTACTOR_PIN;
   gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
   gpioinit.Pull = GPIO_PULLUP;
   gpioinit.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(CLOSE_CONTACTORS_PORT, &gpioinit);  
-  HAL_GPIO_WritePin(CLOSE_CONTACTORS_PORT, CLOSE_CONTACTORS_PIN, GPIO_PIN_RESET); // OFF
+  HAL_GPIO_Init(H_CONTACTOR_PORT, &gpioinit);
+  HAL_GPIO_WritePin(H_CONTACTOR_PORT, H_CONTACTOR_PIN, GPIO_PIN_RESET); // OFF
 
   // Setup USART for debugging
   USARTHandle.Instance = USARTx_INSTANCE;
@@ -84,7 +84,7 @@ int main(void)
   while(1)
   {
     loopVCU(&USARTHandle);
-  } 
+  }
 }
 
 /**
@@ -96,14 +96,14 @@ PUTCHAR_PROTOTYPE
 {
   /* Place your implementation of fputc here */
   /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
-  HAL_USART_Transmit(&USARTHandle, (uint8_t *)&ch, 1, 0xFFFF); 
+  HAL_USART_Transmit(&USARTHandle, (uint8_t *)&ch, 1, 0xFFFF);
 
   return ch;
 }
 
 /**
   * @brief  System Clock Configuration
-  *         The system Clock is configured as follow : 
+  *         The system Clock is configured as follow :
   *            System Clock source            = PLL (HSE)
   *            SYSCLK(Hz)                     = 120000000
   *            HCLK(Hz)                       = 120000000
@@ -138,8 +138,8 @@ static void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  
-  /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 
+
+  /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
      clocks dividers */
   RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
@@ -180,7 +180,7 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* CanHandle)
   * @retval None
   */
 void assert_failed(uint8_t* file, uint32_t line)
-{ 
+{
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 
@@ -190,4 +190,3 @@ void assert_failed(uint8_t* file, uint32_t line)
   }
 }
 #endif
-

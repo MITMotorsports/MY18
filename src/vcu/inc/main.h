@@ -12,13 +12,13 @@
 
 // MISC GPIOs ---------------------------------------------------
 
-#define MCU_ON_CLK_ENABLE()       		__HAL_RCC_GPIOC_CLK_ENABLE()
-#define MCU_ON_PIN                		GPIO_PIN_7
-#define MCU_ON_PORT						GPIOC
+#define L_CONTACTOR_CLK_ENABLE()       		__HAL_RCC_GPIOC_CLK_ENABLE()
+#define L_CONTACTOR_PIN                		GPIO_PIN_7
+#define L_CONTACTOR_PORT						GPIOC
 
-#define CLOSE_CONTACTORS_CLK_ENABLE()  	__HAL_RCC_GPIOC_CLK_ENABLE()
-#define CLOSE_CONTACTORS_PIN			GPIO_PIN_8
-#define CLOSE_CONTACTORS_PORT			GPIOC
+#define H_CONTACTOR_CLK_ENABLE()  	__HAL_RCC_GPIOC_CLK_ENABLE()
+#define H_CONTACTOR_PIN			GPIO_PIN_8
+#define H_CONTACTOR_PORT			GPIOC
 
 // USART -------------------------------------------------------
 #define USARTx_INSTANCE               USART1
