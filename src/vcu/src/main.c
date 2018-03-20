@@ -1,23 +1,4 @@
-
 #include "main.h"
-
-#include <stdbool.h>
-#include "stdio.h"
-
-#ifdef __GNUC__
-  /* With GCC Compilers, small printf (option LD Linker->Libraries->Small printf
-     set to 'Yes') calls __io_putchar() */
-  #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else
-  #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-#endif /* __GNUC__ */
-
-USART_HandleTypeDef  USARTHandle;
-CAN_HandleTypeDef    CanHandle;
-
-// static void CAN_Config(void);
-static void SystemClock_Config(void);
-static void Error_Handler(void);
 
 int main(void)
 {
@@ -25,35 +6,26 @@ int main(void)
 
   SystemClock_Config();
 
-  Can_Init(500000);
+  // TODO: Define Can_Set_Filter in CANlib
+  // init_can0_vcu();
+  Can_Init(5e5);
 
-  GPIO_InitTypeDef gpioinit;
+  GPIO_BEGIN_INIT();
 
   // Setup an LED for debugging
-  LED_CLK_ENABLE();
-  gpioinit.Pin = LED_PIN;
-  gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
-  gpioinit.Pull = GPIO_PULLUP;
-  gpioinit.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(LED_PORT, &gpioinit);
+  DGPIO_INIT_OUT(LED, GPIO_PIN_SET);
 
-  // Setup GPIO for MCU On signal (And set it to be on)
-  L_CONTACTOR_CLK_ENABLE();
-  gpioinit.Pin = L_CONTACTOR_PIN;
-  gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
-  gpioinit.Pull = GPIO_PULLUP;
-  gpioinit.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(L_CONTACTOR_PORT, &gpioinit);
-  HAL_GPIO_WritePin(PIN(L_CONTACTOR), GPIO_PIN_SET); // ON
+  // Setup GPIO for MCU On signal (low side contactor)
+  DGPIO_INIT_OUT(L_CONTACTOR, GPIO_PIN_RESET);
 
-  // Setup GPIO for Close contactors signal (initially off)
-  H_CONTACTOR_CLK_ENABLE();
-  gpioinit.Pin = H_CONTACTOR_PIN;
-  gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
-  gpioinit.Pull = GPIO_PULLUP;
-  gpioinit.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(H_CONTACTOR_PORT, &gpioinit);
-  HAL_GPIO_WritePin(PIN(H_CONTACTOR), GPIO_PIN_RESET); // OFF
+  // Setup GPIO for CHRD DELAY (high side contactor)
+  DGPIO_INIT_OUT(H_CONTACTOR, GPIO_PIN_RESET);
+
+  // Setup GPIOs for fault monitoring
+  DGPIO_INIT_IN(BMS_GATE, GPIO_PULLDOWN);
+  DGPIO_INIT_IN(BPD_GATE, GPIO_PULLDOWN);
+  DGPIO_INIT_IN(IMD_GATE, GPIO_PULLDOWN);
+  DGPIO_INIT_IN(SDN_GATE, GPIO_PULLDOWN);
 
   // Setup USART for debugging
   USARTHandle.Instance = USARTx_INSTANCE;
@@ -73,9 +45,9 @@ int main(void)
   }
 
   // Toggle the LED after this regular setup
-  HAL_GPIO_TogglePin(PIN(LED));
+  HAL_GPIO_TogglePin(GPIO(LED));
   HAL_Delay(1000);
-  HAL_GPIO_TogglePin(PIN(LED));
+  HAL_GPIO_TogglePin(GPIO(LED));
 
   printf("\r\nMEGALV PERIPHERALS ONLINE\r\n");
 

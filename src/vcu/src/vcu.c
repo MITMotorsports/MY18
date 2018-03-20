@@ -1,4 +1,3 @@
-
 #include "vcu.h"
 
 void setupVCU() {
@@ -7,9 +6,9 @@ void setupVCU() {
   lastDashMsgTime = HAL_GetTick();
 }
 
-void beforeLoop() {}
+void vcu_beforeLoop() {}
 
-void afterLoop() {
+void vcu_afterLoop() {
   if (HAL_GetTick() - lastDashMsgTime >= SEND_DASH_MSG_WAIT_DURATION) {
     sendDashMsg();
     lastDashMsgTime = HAL_GetTick();
@@ -17,7 +16,7 @@ void afterLoop() {
 }
 
 void loopVCU() {
-  beforeLoop();
+  vcu_beforeLoop();
 
   switch (carMode) {
   case CAR_STATE_LV_ONLY:
@@ -44,7 +43,7 @@ void loopVCU() {
     break;
   }
 
-  afterLoop();
+  vcu_afterLoop();
 }
 
 void handleCanVCU(CAN_HandleTypeDef *CanHandle) {

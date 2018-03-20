@@ -24,7 +24,7 @@ void loopPrecharge() {
 
 	} else if (mc_voltage.busVoltage / DC_BUS_VOLTAGE_SCALE_FACTOR >= targetVoltage) {
 
-		HAL_GPIO_WritePin(H_CONTACTOR_PORT, H_CONTACTOR_PIN, GPIO_PIN_SET); // ON
+		HAL_GPIO_WritePin(GPIO(H_CONTACTOR), GPIO_PIN_SET); // ON
 		changeCarMode(CAR_STATE_READY_TO_DRIVE);
 
 	}
