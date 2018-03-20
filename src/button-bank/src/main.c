@@ -59,24 +59,6 @@ bool read_pin(uint32_t port, uint8_t bit) {
   return Chip_GPIO_GetPinState(LPC_GPIO, port, bit);
 }
 
-Can_ErrorID_T write_can_driver_reset(bool state) {
-  can0_DriverResetButton_T msg;
-  msg.is_pressed = state;
-  return can0_DriverResetButton_Write(&msg);
-}
-
-Can_ErrorID_T write_can_rtd(bool state) {
-  can0_RTDButton_T msg;
-  msg.is_pressed = state;
-  return can0_RTDButton_Write(&msg);
-}
-
-Can_ErrorID_T write_can_scroll_select(bool state) {
-  can0_ScrollSelectButton_T msg;
-  msg.is_pressed = state;
-  return can0_ScrollSelectButton_Write(&msg);
-}
-
 void handle_can_error(Can_ErrorID_T error) {
   if (error != Can_Error_NONE && error != Can_Error_NO_RX) { // Unimorportant errors
     switch(error) {
@@ -152,24 +134,30 @@ int main(void) {
   bool curr_rtd_pressed = false;
   bool curr_scroll_select_pressed = false;
 
+  bool reset = false, rtd = false;
+
+  uint32_t timer = 0;
   while(1) {
     curr_driver_reset_pressed = read_pin(DRIVER_RESET_PIN_AND_PORT);
-    if (curr_driver_reset_pressed != last_driver_reset_pressed) {
-      write_can_driver_reset(curr_driver_reset_pressed);
+    if (curr_driver_reset_pressed && !last_driver_reset_pressed) {
+      reset = !reset;
     }
     last_driver_reset_pressed = curr_driver_reset_pressed;
 
     curr_rtd_pressed = read_pin(RTD_PIN_AND_PORT);
     if (curr_rtd_pressed != last_rtd_pressed) {
-      write_can_driver_reset(curr_rtd_pressed);
+      rtd = !rtd;
     }
     last_rtd_pressed = curr_rtd_pressed;
 
-    curr_scroll_select_pressed = read_pin(SCROLL_SELECT_PIN_AND_PORT);
-    if (curr_scroll_select_pressed != last_scroll_select_pressed) {
-      write_can_driver_reset(curr_scroll_select_pressed);
+    if (msTicks > timer) {
+      timer = msTicks + 100;
+      can0_ButtonRequest_T msg;
+      msg.RTD = rtd;
+      msg.DriverReset = reset;
+      can0_ButtonRequest_Write(&msg);
+
     }
-    last_scroll_select_pressed = curr_scroll_select_pressed;
   }
 
   return 0;
