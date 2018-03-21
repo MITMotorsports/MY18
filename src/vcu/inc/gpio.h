@@ -31,6 +31,8 @@
 #define PORT(name) name ## _PORT
 #define GPIO(name) (PORT(name)), (PIN(name))
 
+#define READ_PIN(name) (HAL_GPIO_ReadPin(GPIO(name)) == GPIO_PIN_SET)
+
 #define GPIO_BEGIN_INIT() \
   GPIO_InitTypeDef gpioinit; \
   __HAL_RCC_GPIOA_CLK_ENABLE(); \

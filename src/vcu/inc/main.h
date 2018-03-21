@@ -9,17 +9,17 @@
 
 
 #ifdef __GNUC__
-  /* With GCC Compilers, small printf (option LD Linker->Libraries->Small printf
 
-     set to 'Yes') calls __io_putchar() */
-  #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else
-  #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+// With GCC Compilers, small printf (option LD Linker->Libraries->Small printf
+// set to 'Yes') calls __io_putchar()
+  # define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else // ifdef __GNUC__
+  # define PUTCHAR_PROTOTYPE int fputc(int ch, FILE * f)
 #endif /* __GNUC__ */
 
 
-USART_HandleTypeDef  USARTHandle;
-CAN_HandleTypeDef    CanHandle;
+extern USART_HandleTypeDef USARTHandle;
+extern CAN_HandleTypeDef   CanHandle;
 
 // static void CAN_Config(void);
 static void SystemClock_Config(void);

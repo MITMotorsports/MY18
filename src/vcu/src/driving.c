@@ -1,4 +1,3 @@
-
 #include "driving.h"
 
 void resetDrivingValues() {

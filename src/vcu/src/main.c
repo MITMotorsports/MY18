@@ -1,5 +1,8 @@
 #include "main.h"
 
+USART_HandleTypeDef USARTHandle;
+CAN_HandleTypeDef   CanHandle;
+
 int main(void)
 {
   HAL_Init();
@@ -52,10 +55,12 @@ int main(void)
   printf("\r\nMEGALV PERIPHERALS ONLINE\r\n");
 
   setupVCU();
+  s_error_setup();
 
   while(1)
   {
     loopVCU(&USARTHandle);
+    s_error_loop();
   }
 }
 
