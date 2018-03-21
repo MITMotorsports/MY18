@@ -3,6 +3,7 @@
 
 #include "stm32f2xx_hal.h"
 #include "CANlib.h"
+#include "contactors.h"
 
 // LEDs --------------------------------------------------------
 
@@ -12,13 +13,20 @@
 
 // MISC GPIOs ---------------------------------------------------
 
-#define MCU_ON_CLK_ENABLE()       		__HAL_RCC_GPIOC_CLK_ENABLE()
-#define MCU_ON_PIN                		GPIO_PIN_7
-#define MCU_ON_PORT						GPIOC
+#define LOW_SIDE_CONTACTOR_CLK_ENABLE()		__HAL_RCC_GPIOC_CLK_ENABLE()
+#define LOW_SIDE_CONTACTOR_PIN				GPIO_PIN_7
+#define LOW_SIDE_CONTACTOR_PORT				GPIOC
 
-#define CLOSE_CONTACTORS_CLK_ENABLE()  	__HAL_RCC_GPIOC_CLK_ENABLE()
-#define CLOSE_CONTACTORS_PIN			GPIO_PIN_8
-#define CLOSE_CONTACTORS_PORT			GPIOC
+#define HIGH_SIDE_CONTACTOR_CLK_ENABLE()  	__HAL_RCC_GPIOC_CLK_ENABLE()
+#define HIGH_SIDE_CONTACTOR_PIN				GPIO_PIN_8
+#define HIGH_SIDE_CONTACTOR_PORT			GPIOC
+
+#define FAULT_GATES_CLK_ENABLE()			__HAL_RCC_GPIOC_CLK_ENABLE()
+#define FAULT_GATES_PORT					GPIOC
+#define BMS_FAULT_GATE_PIN					GPIO_PIN_4
+#define BPD_FAULT_GATE_PIN					GPIO_PIN_6
+#define IMD_FAULT_GATE_PIN					GPIO_PIN_5
+#define SDN_FAULT_GATE_PIN					GPIO_PIN_3
 
 // USART -------------------------------------------------------
 #define USARTx_INSTANCE               USART1

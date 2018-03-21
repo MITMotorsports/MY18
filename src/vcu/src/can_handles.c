@@ -89,12 +89,24 @@ void sendDashMsg() {
 	can0_VcuToDash_Write(&msg);
 }
 
-void sendTorqueCmdMsg(int16_t torque, int16_t break_and_throttle_conflict) {
+void sendTorqueCmdMsg(int16_t torque) {
 	can0_MCCommand_T msg;
 	msg.torque = torque;
 	msg.speed = 0;
 	msg.direction_is_counterclockwise = 0;
-	msg.inverter_enabled = 1;
+	msg.inverter_enabled = 1;	// INVERTER ENABLED
+	msg.discharge_enabled = 0;
+	msg.torque_limit = 0;
+
+	can0_MCCommand_Write(&msg);
+}
+
+void sendMotorOffCmdMsg() {
+	can0_MCCommand_T msg;
+	msg.torque = 0;
+	msg.speed = 0;
+	msg.direction_is_counterclockwise = 0;
+	msg.inverter_enabled = 0;	// INVERTER DISABLED
 	msg.discharge_enabled = 0;
 	msg.torque_limit = 0;
 

@@ -6,6 +6,7 @@
 #include "stm32f2xx_hal.h"
 #include "state.h"
 
+#define PRECHARGE_DEAD_RECKONING_TIME   5 * 1000 // seconds
 #define PRECHARGE_TOO_LONG_DURATION		10 * 1000 // seconds
 #define DC_BUS_VOLTAGE_SCALE_FACTOR		10
 
