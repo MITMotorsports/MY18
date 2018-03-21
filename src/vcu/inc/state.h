@@ -5,14 +5,35 @@
 #include "stm32f2xx_hal.h"
 #include <stdbool.h>
 
-// DEFINITION OF STRUCTURES
+// DEFINITION OF CAR MODES
 #define CAR_STATE_LV_ONLY 				0
 #define CAR_STATE_PRECHARGING 			1
 #define CAR_STATE_CHARGE_FAULT 			2
 #define CAR_STATE_READY_TO_DRIVE 		3
 #define CAR_STATE_DRIVING 				4
+#define CAR_STATE_CONTACTOR_FAULT       5
 
 uint8_t carMode;
+
+// DEFINITION OF CONTACTOR STATES
+#define CONTACTOR_OPEN					0
+#define CONTACTOR_CLOSED				1
+
+typedef struct
+{
+	uint8_t low_side;
+	uint8_t high_side;
+
+} Contactor_Commanded; // What our code has commanded the contactors to be set to
+
+typedef struct 
+{
+	bool bms_fault;
+	bool bpd_fault;
+	bool imd_fault;
+	bool sdn_fault;
+
+} GateFaults;
 
 typedef struct {
 	int16_t packVoltage;
@@ -63,6 +84,10 @@ typedef struct
 VCU_BoardHeartbeats board_heartbeats_state;
 VCU_BrakeAndThrottle brake_and_throttle_state;
 VCU_ImplausibilityConflict implaus_conflict_state;
+
+Contactor_Commanded commanded_contactors;
+
+GateFaults gate_faults;
 
 MC_Voltage mc_voltage;
 

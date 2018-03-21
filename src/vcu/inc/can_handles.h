@@ -23,6 +23,8 @@ void handleButtonRequest(Frame* msg);
 
 void sendDashMsg();
 
-void sendTorqueCmdMsg(int16_t torque, int16_t break_and_throttle_conflict);
+void sendTorqueCmdMsg(int16_t torque);
+
+void sendMotorOffCmdMsg();
 
 #endif

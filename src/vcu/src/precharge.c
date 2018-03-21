@@ -1,6 +1,6 @@
 
 #include "precharge.h"
-#include "main.h"
+#include "contactors.h"
 
 int16_t calcTargetVoltage(int16_t packVoltage) {
 	return (packVoltage * 9) / 10; // 90% of pack voltage
@@ -18,14 +18,21 @@ void initPrecharge() {
 }
 
 void loopPrecharge() {
-	if (HAL_GetTick() - prechargeStartTime >= PRECHARGE_TOO_LONG_DURATION) {
+	// Timed method for Voltage checking
+	// if (HAL_GetTick() - prechargeStartTime >= PRECHARGE_TOO_LONG_DURATION) {
 
-		changeCarMode(CAR_STATE_CHARGE_FAULT);
+	// 	changeCarMode(CAR_STATE_CHARGE_FAULT);
 
-	} else if (mc_voltage.busVoltage / DC_BUS_VOLTAGE_SCALE_FACTOR >= targetVoltage) {
+	// } else if (mc_voltage.busVoltage / DC_BUS_VOLTAGE_SCALE_FACTOR >= targetVoltage) {
 
-		HAL_GPIO_WritePin(CLOSE_CONTACTORS_PORT, CLOSE_CONTACTORS_PIN, GPIO_PIN_SET); // ON
+	// 	closeHighSideContactor();
+	// 	changeCarMode(CAR_STATE_READY_TO_DRIVE);
+
+	// }
+
+	// Dead reckoning with time
+	if (HAL_GetTick() - prechargeStartTime >= PRECHARGE_DEAD_RECKONING_TIME) {
+		closeHighSideContactor();
 		changeCarMode(CAR_STATE_READY_TO_DRIVE);
-
 	}
 }

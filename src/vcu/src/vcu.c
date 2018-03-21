@@ -3,12 +3,13 @@
 
 void setupVCU() {
     initVCUState();
+    setupErrorState();
 
     lastDashMsgTime = HAL_GetTick();
 }
 
 void beforeLoop() {
-
+    updateErrorState(); // Check for errors
 }
 
 void afterLoop() {
@@ -19,7 +20,7 @@ void afterLoop() {
 }
 
 void loopVCU() {
-    beforeLoop();
+    beforeLoop();   // CAUTION: REMOVING THIS REMOVES ERROR CHECKING
 
     switch (carMode) {
         case CAR_STATE_LV_ONLY:
@@ -36,6 +37,9 @@ void loopVCU() {
             break;
         case CAR_STATE_DRIVING:
             loopDriving();
+            break;
+        case CAR_STATE_CONTACTOR_FAULT:
+            loopContactorFault();
             break;
 
         default:

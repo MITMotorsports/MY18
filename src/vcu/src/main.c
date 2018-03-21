@@ -27,9 +27,8 @@ int main(void)
 
   Can_Init(500000);
 
-  GPIO_InitTypeDef gpioinit;
-
   // Setup an LED for debugging
+  GPIO_InitTypeDef gpioinit;
   LED_CLK_ENABLE();
   gpioinit.Pin = LED_PIN;
   gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
@@ -37,23 +36,9 @@ int main(void)
   gpioinit.Speed = GPIO_SPEED_FAST;
   HAL_GPIO_Init(LED_PORT, &gpioinit);
 
-  // Setup GPIO for MCU On signal (And set it to be on)
-  MCU_ON_CLK_ENABLE();
-  gpioinit.Pin = MCU_ON_PIN;
-  gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
-  gpioinit.Pull = GPIO_PULLUP;
-  gpioinit.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(MCU_ON_PORT, &gpioinit);
-  HAL_GPIO_WritePin(MCU_ON_PORT, MCU_ON_PIN, GPIO_PIN_SET); // ON
-
-  // Setup GPIO for Close contactors signal (initially off)
-  CLOSE_CONTACTORS_CLK_ENABLE();
-  gpioinit.Pin = CLOSE_CONTACTORS_PIN;
-  gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
-  gpioinit.Pull = GPIO_PULLUP;
-  gpioinit.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(CLOSE_CONTACTORS_PORT, &gpioinit);  
-  HAL_GPIO_WritePin(CLOSE_CONTACTORS_PORT, CLOSE_CONTACTORS_PIN, GPIO_PIN_RESET); // OFF
+  // SETUP THE CONTACTOR GPIOS
+  initLowSideContactor();
+  initHighSideContactor();
 
   // Setup USART for debugging
   USARTHandle.Instance = USARTx_INSTANCE;
@@ -73,9 +58,9 @@ int main(void)
   }
 
   // Toggle the LED after this regular setup
-  HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
-  HAL_Delay(1000);
-  HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
+  // HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
+  // HAL_Delay(1000);
+  // HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
 
   printf("\r\nMEGALV PERIPHERALS ONLINE\r\n");
 

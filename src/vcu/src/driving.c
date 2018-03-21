@@ -36,5 +36,5 @@ void loopDriving() {
 
     // HAL_Delay(50);
 
-    sendTorqueCmdMsg(torque_command, implaus_conflict_state.has_brake_throttle_conflict);
+    sendTorqueCmdMsg(torque_command);
 }

@@ -5,8 +5,13 @@
 #include "charge_fault.h"
 #include "ready_to_drive.h"
 #include "driving.h"
+#include "contactor_fault.h"
 
 void initVCUState(void) {
+    // CONTACTOR STATES
+    commanded_contactors.low_side = CONTACTOR_OPEN;
+    commanded_contactors.high_side = CONTACTOR_OPEN;
+
 	// BOARD HEARTBEATS
 	board_heartbeats_state.frontCanNode = HAL_GetTick();
 	board_heartbeats_state.bms = HAL_GetTick();
@@ -63,6 +68,10 @@ void changeCarMode(uint8_t newState) {
         case CAR_STATE_DRIVING:
         	carMode = newState;
             initDriving();
+            break;
+        case CAR_STATE_CONTACTOR_FAULT:
+            carMode = newState;
+            initContactorFault();
             break;
 
         default:
