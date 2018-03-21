@@ -3,7 +3,7 @@
 #include "state.h"
 
 void setupErrorState() {
-    errorState = NO_ERROR_START_STATE;
+    changeErrorState(NO_ERROR_START_STATE);
 }
 
 void updateErrorState() {
@@ -61,9 +61,9 @@ void changeErrorState(uint8_t newState) {
     }
 }
 
-void initInStartState() {}
+void initInStartState() { /* Do nothing for now */ }
 
-void initInNominalState() {}
+void initInNominalState() { /* Do nothing for now */ }
 
 void initInLoopErrorState() {
     // When we get into this state, immediately send the car into the fault state
