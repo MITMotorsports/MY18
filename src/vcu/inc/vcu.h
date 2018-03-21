@@ -13,9 +13,9 @@
 
 void setupVCU();
 
-void vcu_beforeLoop();
+void beforeLoop();
 
-void vcu_afterLoop();
+void afterLoop();
 
 void loopVCU();
 

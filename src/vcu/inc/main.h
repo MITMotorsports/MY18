@@ -1,40 +1,32 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
-#include <stdbool.h>
-#include "stdio.h"
-
 #include "stm32f2xx_hal.h"
 #include "CANlib.h"
 
+// LEDs --------------------------------------------------------
 
-#ifdef __GNUC__
+#define LED_CLK_ENABLE()               __HAL_RCC_GPIOC_CLK_ENABLE()
+#define LED_PIN					   	   GPIO_PIN_10
+#define LED_PORT					   GPIOC
 
-// With GCC Compilers, small printf (option LD Linker->Libraries->Small printf
-// set to 'Yes') calls __io_putchar()
-  # define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else // ifdef __GNUC__
-  # define PUTCHAR_PROTOTYPE int fputc(int ch, FILE * f)
-#endif /* __GNUC__ */
+// MISC GPIOs ---------------------------------------------------
 
+#define MCU_ON_CLK_ENABLE()       		__HAL_RCC_GPIOC_CLK_ENABLE()
+#define MCU_ON_PIN                		GPIO_PIN_7
+#define MCU_ON_PORT						GPIOC
 
-extern USART_HandleTypeDef USARTHandle;
-extern CAN_HandleTypeDef   CanHandle;
-
-// static void CAN_Config(void);
-static void SystemClock_Config(void);
-static void Error_Handler(void);
-
-// GPIO CONFIG
-#include "gpio.h"
+#define CLOSE_CONTACTORS_CLK_ENABLE()  	__HAL_RCC_GPIOC_CLK_ENABLE()
+#define CLOSE_CONTACTORS_PIN			GPIO_PIN_8
+#define CLOSE_CONTACTORS_PORT			GPIOC
 
 // USART -------------------------------------------------------
 #define USARTx_INSTANCE               USART1
-#define USARTx_CLK_ENABLE() __HAL_RCC_USART1_CLK_ENABLE()
-#define USARTx_GPIO_CLK_ENABLE() __HAL_RCC_GPIOB_CLK_ENABLE()
+#define USARTx_CLK_ENABLE()			  __HAL_RCC_USART1_CLK_ENABLE()
+#define USARTx_GPIO_CLK_ENABLE()	  __HAL_RCC_GPIOB_CLK_ENABLE()
 
-#define USARTx_FORCE_RESET() __HAL_RCC_USART1_FORCE_RESET()
-#define USARTx_RELEASE_RESET() __HAL_RCC_USART1_RELEASE_RESET()
+#define USARTx_FORCE_RESET()          __HAL_RCC_USART1_FORCE_RESET()
+#define USARTx_RELEASE_RESET()        __HAL_RCC_USART1_RELEASE_RESET()
 
 #define USARTx_TX_PIN                 GPIO_PIN_6
 #define USARTx_TX_GPIO_PORT           GPIOB
@@ -48,11 +40,11 @@ static void Error_Handler(void);
 
 // CAN ------------------------------------------------------------
 #define CANx                            CAN1
-#define CANx_CLK_ENABLE() __HAL_RCC_CAN1_CLK_ENABLE()
-#define CANx_GPIO_CLK_ENABLE() __HAL_RCC_GPIOB_CLK_ENABLE()
-
-#define CANx_FORCE_RESET() __HAL_RCC_CAN1_FORCE_RESET()
-#define CANx_RELEASE_RESET() __HAL_RCC_CAN1_RELEASE_RESET()
+#define CANx_CLK_ENABLE()               __HAL_RCC_CAN1_CLK_ENABLE()
+#define CANx_GPIO_CLK_ENABLE()          __HAL_RCC_GPIOB_CLK_ENABLE()
+     
+#define CANx_FORCE_RESET()              __HAL_RCC_CAN1_FORCE_RESET()
+#define CANx_RELEASE_RESET()            __HAL_RCC_CAN1_RELEASE_RESET()
 
 #define CANx_TX_PIN                    GPIO_PIN_9
 #define CANx_TX_GPIO_PORT              GPIOB

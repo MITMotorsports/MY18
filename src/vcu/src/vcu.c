@@ -1,65 +1,64 @@
+
 #include "vcu.h"
 
 void setupVCU() {
-  initVCUState();
+    initVCUState();
 
-  lastDashMsgTime = HAL_GetTick();
+    lastDashMsgTime = HAL_GetTick();
 }
 
-void vcu_beforeLoop() {}
+void beforeLoop() {
 
-void vcu_afterLoop() {
-  if (HAL_GetTick() - lastDashMsgTime >= SEND_DASH_MSG_WAIT_DURATION) {
-    sendDashMsg();
-    lastDashMsgTime = HAL_GetTick();
-  }
+}
+
+void afterLoop() {
+    if (HAL_GetTick() - lastDashMsgTime >= SEND_DASH_MSG_WAIT_DURATION) {
+        sendDashMsg();
+        lastDashMsgTime = HAL_GetTick();
+    }
 }
 
 void loopVCU() {
-  vcu_beforeLoop();
+    beforeLoop();
 
-  switch (carMode) {
-  case CAR_STATE_LV_ONLY:
-    loopLVOnly();
-    break;
+    switch (carMode) {
+        case CAR_STATE_LV_ONLY:
+            loopLVOnly();
+            break;
+        case CAR_STATE_PRECHARGING:
+            loopPrecharge();
+            break;
+        case CAR_STATE_CHARGE_FAULT:
+            loopChargeFault();
+            break;
+        case CAR_STATE_READY_TO_DRIVE:
+            loopReadyToDrive();
+            break;
+        case CAR_STATE_DRIVING:
+            loopDriving();
+            break;
 
-  case CAR_STATE_PRECHARGING:
-    loopPrecharge();
-    break;
+        default:
+            break;
+    }
 
-  case CAR_STATE_CHARGE_FAULT:
-    loopChargeFault();
-    break;
-
-  case CAR_STATE_READY_TO_DRIVE:
-    loopReadyToDrive();
-    break;
-
-  case CAR_STATE_DRIVING:
-    loopDriving();
-    break;
-
-  default:
-    break;
-  }
-
-  vcu_afterLoop();
+    afterLoop();
 }
 
-void handleCanVCU(CAN_HandleTypeDef *CanHandle) {
-  Frame frame;
+void handleCanVCU(CAN_HandleTypeDef* CanHandle) {
+    Frame frame;
 
-  lastRxMsgToFrame(&frame);
+    lastRxMsgToFrame(&frame);
 
-  can0_T msgForm;
-  msgForm = identify_can0(&frame);
+    can0_T msgForm;
+    msgForm = identify_can0(&frame);
 
-  switch (msgForm) {
-  case can0_FrontCanNodeBrakeThrottle:
-    handleBrakeThrottleMsg(&frame);
-    break;
+    switch (msgForm) {
+        case can0_FrontCanNodeBrakeThrottle:
+          handleBrakeThrottleMsg(&frame);
+          break;
 
-  default:
-    break;
-  }
+        default:
+          break;
+    }
 }

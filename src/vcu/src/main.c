@@ -1,34 +1,59 @@
+
 #include "main.h"
 
-USART_HandleTypeDef USARTHandle;
-CAN_HandleTypeDef   CanHandle;
+#include <stdbool.h>
+#include "stdio.h"
+
+#ifdef __GNUC__
+  /* With GCC Compilers, small printf (option LD Linker->Libraries->Small printf
+     set to 'Yes') calls __io_putchar() */
+  #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+  #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif /* __GNUC__ */
+
+USART_HandleTypeDef  USARTHandle;
+CAN_HandleTypeDef    CanHandle;
+
+// static void CAN_Config(void);
+static void SystemClock_Config(void);
+static void Error_Handler(void);
 
 int main(void)
 {
   HAL_Init();
-
+  
   SystemClock_Config();
 
-  // TODO: Define Can_Set_Filter in CANlib
-  // init_can0_vcu();
-  Can_Init(5e5);
+  Can_Init(500000);
 
-  GPIO_BEGIN_INIT();
+  GPIO_InitTypeDef gpioinit;
 
   // Setup an LED for debugging
-  DGPIO_INIT_OUT(LED, GPIO_PIN_SET);
+  LED_CLK_ENABLE();
+  gpioinit.Pin = LED_PIN;
+  gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
+  gpioinit.Pull = GPIO_PULLUP;
+  gpioinit.Speed = GPIO_SPEED_FAST;
+  HAL_GPIO_Init(LED_PORT, &gpioinit);
 
-  // Setup GPIO for MCU On signal (low side contactor)
-  DGPIO_INIT_OUT(L_CONTACTOR, GPIO_PIN_RESET);
+  // Setup GPIO for MCU On signal (And set it to be on)
+  MCU_ON_CLK_ENABLE();
+  gpioinit.Pin = MCU_ON_PIN;
+  gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
+  gpioinit.Pull = GPIO_PULLUP;
+  gpioinit.Speed = GPIO_SPEED_FAST;
+  HAL_GPIO_Init(MCU_ON_PORT, &gpioinit);
+  HAL_GPIO_WritePin(MCU_ON_PORT, MCU_ON_PIN, GPIO_PIN_SET); // ON
 
-  // Setup GPIO for CHRD DELAY (high side contactor)
-  DGPIO_INIT_OUT(H_CONTACTOR, GPIO_PIN_RESET);
-
-  // Setup GPIOs for fault monitoring
-  DGPIO_INIT_IN(BMS_GATE, GPIO_PULLDOWN);
-  DGPIO_INIT_IN(BPD_GATE, GPIO_PULLDOWN);
-  DGPIO_INIT_IN(IMD_GATE, GPIO_PULLDOWN);
-  DGPIO_INIT_IN(SDN_GATE, GPIO_PULLDOWN);
+  // Setup GPIO for Close contactors signal (initially off)
+  CLOSE_CONTACTORS_CLK_ENABLE();
+  gpioinit.Pin = CLOSE_CONTACTORS_PIN;
+  gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
+  gpioinit.Pull = GPIO_PULLUP;
+  gpioinit.Speed = GPIO_SPEED_FAST;
+  HAL_GPIO_Init(CLOSE_CONTACTORS_PORT, &gpioinit);  
+  HAL_GPIO_WritePin(CLOSE_CONTACTORS_PORT, CLOSE_CONTACTORS_PIN, GPIO_PIN_RESET); // OFF
 
   // Setup USART for debugging
   USARTHandle.Instance = USARTx_INSTANCE;
@@ -48,20 +73,18 @@ int main(void)
   }
 
   // Toggle the LED after this regular setup
-  HAL_GPIO_TogglePin(GPIO(LED));
+  HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
   HAL_Delay(1000);
-  HAL_GPIO_TogglePin(GPIO(LED));
+  HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
 
   printf("\r\nMEGALV PERIPHERALS ONLINE\r\n");
 
   setupVCU();
-  s_error_setup();
 
   while(1)
   {
     loopVCU(&USARTHandle);
-    s_error_loop();
-  }
+  } 
 }
 
 /**
@@ -73,14 +96,14 @@ PUTCHAR_PROTOTYPE
 {
   /* Place your implementation of fputc here */
   /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
-  HAL_USART_Transmit(&USARTHandle, (uint8_t *)&ch, 1, 0xFFFF);
+  HAL_USART_Transmit(&USARTHandle, (uint8_t *)&ch, 1, 0xFFFF); 
 
   return ch;
 }
 
 /**
   * @brief  System Clock Configuration
-  *         The system Clock is configured as follow :
+  *         The system Clock is configured as follow : 
   *            System Clock source            = PLL (HSE)
   *            SYSCLK(Hz)                     = 120000000
   *            HCLK(Hz)                       = 120000000
@@ -115,8 +138,8 @@ static void SystemClock_Config(void)
   {
     Error_Handler();
   }
-
-  /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
+  
+  /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 
      clocks dividers */
   RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
@@ -157,7 +180,7 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* CanHandle)
   * @retval None
   */
 void assert_failed(uint8_t* file, uint32_t line)
-{
+{ 
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 
@@ -167,3 +190,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   }
 }
 #endif
+
