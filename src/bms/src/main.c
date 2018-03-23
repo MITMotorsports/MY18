@@ -89,22 +89,22 @@ void Process_Input(BMS_INPUT_T *bms_input) {
   bms_input->msTicks        = msTicks;
   bms_input->fault_asserted = Board_Pin_Read(PIN_BMS_FAULT);
 
-  int16_t adc;
-  bms_input->H_contactor_welded = Board_Contactor_High_Welded();
-  bms_input->L_contactor_welded = Board_Contactor_Low_Welded();
+  int16_t adc = 0;
+  // bms_input->H_contactor_welded = Board_Contactor_High_Welded();
+  // bms_input->L_contactor_welded = Board_Contactor_Low_Welded();
 
-  bms_input->H_contactor_closed = Board_Contactor_High_Closed();
-  bms_input->L_contactor_closed = Board_Contactor_Low_Closed(&adc);
+  // bms_input->H_contactor_closed = Board_Contactor_High_Closed();
+  // bms_input->L_contactor_closed = Board_Contactor_Low_Closed(&adc);
 
   Board_PrintNum(adc, 10);
 
-  if (bms_input->H_contactor_welded) {
-    Error_Assert(ERROR_H_CONTACTOR_WELDED);
-  }
-
-  if (bms_input->L_contactor_welded) {
-    Error_Assert(ERROR_L_CONTACTOR_WELDED);
-  }
+  // if (bms_input->H_contactor_welded) {
+  //   Error_Assert(ERROR_H_CONTACTOR_WELDED);
+  // }
+  //
+  // if (bms_input->L_contactor_welded) {
+  //   Error_Assert(ERROR_L_CONTACTOR_WELDED);
+  // }
 }
 
 void Process_Output(BMS_INPUT_T  *bms_input,
