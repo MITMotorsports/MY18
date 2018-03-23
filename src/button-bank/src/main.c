@@ -151,7 +151,7 @@ int main(void) {
         hold.driver_reset |= current.driver_reset;
 
         if (msTicks > timer) {
-            timer = msTicks + can0_ButtonRequst_period;
+            timer = msTicks + can0_ButtonRequest_period;
 
             can0_ButtonRequest_T msg;
             msg.RTD         = hold.rtd;
