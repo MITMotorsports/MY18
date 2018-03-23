@@ -23,13 +23,12 @@ uint32_t Board_Print(const char *str);
 
 uint32_t Board_Println(const char *str);
 
-uint32_t Board_PrintNum(uint32_t num,
-                        uint8_t  base);
-
 // - Blocking
 uint32_t Board_Print_BLOCKING(const char *str);
 
 uint32_t Board_Println_BLOCKING(const char *str);
+
+uint32_t Board_PrintNum(uint32_t num, uint8_t  base);
 
 // - Read/Write from UART buffer
 uint32_t Board_Write(const char *str,
