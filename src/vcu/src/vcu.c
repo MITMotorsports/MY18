@@ -2,7 +2,7 @@
 #include "vcu.h"
 
 void setupVCU() {
-    initVCUState();
+    initVCUState(); // NEEDS TO HAPPEN BEFORE INIT ERROR STATE
     setupErrorState();
 
     lastDashMsgTime = HAL_GetTick();

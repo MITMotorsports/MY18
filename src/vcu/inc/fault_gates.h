@@ -12,6 +12,7 @@ void initFaultGates();
 void updateGateFaults(); // gate faults in state.h
 
 bool anyGateFaultsTripped();
+bool anyGateNonESDFaultsTripped();
 
 void printGateFaults();
 

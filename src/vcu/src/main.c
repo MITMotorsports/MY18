@@ -36,6 +36,15 @@ int main(void)
   gpioinit.Speed = GPIO_SPEED_FAST;
   HAL_GPIO_Init(LED_PORT, &gpioinit);
 
+  // Driver Reset GPIO output for when Driver Reset is pressed
+  DRIVER_RESET_TRIGGER_CLK_ENABLE();
+  gpioinit.Pin = DRIVER_RESET_TRIGGER_PIN;
+  gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
+  gpioinit.Pull = GPIO_PULLUP;
+  gpioinit.Speed = GPIO_SPEED_FAST;
+  HAL_GPIO_Init(DRIVER_RESET_TRIGGER_PORT, &gpioinit);
+  HAL_GPIO_WritePin(DRIVER_RESET_TRIGGER_PORT, DRIVER_RESET_TRIGGER_PIN, GPIO_PIN_SET); //ON 
+
   // SETUP THE CONTACTOR GPIOS
   initLowSideContactor();
   initHighSideContactor();

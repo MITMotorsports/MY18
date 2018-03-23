@@ -8,10 +8,6 @@
 #include "contactor_fault.h"
 
 void initVCUState(void) {
-    // CONTACTOR STATES
-    commanded_contactors.low_side = CONTACTOR_OPEN;
-    commanded_contactors.high_side = CONTACTOR_OPEN;
-
 	// BOARD HEARTBEATS
 	board_heartbeats_state.frontCanNode = HAL_GetTick();
 	board_heartbeats_state.bms = HAL_GetTick();

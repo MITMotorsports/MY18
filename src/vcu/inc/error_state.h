@@ -7,21 +7,24 @@
 #include "fault_gates.h"
 
 // ERROR STATES FOR THE LOOP OPEN STATE MACHINE
-#define NO_ERROR_START_STATE 		0 			// NO CONTACTOR COMMANDS YET
-#define NO_ERROR_NOMINAL_STATE		1			// CONTACTOR STATE AVAILABLE
-#define LOOP_ERROR_STATE    		2			// A FAULT OCCURED
+#define NO_ERROR_NO_ESD_STATE       0
+#define NO_ERROR_STATE              1 
+#define NO_ERROR_WITH_TSMS_STATE    2
+#define LOOP_ERROR_STATE            3
 
 void setupErrorState();
 void updateErrorState();
 
 void changeErrorState(uint8_t newState);
 
-void initInStartState();
-void initInNominalState();
+void initInNoErrorNoESDState();
+void initInNoErrorState();
+void initInNoErrorWithTSMSState();
 void initInLoopErrorState();
 
-void updateInStartState();
-void updateInNominalState();
+void updateInNoErrorNoESDState();
+void updateInNoErrorState();
+void updateInNoErrorWithTSMSState();
 void updateInLoopErrorState();
 
 uint8_t errorState;

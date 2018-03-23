@@ -8,30 +8,36 @@
 // LEDs --------------------------------------------------------
 
 #define LED_CLK_ENABLE()               __HAL_RCC_GPIOC_CLK_ENABLE()
-#define LED_PIN					   	   GPIO_PIN_10
-#define LED_PORT					   GPIOC
+#define LED_PIN                        GPIO_PIN_10
+#define LED_PORT                       GPIOC
 
 // MISC GPIOs ---------------------------------------------------
 
-#define LOW_SIDE_CONTACTOR_CLK_ENABLE()		__HAL_RCC_GPIOC_CLK_ENABLE()
-#define LOW_SIDE_CONTACTOR_PIN				GPIO_PIN_7
-#define LOW_SIDE_CONTACTOR_PORT				GPIOC
+#define VCU_GATE_CLK_ENABLE()               __HAL_RCC_GPIOC_CLK_ENABLE()
+#define VCU_GATE_PIN                        GPIO_PIN_7
+#define VCU_GATE_PORT                       GPIOC
 
-#define HIGH_SIDE_CONTACTOR_CLK_ENABLE()  	__HAL_RCC_GPIOC_CLK_ENABLE()
-#define HIGH_SIDE_CONTACTOR_PIN				GPIO_PIN_8
-#define HIGH_SIDE_CONTACTOR_PORT			GPIOC
+#define PRECHARGE_GATE_CLK_ENABLE()         __HAL_RCC_GPIOC_CLK_ENABLE()
+#define PRECHARGE_GATE_PIN                  GPIO_PIN_8
+#define PRECHARGE_GATE_PORT                 GPIOC
 
-#define FAULT_GATES_CLK_ENABLE()			__HAL_RCC_GPIOC_CLK_ENABLE()
-#define FAULT_GATES_PORT					GPIOC
-#define BMS_FAULT_GATE_PIN					GPIO_PIN_4
-#define BPD_FAULT_GATE_PIN					GPIO_PIN_6
-#define IMD_FAULT_GATE_PIN					GPIO_PIN_5
-#define SDN_FAULT_GATE_PIN					GPIO_PIN_3
+#define FAULT_GATES_CLK_ENABLE()            __HAL_RCC_GPIOC_CLK_ENABLE()
+#define FAULT_GATES_PORT                    GPIOC
+#define BMS_FAULT_GATE_PIN                  GPIO_PIN_4
+#define BPD_FAULT_GATE_PIN                  GPIO_PIN_6
+#define IMD_FAULT_GATE_PIN                  GPIO_PIN_5
+#define SDN_FAULT_GATE_PIN                  GPIO_PIN_2
+#define ESD_FAULT_PIN                       GPIO_PIN_3
+
+#define DRIVER_RESET_TRIGGER_CLK_ENABLE()   __HAL_RCC_GPIOC_CLK_ENABLE()
+#define DRIVER_RESET_TRIGGER_PIN            GPIO_PIN_1
+#define DRIVER_RESET_TRIGGER_PORT           GPIOC
+
 
 // USART -------------------------------------------------------
 #define USARTx_INSTANCE               USART1
-#define USARTx_CLK_ENABLE()			  __HAL_RCC_USART1_CLK_ENABLE()
-#define USARTx_GPIO_CLK_ENABLE()	  __HAL_RCC_GPIOB_CLK_ENABLE()
+#define USARTx_CLK_ENABLE()           __HAL_RCC_USART1_CLK_ENABLE()
+#define USARTx_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOB_CLK_ENABLE()
 
 #define USARTx_FORCE_RESET()          __HAL_RCC_USART1_FORCE_RESET()
 #define USARTx_RELEASE_RESET()        __HAL_RCC_USART1_RELEASE_RESET()

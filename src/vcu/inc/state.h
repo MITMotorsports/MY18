@@ -15,23 +15,14 @@
 
 uint8_t carMode;
 
-// DEFINITION OF CONTACTOR STATES
-#define CONTACTOR_OPEN					0
-#define CONTACTOR_CLOSED				1
-
-typedef struct
-{
-	uint8_t low_side;
-	uint8_t high_side;
-
-} Contactor_Commanded; // What our code has commanded the contactors to be set to
-
 typedef struct 
 {
 	bool bms_fault;
 	bool bpd_fault;
 	bool imd_fault;
 	bool sdn_fault;
+	bool esd_fault;
+	bool NOT_IMPLEMENTED_YET_tsms_fault;
 
 } GateFaults;
 
@@ -84,8 +75,6 @@ typedef struct
 VCU_BoardHeartbeats board_heartbeats_state;
 VCU_BrakeAndThrottle brake_and_throttle_state;
 VCU_ImplausibilityConflict implaus_conflict_state;
-
-Contactor_Commanded commanded_contactors;
 
 GateFaults gate_faults;
 

@@ -4,48 +4,42 @@
 #include "state.h"
 
 void initLowSideContactor() {
-    // Setup GPIO for MCU On signal (And set it to be on)
     GPIO_InitTypeDef gpioinit;
-    LOW_SIDE_CONTACTOR_CLK_ENABLE();
-    gpioinit.Pin = LOW_SIDE_CONTACTOR_PIN;
+    VCU_GATE_CLK_ENABLE();
+    gpioinit.Pin = VCU_GATE_PIN;
     gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
     gpioinit.Pull = GPIO_PULLUP;
     gpioinit.Speed = GPIO_SPEED_FAST;
-    HAL_GPIO_Init(LOW_SIDE_CONTACTOR_PORT, &gpioinit);
+    HAL_GPIO_Init(VCU_GATE_PORT, &gpioinit);
 
-    closeLowSideContactor();
+    openLowSideContactor();
 }
 
 void initHighSideContactor() {
-    // Setup GPIO for Close contactors signal (initially off)
     GPIO_InitTypeDef gpioinit;
-    HIGH_SIDE_CONTACTOR_CLK_ENABLE();
-    gpioinit.Pin = HIGH_SIDE_CONTACTOR_PIN;
+    PRECHARGE_GATE_CLK_ENABLE();
+    gpioinit.Pin = PRECHARGE_GATE_PIN;
     gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
     gpioinit.Pull = GPIO_PULLUP;
     gpioinit.Speed = GPIO_SPEED_FAST;
-    HAL_GPIO_Init(HIGH_SIDE_CONTACTOR_PORT, &gpioinit);  
+    HAL_GPIO_Init(PRECHARGE_GATE_PORT, &gpioinit);  
     
     openHighSideContactor();
 }
 
 void openLowSideContactor() {
-    HAL_GPIO_WritePin(LOW_SIDE_CONTACTOR_PORT, LOW_SIDE_CONTACTOR_PIN, GPIO_PIN_RESET); // OFF
-    commanded_contactors.low_side = CONTACTOR_OPEN; // in the state.h
+    HAL_GPIO_WritePin(VCU_GATE_PORT, VCU_GATE_PIN, GPIO_PIN_RESET); // OFF
 }
 
 void closeLowSideContactor() {
-    HAL_GPIO_WritePin(LOW_SIDE_CONTACTOR_PORT, LOW_SIDE_CONTACTOR_PIN, GPIO_PIN_SET); // ON
-    commanded_contactors.low_side = CONTACTOR_CLOSED; // in the state.h
+    HAL_GPIO_WritePin(VCU_GATE_PORT, VCU_GATE_PIN, GPIO_PIN_SET); // ON
 }
 
 
 void openHighSideContactor() {
-    HAL_GPIO_WritePin(HIGH_SIDE_CONTACTOR_PORT, HIGH_SIDE_CONTACTOR_PIN, GPIO_PIN_RESET); // OFF
-    commanded_contactors.high_side = CONTACTOR_OPEN; // in the state.h
+    HAL_GPIO_WritePin(PRECHARGE_GATE_PORT, PRECHARGE_GATE_PIN, GPIO_PIN_RESET); // OFF
 }
 
 void closeHighSideContactor() {
-    HAL_GPIO_WritePin(HIGH_SIDE_CONTACTOR_PORT, HIGH_SIDE_CONTACTOR_PIN, GPIO_PIN_SET); // ON
-    commanded_contactors.high_side = CONTACTOR_CLOSED;  // in the state.h
+    HAL_GPIO_WritePin(PRECHARGE_GATE_PORT, PRECHARGE_GATE_PIN, GPIO_PIN_SET); // ON
 }
