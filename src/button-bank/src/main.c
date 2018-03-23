@@ -157,6 +157,9 @@ int main(void) {
             msg.RTD         = hold.rtd;
             msg.DriverReset = hold.driver_reset;
 
+            hold.rtd          = false;
+            hold.driver_reset = false;
+
             can0_ButtonRequest_Write(&msg);
         }
     }
