@@ -223,12 +223,24 @@ buses:
             position: 13
             length: 1
             c_type: bool
-          error_contactor_closed:
+          error_L_contactor_welded:
             position: 14
             length: 1
             c_type: bool
-          soc:
+          error_H_contactor_welded:
             position: 15
+            length: 1
+            c_type: bool
+          L_contactor_closed:
+            position: 16
+            length: 1
+            c_type: bool
+          H_contactor_closed:
+            position: 17
+            length: 1
+            c_type: bool
+          soc:
+            position: 20
             length: 8
             c_type: uint8_t
       Dash_Request:

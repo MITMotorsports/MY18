@@ -39,8 +39,13 @@ void Init_BMS_Structs(void) {
   bms_input.mode_request       = BMS_SSM_MODE_STANDBY;
   bms_input.vcu_mode_request   = BMS_SSM_MODE_STANDBY;
   bms_input.csb_mode_request   = BMS_SSM_MODE_STANDBY;
-  bms_input.contactor_closed_high = false;
-  bms_input.contactor_closed_low = false;
+
+  bms_input.H_contactor_welded = false;
+  bms_input.L_contactor_welded = false;
+
+  bms_input.H_contactor_closed = false;
+  bms_input.L_contactor_closed = false;
+
   bms_input.fault_asserted  = false;
 
   bms_input.ltc_packconfig_check_done = false;
@@ -81,21 +86,31 @@ void Process_Input(BMS_INPUT_T *bms_input) {
     BMS_VOLTAGE_ESTIMATE_T vol = Pack_Estimate_Total_Voltage(&pack_config, &pack_status);
   }
 
-  bms_input->msTicks           = msTicks;
-  bms_input->fault_asserted = Board_FAULT_Asserted();
+  bms_input->msTicks        = msTicks;
+  bms_input->fault_asserted = Board_Pin_Read(PIN_BMS_FAULT);
 
-  bms_input->contactor_closed_high = !Board_Contactor_High_Closed();
-  bms_input->contactor_closed_low = Board_Contactor_Low_Closed();
+  int16_t adc;
+  bms_input->H_contactor_welded = Board_Contactor_High_Welded();
+  bms_input->L_contactor_welded = Board_Contactor_Low_Welded();
 
-  if (bms_input->contactor_closed_high || bms_input->contactor_closed_low) {
-    Error_Assert(ERROR_CONTACTOR_CLOSED);
+  bms_input->H_contactor_closed = Board_Contactor_High_Closed();
+  bms_input->L_contactor_closed = Board_Contactor_Low_Closed(&adc);
+
+  Board_PrintNum(adc, 10);
+
+  if (bms_input->H_contactor_welded) {
+    Error_Assert(ERROR_H_CONTACTOR_WELDED);
+  }
+
+  if (bms_input->L_contactor_welded) {
+    Error_Assert(ERROR_L_CONTACTOR_WELDED);
   }
 }
 
 void Process_Output(BMS_INPUT_T  *bms_input,
                     BMS_OUTPUT_T *bms_output,
                     BMS_STATE_T  *bms_state) {
-  Board_FAULT_Set(bms_output->assert_fault);
+  Board_Pin_Set(PIN_BMS_FAULT, bms_output->assert_fault);
 
   if (bms_output->ltc_deinit) {
     Board_LTC6804_DeInit();
@@ -157,11 +172,7 @@ int main(void) {
     // }
 
     // Setting fault pin high
-    // Board_Contactors_Set(true);
-
-    // if(Board_Contactors_Closed()) {
-    //     Board_Println_BLOCKING("Fault Pin high");
-    // }
+    Board_Pin_Set(PIN_BMS_FAULT, GPIO_HIGH);
 
     Process_Keyboard();                                  // console input
     Process_Input(&bms_input);                           // Processes Inputs(can

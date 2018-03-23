@@ -23,14 +23,18 @@ typedef struct BMS_INPUT {
 
   bool vcu_switch;
 
-  bool contactor_closed_high; // TODO: Move to proper location in status.
-  bool contactor_closed_low;
+  bool H_contactor_welded; // TODO: Move to proper location in status.
+  bool L_contactor_welded;
+
+  bool H_contactor_closed; // TODO: Move to proper location in status.
+  bool L_contactor_closed;
 
   bool fault_asserted;
 
-  bool     ltc_packconfig_check_done;
-  bool     eeprom_read_error;
-  bool     fan_override;
+  bool ltc_packconfig_check_done;
+  bool eeprom_read_error;
+  bool fan_override;
+
   uint32_t msTicks;
 } BMS_INPUT_T;
 

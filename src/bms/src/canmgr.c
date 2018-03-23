@@ -100,9 +100,15 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
     msg.error_vcu_dead = errors[ERROR_VCU_DEAD].error == true;
     msg.error_control_flow = errors[ERROR_CONTROL_FLOW].error == true;
     msg.error_blown_fuse = errors[ERROR_BLOWN_FUSE].error == true;
-    msg.error_contactor_closed = errors[ERROR_CONTACTOR_CLOSED].error == true;
+    msg.error_L_contactor_welded = errors[ERROR_L_CONTACTOR_WELDED].error == true;
+    msg.error_H_contactor_welded = errors[ERROR_H_CONTACTOR_WELDED].error == true;
+
+
+    msg.L_contactor_closed = bms_input ->L_contactor_closed;
+    msg.H_contactor_closed = bms_input ->H_contactor_closed;
 
     msg.soc = ps->state_of_charge;
+
     can0_BMSHeartbeat_Write(&msg);
 
     last_time = msTicks;
