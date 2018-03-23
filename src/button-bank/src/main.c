@@ -2,6 +2,8 @@
 #include "chip.h"
 #include "CANlib.h"
 
+#include <string.h>
+
 #define SERIAL_BAUDRATE 57600
 #define CAN_BAUDRATE 500000
 
@@ -15,6 +17,9 @@
 
 #define PIN_CONFIG IOCON_FUNC1 | IOCON_DIGMODE_EN | IOCON_MODE_PULLDOWN // Fix pull
 
+// pulldown or pullup?
+#define BUTTON_DOWN true
+
 Can_ErrorID_T write_can_driver_reset(bool state);
 Can_ErrorID_T write_can_rtd(bool state);
 Can_ErrorID_T write_can_scroll_select(bool state);
@@ -27,32 +32,32 @@ void SysTick_Handler(void) {
 }
 
 void Serial_Init(uint32_t baudrate) {
-  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_6, (IOCON_FUNC1 | IOCON_MODE_INACT)); /* RXD */
-  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_7, (IOCON_FUNC1 | IOCON_MODE_INACT)); /* TXD */
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_6, (IOCON_FUNC1 | IOCON_MODE_INACT)); /* RXD */
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_7, (IOCON_FUNC1 | IOCON_MODE_INACT)); /* TXD */
 
-  Chip_UART_Init(LPC_USART);
-  Chip_UART_SetBaud(LPC_USART, baudrate);
-  // Configure data width, parity, and stop bits
-  Chip_UART_ConfigData(LPC_USART, (UART_LCR_WLEN8 | UART_LCR_SBS_1BIT | UART_LCR_PARITY_DIS));
-  Chip_UART_SetupFIFOS(LPC_USART, (UART_FCR_FIFO_EN | UART_FCR_TRG_LEV2));
-  Chip_UART_TXEnable(LPC_USART);
+    Chip_UART_Init(LPC_USART);
+    Chip_UART_SetBaud(LPC_USART, baudrate);
+    // Configure data width, parity, and stop bits
+    Chip_UART_ConfigData(LPC_USART, (UART_LCR_WLEN8 | UART_LCR_SBS_1BIT | UART_LCR_PARITY_DIS));
+    Chip_UART_SetupFIFOS(LPC_USART, (UART_FCR_FIFO_EN | UART_FCR_TRG_LEV2));
+    Chip_UART_TXEnable(LPC_USART);
 }
 
 void print(const char* str) {
-  Chip_UART_SendBlocking(LPC_USART, str, strlen(str));
+    Chip_UART_SendBlocking(LPC_USART, str, strlen(str));
 }
 
-void GPIO_Init() {
-  Chip_IOCON_PinMuxSet(LPC_IOCON, DRIVER_RESET_PIN_IOCON, PIN_CONFIG);
-  Chip_IOCON_PinMuxSet(LPC_IOCON, RTD_PIN_PIN_IOCON, PIN_CONFIG);
-  Chip_IOCON_PinMuxSet(LPC_IOCON, SCROLL_SELECT_PIN_IOCON, PIN_CONFIG);
+void GPIO_Init(void) {
+    Chip_IOCON_PinMuxSet(LPC_IOCON, DRIVER_RESET_PIN_IOCON, PIN_CONFIG);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, RTD_PIN_PIN_IOCON, PIN_CONFIG);
+    Chip_IOCON_PinMuxSet(LPC_IOCON, SCROLL_SELECT_PIN_IOCON, PIN_CONFIG);
 
-  // Configure pins as inputs
-  Chip_GPIO_SetPinDIR(LPC_GPIO, DRIVER_RESET_PIN_AND_PORT, false);
-  Chip_GPIO_SetPinDIR(LPC_GPIO, RTD_PIN_AND_PORT, false);
-  Chip_GPIO_SetPinDIR(LPC_GPIO, SCROLL_SELECT_PIN_AND_PORT, false);
+    // Configure pins as inputs
+    Chip_GPIO_SetPinDIR(LPC_GPIO, DRIVER_RESET_PIN_AND_PORT, false);
+    Chip_GPIO_SetPinDIR(LPC_GPIO, RTD_PIN_AND_PORT, false);
+    Chip_GPIO_SetPinDIR(LPC_GPIO, SCROLL_SELECT_PIN_AND_PORT, false);
 
-  Chip_GPIO_Init(LPC_GPIO);
+    Chip_GPIO_Init(LPC_GPIO);
 }
 
 bool read_pin(uint32_t port, uint8_t bit) {
@@ -114,51 +119,47 @@ void handle_can_error(Can_ErrorID_T error) {
   }
 }
 
+typedef struct button_states {
+    bool rtd;
+    bool driver_reset;
+    // need to name other buttons
+} button_states_t;
+
+button_states_t poll_buttons(void) {
+    button_states_t bs;
+    bs.rtd          = (read_pin(RTD_PIN_AND_PORT)          == BUTTON_DOWN);
+    bs.driver_reset = (read_pin(DRIVER_RESET_PIN_AND_PORT) == BUTTON_DOWN);
+    return bs;
+}
 
 int main(void) {
-  SystemCoreClockUpdate();
+    SystemCoreClockUpdate();
 
-  Serial_Init(SERIAL_BAUDRATE);
-  Can_Init(CAN_BAUDRATE);
+    Serial_Init(SERIAL_BAUDRATE);
+    Can_Init(CAN_BAUDRATE);
 
-  if (SysTick_Config (SystemCoreClock / 1000)) {
-    // Error
-    while(1);
-  }
-
-  bool last_driver_reset_pressed = false;
-  bool last_rtd_pressed = false;
-  bool last_scroll_select_pressed = false;
-
-  bool curr_driver_reset_pressed = false;
-  bool curr_rtd_pressed = false;
-  bool curr_scroll_select_pressed = false;
-
-  bool reset = false, rtd = false;
-
-  uint32_t timer = 0;
-  while(1) {
-    curr_driver_reset_pressed = read_pin(DRIVER_RESET_PIN_AND_PORT);
-    if (curr_driver_reset_pressed && !last_driver_reset_pressed) {
-      reset = !reset;
+    if (SysTick_Config (SystemCoreClock / 1000)) {
+        while(1); // error
     }
-    last_driver_reset_pressed = curr_driver_reset_pressed;
 
-    curr_rtd_pressed = read_pin(RTD_PIN_AND_PORT);
-    if (curr_rtd_pressed != last_rtd_pressed) {
-      rtd = !rtd;
+    uint32_t timer = 0;
+
+    button_states_t hold = {false, false};
+    while(1) {
+        button_states_t current = poll_buttons();
+        hold.rtd          |= current.rtd;
+        hold.driver_reset |= current.driver_reset;
+
+        if (msTicks > timer) {
+            timer = msTicks + can0_ButtonRequst_period;
+
+            can0_ButtonRequest_T msg;
+            msg.RTD         = hold.rtd;
+            msg.DriverReset = hold.driver_reset;
+
+            can0_ButtonRequest_Write(&msg);
+        }
     }
-    last_rtd_pressed = curr_rtd_pressed;
 
-    if (msTicks > timer) {
-      timer = msTicks + 100;
-      can0_ButtonRequest_T msg;
-      msg.RTD = rtd;
-      msg.DriverReset = reset;
-      can0_ButtonRequest_Write(&msg);
-
-    }
-  }
-
-  return 0;
+    return 0;
 }
