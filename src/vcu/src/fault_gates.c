@@ -6,7 +6,7 @@ void initFaultGates() {
 	GPIO_InitTypeDef gpioinit;
 
     FAULT_GATES_CLK_ENABLE();
-    
+
     gpioinit.Pin = BMS_FAULT_GATE_PIN;
     gpioinit.Mode = GPIO_MODE_INPUT;
     gpioinit.Pull = GPIO_PULLUP;
@@ -29,7 +29,7 @@ void initFaultGates() {
     gpioinit.Mode = GPIO_MODE_INPUT;
     gpioinit.Pull = GPIO_PULLUP;
     gpioinit.Speed = GPIO_SPEED_FAST;
-    HAL_GPIO_Init(FAULT_GATES_PORT, &gpioinit);    
+    HAL_GPIO_Init(FAULT_GATES_PORT, &gpioinit);
 
     gpioinit.Pin = ESD_FAULT_PIN;
     gpioinit.Mode = GPIO_MODE_INPUT;
@@ -48,17 +48,17 @@ void updateGateFaults() {
 }
 
 bool anyGateFaultsTripped() {
-	return (gate_faults.bms_fault || 
-			gate_faults.bpd_fault || 
-			gate_faults.imd_fault || 
+	return (gate_faults.bms_fault ||
+			gate_faults.bpd_fault ||
+			gate_faults.imd_fault ||
 			gate_faults.sdn_fault ||
 			gate_faults.esd_fault);
 }
 
 bool anyGateNonESDFaultsTripped() {
-	return (gate_faults.bms_fault || 
-			gate_faults.bpd_fault || 
-			gate_faults.imd_fault || 
+	return (gate_faults.bms_fault ||
+			gate_faults.bpd_fault ||
+			gate_faults.imd_fault ||
 			gate_faults.sdn_fault);
 }
 

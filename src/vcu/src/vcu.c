@@ -57,13 +57,29 @@ void handleCanVCU(CAN_HandleTypeDef* CanHandle) {
     Frame frame;
 
     lastRxMsgToFrame(&frame);
-
+    printf('MSG IN ID: %#08x\n', frame.id);
     can0_T msgForm;
     msgForm = identify_can0(&frame);
 
     switch (msgForm) {
         case can0_FrontCanNodeBrakeThrottle:
           handleBrakeThrottleMsg(&frame);
+          break;
+
+        case can0_BMSHeartbeat:
+          handleBMSHeartbeatMsg(&frame);
+          break;
+
+        case can0_CellVoltages:
+          handleCellVoltagesMsg(&frame);
+          break;
+
+        case can0_CurrentSensor_Voltage:
+          handleCurrentSensorVoltageMsg(&frame);
+          break;
+
+        case can0_MCVoltage:
+          handleMCVoltageMsg(&frame);
           break;
 
         default:

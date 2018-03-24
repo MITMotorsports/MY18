@@ -28,7 +28,7 @@ void handleMCVoltageMsg(Frame* msg) {
 void handleBMSHeartbeatMsg(Frame* msg) {
 	can0_BMSHeartbeat_T unpacked_msg;
 	unpack_can0_BMSHeartbeat(msg, &unpacked_msg);
-
+	printf("Received bms\n\r");
 	gate_faults.tsms_fault = unpacked_msg.L_contactor_closed;
 
 	board_heartbeats_state.bms = HAL_GetTick();
@@ -46,7 +46,7 @@ void handleCellVoltagesMsg(Frame* msg) {
 	unpack_can0_CellVoltages(msg, &unpacked_msg);
 
 	// So we take the cell voltage of the minimum cell and use that
-	// to estimate the lower bound on the back voltage 
+	// to estimate the lower bound on the back voltage
 	// (12 per cell, 6 cells, millivolts)
 	bms_voltage.packVoltage = unpacked_msg.min * 12 * 6 / 1000;
 }
