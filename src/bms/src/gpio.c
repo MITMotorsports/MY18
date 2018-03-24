@@ -1,4 +1,5 @@
 #include "gpio.h"
+#include "uart.h"
 
 // Digital GPIO Initialization
 void Board_GPIO_Init(void) {
@@ -39,27 +40,29 @@ void Board_GPIO_Init(void) {
   // Contactor Weld
   Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_CONTACTOR_WELD_1);
   Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_1,
-                       (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_PULLUP));
+                       (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
 
 
   Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_CONTACTOR_WELD_2);
   Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_2,
-                       (IOCON_FUNC1 | IOCON_DIGMODE_EN | IOCON_MODE_PULLUP));
+                       (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
   // for analog mode
   // Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_2,
   //                      (IOCON_FUNC2 | IOCON_ADMODE_EN));
 
   // High Side Detect
   // No internal pull up/down. Exists in hardware.
-  Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_HIGH_SIDE_DETECT);
+  Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_HIGH_SIDE_DETECT);
   Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_HIGH_SIDE_DETECT,
-                       (IOCON_FUNC0 | IOCON_MODE_INACT | IOCON_DIGMODE_EN));
+                       (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
 
   // Low Side Detect
-  // This is an analog reading
-  Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_LOW_SIDE_DETECT);
+  Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_LOW_SIDE_DETECT);
   Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_LOW_SIDE_DETECT,
-                       (IOCON_FUNC2 | IOCON_MODE_INACT | IOCON_ADMODE_EN));
+                       (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
+  // This is the analog config that does not work. TODO: Firgure out why.
+  // Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_LOW_SIDE_DETECT,
+                       // (IOCON_FUNC0 | IOCON_ADMODE_EN | IOCON_MODE_INACT));
 
   // Charge Enable Pin
   Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_CHARGER_ENABLE);
@@ -139,59 +142,44 @@ void Board_GPIO_Init(void) {
 }
 
 // Set the value of a GPIO pin
-void Board_Pin_Set(uint8_t led_gpio, uint8_t led_pin, bool state) {
+inline void Board_Pin_Set(uint8_t led_gpio, uint8_t led_pin, bool state) {
   Chip_GPIO_SetPinState(LPC_GPIO, led_gpio, led_pin, state);
 }
 
 // Read the value of a GPIO pin
-bool Board_Pin_Read(uint8_t gpio, uint8_t pin) {
+inline bool Board_Pin_Read(uint8_t gpio, uint8_t pin) {
   return Chip_GPIO_GetPinState(LPC_GPIO, gpio, pin);
 }
 
 // Toggle a GPIO pin
-void Board_Pin_Toggle(uint8_t gpio, uint8_t pin) {
+inline void Board_Pin_Toggle(uint8_t gpio, uint8_t pin) {
   Chip_GPIO_SetPinState(LPC_GPIO, gpio, pin, !Board_Pin_Read(gpio, pin));
 }
+
+// Read from an ADC channel
 
 // Analog Pin Initialization
 void Board_ADC_Init() {
   Chip_ADC_Init(LPC_ADC, &adc_setup);
   Chip_ADC_EnableChannel(LPC_ADC, ADC_CH4, ENABLE);
   Chip_ADC_EnableChannel(LPC_ADC, ADC_CH5, ENABLE);
+  Chip_ADC_EnableChannel(LPC_ADC, ADC_CH7, ENABLE);
   Chip_ADC_SetBurstCmd(LPC_ADC, 1);
   Chip_ADC_SetStartMode(LPC_ADC, ADC_START_NOW, ADC_TRIGGERMODE_RISING);
 }
 
-bool Board_Contactor_Low_Closed(int16_t* val) {
-  int16_t adc_data;
-
-  while (!Chip_ADC_ReadStatus(LPC_ADC, ADC_CH7, ADC_DR_DONE_STAT)) {}
-  Chip_ADC_ReadValue(LPC_ADC, ADC_CH7, &adc_data);
-
-  *val = adc_data;
-  return adc_data < 800;
+bool Board_Contactor_Low_Closed() {
+  return Board_Pin_Read(PIN_LOW_SIDE_DETECT);
 }
 
-bool Board_Contactor_High_Closed(void) {
-  int16_t adc_data;
-
-  while(!Chip_ADC_ReadStatus(LPC_ADC, ADC_CH5, ADC_DR_DONE_STAT)) {}
-  Chip_ADC_ReadValue(LPC_ADC, ADC_CH5, &adc_data);
-  return adc_data < 800;
+bool Board_Contactor_High_Closed() {
+  return Board_Pin_Read(PIN_HIGH_SIDE_DETECT);
 }
 
-bool Board_Contactor_Low_Welded(void) {
-  int16_t adc_data;
-
-  while (!Chip_ADC_ReadStatus(LPC_ADC, ADC_CH4, ADC_DR_DONE_STAT)) {}
-  Chip_ADC_ReadValue(LPC_ADC, ADC_CH4, &adc_data);
-  return adc_data < 800;
+bool Board_Contactor_Low_Welded() {
+  return ! Board_Pin_Read(PIN_CONTACTOR_WELD_2);
 }
 
-bool Board_Contactor_High_Welded(void) {
-  int16_t adc_data;
-
-  while(!Chip_ADC_ReadStatus(LPC_ADC, ADC_CH5, ADC_DR_DONE_STAT)) {}
-  Chip_ADC_ReadValue(LPC_ADC, ADC_CH5, &adc_data);
-  return adc_data < 800;
+bool Board_Contactor_High_Welded() {
+  return ! Board_Pin_Read(PIN_CONTACTOR_WELD_1);
 }

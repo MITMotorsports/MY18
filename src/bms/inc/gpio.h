@@ -31,7 +31,7 @@ void Board_Pin_Toggle(uint8_t gpio, uint8_t pin);
 // --- Get Contactor States
 
 bool Board_Contactor_High_Closed(void);
-bool Board_Contactor_Low_Closed(int16_t* val);
+bool Board_Contactor_Low_Closed(void);
 
 bool Board_Contactor_High_Welded(void);
 bool Board_Contactor_Low_Welded(void);

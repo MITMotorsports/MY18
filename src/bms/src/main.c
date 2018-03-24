@@ -89,22 +89,30 @@ void Process_Input(BMS_INPUT_T *bms_input) {
   bms_input->msTicks        = msTicks;
   bms_input->fault_asserted = Board_Pin_Read(PIN_BMS_FAULT);
 
-  int16_t adc = 0;
-  // bms_input->H_contactor_welded = Board_Contactor_High_Welded();
-  // bms_input->L_contactor_welded = Board_Contactor_Low_Welded();
+  bms_input->H_contactor_welded = Board_Contactor_High_Welded();
+  bms_input->L_contactor_welded = Board_Contactor_Low_Welded();
 
-  // bms_input->H_contactor_closed = Board_Contactor_High_Closed();
-  // bms_input->L_contactor_closed = Board_Contactor_Low_Closed(&adc);
+  bms_input->H_contactor_closed = Board_Contactor_High_Closed();
+  bms_input->L_contactor_closed = Board_Contactor_Low_Closed();
 
-  Board_PrintNum(adc, 10);
+#ifdef DEBUG_PRINT
+  Board_Print_BLOCKING("\nL closed ");
+  Board_PrintNum(bms_input->L_contactor_closed, 10);
+  Board_Print_BLOCKING("\nH closed ");
+  Board_PrintNum(bms_input->H_contactor_closed, 10);
+  Board_Print_BLOCKING("\nL welded ");
+  Board_PrintNum(bms_input->L_contactor_welded, 10);
+  Board_Print_BLOCKING("\nH welded ");
+  Board_PrintNum(bms_input->H_contactor_welded, 10);
+#endif
 
-  // if (bms_input->H_contactor_welded) {
-  //   Error_Assert(ERROR_H_CONTACTOR_WELDED);
-  // }
-  //
-  // if (bms_input->L_contactor_welded) {
-  //   Error_Assert(ERROR_L_CONTACTOR_WELDED);
-  // }
+  if (bms_input->H_contactor_welded) {
+    Error_Assert(ERROR_H_CONTACTOR_WELDED);
+  }
+
+  if (bms_input->L_contactor_welded) {
+    Error_Assert(ERROR_L_CONTACTOR_WELDED);
+  }
 }
 
 void Process_Output(BMS_INPUT_T  *bms_input,
