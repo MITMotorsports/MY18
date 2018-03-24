@@ -166,19 +166,11 @@ int main(void) {
   Board_Println("Flashed by: "AUTHOR);
 
   //Check for contactor weld in first 5 seconds
-  while (msTicks - count < 5000) {
-    Process_Input(&bms_input);
-  }
+  // while (msTicks - count < 5000) {
+  //   Process_Input(&bms_input);
+  // }
 
   while (1) {
-    // preliminary error checks
-    // while(msTicks - count < PRE_ERROR_CHECK_TIMEOUT) {
-    //     if(Board_Contactor_One_Welded() || Board_Contactor_Two_Welded()) {
-    //         Error_Assert(ERROR_CONTACTOR_WELDED,msTicks);
-    //         goto handler;
-    //     }
-    // }
-
     // Setting fault pin high
     Board_Pin_Set(PIN_BMS_FAULT, GPIO_HIGH);
 

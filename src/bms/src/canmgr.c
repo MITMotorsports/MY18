@@ -1,5 +1,4 @@
 #include "canmgr.h"
-#include "error_handler.h"
 
 // CAN Initialization
 void Board_CAN_Init() {
@@ -69,18 +68,37 @@ void can_receive_energy(BMS_INPUT_T *bms_input) {
 
 Frame can_output;
 void Board_CAN_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
-  can_transmit_bms_heartbeat(bms_input);
-  can_transmit_cell_voltages(bms_input);
-  can_transmit_cell_temperatures(bms_input);
+  Can_ErrorID_T err[3];
+
+  err[0] = can_transmit_bms_heartbeat(bms_input);
+  err[1] = can_transmit_cell_voltages(bms_input);
+  err[2] = can_transmit_cell_temperatures(bms_input);
+
+  for (size_t i = 0; i < 3; ++i) {
+    switch (err[i]) {
+      case Can_Error_NONE:
+      case Can_Error_UNUSED:
+        break;
+      default:
+        Board_Print_BLOCKING("CAN SEND ERROR in msg ");
+        Board_PrintNum(i, 10);
+        Board_Print_BLOCKING("it was ");
+        Board_PrintNum((int) err[i], 10);
+        Board_Println_BLOCKING("IMA RESET THE CONTROLER K THX");
+        CAN_ResetPeripheral();
+    }
+  }
 
   // TODO: agree upon resending only if updated or
   // repeating existing info on bus (bms_input0->msTicks)
 }
 
-void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
+Can_ErrorID_T can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
   static uint32_t last_time = 0;
 
-  if ((msTicks - last_time) > can0_BMSHeartbeat_period) {
+  Can_ErrorID_T err = Can_Error_UNUSED;
+
+  if ((msTicks - last_time) > 5 * can0_BMSHeartbeat_period) {
     const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
     ERROR_STATUS_T *errors = Get_Errors();
@@ -109,16 +127,20 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
 
     msg.soc = ps->state_of_charge;
 
-    can0_BMSHeartbeat_Write(&msg);
+    err = can0_BMSHeartbeat_Write(&msg);
 
     last_time = msTicks;
   }
+
+  return err;
 }
 
-void can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
+Can_ErrorID_T can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
   static uint32_t last_time = 0;
 
-  if ((msTicks - last_time) > can0_CellVoltages_period) {
+  Can_ErrorID_T err = Can_Error_UNUSED;
+
+  if ((msTicks - last_time) > 5 * can0_CellVoltages_period) {
     const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
     can0_CellVoltages_T msg;
@@ -127,16 +149,20 @@ void can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
     msg.max = ps->pack_cell_max_mV;
     msg.argmax = 1;
 
-    can0_CellVoltages_Write(&msg);
+    err = can0_CellVoltages_Write(&msg);
 
     last_time = msTicks;
   }
+
+  return err;
 }
 
-void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
+Can_ErrorID_T can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
   static uint32_t last_time = 0;
 
-  if ((msTicks - last_time) > can0_CellTemperatures_period) {
+  Can_ErrorID_T err = Can_Error_UNUSED;
+
+  if ((msTicks - last_time) > 5 * can0_CellTemperatures_period) {
     const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
     can0_CellTemperatures_T msg;
@@ -145,8 +171,10 @@ void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
     msg.max = ps->max_cell_temp_dC;
     msg.argmax = ps->max_cell_temp_position;
 
-    can0_CellTemperatures_Write(&msg);
+    err = can0_CellTemperatures_Write(&msg);
 
     last_time = msTicks;
   }
+
+  return err;
 }
