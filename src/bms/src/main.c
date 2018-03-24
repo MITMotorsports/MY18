@@ -118,7 +118,9 @@ void Process_Input(BMS_INPUT_T *bms_input) {
 void Process_Output(BMS_INPUT_T  *bms_input,
                     BMS_OUTPUT_T *bms_output,
                     BMS_STATE_T  *bms_state) {
-  Board_Pin_Set(PIN_BMS_FAULT, bms_output->assert_fault);
+
+  // TODO: REENABLE PROPER CHECKS
+  // Board_Pin_Set(PIN_BMS_FAULT, bms_output->assert_fault);
 
   if (bms_output->ltc_deinit) {
     Board_LTC6804_DeInit();
