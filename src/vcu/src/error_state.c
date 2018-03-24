@@ -6,8 +6,36 @@ void setupErrorState() {
     changeErrorState(NO_ERROR_NO_ESD_STATE);
 }
 
+bool boardHeartbeatsGood() {
+    if (HAL_GetTick() - board_heartbeats_state.bms >= CAN_BMS_HEARTBEAT_FAULT_DURATION) {
+        return false;
+    } 
+    // if (HAL_GetTick() - board_heartbeats_state.frontCanNode > CAN_FRONT_CAN_NODE_HEARTBEAT_FAULT_DURATION) {
+    //     return false;
+    // }
+
+    return true;
+}
+
+void printHeartbeatFailures() {
+    if (HAL_GetTick() - board_heartbeats_state.bms >= CAN_BMS_HEARTBEAT_FAULT_DURATION) {
+        printf("\r\nBMS HEARTBEAT WAS NOT RECEIVED IN TIMELY FASHION\r\n");
+    }
+    // if (HAL_GetTick() - board_heartbeats_state.frontCanNode > CAN_FRONT_CAN_NODE_HEARTBEAT_FAULT_DURATION) {
+    //     printf("\r\nFRONT CAN NODE HEARTBEAT WAS NOT RECEIVED IN TIMELY FASHION\r\n");
+    // }
+}
+
+void throwErrorIfBadHeartbeats() {
+    if (!boardHeartbeatsGood()) {
+        changeErrorState(HEARTBEAT_ERROR_STATE);
+        printHeartbeatFailures();
+    }
+}
+
 void updateErrorState() {
     updateGateFaults(); // Update the fault gates for our uses
+    throwErrorIfBadHeartbeats(); // Check for heartbeats
 
     switch(errorState) {
         case NO_ERROR_NO_ESD_STATE:
@@ -24,6 +52,10 @@ void updateErrorState() {
 
         case LOOP_ERROR_STATE:
             updateInLoopErrorState();
+            break;
+
+        case HEARTBEAT_ERROR_STATE:
+            updateInHeartbeatErrorState();
             break;
 
         default:
@@ -52,6 +84,11 @@ void changeErrorState(uint8_t newState) {
             initInLoopErrorState();
             break;
 
+        case HEARTBEAT_ERROR_STATE:
+            errorState = newState;
+            initInHeartbeatErrorState();
+            break;
+
         default:
             break;
     }
@@ -72,6 +109,10 @@ void initInNoErrorWithTSMSState() {
 void initInLoopErrorState() {
     // When we get into this state, immediately send the car into the fault state
     changeCarMode(CAR_STATE_CONTACTOR_FAULT);
+}
+
+void initInHeartbeatErrorState() {
+    changeCarMode(CAR_STATE_HEARTBEAT_FAULT);
 }
 
 void updateInNoErrorState() {
@@ -107,4 +148,8 @@ void updateInLoopErrorState() {
         changeErrorState(NO_ERROR_NO_ESD_STATE);
         changeCarMode(CAR_STATE_LV_ONLY);
     }
+}
+
+void updateInHeartbeatErrorState() {
+    // No way out of this state
 }

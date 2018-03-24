@@ -12,6 +12,7 @@
 #define CAR_STATE_READY_TO_DRIVE 		3
 #define CAR_STATE_DRIVING 				4
 #define CAR_STATE_CONTACTOR_FAULT       5
+#define CAR_STATE_HEARTBEAT_FAULT		6
 
 uint8_t carMode;
 

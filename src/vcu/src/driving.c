@@ -12,10 +12,6 @@ void initDriving() {
 }
 
 void loopDriving() {
-	if (HAL_GetTick() - board_heartbeats_state.frontCanNode > CAN_DEAD_DURATION) {
-        resetDrivingValues();
-    }
-
     // Send torque commands
     VCU_BrakeAndThrottle localBTState = brake_and_throttle_state;
 

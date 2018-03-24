@@ -42,6 +42,10 @@ void loopVCU() {
             loopContactorFault();
             break;
 
+        case CAR_STATE_HEARTBEAT_FAULT:
+            loopHeartbeatFault();
+            break;
+
         default:
             break;
     }

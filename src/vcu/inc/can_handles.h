@@ -6,7 +6,6 @@
 #include "CANlib.h"
 #include "state.h"
 
-#define CAN_DEAD_DURATION 400 // TODO: Should be able to read this from CAN spec for each message
 #define SEND_DASH_MSG_WAIT_DURATION 200 // ms
 
 uint32_t lastDashMsgTime;
