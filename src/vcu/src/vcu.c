@@ -14,7 +14,7 @@ void beforeLoop() {
 
 void afterLoop() {
     if (HAL_GetTick() - lastDashMsgTime >= SEND_DASH_MSG_WAIT_DURATION) {
-        sendDashMsg();
+        // sendDashMsg();
         lastDashMsgTime = HAL_GetTick();
     }
 }
