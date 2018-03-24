@@ -29,7 +29,7 @@ void handleBMSHeartbeatMsg(Frame* msg) {
 	can0_BMSHeartbeat_T unpacked_msg;
 	unpack_can0_BMSHeartbeat(msg, &unpacked_msg);
 
-	// Load into local struct if needed ...
+	gate_faults.tsms_fault = unpacked_msg.L_contactor_closed;
 
 	board_heartbeats_state.bms = HAL_GetTick();
 }

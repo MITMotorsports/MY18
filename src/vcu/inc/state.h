@@ -22,7 +22,7 @@ typedef struct
 	bool imd_fault;
 	bool sdn_fault;
 	bool esd_fault;
-	bool NOT_IMPLEMENTED_YET_tsms_fault;
+	bool tsms_fault;
 
 } GateFaults;
 
