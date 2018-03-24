@@ -174,30 +174,80 @@ buses:
         period: 0.02s
         is_big_endian: true
         segments:
-          type:
+          error_pec:
             position: 0
-            length: 4
-            c_type: enum
-            enum:
-              NONE: 0x0
-              LTC6804_PEC: 0x1
-              LTC6804_CVST: 0x2
-              LTC6804_OWT: 0x3
-              EEPROM: 0x4
-              CELL_UNDER_VOLTAGE: 0x5
-              CELL_OVER_VOLTAGE: 0x6
-              CELL_UNDER_TEMP: 0x7
-              CELL_OVER_TEMP: 0x8
-              OVER_CURRENT: 0x9
-              CAN: 0xA
-              CONFLICTING_MODE_REQUESTS: 0xB
-              VCU_DEAD: 0xC
-              CONTROL_FLOW: 0xD
-              BLOWN_FUSE: 0xE
-              CONTACTOR_WELDED: 0xF
-              OTHER: 0x10
-          soc:
+            length: 1
+            c_type: bool
+          error_cvst:
+            position: 1
+            length: 1
+            c_type: bool
+          error_owt:
+            position: 2
+            length: 1
+            c_type: bool
+          error_eeprom:
+            position: 3
+            length: 1
+            c_type: bool
+          error_cell_under_voltage:
             position: 4
+            length: 1
+            c_type: bool
+          error_cell_over_voltage:
+            position: 5
+            length: 1
+            c_type: bool
+          error_cell_under_temp:
+            position: 6
+            length: 1
+            c_type: bool
+          error_cell_over_temp:
+            position: 7
+            length: 1
+            c_type: bool
+          error_over_current:
+            position: 8
+            length: 1
+            c_type: bool
+          error_can:
+            position: 9
+            length: 1
+            c_type: bool
+          error_conflicting_mode_requests:
+            position: 10
+            length: 1
+            c_type: bool
+          error_vcu_dead:
+            position: 11
+            length: 1
+            c_type: bool
+          error_control_flow:
+            position: 12
+            length: 1
+            c_type: bool
+          error_blown_fuse:
+            position: 13
+            length: 1
+            c_type: bool
+          error_L_contactor_welded:
+            position: 14
+            length: 1
+            c_type: bool
+          error_H_contactor_welded:
+            position: 15
+            length: 1
+            c_type: bool
+          L_contactor_closed:
+            position: 16
+            length: 1
+            c_type: bool
+          H_contactor_closed:
+            position: 17
+            length: 1
+            c_type: bool
+          soc:
+            position: 20
             length: 8
             c_type: uint8_t
       BMSRequest:
