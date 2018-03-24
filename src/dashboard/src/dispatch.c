@@ -5,6 +5,7 @@
 #include "page_manager.h"
 #include "carstats.h"
 #include "NHD_US2066.h"
+#include "led.h"
 
 static button_state_t left_button;
 static button_state_t right_button;
@@ -18,6 +19,8 @@ static uint32_t nextOLEDUpdate;
 
 #define BUTTON_DOWN false
 #define OLED_UPDATE_INTERVAL_MS 100
+
+void update_lights(void);
 
 void dispatch_init() {
     init_button_state(&left_button);
@@ -57,23 +60,23 @@ void dispatch_update() {
     }
 }
 
-void update_lights() {
-    if (carstats->vcu_data.rtd_light_on)
+void update_lights(void) {
+    if (carstats.vcu_data.rtd_light_on)
         LED_RTD_on();
     else
         LED_RTD_off();
 
-    if (carstats->vcu_data.hv_light_on)
+    if (carstats.vcu_data.hv_light_on)
         LED_HV_on();
     else
         LED_HV_off();
 
-    if (carstats->vcu_data.imd_light_on)
+    if (carstats.vcu_data.imd_light_on)
         LED_IMD_on();
     else
         LED_IMD_off();
 
-    if (carstats->vcu_data.ams_light_on)
+    if (carstats.vcu_data.ams_light_on)
         LED_AMS_on();
     else
         LED_AMS_off();
