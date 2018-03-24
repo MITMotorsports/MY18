@@ -140,16 +140,20 @@ int main(void) {
     SystemCoreClockUpdate();
 
     Serial_Init(SERIAL_BAUDRATE);
+    print("CAN inits\n");
     Can_Init(CAN_BAUDRATE);
 
     if (SysTick_Config (SystemCoreClock / 1000)) {
         while(1); // error
     }
-
+    print("DONE init\n");
     uint32_t timer = 0;
 
     button_states_t hold = {false, false};
+    Frame p;
     while(1) {
+        // Clear RX buffer
+        Can_RawRead(&p);
         button_states_t current = poll_buttons();
         hold.rtd          |= current.rtd;
         hold.driver_reset |= current.driver_reset;
@@ -164,7 +168,7 @@ int main(void) {
             hold.rtd          = false;
             hold.driver_reset = false;
 
-            can0_ButtonRequest_Write(&msg);
+            handle_can_error(can0_ButtonRequest_Write(&msg));
         }
     }
 
