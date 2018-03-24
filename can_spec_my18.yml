@@ -427,7 +427,7 @@ buses:
         period: 0.05s
         is_big_endian: true
         segments:
-          pack_voltage:
+          dc_bus_voltage:
             position: 16
             length: 32
             c_type: int32_t

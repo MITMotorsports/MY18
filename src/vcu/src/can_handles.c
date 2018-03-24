@@ -34,6 +34,13 @@ void handleBMSHeartbeatMsg(Frame* msg) {
 	board_heartbeats_state.bms = HAL_GetTick();
 }
 
+void handleCurrentSensorVoltageMsg(Frame* msg) {
+	can0_CurrentSensor_Voltage_T unpacked_msg;
+	unpack_can0_CurrentSensor_Voltage(msg, &unpacked_msg);
+
+	bms_voltage.dc_bus_voltage = unpacked_msg.dc_bus_voltage;
+}
+
 void handleCellVoltagesMsg(Frame* msg) {
 	can0_CellVoltages_T unpacked_msg;
 	unpack_can0_CellVoltages(msg, &unpacked_msg);

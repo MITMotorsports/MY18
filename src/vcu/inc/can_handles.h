@@ -17,6 +17,8 @@ void handleMCVoltageMsg(Frame* msg);
 
 void handleBMSHeartbeatMsg(Frame* msg);
 
+void handleCurrentSensorVoltageMsg(Frame* msg);
+
 void handleCellVoltagesMsg(Frame* msg);
 
 void handleButtonRequest(Frame* msg);

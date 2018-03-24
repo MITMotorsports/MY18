@@ -28,7 +28,8 @@ typedef struct
 
 typedef struct {
 	int16_t packVoltage;
-} BMS_CellVoltage;
+	int32_t dc_bus_voltage;
+} BMS_Voltage;
 
 typedef struct
 {
@@ -80,7 +81,7 @@ GateFaults gate_faults;
 
 MC_Voltage mc_voltage;
 
-BMS_CellVoltage bms_voltage;
+BMS_Voltage bms_voltage;
 
 ButtonBank_Presses button_presses;
 
