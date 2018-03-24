@@ -9,6 +9,7 @@ int16_t calcTargetVoltage(int16_t packVoltage) {
 void initPrecharge() {
 	printf("\r\nSTARTING PRECHARGE\r\n");
 	prechargeStartTime = HAL_GetTick();
+	showVoltageTime = HAL_GetTick();
 	if (bms_voltage.packVoltage == 0) {
 		printf("\r\n[ERROR]: PACK VOLTAGE IS NOT SET\r\n");
 		changeCarMode(CAR_STATE_CHARGE_FAULT);
@@ -29,6 +30,12 @@ void loopPrecharge() {
 	// 	changeCarMode(CAR_STATE_READY_TO_DRIVE);
 
 	// }
+
+	// Print the voltage
+	if (HAL_GetTick() - showVoltageTime > SHOW_VOLTAGE_FREQUENCY_UPDATE) {
+		printf("THE PACK VOLTAGE MEASURED IS %d", bms_voltage.packVoltage);
+		showVoltageTime = HAL_GetTick();
+	}
 
 	// Dead reckoning with time
 	if (HAL_GetTick() - prechargeStartTime >= PRECHARGE_DEAD_RECKONING_TIME) {
