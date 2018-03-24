@@ -15,7 +15,7 @@
 #define RTD_PIN_PIN_IOCON IOCON_PIO1_2
 #define SCROLL_SELECT_PIN_IOCON IOCON_PIO1_3
 
-#define PIN_CONFIG IOCON_FUNC1 | IOCON_DIGMODE_EN | IOCON_MODE_PULLDOWN // Fix pull
+#define PIN_CONFIG IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_PULLDOWN // Fix pull
 
 // pulldown or pullup?
 #define BUTTON_DOWN true
@@ -48,14 +48,18 @@ void print(const char* str) {
 }
 
 void GPIO_Init(void) {
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, DRIVER_RESET_PIN_IOCON);
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, RTD_PIN_PIN_IOCON);
+    Chip_GPIO_SetPinDIRInput(LPC_GPIO, SCROLL_SELECT_PIN_IOCON);
+
     Chip_IOCON_PinMuxSet(LPC_IOCON, DRIVER_RESET_PIN_IOCON, PIN_CONFIG);
     Chip_IOCON_PinMuxSet(LPC_IOCON, RTD_PIN_PIN_IOCON, PIN_CONFIG);
     Chip_IOCON_PinMuxSet(LPC_IOCON, SCROLL_SELECT_PIN_IOCON, PIN_CONFIG);
 
     // Configure pins as inputs
-    Chip_GPIO_SetPinDIR(LPC_GPIO, DRIVER_RESET_PIN_AND_PORT, false);
-    Chip_GPIO_SetPinDIR(LPC_GPIO, RTD_PIN_AND_PORT, false);
-    Chip_GPIO_SetPinDIR(LPC_GPIO, SCROLL_SELECT_PIN_AND_PORT, false);
+    // Chip_GPIO_SetPinDIR(LPC_GPIO, DRIVER_RESET_PIN_AND_PORT, false);
+    // Chip_GPIO_SetPinDIR(LPC_GPIO, RTD_PIN_AND_PORT, false);
+    // Chip_GPIO_SetPinDIR(LPC_GPIO, SCROLL_SELECT_PIN_AND_PORT, false);
 
     Chip_GPIO_Init(LPC_GPIO);
 }
