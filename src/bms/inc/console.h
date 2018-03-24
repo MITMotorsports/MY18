@@ -20,7 +20,7 @@ typedef struct {
 
 static const BMS_COMMAND_T commands[] = {
   { "get",     C_GET,            1, "Get a value. Usage: get [field]"                },
-  { "set",     C_GET,            2, "Set a value. Usage: set [field] [value]"        },
+  { "set",     C_SET,            2, "Set a value. Usage: set [field] [value]"        },
   { "help",    C_HELP,           1, "Get help. Usage: help [command name]"           },
   { "config",  C_CONFIG,         0, "Reinitialize BMS, reload EEPROM. Usage: config" },
   { "dis",     C_DIS,            0, "Go into discharge mode. Usage: dis [on|off]"    },
@@ -42,6 +42,7 @@ static const char *const locstring[] =  {
   "cc_cell_voltage_mV",
   "cell_discharge_c_rating_cC",
   "max_cell_temp_param",
+  "soc",
 
   // can't write to the follwing
   "state",

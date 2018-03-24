@@ -53,13 +53,13 @@ void EEPROM_Init(LPC_SSP_T *pSSP, uint32_t baud, uint8_t cs_gpio,
 }
 
 void EEPROM_WriteCCPage(uint32_t *cc) {
-  Board_Println_BLOCKING("Writing CC Page to EEPROM...");
+  Board_Println("Writing CC Page to EEPROM...");
   memcpy(eeprom_data_buf, cc, CC_PAGE_SZ);
   LC1024_WriteEnable();
   LC1024_WriteEnable();
   LC1024_WriteMem(eeprom_data_addr_cc, eeprom_data_buf, CC_PAGE_SZ);
-  Board_BlockingDelay(150);
-  Board_Println_BLOCKING("Done writing CC Page to EEPROM...");
+  // Board_BlockingDelay(150);
+  Board_Println("Done writing CC Page to EEPROM...");
 }
 
 void EEPROM_LoadCCPage(uint32_t *cc) {

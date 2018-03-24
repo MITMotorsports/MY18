@@ -44,21 +44,21 @@ handler:
 
   switch (state->discharge_state) {
   case BMS_DISCHARGE_OFF:
-    output->close_contactors = false;
+    output->assert_fault = false;
     break;
 
   case BMS_DISCHARGE_INIT:
-    output->close_contactors = true;
+    output->assert_fault = true;
 
     // checking if the fault pin has correctly been set to high
-    if (input->contactors_closed == output->close_contactors) {
+    if (input->fault_asserted == output->assert_fault) {
       state->discharge_state = BMS_DISCHARGE_RUN;
       goto handler;
     }
     break;
 
   case BMS_DISCHARGE_RUN:
-    output->close_contactors = true;
+    output->assert_fault = true;
 
     // recalculate max current?
 
@@ -72,7 +72,7 @@ handler:
      */
 
     // if the fault pin is low, go back to init and change it to high
-    if (!input->contactors_closed) {
+    if (!input->fault_asserted) {
       state->discharge_state = BMS_DISCHARGE_INIT;
     }
 
@@ -80,9 +80,9 @@ handler:
     break;
 
   case BMS_DISCHARGE_DONE:
-    output->close_contactors = false;
+    output->assert_fault = false;
 
-    if (!input->contactors_closed) {
+    if (!input->fault_asserted) {
       state->discharge_state = BMS_DISCHARGE_OFF;
     }
     break;

@@ -39,16 +39,21 @@ void Init_BMS_Structs(void) {
   bms_input.mode_request       = BMS_SSM_MODE_STANDBY;
   bms_input.vcu_mode_request   = BMS_SSM_MODE_STANDBY;
   bms_input.csb_mode_request   = BMS_SSM_MODE_STANDBY;
-  bms_input.contactor_weld_one = false;
-  bms_input.contactor_weld_two = false;
-  bms_input.contactors_closed  = false;
+
+  bms_input.H_contactor_welded = false;
+  bms_input.L_contactor_welded = false;
+
+  bms_input.H_contactor_closed = false;
+  bms_input.L_contactor_closed = false;
+
+  bms_input.fault_asserted  = false;
 
   bms_input.ltc_packconfig_check_done = false;
   bms_input.eeprom_read_error         = false;
   bms_input.fan_override              = false;
   bms_input.msTicks                   = msTicks;
 
-  bms_output.close_contactors = false;
+  bms_output.assert_fault = false;
   bms_output.balance_req      = balance_reqs;
   memset(balance_reqs,
          0,
@@ -75,26 +80,45 @@ void Process_Input(BMS_INPUT_T *bms_input) {
     Board_CAN_Receive(bms_input);
     Board_GetModeRequest(&console_output, bms_input);
     Board_LTC6804_ProcessInputs(&pack_status, &bms_state);
+    SOC_Estimate(&pack_status);
 
     // Pack voltage estimation
     BMS_VOLTAGE_ESTIMATE_T vol = Pack_Estimate_Total_Voltage(&pack_config, &pack_status);
   }
 
-  bms_input->msTicks           = msTicks;
-  bms_input->contactors_closed = Board_Contactors_Closed();
+  bms_input->msTicks        = msTicks;
+  bms_input->fault_asserted = Board_Pin_Read(PIN_BMS_FAULT);
 
-  bms_input->contactor_weld_one = !Board_Contactor_One_Welded();
-  bms_input->contactor_weld_two = Board_Contactor_Two_Welded();
+  bms_input->H_contactor_welded = Board_Contactor_High_Welded();
+  bms_input->L_contactor_welded = Board_Contactor_Low_Welded();
 
-  if (bms_input->contactor_weld_one || bms_input->contactor_weld_two) {
-    Error_Assert(ERROR_CONTACTOR_WELDED);
+  bms_input->H_contactor_closed = Board_Contactor_High_Closed();
+  bms_input->L_contactor_closed = Board_Contactor_Low_Closed();
+
+#ifdef DEBUG_PRINT
+  Board_Print_BLOCKING("\nL closed ");
+  Board_PrintNum(bms_input->L_contactor_closed, 10);
+  Board_Print_BLOCKING("\nH closed ");
+  Board_PrintNum(bms_input->H_contactor_closed, 10);
+  Board_Print_BLOCKING("\nL welded ");
+  Board_PrintNum(bms_input->L_contactor_welded, 10);
+  Board_Print_BLOCKING("\nH welded ");
+  Board_PrintNum(bms_input->H_contactor_welded, 10);
+#endif
+
+  if (bms_input->H_contactor_welded) {
+    Error_Assert(ERROR_H_CONTACTOR_WELDED);
+  }
+
+  if (bms_input->L_contactor_welded) {
+    Error_Assert(ERROR_L_CONTACTOR_WELDED);
   }
 }
 
 void Process_Output(BMS_INPUT_T  *bms_input,
                     BMS_OUTPUT_T *bms_output,
                     BMS_STATE_T  *bms_state) {
-  Board_Contactors_Set(bms_output->close_contactors);
+  Board_Pin_Set(PIN_BMS_FAULT, bms_output->assert_fault);
 
   if (bms_output->ltc_deinit) {
     Board_LTC6804_DeInit();
@@ -126,6 +150,7 @@ int main(void) {
   Board_ADC_Init();
   Board_CAN_Init();
   EEPROM_Init(LPC_SSP1, EEPROM_BAUD, EEPROM_CS_PIN);
+  SOC_Init(&pack_status);
 
   Error_Init();
   SSM_Init(&bms_input, &bms_state, &bms_output);
@@ -135,26 +160,19 @@ int main(void) {
   microrl_init(&rl, Board_Print);
   microrl_set_execute_callback(&rl, executerl);
   console_init(&bms_input, &bms_state, &console_output);
-  int count = msTicks;
+  int32_t count = msTicks;
 
   Board_Println("Currently running: "HASH);
   Board_Println("Flashed by: "AUTHOR);
 
+  //Check for contactor weld in first 5 seconds
+  // while (msTicks - count < 5000) {
+  //   Process_Input(&bms_input);
+  // }
+
   while (1) {
-    // preliminary error checks
-    // while(msTicks - count < PRE_ERROR_CHECK_TIMEOUT) {
-    //     if(Board_Contactor_One_Welded() || Board_Contactor_Two_Welded()) {
-    //         Error_Assert(ERROR_CONTACTOR_WELDED,msTicks);
-    //         goto handler;
-    //     }
-    // }
-
     // Setting fault pin high
-    Board_Contactors_Set(true);
-
-    // if(Board_Contactors_Closed()) {
-    //     Board_Println_BLOCKING("Fault Pin high");
-    // }
+    Board_Pin_Set(PIN_BMS_FAULT, GPIO_HIGH);
 
     Process_Keyboard();                                  // console input
     Process_Input(&bms_input);                           // Processes Inputs(can
@@ -176,7 +194,7 @@ int main(void) {
   Board_Println("FORCED HANG");
   Write_EEPROM_Error();
 
-  bms_output.close_contactors = false;
+  bms_output.assert_fault = false;
 
   Board_Println("Halting...");
   while (1) {
