@@ -7,6 +7,8 @@
 # this makefile is based strongly on many examples found in the network
 #=============================================================================#
 
+SAVAGE_MODE = true
+
 #=============================================================================#
 # hash based versioning
 #=============================================================================#
@@ -67,7 +69,7 @@ SRCS_DIRS = src/ ../../lib/lpc11cx4-library/lpc_chip_11cxx_lib/src  ../../lib/lp
 SPECIAL_FSAE_FLAGS = -DFSAE_DRIVERS -DCAN_ARCHITECTURE_ARM
 
 # C definitions
-C_DEFS = -DHASH="\"$(HASH)\"" -DAUTHOR="\"$(AUTHOR)\"" -DCORE_M0 -DDEBUG_ENABLE $(SPECIAL_FSAE_FLAGS) -DCAN_ARCHITECTURE_LPC11CX4
+C_DEFS = -DSAVAGE_MODE=$(SAVAGE_MODE) -DHASH="\"$(HASH)\"" -DAUTHOR="\"$(AUTHOR)\"" -DCORE_M0 -DDEBUG_ENABLE $(SPECIAL_FSAE_FLAGS) -DCAN_ARCHITECTURE_LPC11CX4
 
 # ASM definitions
 AS_DEFS = -D__STARTUP_CLEAR_BSS -D__START=main

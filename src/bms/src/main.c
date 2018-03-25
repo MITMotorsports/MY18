@@ -80,7 +80,8 @@ void Process_Input(BMS_INPUT_T *bms_input) {
     Board_CAN_Receive(bms_input);
     Board_GetModeRequest(&console_output, bms_input);
     Board_LTC6804_ProcessInputs(&pack_status, &bms_state);
-    SOC_Estimate(&pack_status);
+    // TODO: Reenable after Roman
+    // SOC_Estimate(&pack_status);
 
     // Pack voltage estimation
     BMS_VOLTAGE_ESTIMATE_T vol = Pack_Estimate_Total_Voltage(&pack_config, &pack_status);
