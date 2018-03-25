@@ -22,7 +22,7 @@ static void Error_Handler(void);
 int main(void)
 {
   HAL_Init();
-  
+
   SystemClock_Config();
 
   Can_Init(500000);
@@ -43,7 +43,7 @@ int main(void)
   gpioinit.Pull = GPIO_PULLUP;
   gpioinit.Speed = GPIO_SPEED_FAST;
   HAL_GPIO_Init(DRIVER_RESET_TRIGGER_PORT, &gpioinit);
-  HAL_GPIO_WritePin(DRIVER_RESET_TRIGGER_PORT, DRIVER_RESET_TRIGGER_PIN, GPIO_PIN_SET); //ON 
+  HAL_GPIO_WritePin(DRIVER_RESET_TRIGGER_PORT, DRIVER_RESET_TRIGGER_PIN, GPIO_PIN_SET); //ON
 
   // SETUP THE CONTACTOR GPIOS
   initLowSideContactor();
@@ -78,7 +78,8 @@ int main(void)
   while(1)
   {
     loopVCU(&USARTHandle);
-  } 
+    // printf("LAST BMS: %llu, NOW: %llu", board_heartbeats_state.bms, HAL_GetTick());
+  }
 }
 
 /**
@@ -90,14 +91,14 @@ PUTCHAR_PROTOTYPE
 {
   /* Place your implementation of fputc here */
   /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
-  HAL_USART_Transmit(&USARTHandle, (uint8_t *)&ch, 1, 0xFFFF); 
+  HAL_USART_Transmit(&USARTHandle, (uint8_t *)&ch, 1, 0xFFFF);
 
   return ch;
 }
 
 /**
   * @brief  System Clock Configuration
-  *         The system Clock is configured as follow : 
+  *         The system Clock is configured as follow :
   *            System Clock source            = PLL (HSE)
   *            SYSCLK(Hz)                     = 120000000
   *            HCLK(Hz)                       = 120000000
@@ -132,8 +133,8 @@ static void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  
-  /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 
+
+  /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
      clocks dividers */
   RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
@@ -174,7 +175,7 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* CanHandle)
   * @retval None
   */
 void assert_failed(uint8_t* file, uint32_t line)
-{ 
+{
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 
@@ -184,4 +185,3 @@ void assert_failed(uint8_t* file, uint32_t line)
   }
 }
 #endif
-

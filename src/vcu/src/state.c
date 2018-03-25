@@ -24,7 +24,7 @@ void initVCUState(void) {
 	implaus_conflict_state.observed_implausibility = false;
 	implaus_conflict_state.actual_implausibility = false;
 	implaus_conflict_state.implausibility_ticks = 0;
-	
+
 	// DC BUS VOLTAGE OF MOTOR CONTROLLER
     mc_voltage.busVoltage = 0;
     mc_voltage.outVoltage = 0;
@@ -43,7 +43,7 @@ void initVCUState(void) {
 	changeCarMode(CAR_STATE_LV_ONLY);
 }
 
-void changeCarMode(uint8_t newState) {
+void changeCarMode(CAR_STATE_T newState) {
 	switch (carMode) {
         case CAR_STATE_LV_ONLY:
         	carMode = newState;
@@ -71,7 +71,7 @@ void changeCarMode(uint8_t newState) {
             break;
 
         default:
-        	printf("\r\n[WARNING]: INVALID CAR MODE CHANGE.\r\n");
-            break;
+        		printf("\r\n[WARNING]: INVALID CAR MODE CHANGE. %d\r\n", carMode);
+          	break;
     }
 }

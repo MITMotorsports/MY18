@@ -57,7 +57,7 @@ void handleCanVCU(CAN_HandleTypeDef* CanHandle) {
     Frame frame;
 
     lastRxMsgToFrame(&frame);
-    printf('MSG IN ID: %#08x\n', frame.id);
+    // printf('MSG IN ID: %#08x\n', frame.id);
     can0_T msgForm;
     msgForm = identify_can0(&frame);
 

@@ -28,7 +28,7 @@ void handleMCVoltageMsg(Frame* msg) {
 void handleBMSHeartbeatMsg(Frame* msg) {
 	can0_BMSHeartbeat_T unpacked_msg;
 	unpack_can0_BMSHeartbeat(msg, &unpacked_msg);
-	printf("Received bms\n\r");
+
 	gate_faults.tsms_fault = unpacked_msg.L_contactor_closed;
 
 	board_heartbeats_state.bms = HAL_GetTick();

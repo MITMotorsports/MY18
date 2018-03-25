@@ -9,7 +9,7 @@ void setupErrorState() {
 bool boardHeartbeatsGood() {
     if (HAL_GetTick() - board_heartbeats_state.bms >= CAN_BMS_HEARTBEAT_FAULT_DURATION) {
         return false;
-    } 
+    }
     // if (HAL_GetTick() - board_heartbeats_state.frontCanNode > CAN_FRONT_CAN_NODE_HEARTBEAT_FAULT_DURATION) {
     //     return false;
     // }
@@ -18,9 +18,10 @@ bool boardHeartbeatsGood() {
 }
 
 void printHeartbeatFailures() {
-    if (HAL_GetTick() - board_heartbeats_state.bms >= CAN_BMS_HEARTBEAT_FAULT_DURATION) {
-        printf("\r\nBMS HEARTBEAT WAS NOT RECEIVED IN TIMELY FASHION\r\n");
-    }
+    // printf("LAST BMS: %llu, NOW: %llu", board_heartbeats_state.bms, HAL_GetTick());
+    // if (HAL_GetTick() - board_heartbeats_state.bms >= CAN_BMS_HEARTBEAT_FAULT_DURATION) {
+    //     printf("\r\nBMS HEARTBEAT WAS NOT RECEIVED IN TIMELY FASHION\r\n");
+    // }
     // if (HAL_GetTick() - board_heartbeats_state.frontCanNode > CAN_FRONT_CAN_NODE_HEARTBEAT_FAULT_DURATION) {
     //     printf("\r\nFRONT CAN NODE HEARTBEAT WAS NOT RECEIVED IN TIMELY FASHION\r\n");
     // }
@@ -94,7 +95,7 @@ void changeErrorState(uint8_t newState) {
     }
 }
 
-void initInNoErrorState() { 
+void initInNoErrorState() {
     printf("\r\nAS OF NOW, NO DETECTABLE ERRORS, TSMS EXCLUDED\r\n");
 }
 
@@ -103,7 +104,7 @@ void initInNoErrorNoESDState() {
 }
 
 void initInNoErrorWithTSMSState() {
-    printf("\r\nAS OF NOW, NO DETECTABLE ERRORS, TSMS INCLUDED\r\n");   
+    printf("\r\nAS OF NOW, NO DETECTABLE ERRORS, TSMS INCLUDED\r\n");
 }
 
 void initInLoopErrorState() {

@@ -6,17 +6,19 @@
 #include <stdbool.h>
 
 // DEFINITION OF CAR MODES
-#define CAR_STATE_LV_ONLY 				0
-#define CAR_STATE_PRECHARGING 			1
-#define CAR_STATE_CHARGE_FAULT 			2
-#define CAR_STATE_READY_TO_DRIVE 		3
-#define CAR_STATE_DRIVING 				4
-#define CAR_STATE_CONTACTOR_FAULT       5
-#define CAR_STATE_HEARTBEAT_FAULT		6
+typedef enum {
+	CAR_STATE_LV_ONLY,
+	CAR_STATE_PRECHARGING,
+	CAR_STATE_CHARGE_FAULT,
+	CAR_STATE_READY_TO_DRIVE,
+	CAR_STATE_DRIVING,
+	CAR_STATE_CONTACTOR_FAULT,
+	CAR_STATE_HEARTBEAT_FAULT,
+} CAR_STATE_T;
 
-uint8_t carMode;
+CAR_STATE_T carMode;
 
-typedef struct 
+typedef struct
 {
 	bool bms_fault;
 	bool bpd_fault;
