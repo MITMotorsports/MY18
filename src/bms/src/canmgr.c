@@ -119,15 +119,17 @@ Can_ErrorID_T can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
     msg.error_vcu_dead = errors[ERROR_VCU_DEAD].error == true;
     msg.error_control_flow = errors[ERROR_CONTROL_FLOW].error == true;
     msg.error_blown_fuse = errors[ERROR_BLOWN_FUSE].error == true;
-    msg.error_L_contactor_welded = errors[ERROR_L_CONTACTOR_WELDED].error == true;
-    msg.error_H_contactor_welded = errors[ERROR_H_CONTACTOR_WELDED].error == true;
+    // msg.error_L_contactor_welded = errors[ERROR_L_CONTACTOR_WELDED].error == true;
+    // msg.error_H_contactor_welded = errors[ERROR_H_CONTACTOR_WELDED].error == true;
 
 
     msg.L_contactor_closed = bms_input ->L_contactor_closed;
     msg.H_contactor_closed = bms_input ->H_contactor_closed;
+    msg.L_contactor_welded = bms_input ->L_contactor_welded;
+    msg.H_contactor_welded = bms_input ->H_contactor_welded;
 
-    msg.soc = ps->state_of_charge;
-
+    msg.soc = 7;
+    Board_Println_BLOCKING("HERE");
     err = can0_BMSHeartbeat_Write(&msg);
 
     last_time = msTicks;
@@ -138,17 +140,16 @@ Can_ErrorID_T can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
 
 Can_ErrorID_T can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
   static uint32_t last_time = 0;
-
   Can_ErrorID_T err = Can_Error_UNUSED;
 
   if ((msTicks - last_time) > can0_CellVoltages_period) {
     const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
+    // TODO: Get info about argmin/argmax.
     can0_CellVoltages_T msg;
+
     msg.min = ps->pack_cell_min_mV;
-    msg.argmin = 1;
     msg.max = ps->pack_cell_max_mV;
-    msg.argmax = 1;
 
     err = can0_CellVoltages_Write(&msg);
 

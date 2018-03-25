@@ -110,7 +110,7 @@ buses:
             unit: mRPM
       CellTemperatures:
         can_id: 0x0F1
-        period: 0.1s
+        period: 10s
         is_big_endian: true
         segments:
           min:
@@ -137,31 +137,21 @@ buses:
             signed: false
       CellVoltages:
         can_id: 0x0F2
-        period: 0.1s
+        period: 0.3s
         is_big_endian: true
         segments:
           min:
-            position: 30
-            length: 10
-            c_type: uint16_t
+            position: 0
+            length: 32
+            c_type: uint32_t
             signed: false
             unit: mV
-          argmin:
-            position: 40
-            length: 7
-            c_type: uint8_t
-            signed: false
           max:
-            position: 47
-            length: 10
-            c_type: uint16_t
+            position: 32
+            length: 32
+            c_type: uint32_t
             signed: false
             unit: mV
-          argmax:
-            position: 57
-            length: 7
-            c_type: uint8_t
-            signed: false
       BMSHeartbeat:
         can_id: 0x0D4
         period: 0.02s
@@ -237,6 +227,14 @@ buses:
             c_type: bool
           H_contactor_closed:
             position: 17
+            length: 1
+            c_type: bool
+          L_contactor_welded:
+            position: 32
+            length: 1
+            c_type: bool
+          H_contactor_welded:
+            position: 30
             length: 1
             c_type: bool
           soc:

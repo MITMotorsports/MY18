@@ -96,24 +96,29 @@ void Process_Input(BMS_INPUT_T *bms_input) {
   bms_input->H_contactor_closed = Board_Contactor_High_Closed();
   bms_input->L_contactor_closed = Board_Contactor_Low_Closed();
 
-#ifdef DEBUG_PRINT
-  Board_Print_BLOCKING("\nL closed ");
-  Board_PrintNum(bms_input->L_contactor_closed, 10);
-  Board_Print_BLOCKING("\nH closed ");
-  Board_PrintNum(bms_input->H_contactor_closed, 10);
-  Board_Print_BLOCKING("\nL welded ");
-  Board_PrintNum(bms_input->L_contactor_welded, 10);
-  Board_Print_BLOCKING("\nH welded ");
-  Board_PrintNum(bms_input->H_contactor_welded, 10);
+#if true
+  uint32_t lastpr = 0;
+  if (msTicks - lastpr > 1000) {
+    Board_Print_BLOCKING("\nL closed ");
+    Board_PrintNum(bms_input->L_contactor_closed, 10);
+    Board_Print_BLOCKING("\nH closed ");
+    Board_PrintNum(bms_input->H_contactor_closed, 10);
+    Board_Print_BLOCKING("\nL welded ");
+    Board_PrintNum(bms_input->L_contactor_welded, 10);
+    Board_Print_BLOCKING("\nH welded ");
+    Board_PrintNum(bms_input->H_contactor_welded, 10);
+
+    lastpr = msTicks;
+  }
 #endif
 
-  if (bms_input->H_contactor_welded) {
-    Error_Assert(ERROR_H_CONTACTOR_WELDED);
-  }
-
-  if (bms_input->L_contactor_welded) {
-    Error_Assert(ERROR_L_CONTACTOR_WELDED);
-  }
+  // if (bms_input->H_contactor_welded) {
+  //   Error_Assert(ERROR_H_CONTACTOR_WELDED);
+  // }
+  //
+  // if (bms_input->L_contactor_welded) {
+  //   Error_Assert(ERROR_L_CONTACTOR_WELDED);
+  // }
 }
 
 void Process_Output(BMS_INPUT_T  *bms_input,
@@ -123,6 +128,7 @@ void Process_Output(BMS_INPUT_T  *bms_input,
   // TODO: REENABLE PROPER CHECKS
   // Board_Pin_Set(PIN_BMS_FAULT, bms_output->assert_fault);
 
+  Board_CAN_Transmit(bms_input, bms_output);
   if (bms_output->ltc_deinit) {
     Board_LTC6804_DeInit();
   } else if (bms_output->check_packconfig_with_ltc) {
@@ -130,7 +136,6 @@ void Process_Output(BMS_INPUT_T  *bms_input,
                                                               cell_voltages);
   } else {
     Board_LTC6804_UpdateBalanceStates(bms_output->balance_req);
-    Board_CAN_Transmit(bms_input, bms_output);
 
     // Board_Println("PACKCONFIG CHECK DONE");
   }
