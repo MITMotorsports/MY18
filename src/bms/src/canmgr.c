@@ -84,8 +84,8 @@ void Board_CAN_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
         Board_PrintNum(i, 10);
         Board_Print_BLOCKING("it was ");
         Board_PrintNum((int) err[i], 10);
-        Board_Println_BLOCKING("IMA RESET THE CONTROLER K THX");
-        CAN_ResetPeripheral();
+        Board_Println_BLOCKING("IMA FLUSH THE BUFFER THX");
+        CAN_Flush_Tx();
     }
   }
 
@@ -98,7 +98,7 @@ Can_ErrorID_T can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
 
   Can_ErrorID_T err = Can_Error_UNUSED;
 
-  if ((msTicks - last_time) > 5 * can0_BMSHeartbeat_period) {
+  if ((msTicks - last_time) > can0_BMSHeartbeat_period) {
     const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
     ERROR_STATUS_T *errors = Get_Errors();
@@ -140,7 +140,7 @@ Can_ErrorID_T can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
 
   Can_ErrorID_T err = Can_Error_UNUSED;
 
-  if ((msTicks - last_time) > 5 * can0_CellVoltages_period) {
+  if ((msTicks - last_time) > can0_CellVoltages_period) {
     const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
     can0_CellVoltages_T msg;
@@ -162,7 +162,7 @@ Can_ErrorID_T can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
 
   Can_ErrorID_T err = Can_Error_UNUSED;
 
-  if ((msTicks - last_time) > 5 * can0_CellTemperatures_period) {
+  if ((msTicks - last_time) > can0_CellTemperatures_period) {
     const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
     can0_CellTemperatures_T msg;
