@@ -10,17 +10,17 @@
 
 uint32_t lastDashMsgTime;
 
-void handleBrakeThrottleMsg(Frame* msg);
+void handleBrakeThrottleMsg(Frame *msg);
 
-void handleMCVoltageMsg(Frame* msg);
+void handleMCVoltageMsg(Frame *msg);
 
-void handleBMSHeartbeatMsg(Frame* msg);
+void handleBMSHeartbeatMsg(Frame *msg);
 
-void handleCurrentSensorVoltageMsg(Frame* msg);
+void handleCurrentSensorVoltageMsg(Frame *msg);
 
-void handleCellVoltagesMsg(Frame* msg);
+void handleCellVoltagesMsg(Frame *msg);
 
-void handleButtonRequest(Frame* msg);
+void handleButtonRequest(Frame *msg);
 
 void sendDashMsg();
 
@@ -28,4 +28,4 @@ void sendTorqueCmdMsg(int16_t torque);
 
 void sendMotorOffCmdMsg();
 
-#endif
+#endif // ifndef __CAN_HANDLES_H

@@ -18,4 +18,4 @@ uint32_t timeSinceLatchSettingStart;
 void initLVOnly();
 void loopLVOnly();
 
-#endif
+#endif // ifndef __LV_ONLY_H

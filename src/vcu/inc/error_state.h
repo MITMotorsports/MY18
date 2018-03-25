@@ -8,13 +8,13 @@
 
 // ERROR STATES FOR THE LOOP OPEN STATE MACHINE
 #define NO_ERROR_NO_ESD_STATE       0
-#define NO_ERROR_STATE              1 
+#define NO_ERROR_STATE              1
 #define NO_ERROR_WITH_TSMS_STATE    2
 #define LOOP_ERROR_STATE            3
-#define HEARTBEAT_ERROR_STATE		4
+#define HEARTBEAT_ERROR_STATE           4
 
-#define CAN_BMS_HEARTBEAT_FAULT_DURATION				400 // millis
-#define CAN_FRONT_CAN_NODE_HEARTBEAT_FAULT_DURATION		400 // millis
+#define CAN_BMS_HEARTBEAT_FAULT_DURATION                                400 // millis
+#define CAN_FRONT_CAN_NODE_HEARTBEAT_FAULT_DURATION             400         // millis
 
 void throwErrorIfBadHeartbeats();
 bool boardHeartbeatsGood();
@@ -40,4 +40,4 @@ void updateInHeartbeatErrorState();
 
 uint8_t errorState;
 
-#endif
+#endif // ifndef __ERROR_STATE_H

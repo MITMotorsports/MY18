@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# is not really python 3 compatible yet
+
 import can
 import threading
 import time
@@ -115,7 +117,7 @@ class PrechargeTest(object):
             if rx_msg is not None:
                 print("rx: {}".format(rx_msg))
         print "Stopped receiving messages"
-    
+
     # def send(self, bus, stop_event):
     #     print("Start to send messages")
     #     while not stop_event.is_set():
@@ -125,7 +127,7 @@ class PrechargeTest(object):
     #     print("Stopped sending messages")
 
 if __name__ == "__main__":
-    
+
     stop_event = threading.Event()
     shutdownLoop = ShutdownLoop(stop_event)
 
@@ -139,5 +141,3 @@ if __name__ == "__main__":
     stop_event.set()
     shutdownLoop.bus.shutdown()
     print("Stopped script")
-    
-

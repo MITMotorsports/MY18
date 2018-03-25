@@ -9,4 +9,4 @@
 void initContactorFault();
 void loopContactorFault();
 
-#endif
+#endif // ifndef __CONTACTOR_FAULT_H

@@ -16,4 +16,4 @@ bool anyGateNonESDFaultsTripped();
 
 void printGateFaults();
 
-#endif
+#endif // ifndef __FAULT_GATES_H

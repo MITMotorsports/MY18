@@ -15,5 +15,4 @@ void closeLowSideContactor();
 void openHighSideContactor();
 void closeHighSideContactor();
 
-#endif
-
+#endif // ifndef __CONTACTORS_H

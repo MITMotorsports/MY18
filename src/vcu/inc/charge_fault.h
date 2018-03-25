@@ -8,4 +8,4 @@
 void initChargeFault();
 void loopChargeFault();
 
-#endif
+#endif // ifndef __CHARGE_FAULT_H

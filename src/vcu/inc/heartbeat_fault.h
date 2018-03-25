@@ -8,4 +8,4 @@
 void initHeartbeatFault();
 void loopHeartbeatFault();
 
-#endif
+#endif // ifndef __HEARTBEAT_FAULT_H

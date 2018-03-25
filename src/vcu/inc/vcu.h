@@ -21,6 +21,6 @@ void afterLoop();
 
 void loopVCU();
 
-void handleCanVCU(CAN_HandleTypeDef* CanHandle);
+void handleCanVCU(CAN_HandleTypeDef *CanHandle);
 
-#endif
+#endif // ifndef __VCU_H
