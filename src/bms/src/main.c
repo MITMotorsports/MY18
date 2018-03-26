@@ -99,14 +99,10 @@ void Process_Input(BMS_INPUT_T *bms_input) {
 #if true
   uint32_t lastpr = 0;
   if (msTicks - lastpr > 1000) {
-    Board_Print_BLOCKING("\nL closed ");
-    Board_PrintNum(bms_input->L_contactor_closed, 10);
-    Board_Print_BLOCKING("\nH closed ");
-    Board_PrintNum(bms_input->H_contactor_closed, 10);
-    Board_Print_BLOCKING("\nL welded ");
-    Board_PrintNum(bms_input->L_contactor_welded, 10);
-    Board_Print_BLOCKING("\nH welded ");
-    Board_PrintNum(bms_input->H_contactor_welded, 10);
+    if (bms_input->L_contactor_closed) Board_Print_BLOCKING("\nL closed\n");
+    if (bms_input->H_contactor_closed) Board_Print_BLOCKING("\nH closed\n");
+    if (bms_input->L_contactor_welded) Board_Print_BLOCKING("\nL welded\n");
+    if (bms_input->H_contactor_welded) Board_Print_BLOCKING("\nH welded\n");
 
     lastpr = msTicks;
   }

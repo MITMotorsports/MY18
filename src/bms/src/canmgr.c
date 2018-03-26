@@ -105,31 +105,29 @@ Can_ErrorID_T can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
     ERROR_STATUS_T *errors = Get_Errors();
     can0_BMSHeartbeat_T msg;
 
-    msg.error_pec = errors[ERROR_LTC6804_PEC].error == true;
-    msg.error_cvst = errors[ERROR_LTC6804_CVST].error == true;
-    msg.error_owt = errors[ERROR_LTC6804_OWT].error == true;
-    msg.error_eeprom = errors[ERROR_EEPROM].error == true;
-    msg.error_cell_under_voltage = errors[ERROR_CELL_UNDER_VOLTAGE].error == true;
-    msg.error_cell_over_voltage = errors[ERROR_CELL_OVER_VOLTAGE].error == true;
-    msg.error_cell_under_temp = errors[ERROR_CELL_UNDER_TEMP].error == true;
-    msg.error_cell_over_temp = errors[ERROR_CELL_OVER_TEMP].error == true;
-    msg.error_over_current = errors[ERROR_OVER_CURRENT].error == true;
-    msg.error_can = errors[ERROR_CAN].error == true;
-    msg.error_conflicting_mode_requests = errors[ERROR_CONFLICTING_MODE_REQUESTS].error == true;
-    msg.error_vcu_dead = errors[ERROR_VCU_DEAD].error == true;
-    msg.error_control_flow = errors[ERROR_CONTROL_FLOW].error == true;
-    msg.error_blown_fuse = errors[ERROR_BLOWN_FUSE].error == true;
+    // msg.error_pec = errors[ERROR_LTC6804_PEC].error == true;
+    // msg.error_cvst = errors[ERROR_LTC6804_CVST].error == true;
+    // msg.error_owt = errors[ERROR_LTC6804_OWT].error == true;
+    // msg.error_eeprom = errors[ERROR_EEPROM].error == true;
+    // msg.error_cell_under_voltage = errors[ERROR_CELL_UNDER_VOLTAGE].error == true;
+    // msg.error_cell_over_voltage = errors[ERROR_CELL_OVER_VOLTAGE].error == true;
+    // msg.error_cell_under_temp = errors[ERROR_CELL_UNDER_TEMP].error == true;
+    // msg.error_cell_over_temp = errors[ERROR_CELL_OVER_TEMP].error == true;
+    // msg.error_over_current = errors[ERROR_OVER_CURRENT].error == true;
+    // msg.error_can = errors[ERROR_CAN].error == true;
+    // msg.error_conflicting_mode_requests = errors[ERROR_CONFLICTING_MODE_REQUESTS].error == true;
+    // msg.error_vcu_dead = errors[ERROR_VCU_DEAD].error == true;
+    // msg.error_control_flow = errors[ERROR_CONTROL_FLOW].error == true;
+    // msg.error_blown_fuse = errors[ERROR_BLOWN_FUSE].error == true;
     // msg.error_L_contactor_welded = errors[ERROR_L_CONTACTOR_WELDED].error == true;
     // msg.error_H_contactor_welded = errors[ERROR_H_CONTACTOR_WELDED].error == true;
 
-
-    msg.L_contactor_closed = bms_input ->L_contactor_closed;
-    msg.H_contactor_closed = bms_input ->H_contactor_closed;
-    msg.L_contactor_welded = bms_input ->L_contactor_welded;
-    msg.H_contactor_welded = bms_input ->H_contactor_welded;
+    msg.L_contactor_closed = bms_input->L_contactor_closed;
+    msg.H_contactor_closed = bms_input->H_contactor_closed;
+    msg.L_contactor_welded = bms_input->L_contactor_welded;
+    msg.H_contactor_welded = bms_input->H_contactor_welded;
 
     msg.soc = 7;
-    Board_Println_BLOCKING("HERE");
     err = can0_BMSHeartbeat_Write(&msg);
 
     last_time = msTicks;

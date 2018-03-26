@@ -153,88 +153,88 @@ buses:
             signed: false
             unit: mV
       BMSHeartbeat:
-        can_id: 0x0D4
-        period: 0.02s
+        can_id: 0x0D9
+        period: 0.1s
         is_big_endian: true
         segments:
-          error_pec:
+          # error_pec:
+          #   position: 0
+          #   length: 1
+          #   c_type: bool
+          # error_cvst:
+          #   position: 1
+          #   length: 1
+          #   c_type: bool
+          # error_owt:
+          #   position: 2
+          #   length: 1
+          #   c_type: bool
+          # error_eeprom:
+          #   position: 3
+          #   length: 1
+          #   c_type: bool
+          # error_cell_under_voltage:
+          #   position: 4
+          #   length: 1
+          #   c_type: bool
+          # error_cell_over_voltage:
+          #   position: 5
+          #   length: 1
+          #   c_type: bool
+          # error_cell_under_temp:
+          #   position: 6
+          #   length: 1
+          #   c_type: bool
+          # error_cell_over_temp:
+          #   position: 7
+          #   length: 1
+          #   c_type: bool
+          # error_over_current:
+          #   position: 8
+          #   length: 1
+          #   c_type: bool
+          # error_can:
+          #   position: 9
+          #   length: 1
+          #   c_type: bool
+          # error_conflicting_mode_requests:
+          #   position: 10
+          #   length: 1
+          #   c_type: bool
+          # error_vcu_dead:
+          #   position: 11
+          #   length: 1
+          #   c_type: bool
+          # error_control_flow:
+          #   position: 12
+          #   length: 1
+          #   c_type: bool
+          # error_blown_fuse:
+          #   position: 13
+          #   length: 1
+          #   c_type: bool
+          # error_L_contactor_welded:
+          #   position: 14
+          #   length: 1
+          #   c_type: bool
+          # error_H_contactor_welded:
+          #   position: 15
+          #   length: 1
+          #   c_type: bool
+          L_contactor_closed:
             position: 0
             length: 1
             c_type: bool
-          error_cvst:
-            position: 1
-            length: 1
-            c_type: bool
-          error_owt:
-            position: 2
-            length: 1
-            c_type: bool
-          error_eeprom:
-            position: 3
-            length: 1
-            c_type: bool
-          error_cell_under_voltage:
+          H_contactor_closed:
             position: 4
             length: 1
             c_type: bool
-          error_cell_over_voltage:
-            position: 5
-            length: 1
-            c_type: bool
-          error_cell_under_temp:
-            position: 6
-            length: 1
-            c_type: bool
-          error_cell_over_temp:
-            position: 7
-            length: 1
-            c_type: bool
-          error_over_current:
+          L_contactor_welded:
             position: 8
             length: 1
             c_type: bool
-          error_can:
-            position: 9
-            length: 1
-            c_type: bool
-          error_conflicting_mode_requests:
-            position: 10
-            length: 1
-            c_type: bool
-          error_vcu_dead:
-            position: 11
-            length: 1
-            c_type: bool
-          error_control_flow:
-            position: 12
-            length: 1
-            c_type: bool
-          error_blown_fuse:
-            position: 13
-            length: 1
-            c_type: bool
-          error_L_contactor_welded:
-            position: 14
-            length: 1
-            c_type: bool
-          error_H_contactor_welded:
-            position: 15
-            length: 1
-            c_type: bool
-          L_contactor_closed:
-            position: 16
-            length: 1
-            c_type: bool
-          H_contactor_closed:
-            position: 17
-            length: 1
-            c_type: bool
-          L_contactor_welded:
-            position: 32
-            length: 1
-            c_type: bool
           H_contactor_welded:
-            position: 30
+            position: 16
             length: 1
             c_type: bool
           soc:
