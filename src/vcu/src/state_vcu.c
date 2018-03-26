@@ -80,6 +80,10 @@ void set_vcu_state(VCU_STATE_T newState) {
     initContactorFault();
     break;
 
+	case VCU_STATE_HEARTBEAT_FAULT:
+		Error_Handler("Heartbeat fault state.");
+		break;
+
   default:
     printf("\r\n[WARNING]: INVALID CAR MODE CHANGE. %d\r\n", carMode);
     Error_Handler("Inside set_vcu_state.");

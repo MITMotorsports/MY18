@@ -60,6 +60,7 @@ void loopVCU() {
 
 void handleCanVCU(CAN_HandleTypeDef *CanHandle) {
   Frame frame;
+	// TODO: Maybe use CanHandle to get last RxMsg here.
 
   lastRxMsgToFrame(&frame);
 

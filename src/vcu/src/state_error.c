@@ -1,12 +1,17 @@
 #include "state_error.h"
 
-void init_error_state( void ) {
+
+
+ERROR_STATE_T currentState;
+
+
+
+void init_error_state(void) {
   set_error_state(NO_ERROR_NO_ESD_STATE);
 }
 
-bool boardHeartbeatsGood( void ) {
-  if (HAL_GetTick() - heartbeats.bms >=
-      CAN_BMS_HEARTBEAT_FAULT_DURATION) {
+bool boardHeartbeatsGood(void) {
+  if (HAL_GetTick() - heartbeats.bms >= CAN_BMS_HEARTBEAT_FAULT_DURATION) {
     return false;
   }
 
@@ -18,7 +23,7 @@ bool boardHeartbeatsGood( void ) {
   return true;
 }
 
-void printHeartbeatFailures( void ) {
+void printHeartbeatFailures(void) {
   // printf("LAST BMS: %llu, NOW: %llu", heartbeats.bms,
   // HAL_GetTick());
   // if (HAL_GetTick() - heartbeats.bms >=
@@ -32,18 +37,18 @@ void printHeartbeatFailures( void ) {
   // }
 }
 
-void throwErrorIfBadHeartbeats( void ) {
+void throwErrorIfBadHeartbeats(void) {
   if (!boardHeartbeatsGood()) {
     set_error_state(HEARTBEAT_ERROR_STATE);
     printHeartbeatFailures();
   }
 }
 
-void update_error_state( void ) {
+void update_error_state(void) {
   updateGateFaults();          // Update the fault gates for our uses
   throwErrorIfBadHeartbeats(); // Check for heartbeats
 
-  switch (errorState) {
+  switch (currentState) {
   case NO_ERROR_NO_ESD_STATE:
     updateInNoErrorNoESDState();
     break;
@@ -72,26 +77,27 @@ void update_error_state( void ) {
 void set_error_state(ERROR_STATE_T newState) {
   switch (newState) {
   case NO_ERROR_NO_ESD_STATE:
+		currentState = newState;
     initInNoErrorNoESDState();
     break;
 
   case NO_ERROR_STATE:
-    errorState = newState;
+    currentState = newState;
     initInNoErrorState();
     break;
 
   case NO_ERROR_WITH_TSMS_STATE:
-    errorState = newState;
+    currentState = newState;
     initInNoErrorWithTSMSState();
     break;
 
   case LOOP_ERROR_STATE:
-    errorState = newState;
+    currentState = newState;
     initInLoopErrorState();
     break;
 
   case HEARTBEAT_ERROR_STATE:
-    errorState = newState;
+    currentState = newState;
     initInHeartbeatErrorState();
     break;
 
@@ -100,42 +106,46 @@ void set_error_state(ERROR_STATE_T newState) {
   }
 }
 
-void initInNoErrorState( void ) {
+const inline ERROR_STATE_T current_error_state(void) {
+	return currentState;
+}
+
+void initInNoErrorState(void) {
   printf("\r\nAS OF NOW, NO DETECTABLE ERRORS, TSMS EXCLUDED\r\n");
 }
 
-void initInNoErrorNoESDState( void ) {
+void initInNoErrorNoESDState(void) {
   printf("\r\nAS OF NOW, NO DETECTABLE ERRORS, ESD & TSMS EXCLUDED\r\n");
 }
 
-void initInNoErrorWithTSMSState( void ) {
+void initInNoErrorWithTSMSState(void) {
   printf("\r\nAS OF NOW, NO DETECTABLE ERRORS, TSMS INCLUDED\r\n");
 }
 
-void initInLoopErrorState( void ) {
+void initInLoopErrorState(void) {
   // When we get into this state, immediately send the car into the fault state
   set_vcu_state(VCU_STATE_CONTACTOR_FAULT);
 }
 
-void initInHeartbeatErrorState( void ) {
+void initInHeartbeatErrorState(void) {
   set_vcu_state(VCU_STATE_HEARTBEAT_FAULT);
 }
 
-void updateInNoErrorState( void ) {
+void updateInNoErrorState(void) {
   if (anyGateFaultsTripped()) {
     set_error_state(LOOP_ERROR_STATE);
     printGateFaults();
   }
 }
 
-void updateInNoErrorNoESDState( void ) {
+void updateInNoErrorNoESDState(void) {
   if (anyGateNonESDFaultsTripped()) {
     set_error_state(LOOP_ERROR_STATE);
     printGateFaults();
   }
 }
 
-void updateInNoErrorWithTSMSState( void ) {
+void updateInNoErrorWithTSMSState(void) {
   if (anyGateFaultsTripped() || gate_faults.tsms_fault) {
     set_error_state(LOOP_ERROR_STATE);
     printGateFaults();
@@ -146,7 +156,10 @@ void updateInNoErrorWithTSMSState( void ) {
   }
 }
 
-void updateInLoopErrorState( void ) {
+void updateInLoopErrorState(void) {
+	if (NO_ERROR_NO_ESD_STATE) return;
+	printf("WTF ERROR STATE IS NOW: %d\n\r", currentState);
+
   if (!anyGateNonESDFaultsTripped()) {
     // Can be caused by a master reset on the gate driver such that now we might
     // have no faults
@@ -156,6 +169,6 @@ void updateInLoopErrorState( void ) {
   }
 }
 
-void updateInHeartbeatErrorState( void ) {
+void updateInHeartbeatErrorState(void) {
   // No way out of this state
 }

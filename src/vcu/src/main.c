@@ -130,12 +130,23 @@ void Error_Handler(const char *s) {
 void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* CanHandle) {
   handleCanVCU(CanHandle);
 
-  /* Receive */
-  if (HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0) != HAL_OK) {
-    /* Reception Error */
-    Error_Handler("CAN RX callback Initialization");
+	HAL_StatusTypeDef CAN_RX_STATUS = HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0);
+  if (CAN_RX_STATUS != HAL_OK) {
+		char *ERRMSG;
+		sprintf(ERRMSG, "CAN RX Error is %d", (int) CAN_RX_STATUS);
+    Error_Handler(ERRMSG);
+		// printf("ERROR IN CAN %d\n\r", (int) CAN_RX_STATUS);
   }
 }
+
+// FOR REFERENCE:
+// typedef enum
+// {
+//   HAL_OK       = 0x00U,
+//   HAL_ERROR    = 0x01U,
+//   HAL_BUSY     = 0x02U,
+//   HAL_TIMEOUT  = 0x03U
+// } HAL_StatusTypeDef;
 
 #ifdef  USE_FULL_ASSERT
 /**
