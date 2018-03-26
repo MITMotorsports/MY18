@@ -97,7 +97,7 @@ void Process_Input(BMS_INPUT_T *bms_input) {
   bms_input->L_contactor_closed = Board_Contactor_Low_Closed();
 
 #if true
-  uint32_t lastpr = 0;
+  static uint32_t lastpr = 0;
   if (msTicks - lastpr > 1000) {
     if (bms_input->L_contactor_closed) Board_Print_BLOCKING("\nL closed\n");
     if (bms_input->H_contactor_closed) Board_Print_BLOCKING("\nH closed\n");

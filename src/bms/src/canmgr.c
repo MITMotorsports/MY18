@@ -122,6 +122,8 @@ Can_ErrorID_T can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
     // msg.error_L_contactor_welded = errors[ERROR_L_CONTACTOR_WELDED].error == true;
     // msg.error_H_contactor_welded = errors[ERROR_H_CONTACTOR_WELDED].error == true;
 
+    if (bms_input->L_contactor_welded) Board_Print_BLOCKING("\nL welded\n");
+    
     msg.L_contactor_closed = bms_input->L_contactor_closed;
     msg.H_contactor_closed = bms_input->H_contactor_closed;
     msg.L_contactor_welded = bms_input->L_contactor_welded;
