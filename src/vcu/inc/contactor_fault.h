@@ -1,4 +1,3 @@
-
 #ifndef __CONTACTOR_FAULT_H
 #define __CONTACTOR_FAULT_H
 

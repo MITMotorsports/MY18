@@ -1,4 +1,3 @@
-
 #include "vcu.h"
 
 void setupVCU() {
@@ -52,6 +51,7 @@ void loopVCU() {
     break;
 
   default:
+    Error_Handler("Inside loopVCU.");
     break;
   }
 
@@ -63,7 +63,6 @@ void handleCanVCU(CAN_HandleTypeDef *CanHandle) {
 
   lastRxMsgToFrame(&frame);
 
-  // printf('MSG IN ID: %#08x\n', frame.id);
   can0_T msgForm;
   msgForm = identify_can0(&frame);
 

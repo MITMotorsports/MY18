@@ -49,8 +49,7 @@ void loopPrecharge() {
       closeHighSideContactor();
       changeCarMode(CAR_STATE_READY_TO_DRIVE);
     } else {
-      printf("\r\n[ERROR]: PRECHARGE DID NOT BRING DC BUS VOLTAGE TO %d\r\n",
-             240);
+      printf("\r\n[ERROR]: PRECHARGE DID NOT BRING DC BUS VOLTAGE TO %d\r\n", 240);
       changeCarMode(CAR_STATE_CHARGE_FAULT);
     }
   }

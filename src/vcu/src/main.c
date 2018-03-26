@@ -1,53 +1,23 @@
-
 #include "main.h"
 
-#include <stdbool.h>
-#include "stdio.h"
-
-#ifdef __GNUC__
-  /* With GCC Compilers, small printf (option LD Linker->Libraries->Small printf
-     set to 'Yes') calls __io_putchar() */
-  #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else
-  #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-#endif /* __GNUC__ */
-
-USART_HandleTypeDef  USARTHandle;
-CAN_HandleTypeDef    CanHandle;
-
-// static void CAN_Config(void);
-static void SystemClock_Config(void);
-static void Error_Handler(void);
-
-int main(void)
-{
+int main(void) {
   HAL_Init();
 
   SystemClock_Config();
 
   Can_Init(500000);
 
+  GPIO_BEGIN_INIT();
+
   // Setup an LED for debugging
-  GPIO_InitTypeDef gpioinit;
-  LED_CLK_ENABLE();
-  gpioinit.Pin = LED_PIN;
-  gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
-  gpioinit.Pull = GPIO_PULLUP;
-  gpioinit.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(LED_PORT, &gpioinit);
+  DGPIO_INIT_OUT(LED, GPIO_PIN_RESET);
 
   // Driver Reset GPIO output for when Driver Reset is pressed
-  DRIVER_RESET_TRIGGER_CLK_ENABLE();
-  gpioinit.Pin = DRIVER_RESET_TRIGGER_PIN;
-  gpioinit.Mode = GPIO_MODE_OUTPUT_PP;
-  gpioinit.Pull = GPIO_PULLUP;
-  gpioinit.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(DRIVER_RESET_TRIGGER_PORT, &gpioinit);
-  HAL_GPIO_WritePin(DRIVER_RESET_TRIGGER_PORT, DRIVER_RESET_TRIGGER_PIN, GPIO_PIN_SET); //ON
+  DGPIO_INIT_OUT(DRIVER_RESET_TRIGGER, GPIO_PIN_SET); //ON
 
   // SETUP THE CONTACTOR GPIOS
-  initLowSideContactor();
-  initHighSideContactor();
+  DGPIO_INIT_OUT(L_CONTACTOR, GPIO_PIN_RESET);
+  DGPIO_INIT_OUT(H_CONTACTOR, GPIO_PIN_RESET);
 
   // Setup USART for debugging
   USARTHandle.Instance = USARTx_INSTANCE;
@@ -60,10 +30,9 @@ int main(void)
   USARTHandle.Init.CLKPhase = USART_PHASE_1EDGE;
   USARTHandle.Init.CLKLastBit = USART_LASTBIT_DISABLE;
 
-  if(HAL_USART_Init(&USARTHandle) != HAL_OK)
-  {
+  if(HAL_USART_Init(&USARTHandle) != HAL_OK) {
     /* Initialization Error */
-    Error_Handler();
+    Error_Handler("UART Initialization");
   }
 
   // Toggle the LED after this regular setup
@@ -75,12 +44,27 @@ int main(void)
 
   setupVCU();
 
-  while(1)
-  {
-    // loopVCU(&USARTHandle);
-    // printf("LAST BMS: %d\n\r", voltages.packVoltage);
-    printf("allok\n\r");
-    HAL_Delay(1000);
+  while(1) {
+    // loopVCU();
+
+
+    static uint32_t lastt = 0;
+    static bool i = false;
+
+    if (HAL_GetTick() - lastt > 1000) {
+      HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
+      if (i) {
+        printf("OFF\n\r");
+        HAL_GPIO_WritePin(GPIO(L_CONTACTOR), GPIO_PIN_RESET);
+      }
+      else {
+        printf("ON\n\r");
+        HAL_GPIO_WritePin(GPIO(L_CONTACTOR), GPIO_PIN_SET);
+      }
+      lastt = HAL_GetTick();
+
+      i = !i;
+    }
   }
 }
 
@@ -89,8 +73,7 @@ int main(void)
   * @param  None
   * @retval None
   */
-PUTCHAR_PROTOTYPE
-{
+PUTCHAR_PROTOTYPE {
   /* Place your implementation of fputc here */
   /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
   HAL_USART_Transmit(&USARTHandle, (uint8_t *)&ch, 1, 0xFFFF);
@@ -117,8 +100,7 @@ PUTCHAR_PROTOTYPE
   * @param  None
   * @retval None
   */
-static void SystemClock_Config(void)
-{
+static void SystemClock_Config(void) {
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
   RCC_OscInitTypeDef RCC_OscInitStruct;
 
@@ -131,9 +113,8 @@ static void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLN = 240;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 5;
-  if(HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
+  if(HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+    Error_Handler("Oscillator Initialization");
   }
 
   /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
@@ -143,30 +124,28 @@ static void SystemClock_Config(void)
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
-  if(HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
-  {
-    Error_Handler();
+  if(HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK) {
+    Error_Handler("Clock Config Initialization");
   }
 }
 
-static void Error_Handler(void)
-{
-  while(1)
-  {
+void Error_Handler(const char *s) {
+  while(1) {
+    printf("FORCED HANG IN Error_Handler\n\r");
+    printf("Error Message: %s\n\r", s);
+    HAL_Delay(1000);
   }
 }
 
-// void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* CanHandle)
-// {
-//   handleCanVCU(CanHandle);
-//
-//   /* Receive */
-//   if(HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0) != HAL_OK)
-//   {
-//     /* Reception Error */
-//     Error_Handler();
-//   }
-// }
+void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* CanHandle) {
+  handleCanVCU(CanHandle);
+
+  /* Receive */
+  if(HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0) != HAL_OK) {
+    /* Reception Error */
+    Error_Handler("CAN RX callback Initialization");
+  }
+}
 
 #ifdef  USE_FULL_ASSERT
 /**
@@ -176,14 +155,13 @@ static void Error_Handler(void)
   * @param  line: assert_param error line source number
   * @retval None
   */
-void assert_failed(uint8_t* file, uint32_t line)
-{
+void assert_failed(uint8_t* file, uint32_t line) {
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 
   /* Infinite loop */
-  while (1)
-  {
+  printf("Assertion failed on: file %s on line %d. HALTING...\r\n", file, line);
+  while (1) {
   }
 }
 #endif

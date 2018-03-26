@@ -1,4 +1,3 @@
-
 #include "contactor_fault.h"
 #include "driving.h"
 #include "contactors.h"

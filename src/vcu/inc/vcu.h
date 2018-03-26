@@ -12,6 +12,7 @@
 #include "driving.h"
 #include "contactor_fault.h"
 #include "error_state.h"
+#include "extern.h"
 
 void setupVCU();
 

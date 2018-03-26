@@ -1,4 +1,3 @@
-
 #include "charge_fault.h"
 #include "contactors.h"
 

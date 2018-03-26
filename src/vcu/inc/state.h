@@ -1,9 +1,8 @@
 #ifndef __STATE_H
 #define __STATE_H
 
-#include "stdio.h"
-#include "stm32f2xx_hal.h"
 #include <stdbool.h>
+#include <stdint.h>
 
 // DEFINITION OF CAR MODES
 typedef enum {

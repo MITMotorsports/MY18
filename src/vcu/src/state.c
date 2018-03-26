@@ -1,10 +1,15 @@
 #include "state.h"
+
+#include "stdio.h"
+#include "stm32f2xx_hal.h"
+
 #include "lv_only.h"
 #include "precharge.h"
 #include "charge_fault.h"
 #include "ready_to_drive.h"
 #include "driving.h"
 #include "contactor_fault.h"
+#include "extern.h"
 
 GateFaults_T gate_faults;
 Heartbeats_T heartbeats;
@@ -86,6 +91,7 @@ void changeCarMode(CAR_STATE_T newState) {
 
   default:
     printf("\r\n[WARNING]: INVALID CAR MODE CHANGE. %d\r\n", carMode);
+    Error_Handler("Inside changeCarMode.");
     break;
   }
 }

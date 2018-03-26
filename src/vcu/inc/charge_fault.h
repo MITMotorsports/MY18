@@ -1,4 +1,3 @@
-
 #ifndef __CHARGE_FAULT_H
 #define __CHARGE_FAULT_H
 
