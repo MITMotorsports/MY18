@@ -10,14 +10,32 @@
 
 
 
-// ERROR STATES FOR THE LOOP OPEN STATE MACHINE
+// ERROR STATES
 typedef enum {
-  NO_ERROR_NO_ESD_STATE,
   NO_ERROR_STATE,
-  NO_ERROR_WITH_TSMS_STATE,
-  LOOP_ERROR_STATE,
-  HEARTBEAT_ERROR_STATE,
+  RECOVERABLE_ERROR_STATE,
+  FATAL_ERROR_STATE
 } ERROR_STATE_T;
+
+
+
+// CONTAINER DEFINITIONS
+typedef struct {
+  bool HEARTBEAT_ERROR;
+  bool SHUTDOWN_ERROR;  // Only includes SHUTDOWN_SENSE_GATE AKA ESD
+} RECOVERABLE_ERROR_T;
+
+typedef struct {
+  bool HEARTBEAT_ERROR;
+  bool GATE_ERROR;
+  bool CONFLICT_ERROR;
+} FATAL_ERROR_T;
+
+
+
+// CONTAINER DECLARATIONS
+extern RECOVERABLE_ERROR_T recoverable_errors;
+extern FATAL_ERROR_T fatal_errors;
 
 
 
@@ -39,17 +57,17 @@ bool boardHeartbeatsGood(void);
 void printHeartbeatFailures(void);
 
 // PRIVATE FUNCTIONS
-void initInNoErrorNoESDState(void);
-void initInNoErrorState(void);
-void initInNoErrorWithTSMSState(void);
-void initInLoopErrorState(void);
-void initInHeartbeatErrorState(void);
+static void initInNoErrorNoESDState(void);
+static void initInNoErrorState(void);
+static void initInNoErrorWithTSMSState(void);
+static void initInLoopErrorState(void);
+static void initInHeartbeatErrorState(void);
 
-void updateInNoErrorNoESDState(void);
-void updateInNoErrorState(void);
-void updateInNoErrorWithTSMSState(void);
-void updateInLoopErrorState(void);
-void updateInHeartbeatErrorState(void);
+static void updateInNoErrorNoESDState(void);
+static void updateInNoErrorState(void);
+static void updateInNoErrorWithTSMSState(void);
+static void updateInLoopErrorState(void);
+static void updateInHeartbeatErrorState(void);
 
 
 

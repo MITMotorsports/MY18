@@ -1,6 +1,6 @@
 #include "state.h"
 
-static VCU_STATE_T carMode;
+static VCU_STATE_T currentState;
 
 GateFaults_T gate_faults;
 Heartbeats_T heartbeats;
@@ -49,48 +49,44 @@ void init_vcu_state( void ) {
 }
 
 void set_vcu_state(VCU_STATE_T newState) {
-  switch (carMode) {
+  switch (currentState) {
   case VCU_STATE_LV_ONLY:
-    carMode = newState;
     initLVOnly();
     break;
 
   case VCU_STATE_PRECHARGING:
-    carMode = newState;
     initPrecharge();
     break;
 
   case VCU_STATE_CHARGE_FAULT:
-    carMode = newState;
     initChargeFault();
     break;
 
   case VCU_STATE_READY_TO_DRIVE:
-    carMode = newState;
     initReadyToDrive();
     break;
 
   case VCU_STATE_DRIVING:
-    carMode = newState;
     initDriving();
     break;
 
   case VCU_STATE_CONTACTOR_FAULT:
-    carMode = newState;
     initContactorFault();
     break;
 
 	case VCU_STATE_HEARTBEAT_FAULT:
 		Error_Handler("Heartbeat fault state.");
-		break;
+		return;
 
   default:
-    printf("\r\n[WARNING]: INVALID CAR MODE CHANGE. %d\r\n", carMode);
+    printf("\r\n[WARNING]: INVALID CAR MODE CHANGE. %d\r\n", currentState);
     Error_Handler("Inside set_vcu_state.");
-    break;
+    return;
   }
+
+  currentState = newState;
 }
 
 const inline VCU_STATE_T current_vcu_state() {
-  return carMode;
+  return currentState;
 }
