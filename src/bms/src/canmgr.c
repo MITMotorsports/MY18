@@ -122,15 +122,25 @@ Can_ErrorID_T can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
     // msg.error_L_contactor_welded = errors[ERROR_L_CONTACTOR_WELDED].error == true;
     // msg.error_H_contactor_welded = errors[ERROR_H_CONTACTOR_WELDED].error == true;
 
-    if (bms_input->L_contactor_welded) Board_Print_BLOCKING("\nL welded\n");
-    
-    msg.L_contactor_closed = bms_input->L_contactor_closed;
-    msg.H_contactor_closed = bms_input->H_contactor_closed;
-    msg.L_contactor_welded = bms_input->L_contactor_welded;
-    msg.H_contactor_welded = bms_input->H_contactor_welded;
+    Frame manual;
+    manual.id = can0_BMSHeartbeat_can_id;
+    manual.len = 1;
+    manual.extended = false;
+    manual.data[0] = 0;
+    if (bms_input->L_contactor_closed) manual.data[0] += 2;
+    if (bms_input->H_contactor_closed) manual.data[0] += 4;
+    if (bms_input->L_contactor_welded) manual.data[0] += 8;
+    if (bms_input->H_contactor_welded) manual.data[0] += 16;
 
-    msg.soc = 7;
-    err = can0_BMSHeartbeat_Write(&msg);
+    // msg.L_contactor_closed = bms_input->L_contactor_closed;
+    // msg.H_contactor_closed = bms_input->H_contactor_closed;
+    // msg.L_contactor_welded = bms_input->L_contactor_welded;
+    // msg.H_contactor_welded = bms_input->H_contactor_welded;
+
+    // msg.soc = 7;
+    // err = can0_BMSHeartbeat_Write(&msg);
+
+    err = Can_RawWrite(&manual);
 
     last_time = msTicks;
   }
