@@ -11,11 +11,11 @@ void initPrecharge() {
   prechargeStartTime = HAL_GetTick();
   showVoltageTime    = HAL_GetTick();
 
-  if (bms_voltage.packVoltage == 0) {
+  if (voltages.packVoltage == 0) {
     printf("\r\n[ERROR]: PACK VOLTAGE IS NOT SET\r\n");
     changeCarMode(CAR_STATE_CHARGE_FAULT);
   } else {
-    targetVoltage = calcTargetVoltage(bms_voltage.packVoltage);
+    targetVoltage = calcTargetVoltage(voltages.packVoltage);
   }
 }
 
@@ -37,7 +37,7 @@ void loopPrecharge() {
 
   // Print the voltage
   if (HAL_GetTick() - showVoltageTime > SHOW_VOLTAGE_FREQUENCY_UPDATE) {
-    printf("THE DC BUS VOLTAGE MEASURED IS %d", bms_voltage.dc_bus_voltage);
+    printf("THE DC BUS VOLTAGE MEASURED IS %d", voltages.dc_bus_voltage);
     showVoltageTime = HAL_GetTick();
   }
 
@@ -45,7 +45,7 @@ void loopPrecharge() {
   // TODO: REMOVE THE 240 CHECK
   if (HAL_GetTick() - prechargeStartTime >= PRECHARGE_DEAD_RECKONING_TIME) {
     // safety check for integration testing
-    if (bms_voltage.dc_bus_voltage >= 240) {
+    if (voltages.dc_bus_voltage >= 240) {
       closeHighSideContactor();
       changeCarMode(CAR_STATE_READY_TO_DRIVE);
     } else {

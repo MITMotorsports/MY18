@@ -10,7 +10,7 @@ void initLVOnly() {
 }
 
 void loopLVOnly() {
-  if (button_presses.DriverReset && !latchingDriverReset) {
+  if (buttons.DriverReset && !latchingDriverReset) {
     latchingDriverReset        = true;
     timeSinceLatchSettingStart = HAL_GetTick();
 

@@ -7,12 +7,12 @@ void setupErrorState() {
 }
 
 bool boardHeartbeatsGood() {
-  if (HAL_GetTick() - board_heartbeats_state.bms >=
+  if (HAL_GetTick() - heartbeats.bms >=
       CAN_BMS_HEARTBEAT_FAULT_DURATION) {
     return false;
   }
 
-  // if (HAL_GetTick() - board_heartbeats_state.frontCanNode >
+  // if (HAL_GetTick() - heartbeats.frontCanNode >
   // CAN_FRONT_CAN_NODE_HEARTBEAT_FAULT_DURATION) {
   //     return false;
   // }
@@ -21,13 +21,13 @@ bool boardHeartbeatsGood() {
 }
 
 void printHeartbeatFailures() {
-  // printf("LAST BMS: %llu, NOW: %llu", board_heartbeats_state.bms,
+  // printf("LAST BMS: %llu, NOW: %llu", heartbeats.bms,
   // HAL_GetTick());
-  // if (HAL_GetTick() - board_heartbeats_state.bms >=
+  // if (HAL_GetTick() - heartbeats.bms >=
   // CAN_BMS_HEARTBEAT_FAULT_DURATION) {
   //     printf("\r\nBMS HEARTBEAT WAS NOT RECEIVED IN TIMELY FASHION\r\n");
   // }
-  // if (HAL_GetTick() - board_heartbeats_state.frontCanNode >
+  // if (HAL_GetTick() - heartbeats.frontCanNode >
   // CAN_FRONT_CAN_NODE_HEARTBEAT_FAULT_DURATION) {
   //     printf("\r\nFRONT CAN NODE HEARTBEAT WAS NOT RECEIVED IN TIMELY
   // FASHION\r\n");

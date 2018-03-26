@@ -117,7 +117,7 @@ buses:
             unit: mRPM
       CellTemperatures:
         can_id: 0x0F1
-        period: 0.1s
+        period: 10s
         is_big_endian: true
         segments:
           min:
@@ -144,106 +144,104 @@ buses:
             signed: false
       CellVoltages:
         can_id: 0x0F2
-        period: 0.1s
+        period: 0.3s
         is_big_endian: true
         segments:
           min:
-            position: 30
-            length: 10
-            c_type: uint16_t
+            position: 0
+            length: 32
+            c_type: uint32_t
             signed: false
             unit: mV
-          argmin:
-            position: 40
-            length: 7
-            c_type: uint8_t
-            signed: false
           max:
-            position: 47
-            length: 10
-            c_type: uint16_t
+            position: 32
+            length: 32
+            c_type: uint32_t
             signed: false
             unit: mV
-          argmax:
-            position: 57
-            length: 7
-            c_type: uint8_t
-            signed: false
       BMSHeartbeat:
-        can_id: 0x0D4
-        period: 0.02s
+        can_id: 0x0D9
+        period: 0.1s
         is_big_endian: true
         segments:
-          error_pec:
+          # error_pec:
+          #   position: 0
+          #   length: 1
+          #   c_type: bool
+          # error_cvst:
+          #   position: 1
+          #   length: 1
+          #   c_type: bool
+          # error_owt:
+          #   position: 2
+          #   length: 1
+          #   c_type: bool
+          # error_eeprom:
+          #   position: 3
+          #   length: 1
+          #   c_type: bool
+          # error_cell_under_voltage:
+          #   position: 4
+          #   length: 1
+          #   c_type: bool
+          # error_cell_over_voltage:
+          #   position: 5
+          #   length: 1
+          #   c_type: bool
+          # error_cell_under_temp:
+          #   position: 6
+          #   length: 1
+          #   c_type: bool
+          # error_cell_over_temp:
+          #   position: 7
+          #   length: 1
+          #   c_type: bool
+          # error_over_current:
+          #   position: 8
+          #   length: 1
+          #   c_type: bool
+          # error_can:
+          #   position: 9
+          #   length: 1
+          #   c_type: bool
+          # error_conflicting_mode_requests:
+          #   position: 10
+          #   length: 1
+          #   c_type: bool
+          # error_vcu_dead:
+          #   position: 11
+          #   length: 1
+          #   c_type: bool
+          # error_control_flow:
+          #   position: 12
+          #   length: 1
+          #   c_type: bool
+          # error_blown_fuse:
+          #   position: 13
+          #   length: 1
+          #   c_type: bool
+          # error_L_contactor_welded:
+          #   position: 14
+          #   length: 1
+          #   c_type: bool
+          # error_H_contactor_welded:
+          #   position: 15
+          #   length: 1
+          #   c_type: bool
+          L_contactor_closed:
             position: 0
             length: 1
             c_type: bool
-          error_cvst:
-            position: 1
-            length: 1
-            c_type: bool
-          error_owt:
-            position: 2
-            length: 1
-            c_type: bool
-          error_eeprom:
-            position: 3
-            length: 1
-            c_type: bool
-          error_cell_under_voltage:
+          H_contactor_closed:
             position: 4
             length: 1
             c_type: bool
-          error_cell_over_voltage:
-            position: 5
-            length: 1
-            c_type: bool
-          error_cell_under_temp:
-            position: 6
-            length: 1
-            c_type: bool
-          error_cell_over_temp:
-            position: 7
-            length: 1
-            c_type: bool
-          error_over_current:
+          L_contactor_welded:
             position: 8
             length: 1
             c_type: bool
-          error_can:
-            position: 9
-            length: 1
-            c_type: bool
-          error_conflicting_mode_requests:
-            position: 10
-            length: 1
-            c_type: bool
-          error_vcu_dead:
-            position: 11
-            length: 1
-            c_type: bool
-          error_control_flow:
-            position: 12
-            length: 1
-            c_type: bool
-          error_blown_fuse:
-            position: 13
-            length: 1
-            c_type: bool
-          error_L_contactor_welded:
-            position: 14
-            length: 1
-            c_type: bool
-          error_H_contactor_welded:
-            position: 15
-            length: 1
-            c_type: bool
-          L_contactor_closed:
+          H_contactor_welded:
             position: 16
-            length: 1
-            c_type: bool
-          H_contactor_closed:
-            position: 17
             length: 1
             c_type: bool
           soc:

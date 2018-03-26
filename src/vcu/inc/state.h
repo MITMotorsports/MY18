@@ -26,12 +26,19 @@ typedef struct
   bool sdn_fault;
   bool esd_fault;
   bool tsms_fault;
-} GateFaults;
+} GateFaults_T;
+
+typedef struct {
+  bool L_contactor_closed;
+  bool H_contactor_closed;
+  bool L_contactor_welded;
+  bool H_contactor_welded;
+} Contactors_T;
 
 typedef struct {
   int16_t packVoltage;
   int32_t dc_bus_voltage;
-} BMS_Voltage;
+} Voltages_T;
 
 typedef struct
 {
@@ -39,14 +46,14 @@ typedef struct
   int16_t outVoltage;
   int16_t VAB_Vd_Voltage;
   int16_t VBC_Vq_Voltage;
-} MC_Voltage;
+} MCVoltage_T;
 
 typedef struct
 {
   uint32_t frontCanNode;
   uint32_t bms;
   uint32_t mc;
-} VCU_BoardHeartbeats;
+} Heartbeats_T;
 
 typedef struct
 {
@@ -54,7 +61,7 @@ typedef struct
   int16_t accel_2;
   int16_t brake_1;
   int16_t brake_2;
-} VCU_BrakeAndThrottle;
+} Pedalbox_T;
 
 typedef struct
 {
@@ -62,27 +69,25 @@ typedef struct
   bool     observed_implausibility;
   bool     actual_implausibility;
   uint32_t implausibility_ticks;
-} VCU_ImplausibilityConflict;
+} Conflicts_T;
 
 typedef struct
 {
   bool RTD;
   bool DriverReset;
   bool ScrollSelect;
-} ButtonBank_Presses;
+} Buttons_T;
 
 // ACTUAL OBJECTS
-VCU_BoardHeartbeats  board_heartbeats_state;
-VCU_BrakeAndThrottle brake_and_throttle_state;
-VCU_ImplausibilityConflict implaus_conflict_state;
+extern GateFaults_T gate_faults;
+extern Heartbeats_T heartbeats;
+extern Contactors_T contactors;
+extern Conflicts_T  conflicts;
 
-GateFaults gate_faults;
-
-MC_Voltage mc_voltage;
-
-BMS_Voltage bms_voltage;
-
-ButtonBank_Presses button_presses;
+extern MCVoltage_T mc_voltage;
+extern Voltages_T  voltages;
+extern Pedalbox_T  pedalbox;
+extern Buttons_T   buttons;
 
 void initVCUState(void);
 

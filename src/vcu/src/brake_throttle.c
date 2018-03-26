@@ -1,7 +1,7 @@
 #include "brake_throttle.h"
 
-void update_brake_throttle_conflict(VCU_BrakeAndThrottle        brake_throttle,
-                                    VCU_ImplausibilityConflict *implaus_conflict)
+void update_brake_throttle_conflict(Pedalbox_T        brake_throttle,
+                                    Conflicts_T *implaus_conflict)
 {
   if (implaus_conflict->actual_implausibility) {
     // Checking conflict is pointless if implausibility
@@ -29,8 +29,8 @@ void update_brake_throttle_conflict(VCU_BrakeAndThrottle        brake_throttle,
                                                   throttle_engaged;
 }
 
-void update_implausibility(VCU_BrakeAndThrottle        brake_throttle,
-                           VCU_ImplausibilityConflict *implaus_conflict,
+void update_implausibility(Pedalbox_T        brake_throttle,
+                           Conflicts_T *implaus_conflict,
                            uint32_t                    msg_ticks) {
   uint16_t max_travel =
     (brake_throttle.accel_1 >

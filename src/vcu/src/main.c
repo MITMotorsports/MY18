@@ -77,8 +77,10 @@ int main(void)
 
   while(1)
   {
-    loopVCU(&USARTHandle);
-    // printf("LAST BMS: %llu, NOW: %llu", board_heartbeats_state.bms, HAL_GetTick());
+    // loopVCU(&USARTHandle);
+    // printf("LAST BMS: %d\n\r", voltages.packVoltage);
+    printf("allok\n\r");
+    HAL_Delay(1000);
   }
 }
 
@@ -154,17 +156,17 @@ static void Error_Handler(void)
   }
 }
 
-void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* CanHandle)
-{
-  handleCanVCU(CanHandle);
-
-  /* Receive */
-  if(HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0) != HAL_OK)
-  {
-    /* Reception Error */
-    Error_Handler();
-  }
-}
+// void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* CanHandle)
+// {
+//   handleCanVCU(CanHandle);
+//
+//   /* Receive */
+//   if(HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0) != HAL_OK)
+//   {
+//     /* Reception Error */
+//     Error_Handler();
+//   }
+// }
 
 #ifdef  USE_FULL_ASSERT
 /**
