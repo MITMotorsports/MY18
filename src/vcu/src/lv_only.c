@@ -4,7 +4,7 @@
 
 void initLVOnly() {
   printf("\r\nCAR STARTED IN LV MODE\r\n");
-  changeErrorState(NO_ERROR_NO_ESD_STATE);
+  set_error_state(NO_ERROR_NO_ESD_STATE);
   latchingDriverReset = false;
   closingVCUFET       = false;
 }
@@ -28,7 +28,7 @@ void loopLVOnly() {
                         DRIVER_RESET_TRIGGER_PIN,
                         GPIO_PIN_SET);  // ON
 
-      changeErrorState(NO_ERROR_STATE); // NOW WE ARE CHECKING ESD
+      set_error_state(NO_ERROR_STATE); // NOW WE ARE CHECKING ESD
 
       closingVCUFET = true;
     }
@@ -40,7 +40,7 @@ void loopLVOnly() {
     HAL_Delay(CLOSE_VCU_GATE_TIME);             // HOLD OFF TO DO ERROR CHECKING
                                                 // FOR SOME TIME
 
-    changeErrorState(NO_ERROR_WITH_TSMS_STATE); // Now checking for TSMS
-    changeCarMode(CAR_STATE_PRECHARGING);
+    set_error_state(NO_ERROR_WITH_TSMS_STATE); // Now checking for TSMS
+    set_vcu_state(VCU_STATE_PRECHARGING);
   }
 }

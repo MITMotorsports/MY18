@@ -1,6 +1,6 @@
 #include "main.h"
 
-int main(void) {
+int main( void ) {
   HAL_Init();
 
   SystemClock_Config();
@@ -13,7 +13,7 @@ int main(void) {
   DGPIO_INIT_OUT(LED, GPIO_PIN_RESET);
 
   // Driver Reset GPIO output for when Driver Reset is pressed
-  DGPIO_INIT_OUT(DRIVER_RESET_TRIGGER, GPIO_PIN_SET); //ON
+  DGPIO_INIT_OUT(DRIVER_RESET_TRIGGER, GPIO_PIN_RESET);
 
   // SETUP THE CONTACTOR GPIOS
   DGPIO_INIT_OUT(L_CONTACTOR, GPIO_PIN_RESET);
@@ -45,25 +45,15 @@ int main(void) {
   setupVCU();
 
   while(1) {
-    // loopVCU();
-
+    loopVCU();
 
     static uint32_t lastt = 0;
-    static bool i = false;
-
     if (HAL_GetTick() - lastt > 1000) {
-      HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
-      if (i) {
-        printf("OFF\n\r");
-        HAL_GPIO_WritePin(GPIO(L_CONTACTOR), GPIO_PIN_RESET);
-      }
-      else {
-        printf("ON\n\r");
-        HAL_GPIO_WritePin(GPIO(L_CONTACTOR), GPIO_PIN_SET);
-      }
-      lastt = HAL_GetTick();
+      HAL_GPIO_TogglePin(GPIO(LED));
+      // HAL_GPIO_TogglePin(GPIO(L_CONTACTOR));
+      // HAL_GPIO_TogglePin(GPIO(H_CONTACTOR));
 
-      i = !i;
+      lastt = HAL_GetTick();
     }
   }
 }
@@ -100,7 +90,7 @@ PUTCHAR_PROTOTYPE {
   * @param  None
   * @retval None
   */
-static void SystemClock_Config(void) {
+static void SystemClock_Config( void ) {
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
   RCC_OscInitTypeDef RCC_OscInitStruct;
 
@@ -113,7 +103,7 @@ static void SystemClock_Config(void) {
   RCC_OscInitStruct.PLL.PLLN = 240;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 5;
-  if(HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
     Error_Handler("Oscillator Initialization");
   }
 
@@ -124,13 +114,13 @@ static void SystemClock_Config(void) {
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
-  if(HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK) {
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK) {
     Error_Handler("Clock Config Initialization");
   }
 }
 
 void Error_Handler(const char *s) {
-  while(1) {
+  while (1) {
     printf("FORCED HANG IN Error_Handler\n\r");
     printf("Error Message: %s\n\r", s);
     HAL_Delay(1000);
@@ -141,7 +131,7 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* CanHandle) {
   handleCanVCU(CanHandle);
 
   /* Receive */
-  if(HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0) != HAL_OK) {
+  if (HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0) != HAL_OK) {
     /* Reception Error */
     Error_Handler("CAN RX callback Initialization");
   }

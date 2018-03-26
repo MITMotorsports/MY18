@@ -1,12 +1,10 @@
+#include "state_error.h"
 
-#include "error_state.h"
-#include "state.h"
-
-void setupErrorState() {
-  changeErrorState(NO_ERROR_NO_ESD_STATE);
+void init_error_state( void ) {
+  set_error_state(NO_ERROR_NO_ESD_STATE);
 }
 
-bool boardHeartbeatsGood() {
+bool boardHeartbeatsGood( void ) {
   if (HAL_GetTick() - heartbeats.bms >=
       CAN_BMS_HEARTBEAT_FAULT_DURATION) {
     return false;
@@ -20,7 +18,7 @@ bool boardHeartbeatsGood() {
   return true;
 }
 
-void printHeartbeatFailures() {
+void printHeartbeatFailures( void ) {
   // printf("LAST BMS: %llu, NOW: %llu", heartbeats.bms,
   // HAL_GetTick());
   // if (HAL_GetTick() - heartbeats.bms >=
@@ -34,14 +32,14 @@ void printHeartbeatFailures() {
   // }
 }
 
-void throwErrorIfBadHeartbeats() {
+void throwErrorIfBadHeartbeats( void ) {
   if (!boardHeartbeatsGood()) {
-    changeErrorState(HEARTBEAT_ERROR_STATE);
+    set_error_state(HEARTBEAT_ERROR_STATE);
     printHeartbeatFailures();
   }
 }
 
-void updateErrorState() {
+void update_error_state( void ) {
   updateGateFaults();          // Update the fault gates for our uses
   throwErrorIfBadHeartbeats(); // Check for heartbeats
 
@@ -71,7 +69,7 @@ void updateErrorState() {
   }
 }
 
-void changeErrorState(uint8_t newState) {
+void set_error_state(ERROR_STATE_T newState) {
   switch (newState) {
   case NO_ERROR_NO_ESD_STATE:
     initInNoErrorNoESDState();
@@ -102,44 +100,44 @@ void changeErrorState(uint8_t newState) {
   }
 }
 
-void initInNoErrorState() {
+void initInNoErrorState( void ) {
   printf("\r\nAS OF NOW, NO DETECTABLE ERRORS, TSMS EXCLUDED\r\n");
 }
 
-void initInNoErrorNoESDState() {
+void initInNoErrorNoESDState( void ) {
   printf("\r\nAS OF NOW, NO DETECTABLE ERRORS, ESD & TSMS EXCLUDED\r\n");
 }
 
-void initInNoErrorWithTSMSState() {
+void initInNoErrorWithTSMSState( void ) {
   printf("\r\nAS OF NOW, NO DETECTABLE ERRORS, TSMS INCLUDED\r\n");
 }
 
-void initInLoopErrorState() {
+void initInLoopErrorState( void ) {
   // When we get into this state, immediately send the car into the fault state
-  changeCarMode(CAR_STATE_CONTACTOR_FAULT);
+  set_vcu_state(VCU_STATE_CONTACTOR_FAULT);
 }
 
-void initInHeartbeatErrorState() {
-  changeCarMode(CAR_STATE_HEARTBEAT_FAULT);
+void initInHeartbeatErrorState( void ) {
+  set_vcu_state(VCU_STATE_HEARTBEAT_FAULT);
 }
 
-void updateInNoErrorState() {
+void updateInNoErrorState( void ) {
   if (anyGateFaultsTripped()) {
-    changeErrorState(LOOP_ERROR_STATE);
+    set_error_state(LOOP_ERROR_STATE);
     printGateFaults();
   }
 }
 
-void updateInNoErrorNoESDState() {
+void updateInNoErrorNoESDState( void ) {
   if (anyGateNonESDFaultsTripped()) {
-    changeErrorState(LOOP_ERROR_STATE);
+    set_error_state(LOOP_ERROR_STATE);
     printGateFaults();
   }
 }
 
-void updateInNoErrorWithTSMSState() {
+void updateInNoErrorWithTSMSState( void ) {
   if (anyGateFaultsTripped() || gate_faults.tsms_fault) {
-    changeErrorState(LOOP_ERROR_STATE);
+    set_error_state(LOOP_ERROR_STATE);
     printGateFaults();
 
     if (gate_faults.tsms_fault) {
@@ -148,16 +146,16 @@ void updateInNoErrorWithTSMSState() {
   }
 }
 
-void updateInLoopErrorState() {
+void updateInLoopErrorState( void ) {
   if (!anyGateNonESDFaultsTripped()) {
     // Can be caused by a master reset on the gate driver such that now we might
     // have no faults
     printf("\r\nTRANSITIONING OUT OF ERROR STATE: PROBABLY A MASTER RESET\r\n");
-    changeErrorState(NO_ERROR_NO_ESD_STATE);
-    changeCarMode(CAR_STATE_LV_ONLY);
+    set_error_state(NO_ERROR_NO_ESD_STATE);
+    set_vcu_state(VCU_STATE_LV_ONLY);
   }
 }
 
-void updateInHeartbeatErrorState() {
+void updateInHeartbeatErrorState( void ) {
   // No way out of this state
 }

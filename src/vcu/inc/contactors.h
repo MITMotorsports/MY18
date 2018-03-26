@@ -1,4 +1,3 @@
-
 #ifndef __CONTACTORS_H
 #define __CONTACTORS_H
 

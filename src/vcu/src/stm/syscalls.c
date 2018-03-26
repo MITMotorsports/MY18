@@ -43,7 +43,7 @@ extern int errno;
 #define MAX_STACK_SIZE 0x2000
 
 extern int __io_putchar(int ch) __attribute__((weak));
-extern int __io_getchar(void) __attribute__((weak));
+extern int __io_getchar( void ) __attribute__((weak));
 
 #ifndef FreeRTOS
   register char * stack_ptr asm("sp");
@@ -61,7 +61,7 @@ void initialise_monitor_handles()
 {
 }
 
-int _getpid(void)
+int _getpid( void )
 {
 	return 1;
 }
@@ -181,7 +181,7 @@ int _link(char *old, char *new)
 	return -1;
 }
 
-int _fork(void)
+int _fork( void )
 {
 	errno = EAGAIN;
 	return -1;

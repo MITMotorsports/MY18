@@ -1,4 +1,3 @@
-
 #ifndef __FAULT_GATES_H
 #define __FAULT_GATES_H
 

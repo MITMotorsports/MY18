@@ -1,3 +1,6 @@
+#ifndef __BRAKE_THROTTLE_H
+#define __BRAKE_THROTTLE_H
+
 #include "state.h"
 #include <stdbool.h>
 #include "stdio.h"
@@ -21,3 +24,5 @@ void update_brake_throttle_conflict(Pedalbox_T   brake_throttle,
 void update_implausibility(Pedalbox_T   brake_throttle,
                            Conflicts_T *implaus_conflict,
                            uint32_t     msg_ticks);
+
+#endif // ifndef __BRAKE_THROTTLE_H

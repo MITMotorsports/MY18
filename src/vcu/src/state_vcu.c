@@ -1,15 +1,6 @@
 #include "state.h"
 
-#include "stdio.h"
-#include "stm32f2xx_hal.h"
-
-#include "lv_only.h"
-#include "precharge.h"
-#include "charge_fault.h"
-#include "ready_to_drive.h"
-#include "driving.h"
-#include "contactor_fault.h"
-#include "extern.h"
+static VCU_STATE_T carMode;
 
 GateFaults_T gate_faults;
 Heartbeats_T heartbeats;
@@ -21,7 +12,7 @@ Voltages_T  voltages;
 Pedalbox_T  pedalbox;
 Buttons_T   buttons;
 
-void initVCUState(void) {
+void init_vcu_state( void ) {
   // BOARD HEARTBEATS
   heartbeats.frontCanNode = HAL_GetTick();
   heartbeats.bms          = HAL_GetTick();
@@ -54,44 +45,48 @@ void initVCUState(void) {
   buttons.ScrollSelect = 0;
 
   // CAR Mode
-  changeCarMode(CAR_STATE_LV_ONLY);
+  set_vcu_state(VCU_STATE_LV_ONLY);
 }
 
-void changeCarMode(CAR_STATE_T newState) {
+void set_vcu_state(VCU_STATE_T newState) {
   switch (carMode) {
-  case CAR_STATE_LV_ONLY:
+  case VCU_STATE_LV_ONLY:
     carMode = newState;
     initLVOnly();
     break;
 
-  case CAR_STATE_PRECHARGING:
+  case VCU_STATE_PRECHARGING:
     carMode = newState;
     initPrecharge();
     break;
 
-  case CAR_STATE_CHARGE_FAULT:
+  case VCU_STATE_CHARGE_FAULT:
     carMode = newState;
     initChargeFault();
     break;
 
-  case CAR_STATE_READY_TO_DRIVE:
+  case VCU_STATE_READY_TO_DRIVE:
     carMode = newState;
     initReadyToDrive();
     break;
 
-  case CAR_STATE_DRIVING:
+  case VCU_STATE_DRIVING:
     carMode = newState;
     initDriving();
     break;
 
-  case CAR_STATE_CONTACTOR_FAULT:
+  case VCU_STATE_CONTACTOR_FAULT:
     carMode = newState;
     initContactorFault();
     break;
 
   default:
     printf("\r\n[WARNING]: INVALID CAR MODE CHANGE. %d\r\n", carMode);
-    Error_Handler("Inside changeCarMode.");
+    Error_Handler("Inside set_vcu_state.");
     break;
   }
+}
+
+const inline VCU_STATE_T current_vcu_state() {
+  return carMode;
 }

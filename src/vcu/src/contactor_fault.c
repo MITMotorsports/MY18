@@ -17,7 +17,7 @@ void initContactorFault() {
   printf("\r\n[ERROR]: CONTACTORS OPENED AS A RESULT OF A HARDWARE FAULT\r\n");
   printf("\r\nTO ACCOUNT FOR THIS, PERFORM A MASTER RESET AND THEN A DRIVER RESET\r\n");
 
-  changeCarMode(CAR_STATE_LV_ONLY); // NOW WE'LL NEED A MASTER RESET
+  set_vcu_state(VCU_STATE_LV_ONLY); // NOW WE'LL NEED A MASTER RESET
 }
 
 void loopContactorFault() {}

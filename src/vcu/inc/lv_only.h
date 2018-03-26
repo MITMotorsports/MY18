@@ -1,10 +1,8 @@
-
 #ifndef __LV_ONLY_H
 #define __LV_ONLY_H
 
 #include "stdio.h"
 #include "state.h"
-#include "error_state.h"
 #include "contactors.h"
 #include <stdbool.h>
 

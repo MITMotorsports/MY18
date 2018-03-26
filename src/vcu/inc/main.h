@@ -110,7 +110,7 @@
 #define CANx_RX_IRQHandler             CAN1_RX0_IRQHandler
 
 void lastRxMsgToFrame(Frame *frame);
-static void SystemClock_Config(void);
+static void SystemClock_Config( void );
 
 USART_HandleTypeDef  USARTHandle;
 CAN_HandleTypeDef    CanHandle;

@@ -1,14 +1,14 @@
 #include "vcu.h"
 
 void setupVCU() {
-  initVCUState(); // NEEDS TO HAPPEN BEFORE INIT ERROR STATE
-  setupErrorState();
+  init_vcu_state(); // NEEDS TO HAPPEN BEFORE INIT ERROR STATE
+  init_error_state();
 
   lastDashMsgTime = HAL_GetTick();
 }
 
 void beforeLoop() {
-  updateErrorState(); // Check for errors
+  update_error_state(); // Check for errors
 }
 
 void afterLoop() {
@@ -21,32 +21,32 @@ void afterLoop() {
 void loopVCU() {
   beforeLoop(); // CAUTION: REMOVING THIS REMOVES ERROR CHECKING
 
-  switch (carMode) {
-  case CAR_STATE_LV_ONLY:
+  switch (current_vcu_state()) {
+  case VCU_STATE_LV_ONLY:
     loopLVOnly();
     break;
 
-  case CAR_STATE_PRECHARGING:
+  case VCU_STATE_PRECHARGING:
     loopPrecharge();
     break;
 
-  case CAR_STATE_CHARGE_FAULT:
+  case VCU_STATE_CHARGE_FAULT:
     loopChargeFault();
     break;
 
-  case CAR_STATE_READY_TO_DRIVE:
+  case VCU_STATE_READY_TO_DRIVE:
     loopReadyToDrive();
     break;
 
-  case CAR_STATE_DRIVING:
+  case VCU_STATE_DRIVING:
     loopDriving();
     break;
 
-  case CAR_STATE_CONTACTOR_FAULT:
+  case VCU_STATE_CONTACTOR_FAULT:
     loopContactorFault();
     break;
 
-  case CAR_STATE_HEARTBEAT_FAULT:
+  case VCU_STATE_HEARTBEAT_FAULT:
     loopHeartbeatFault();
     break;
 

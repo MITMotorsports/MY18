@@ -1,4 +1,3 @@
-
 #ifndef __HEARTBEAT_FAULT_H
 #define __HEARTBEAT_FAULT_H
 

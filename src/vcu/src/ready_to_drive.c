@@ -9,6 +9,6 @@ void loopReadyToDrive() {
   if (buttons.RTD &&
       ((pedalbox.brake_1 > CONFLICT_BRAKE_RAW) ||
        (pedalbox.brake_2 > CONFLICT_BRAKE_RAW))) {
-    changeCarMode(CAR_STATE_DRIVING);
+    set_vcu_state(VCU_STATE_DRIVING);
   }
 }

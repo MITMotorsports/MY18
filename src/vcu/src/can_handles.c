@@ -71,8 +71,8 @@ void handleButtonRequest(Frame *msg) {
 void sendDashMsg() {
   can0_VcuToDash_T msg;
 
-  // msg.rtd_light_on = //is this right? (carMode == CAR_STATE_READY_TO_DRIVE ||
-  // carMode == CAR_STATE_DRIVING);
+  // msg.rtd_light_on = //is this right? (carMode == VCU_STATE_READY_TO_DRIVE ||
+  // carMode == VCU_STATE_DRIVING);
   // msg.ams_light_on = //what;
   // msg.imd_light_on = //what;
   // msg.hv_light_on = //what;
