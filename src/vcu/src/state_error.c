@@ -1,6 +1,7 @@
 #include "state_error.h"
 
 static ERROR_STATE_T currentState = NO_ERROR_STATE;
+bool not_yet_master_rst           = true;
 
 // Implicitly initialize error structs to false (no errors).
 RECOVERABLE_ERROR_T recoverable_errors = {};
@@ -54,25 +55,27 @@ void advance_error_state(void) {
 
 void enter_no_error_state(void) {
   printf("[ERROR FSM] Entered NO_ERROR_STATE!\r\n");
+
+  if (not_yet_master_rst) printf("waiting_master_rst\r\n");
 }
 
 void update_no_error_state(void) {
-  // if (any_fatal_gate_faults() ||
-  //     any_fatal_contactor_faults() ||
-  //     any_fatal_conflict_faults())
-  // {
-  //   // set_error_state(FATAL_ERROR_STATE);
-  //   printf("would've gone fatal\r\n");
-  //   HAL_Delay(100);
-  // }
+  if (not_yet_master_rst) {
+    return;
+  }
+
+  if (any_fatal_gate_faults() ||
+      any_fatal_contactor_faults() ||
+      any_fatal_conflict_faults())
+  {
+    set_error_state(FATAL_ERROR_STATE);
+  }
 
   if (any_recoverable_gate_faults() ||
       any_recoverable_heartbeat_faults() ||
       any_recoverable_conflict_faults())
   {
-    // set_error_state(RECOVERABLE_ERROR_STATE);
-    printf("would've gone recoverable\r\n");
-    HAL_Delay(100);
+    set_error_state(RECOVERABLE_ERROR_STATE);
   }
 }
 

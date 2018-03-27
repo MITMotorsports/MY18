@@ -49,6 +49,8 @@ VCU_STATE_T set_vcu_state(VCU_STATE_T newState) {
 
   case VCU_STATE_READY_TO_DRIVE:
     initReadyToDrive();
+    printf("[VCU FSM] READY TO DRIVE\r\n");
+    printf("[VCU FSM] READY TO DRIVE\r\n");
     break;
 
   case VCU_STATE_DRIVING:
@@ -75,7 +77,6 @@ void advance_vcu_state(void) {
     break;
 
   case VCU_STATE_PRECHARGE_FAULT:
-    loopChargeFault();
     break;
 
   case VCU_STATE_READY_TO_DRIVE:

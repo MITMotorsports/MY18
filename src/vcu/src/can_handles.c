@@ -8,6 +8,11 @@ void handleCAN(CAN_HandleTypeDef *CanHandle) {
 
   lastRxMsgToFrame(&frame);
 
+  // TODO: Remove HACK.
+  if (frame.id == 0xD8) {
+    buttons.DriverReset = true;
+    return;
+  }
   can0_T msgForm;
   msgForm = identify_can0(&frame);
 
@@ -98,11 +103,11 @@ void handleCellVoltagesMsg(Frame *msg) {
 void handleButtonRequest(Frame *msg) {
   can0_ButtonRequest_T unpacked_msg;
 
-  unpack_can0_ButtonRequest(msg, &unpacked_msg);
-
-  buttons.RTD          = unpacked_msg.RTD;
-  buttons.DriverReset  = unpacked_msg.DriverReset;
-  buttons.ScrollSelect = unpacked_msg.ScrollSelect;
+  // unpack_can0_ButtonRequest(msg, &unpacked_msg);
+  HAL_GPIO_TogglePin(GPIO(LED));
+  // buttons.RTD          = unpacked_msg.RTD;
+  buttons.DriverReset  = true; // unpacked_msg.DriverReset;
+  // buttons.ScrollSelect = unpacked_msg.ScrollSelect;
 }
 
 // void sendDashMsg() {

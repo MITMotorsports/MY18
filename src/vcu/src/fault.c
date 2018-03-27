@@ -4,6 +4,7 @@
 
 void handle_fatal_fault(void) {
   // Just in case we loose a CAN msg, do this multiple times
+  print_gate_faults();
   sendMotorOffCmdMsg();
   sendMotorOffCmdMsg();
   sendMotorOffCmdMsg();
@@ -14,5 +15,6 @@ void handle_fatal_fault(void) {
   openLowSideContactor();
   openHighSideContactor();
 
-  // printf("\r\n[FATAL FAULT HANDLER] A FULL CAR POWER CYCLE IS REQUIRED.\r\n");
+  printf("\r\n[FATAL FAULT HANDLER] A FULL CAR POWER CYCLE IS REQUIRED. FORCED HANG.\r\n");
+  while (1) {}
 }

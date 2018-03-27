@@ -6,6 +6,10 @@
 #define LED_PORT                       GPIOC
 
 // MISC GPIOs ---------------------------------------------------
+
+#define MASTER_RST_PIN                GPIO_PIN_0
+#define MASTER_RST_PORT               GPIOC
+
 #define DRIVER_RST_PIN                GPIO_PIN_1
 #define DRIVER_RST_PORT               GPIOC
 
@@ -60,3 +64,8 @@
   gpioinit.Pull  = type;            \
   gpioinit.Speed = GPIO_SPEED_FAST; \
   HAL_GPIO_Init(PORT(name), &gpioinit);
+
+// Input types:
+//  - GPIO_NOPULL
+//  - GPIO_PULLUP
+//  - GPIO_PULLDOWN

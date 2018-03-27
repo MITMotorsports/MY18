@@ -1,7 +1,7 @@
 #include "state_vcu_rtd.h"
 
 void initReadyToDrive() {
-  printf("\r\nREADY TO DRIVE\r\n");
+  printf("[VCU FSM] READY TO DRIVE\r\n");
 }
 
 void loopReadyToDrive() {

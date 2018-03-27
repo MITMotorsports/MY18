@@ -1,7 +1,7 @@
 #include "state_vcu_driving.h"
 
 void resetDrivingValues() {
-  torque_command                   = 0;
+  torque_command   = 0;
   pedalbox.accel_1 = 0;
   pedalbox.accel_2 = 0;
 }
