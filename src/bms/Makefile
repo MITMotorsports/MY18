@@ -7,7 +7,7 @@
 # this makefile is based strongly on many examples found in the network
 #=============================================================================#
 
-SAVAGE_MODE = true
+SAVAGE_MODE = false
 
 #=============================================================================#
 # hash based versioning

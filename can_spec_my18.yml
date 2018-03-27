@@ -137,7 +137,7 @@ buses:
             signed: false
       CellVoltages:
         can_id: 0x0F2
-        period: 0.3s
+        period: 0.1s
         is_big_endian: true
         segments:
           min:
@@ -154,7 +154,7 @@ buses:
             unit: mV
       BMSHeartbeat:
         can_id: 0x0D9
-        period: 0.1s
+        period: 0.02ms
         is_big_endian: true
         segments:
           # error_pec:

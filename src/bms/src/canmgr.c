@@ -87,6 +87,8 @@ void Board_CAN_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
         Board_Println_BLOCKING("IMA FLUSH THE BUFFER THX");
         CAN_Flush_Tx();
         CAN_Clear_Error();
+        CAN_ResetPeripheral();
+        init_can0_bms();
     }
   }
 
