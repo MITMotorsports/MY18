@@ -8,14 +8,18 @@
 #define CAN_BAUDRATE 500000
 
 #define DRIVER_RESET_PIN_AND_PORT 1, 1
-#define RTD_PIN_AND_PORT 1, 2
-#define SCROLL_SELECT_PIN_AND_PORT 1, 3
+#define RTD_PIN_AND_PORT 1, 4
+#define SCROLL_SELECT_PIN_AND_PORT 1, 2
 
 #define DRIVER_RESET_PIN_IOCON IOCON_PIO1_1
-#define RTD_PIN_PIN_IOCON IOCON_PIO1_2
-#define SCROLL_SELECT_PIN_IOCON IOCON_PIO1_3
+#define RTD_PIN_PIN_IOCON IOCON_PIO1_4
+#define SCROLL_SELECT_PIN_IOCON IOCON_PIO1_2
 
 #define PIN_CONFIG IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_PULLDOWN // Fix pull
+
+#define INIT_CAN() init_can0_button_bank();
+
+#define BUTTON_STR(val) ((val) ? "pressed\n" : "released\n")
 
 // pulldown or pullup?
 #define BUTTON_DOWN true
@@ -115,9 +119,11 @@ void handle_can_error(Can_ErrorID_T error) {
         break;
       case Can_Error_TX_BUFFER_FULL:
         print("Can_Error_TX_BUFFER_FULL\n");
+		INIT_CAN();
         break;
       case Can_Error_RX_BUFFER_FULL:
         print("Can_Error_RX_BUFFER_FULL\n");
+		INIT_CAN();
         break;
     }
   }
@@ -133,6 +139,19 @@ button_states_t poll_buttons(void) {
     button_states_t bs;
     bs.rtd          = (read_pin(RTD_PIN_AND_PORT)          == BUTTON_DOWN);
     bs.driver_reset = (read_pin(DRIVER_RESET_PIN_AND_PORT) == BUTTON_DOWN);
+
+	static uint32_t last_print = 0;
+
+	if (msTicks - last_print > 1000) {
+		print("rtd--------- ");
+		print(BUTTON_STR(bs.rtd));
+
+		print("driver_reset ");
+		print(BUTTON_STR(bs.driver_reset));
+
+		print("\n\n");
+		last_print = msTicks;
+	}
     return bs;
 }
 
@@ -140,8 +159,8 @@ int main(void) {
     SystemCoreClockUpdate();
 
     Serial_Init(SERIAL_BAUDRATE);
-    print("CAN inits\n");
-    Can_Init(CAN_BAUDRATE);
+    print("CAN INIT\n");
+	INIT_CAN();
 
     if (SysTick_Config (SystemCoreClock / 1000)) {
         while(1); // error
@@ -161,14 +180,26 @@ int main(void) {
         if (msTicks > timer) {
             timer = msTicks + can0_ButtonRequest_period;
 
-            can0_ButtonRequest_T msg;
-            msg.RTD         = hold.rtd;
-            msg.DriverReset = hold.driver_reset;
+            // can0_ButtonRequest_T msg;
+            // msg.RTD         = hold.rtd;
+            // msg.DriverReset = hold.driver_reset;
+			//
+			// hold.rtd          = false;
+			// hold.driver_reset = false;
+			//
+			// handle_can_error(can0_ButtonRequest_Write(&msg));
 
-            hold.rtd          = false;
-            hold.driver_reset = false;
+			Frame manual;
 
-            handle_can_error(can0_ButtonRequest_Write(&msg));
+			manual.id = can0_ButtonRequest_can_id;
+			manual.len = 1;
+			manual.data[0] = 0;
+			manual.data[0] += (hold.rtd)? 2 : 0;
+			manual.data[0] += (hold.driver_reset)? 4 : 0;
+
+			handle_can_error(Can_RawWrite(&manual));
+
+			hold.rtd = hold.driver_reset = 0;
         }
     }
 
