@@ -57,18 +57,22 @@ void enter_no_error_state(void) {
 }
 
 void update_no_error_state(void) {
-  if (any_fatal_gate_faults() ||
-      any_fatal_contactor_faults() ||
-      any_fatal_conflict_faults())
-  {
-    set_error_state(FATAL_ERROR_STATE);
-  }
+  // if (any_fatal_gate_faults() ||
+  //     any_fatal_contactor_faults() ||
+  //     any_fatal_conflict_faults())
+  // {
+  //   // set_error_state(FATAL_ERROR_STATE);
+  //   printf("would've gone fatal\r\n");
+  //   HAL_Delay(100);
+  // }
 
   if (any_recoverable_gate_faults() ||
       any_recoverable_heartbeat_faults() ||
       any_recoverable_conflict_faults())
   {
-    set_error_state(RECOVERABLE_ERROR_STATE);
+    // set_error_state(RECOVERABLE_ERROR_STATE);
+    printf("would've gone recoverable\r\n");
+    HAL_Delay(100);
   }
 }
 

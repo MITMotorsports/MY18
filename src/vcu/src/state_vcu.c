@@ -74,7 +74,7 @@ void advance_vcu_state(void) {
     loopPrecharge();
     break;
 
-  case VCU_STATE_CHARGE_FAULT:
+  case VCU_STATE_PRECHARGE_FAULT:
     loopChargeFault();
     break;
 
@@ -84,14 +84,6 @@ void advance_vcu_state(void) {
 
   case VCU_STATE_DRIVING:
     loopDriving();
-    break;
-
-  case VCU_STATE_CONTACTOR_FAULT:
-    loopContactorFault();
-    break;
-
-  case VCU_STATE_HEARTBEAT_FAULT:
-    loopHeartbeatFault();
     break;
 
   default:

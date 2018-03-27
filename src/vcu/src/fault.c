@@ -14,5 +14,5 @@ void handle_fatal_fault(void) {
   openLowSideContactor();
   openHighSideContactor();
 
-  printf("\r\n[FATAL FAULT HANDLER] A FULL CAR POWER CYCLE IS REQUIRED.\r\n");
+  // printf("\r\n[FATAL FAULT HANDLER] A FULL CAR POWER CYCLE IS REQUIRED.\r\n");
 }

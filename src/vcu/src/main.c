@@ -6,45 +6,26 @@ int main(void) {
   SystemClock_Config();
 
   Can_Init(500000);
+  USART_Init(115200);
 
   GPIO_BEGIN_INIT();
 
   // Setup an LED for debugging
-  DGPIO_INIT_OUT(LED, GPIO_PIN_RESET);
+  DGPIO_INIT_OUT(        LED, GPIO_PIN_RESET);
 
   // Driver Reset GPIO output for when Driver Reset is pressed
-  DGPIO_INIT_OUT(DRIVER_RST, GPIO_PIN_RESET);
+  DGPIO_INIT_OUT( DRIVER_RST, GPIO_PIN_RESET);
 
   // SETUP THE CONTACTOR GPIOS
   DGPIO_INIT_OUT(L_CONTACTOR, GPIO_PIN_RESET);
   DGPIO_INIT_OUT(H_CONTACTOR, GPIO_PIN_RESET);
 
-  DGPIO_INIT_IN(H_CONTACTOR, GPIO_PIN_RESET);
-
-  // Setup USART for debugging
-  USARTHandle.Instance         = USARTx_INSTANCE;
-  USARTHandle.Init.BaudRate    = 115200;
-  USARTHandle.Init.WordLength  = USART_WORDLENGTH_8B;
-  USARTHandle.Init.StopBits    = USART_STOPBITS_1;
-  USARTHandle.Init.Parity      = USART_PARITY_NONE;
-  USARTHandle.Init.Mode        = USART_MODE_TX_RX;
-  USARTHandle.Init.CLKPolarity = USART_POLARITY_LOW;
-  USARTHandle.Init.CLKPhase    = USART_PHASE_1EDGE;
-  USARTHandle.Init.CLKLastBit  = USART_LASTBIT_DISABLE;
-
-  if (HAL_USART_Init(&USARTHandle) != HAL_OK) {
-    /* Initialization Error */
-    Error_Handler("UART Initialization");
-  }
-
-  // Toggle the LED after this regular setup
-  // HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
-  // HAL_Delay(1000);
-  // HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
-
   printf("\r\nMEGALV PERIPHERALS ONLINE\r\n");
+  init_states();
 
   while (1) {
+    advance_states();
+
     static uint32_t lastt = 0;
 
     if (HAL_GetTick() - lastt > 1000) {
@@ -58,6 +39,40 @@ int main(void) {
   }
 }
 
+void Error_Handler(const char *s) {
+  while (1) {
+    printf("FORCED HANG IN Error_Handler\r\n");
+    printf(           "Error Message: %s\r\n", s);
+    HAL_Delay(1000);
+  }
+}
+
+// THE NETHER REGIONS -- TREAD CAREFULLY
+
+void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *CanHandle) {
+  // printf("CAN stat: %#010x\r\n", (int)CanHandle->State);
+
+  HAL_StatusTypeDef CAN_RX_STATUS = HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0);
+
+  if (CAN_RX_STATUS != HAL_OK) {
+    // char *ERRMSG;
+    // sprintf(ERRMSG, "CAN RX Error is %d", (int) CAN_RX_STATUS);
+    // Error_Handler(ERRMSG);
+    printf("ERROR IN CAN %d\r\n", (int)CAN_RX_STATUS);
+  }
+
+  handleCAN(CanHandle);
+}
+
+// FOR REFERENCE:
+// typedef enum
+// {
+//   HAL_OK       = 0x00U,
+//   HAL_ERROR    = 0x01U,
+//   HAL_BUSY     = 0x02U,
+//   HAL_TIMEOUT  = 0x03U
+// } HAL_StatusTypeDef;
+
 /**
  * @brief  Retargets the C library printf function to the USART.
  * @param  None
@@ -65,11 +80,29 @@ int main(void) {
  */
 PUTCHAR_PROTOTYPE {
   /* Place your implementation of fputc here */
+
   /* e.g. write a character to the EVAL_COM1 and Loop until the end of
      transmission */
   HAL_USART_Transmit(&USARTHandle, (uint8_t *)&ch, 1, 0xFFFF);
 
   return ch;
+}
+
+void USART_Init(uint32_t baudrate) {
+  // Setup USART for debugging
+  USARTHandle.Instance         = USARTx_INSTANCE;
+  USARTHandle.Init.BaudRate    = baudrate;
+  USARTHandle.Init.WordLength  = USART_WORDLENGTH_8B;
+  USARTHandle.Init.StopBits    = USART_STOPBITS_1;
+  USARTHandle.Init.Parity      = USART_PARITY_NONE;
+  USARTHandle.Init.Mode        = USART_MODE_TX_RX;
+  USARTHandle.Init.CLKPolarity = USART_POLARITY_LOW;
+  USARTHandle.Init.CLKPhase    = USART_PHASE_1EDGE;
+  USARTHandle.Init.CLKLastBit  = USART_LASTBIT_DISABLE;
+
+  if (HAL_USART_Init(&USARTHandle) != HAL_OK) {
+    Error_Handler("UART Initialization");
+  }
 }
 
 /**
@@ -123,38 +156,6 @@ static void SystemClock_Config(void) {
     Error_Handler("Clock Config Initialization");
   }
 }
-
-void Error_Handler(const char *s) {
-  while (1) {
-    printf("FORCED HANG IN Error_Handler\r\n");
-    printf("Error Message: %s\r\n", s);
-    HAL_Delay(1000);
-  }
-}
-
-void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *CanHandle) {
-  // printf("CAN stat: %#010x\r\n", (int)CanHandle->State);
-
-  HAL_StatusTypeDef CAN_RX_STATUS = HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0);
-
-  if (CAN_RX_STATUS != HAL_OK) {
-    // char *ERRMSG;
-    // sprintf(ERRMSG, "CAN RX Error is %d", (int) CAN_RX_STATUS);
-    // Error_Handler(ERRMSG);
-    printf("ERROR IN CAN %d\r\n", (int)CAN_RX_STATUS);
-  }
-
-  handleCAN(CanHandle);
-}
-
-// FOR REFERENCE:
-// typedef enum
-// {
-//   HAL_OK       = 0x00U,
-//   HAL_ERROR    = 0x01U,
-//   HAL_BUSY     = 0x02U,
-//   HAL_TIMEOUT  = 0x03U
-// } HAL_StatusTypeDef;
 
 #ifdef  USE_FULL_ASSERT
 

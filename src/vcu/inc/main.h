@@ -9,13 +9,16 @@
 
 #include "extern.h"
 #include "gpio.h"
+#include "state.h"
 
 #ifdef __GNUC__
-  /* With GCC Compilers, small printf (option LD Linker->Libraries->Small printf
-     set to 'Yes') calls __io_putchar() */
-  #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else
-  #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+
+// With GCC Compilers, small printf
+// (option LD Linker->Libraries->Small printf set to 'Yes') calls __io_putchar()
+
+  # define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else // ifdef __GNUC__
+  # define PUTCHAR_PROTOTYPE int fputc(int ch, FILE * f)
 #endif /* __GNUC__ */
 
 // USART -------------------------------------------------------
@@ -54,10 +57,10 @@
 #define CANx_RX_IRQn                   CAN1_RX0_IRQn
 #define CANx_RX_IRQHandler             CAN1_RX0_IRQHandler
 
-void lastRxMsgToFrame(Frame *frame);
-static void SystemClock_Config( void );
+void USART_Init(uint32_t baudrate);
+static void SystemClock_Config(void);
 
-USART_HandleTypeDef  USARTHandle;
-CAN_HandleTypeDef    CanHandle;
+USART_HandleTypeDef USARTHandle;
+CAN_HandleTypeDef   CanHandle;
 
-#endif /* __MAIN_H */
+#endif // ifndef __MAIN_H
