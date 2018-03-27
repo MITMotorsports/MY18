@@ -5,9 +5,8 @@
 #include "stm32f2xx_hal.h"
 #include <stdbool.h>
 
-#include "fault_gates.h"
+#include "fault.h"
 #include "extern.h"
-
 
 
 // ERROR STATES
@@ -18,19 +17,16 @@ typedef enum {
 } ERROR_STATE_T;
 
 
-
 // CONTAINER DEFINITIONS
 typedef struct {
   bool HEARTBEAT_ERROR;
-  bool SHUTDOWN_ERROR;  // Only includes SHUTDOWN_SENSE_GATE AKA ESD
+  bool SHUTDOWN_ERROR; // Only includes SHUTDOWN_SENSE(_GATE) AKA ESD
 } RECOVERABLE_ERROR_T;
 
 typedef struct {
-  bool HEARTBEAT_ERROR;
   bool GATE_ERROR;
   bool CONFLICT_ERROR;
 } FATAL_ERROR_T;
-
 
 
 // CONTAINER DECLARATIONS
@@ -38,37 +34,14 @@ extern RECOVERABLE_ERROR_T recoverable_errors;
 extern FATAL_ERROR_T fatal_errors;
 
 
-
-// CONSTANTS
-#define CAN_BMS_HEARTBEAT_FAULT_DURATION 400
-#define CAN_FRONT_CAN_NODE_HEARTBEAT_FAULT_DURATION 400
-
-
 // INTERACTION FUNCTIONS
-void init_error_state(void);
-void update_error_state(void);
+void          init_error_state(void);
+void          transition_error_state(void);
+ERROR_STATE_T set_error_state(ERROR_STATE_T newState);
 
-void set_error_state(ERROR_STATE_T newState);
-
-const ERROR_STATE_T current_error_state(void);
-
-void throwErrorIfBadHeartbeats(void);
-bool boardHeartbeatsGood(void);
-void printHeartbeatFailures(void);
+ERROR_STATE_T current_error_state(void);
 
 // PRIVATE FUNCTIONS
-static void initInNoErrorNoESDState(void);
-static void initInNoErrorState(void);
-static void initInNoErrorWithTSMSState(void);
-static void initInLoopErrorState(void);
-static void initInHeartbeatErrorState(void);
-
-static void updateInNoErrorNoESDState(void);
-static void updateInNoErrorState(void);
-static void updateInNoErrorWithTSMSState(void);
-static void updateInLoopErrorState(void);
-static void updateInHeartbeatErrorState(void);
-
 
 
 #endif // ifndef __STATE_ERROR_H

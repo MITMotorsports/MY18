@@ -1,96 +1,68 @@
-
 #include "fault_gates.h"
-#include "main.h"
 
-void initFaultGates() {
-  GPIO_InitTypeDef gpioinit;
+GateFaults_T gates;
 
-  FAULT_GATES_CLK_ENABLE();
-
-  gpioinit.Pin   = BMS_FAULT_GATE_PIN;
-  gpioinit.Mode  = GPIO_MODE_INPUT;
-  gpioinit.Pull  = GPIO_PULLUP;
-  gpioinit.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(FAULT_GATES_PORT, &gpioinit);
-
-  gpioinit.Pin   = BPD_FAULT_GATE_PIN;
-  gpioinit.Mode  = GPIO_MODE_INPUT;
-  gpioinit.Pull  = GPIO_PULLUP;
-  gpioinit.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(FAULT_GATES_PORT, &gpioinit);
-
-  gpioinit.Pin   = IMD_FAULT_GATE_PIN;
-  gpioinit.Mode  = GPIO_MODE_INPUT;
-  gpioinit.Pull  = GPIO_PULLUP;
-  gpioinit.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(FAULT_GATES_PORT, &gpioinit);
-
-  gpioinit.Pin   = SDN_FAULT_GATE_PIN;
-  gpioinit.Mode  = GPIO_MODE_INPUT;
-  gpioinit.Pull  = GPIO_PULLUP;
-  gpioinit.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(FAULT_GATES_PORT, &gpioinit);
-
-  gpioinit.Pin   = ESD_FAULT_PIN;
-  gpioinit.Mode  = GPIO_MODE_INPUT;
-  gpioinit.Pull  = GPIO_PULLUP;
-  gpioinit.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(FAULT_GATES_PORT, &gpioinit);
+// Gate faults occur when a pin goes LOW.
+void update_gate_status(void) {
+  gates.sdn      = !READ_PIN(SDN);
+  gates.sdn_gate = !READ_PIN(SDN_GATE);
+  gates.bms_gate = !READ_PIN(BMS_GATE);
+  gates.imd_gate = !READ_PIN(IMD_GATE);
+  gates.bpd_gate = !READ_PIN(BPD_GATE);
 }
 
-void updateGateFaults() {
-  // If we read a GPIO of on, we set the fault to true, otherwise set to false
-  gate_faults.bms_fault =
-    (HAL_GPIO_ReadPin(FAULT_GATES_PORT, BMS_FAULT_GATE_PIN) == GPIO_PIN_RESET);
-  gate_faults.bpd_fault =
-    (HAL_GPIO_ReadPin(FAULT_GATES_PORT, BPD_FAULT_GATE_PIN) == GPIO_PIN_RESET);
-  gate_faults.imd_fault =
-    (HAL_GPIO_ReadPin(FAULT_GATES_PORT, IMD_FAULT_GATE_PIN) == GPIO_PIN_RESET);
-  gate_faults.sdn_fault =
-    (HAL_GPIO_ReadPin(FAULT_GATES_PORT, SDN_FAULT_GATE_PIN) == GPIO_PIN_RESET);
-  gate_faults.esd_fault =
-    (HAL_GPIO_ReadPin(FAULT_GATES_PORT, ESD_FAULT_PIN) == GPIO_PIN_RESET);
+bool any_all_gate_faults(void) {
+  update_gate_status();
+
+  return gates.sdn      ||
+         gates.sdn_gate ||
+         gates.bms_gate ||
+         gates.imd_gate ||
+         gates.bpd_gate;
 }
 
-bool anyGateFaultsTripped() {
-  return gate_faults.bms_fault ||
-         gate_faults.bpd_fault ||
-         gate_faults.imd_fault ||
-         gate_faults.sdn_fault ||
-         gate_faults.esd_fault;
+bool any_recoverable_gate_faults(void) {
+  update_gate_status();
+
+  return gates.sdn      ||
+         gates.sdn_gate;
 }
 
-bool anyGateNonESDFaultsTripped() {
-  return gate_faults.bms_fault ||
-         gate_faults.bpd_fault ||
-         gate_faults.imd_fault ||
-         gate_faults.sdn_fault;
+bool any_fatal_gate_faults(void) {
+  update_gate_status();
+
+  return gates.bms_gate ||
+         gates.imd_gate ||
+         gates.bpd_gate;
 }
 
-void printGateFaults() {
-  if (anyGateFaultsTripped()) {
-    printf("\r\n[ERROR]: THE FOLLOWING FAULT GATES WERE TRIPPED:\r\n");
+void print_gate_faults(void) {
+  update_gate_status();
 
-    if (gate_faults.bms_fault) {
-      printf("\t[FAULT]: BMS FAULT\r\n");
+  if (any_all_gate_faults()) {
+    printf("[GATE FAULT] THE FOLLOWING FAULT GATES WERE TRIPPED:\r\n");
+
+    if (gates.sdn) {
+      printf("\t- SDN (NON GATE) FAULT\r\n");
     }
 
-    if (gate_faults.bpd_fault) {
-      printf("\t[FAULT]: BPD FAULT\r\n");
+    if (gates.sdn_gate) {
+      printf("\t- SDN GATE FAULT\r\n");
     }
 
-    if (gate_faults.imd_fault) {
-      printf("\t[FAULT]: IMD FAULT\r\n");
+    if (gates.bms_gate) {
+      printf("\t- BMS GATE FAULT\r\n");
     }
 
-    if (gate_faults.sdn_fault) {
-      printf("\t[FAULT]: SDN FAULT\r\n");
+    if (gates.imd_gate) {
+      printf("\t- IMD GATE FAULT\r\n");
     }
 
-    if (gate_faults.esd_fault) {
-      printf("\t[FAULT]: ESD FAULT\r\n");
+    if (gates.bpd_gate) {
+      printf("\t- BPD GATE FAULT\r\n");
     }
-  } else {
-    printf("NO GATE FAULTS WERE TRIPPED.");
+  }
+  else {
+    printf("[GATE FAULT] NO GATE FAULTS WERE TRIPPED.\r\n");
   }
 }

@@ -3,7 +3,8 @@
 
 #include "stdio.h"
 #include "state.h"
-#include "brake_throttle.h"
+
+#include "fault_conflicts.h"
 
 void initReadyToDrive();
 void loopReadyToDrive();

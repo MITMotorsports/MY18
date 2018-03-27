@@ -3,10 +3,8 @@
 
 #include "stdio.h"
 #include "stm32f2xx_hal.h"
-#include "state.h"
 
-void initLowSideContactor();
-void initHighSideContactor();
+#include "gpio.h"
 
 void openLowSideContactor();
 void closeLowSideContactor();

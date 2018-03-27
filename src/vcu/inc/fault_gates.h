@@ -2,17 +2,33 @@
 #define __FAULT_GATES_H
 
 #include "stdio.h"
-#include "stm32f2xx_hal.h"
-#include "state.h"
 #include <stdbool.h>
 
-void initFaultGates();
+#include "gpio.h"
 
-void updateGateFaults(); // gate faults in state.h
 
-bool anyGateFaultsTripped();
-bool anyGateNonESDFaultsTripped();
 
-void printGateFaults();
+// CONTAINER DECLARATION
+typedef struct {
+  bool sdn;
+  bool sdn_gate;
+  bool bms_gate;
+  bool imd_gate;
+  bool bpd_gate;
+} GateFaults_T;
+
+
+
+// GLOBAL CONTAINER DECLARATIONS
+extern GateFaults_T gates;
+
+
+
+// FUNCTION DECLARATIONS
+bool any_all_gate_faults(void);
+bool any_fatal_gate_faults(void);
+
+void print_gate_faults(void);
+
 
 #endif // ifndef __FAULT_GATES_H

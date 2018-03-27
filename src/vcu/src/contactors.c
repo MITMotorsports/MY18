@@ -1,6 +1,4 @@
 #include "contactors.h"
-#include "main.h"
-#include "state.h"
 
 void openLowSideContactor() {
 }

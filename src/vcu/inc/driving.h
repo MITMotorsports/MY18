@@ -5,7 +5,7 @@
 #include "stm32f2xx_hal.h"
 #include "state.h"
 #include "can_handles.h"
-#include "brake_throttle.h"
+#include "fault_conflicts.h"
 #include "torque_calc.h"
 
 void resetDrivingValues();

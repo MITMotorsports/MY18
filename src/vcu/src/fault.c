@@ -1,9 +1,8 @@
+#include "fault.h"
 
-#include "heartbeat_fault.h"
-#include "driving.h"
-#include "contactors.h"
 
-void initHeartbeatFault() {
+
+void handle_fatal_fault(void) {
   // Just in case we loose a CAN msg, do this multiple times
   sendMotorOffCmdMsg();
   sendMotorOffCmdMsg();
@@ -15,10 +14,5 @@ void initHeartbeatFault() {
   openLowSideContactor();
   openHighSideContactor();
 
-  printf("\r\n[HEARTBEAT FAULT] A FULL CAR POWER CYCLE IS REQUIRED.\r\n");
-}
-
-void loopHeartbeatFault() {
-  openLowSideContactor();
-  openHighSideContactor();
+  printf("\r\n[FATAL FAULT HANDLER] A FULL CAR POWER CYCLE IS REQUIRED.\r\n");
 }

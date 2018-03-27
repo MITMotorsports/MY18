@@ -2,9 +2,10 @@
 #define __LV_ONLY_H
 
 #include "stdio.h"
-#include "state.h"
-#include "contactors.h"
 #include <stdbool.h>
+
+#include "state.h"
+#include "gpio.h"
 
 #define DRIVER_RESET_LATCHING_TIME 2 // millis
 #define CLOSE_VCU_GATE_TIME        2 // millis

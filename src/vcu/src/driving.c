@@ -1,4 +1,3 @@
-
 #include "driving.h"
 
 void resetDrivingValues() {
@@ -14,11 +13,6 @@ void initDriving() {
 void loopDriving() {
   // Send torque commands
   Pedalbox_T localBTState = pedalbox;
-
-  update_implausibility(localBTState,
-                        &conflicts,
-                        heartbeats.frontCanNode);
-  update_brake_throttle_conflict(localBTState, &conflicts);
 
   torque_command = calcTorque(localBTState.accel_1, localBTState.accel_2);
 

@@ -2,31 +2,35 @@
 
 // LEDs --------------------------------------------------------
 
-#define LED_CLK_ENABLE() __HAL_RCC_GPIOC_CLK_ENABLE()
 #define LED_PIN                        GPIO_PIN_10
 #define LED_PORT                       GPIOC
 
 // MISC GPIOs ---------------------------------------------------
+#define DRIVER_RST_PIN                GPIO_PIN_1
+#define DRIVER_RST_PORT               GPIOC
 
-#define L_CONTACTOR_CLK_ENABLE() __HAL_RCC_GPIOC_CLK_ENABLE()
-#define L_CONTACTOR_PIN                        GPIO_PIN_7
-#define L_CONTACTOR_PORT                       GPIOC
 
-#define H_CONTACTOR_GATE_CLK_ENABLE() __HAL_RCC_GPIOC_CLK_ENABLE()
-#define H_CONTACTOR_PIN                  GPIO_PIN_8
-#define H_CONTACTOR_PORT                 GPIOC
+#define L_CONTACTOR_PIN               GPIO_PIN_7
+#define L_CONTACTOR_PORT              GPIOC
 
-#define FAULT_GATES_CLK_ENABLE() __HAL_RCC_GPIOC_CLK_ENABLE()
-#define FAULT_GATES_PORT                    GPIOC
-#define BMS_FAULT_GATE_PIN                  GPIO_PIN_4
-#define BPD_FAULT_GATE_PIN                  GPIO_PIN_6
-#define IMD_FAULT_GATE_PIN                  GPIO_PIN_5
-#define SDN_FAULT_GATE_PIN                  GPIO_PIN_2
-#define ESD_FAULT_PIN                       GPIO_PIN_3
+#define H_CONTACTOR_PIN               GPIO_PIN_8
+#define H_CONTACTOR_PORT              GPIOC
 
-#define DRIVER_RESET_TRIGGER_CLK_ENABLE() __HAL_RCC_GPIOC_CLK_ENABLE()
-#define DRIVER_RESET_TRIGGER_PIN            GPIO_PIN_1
-#define DRIVER_RESET_TRIGGER_PORT           GPIOC
+
+#define SDN_PIN                       GPIO_PIN_2
+#define SDN_PORT                      GPIOC
+
+#define SDN_GATE_PIN                  GPIO_PIN_3
+#define SDN_GATE_PORT                 GPIOC
+
+#define BMS_GATE_PIN                  GPIO_PIN_4
+#define BMS_GATE_PORT                 GPIOC
+
+#define IMD_GATE_PIN                  GPIO_PIN_5
+#define IMD_GATE_PORT                 GPIOC
+
+#define BPD_GATE_PIN                  GPIO_PIN_6
+#define BPD_GATE_PORT                 GPIOC
 
 
 // MACRO DEFINITIONS

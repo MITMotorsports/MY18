@@ -3,8 +3,6 @@
 void setupVCU() {
   init_vcu_state(); // NEEDS TO HAPPEN BEFORE INIT ERROR STATE
   init_error_state();
-
-  lastDashMsgTime = HAL_GetTick();
 }
 
 void beforeLoop() {
@@ -12,10 +10,6 @@ void beforeLoop() {
 }
 
 void afterLoop() {
-  if (HAL_GetTick() - lastDashMsgTime >= SEND_DASH_MSG_WAIT_DURATION) {
-    // sendDashMsg();
-    lastDashMsgTime = HAL_GetTick();
-  }
 }
 
 void loopVCU() {
