@@ -36,5 +36,6 @@ extern Conflicts_T conflicts;
 
 
 bool any_fatal_conflict_faults(void);
+bool any_recoverable_conflict_faults(void);
 
 #endif // ifndef __FAULT_CONFLICTS_H

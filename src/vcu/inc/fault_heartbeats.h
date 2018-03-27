@@ -4,6 +4,7 @@
 #include "stdio.h"
 #include <stdint.h>
 #include <stdbool.h>
+#include "stm32f2xx_hal.h"
 
 #include "extern.h"
 
@@ -16,7 +17,7 @@ typedef struct {
 } Heartbeats_T;
 
 
-extern Heartbeats_T heartbeats;
+extern volatile Heartbeats_T heartbeats;
 
 
 bool any_recoverable_heartbeat_faults(void);

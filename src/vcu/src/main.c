@@ -44,11 +44,7 @@ int main(void) {
 
   printf("\r\nMEGALV PERIPHERALS ONLINE\r\n");
 
-  setupVCU();
-
   while (1) {
-    // loopVCU();
-
     static uint32_t lastt = 0;
 
     if (HAL_GetTick() - lastt > 1000) {
@@ -137,8 +133,6 @@ void Error_Handler(const char *s) {
 }
 
 void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *CanHandle) {
-  handleCanVCU(CanHandle);
-
   // printf("CAN stat: %#010x\r\n", (int)CanHandle->State);
 
   HAL_StatusTypeDef CAN_RX_STATUS = HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0);
@@ -149,6 +143,8 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *CanHandle) {
     // Error_Handler(ERRMSG);
     printf("ERROR IN CAN %d\r\n", (int)CAN_RX_STATUS);
   }
+
+  handleCAN(CanHandle);
 }
 
 // FOR REFERENCE:

@@ -1,6 +1,6 @@
 #include "fault_heartbeats.h"
 
-Heartbeats_T heartbeats = {};
+volatile Heartbeats_T heartbeats = {};
 
 const Time_T BMS_HB_MAX_TIME = 400;
 const Time_T FCN_HB_MAX_TIME = 400;

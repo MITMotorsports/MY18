@@ -2,6 +2,10 @@
 
 Conflicts_T conflicts = {};
 
+bool any_recoverable_conflict_faults(void) {
+  return false;
+}
+
 bool any_fatal_conflict_faults(void) {
   return false;
 }
@@ -13,7 +17,7 @@ void update_conflicts() {
   }
 
   // Take minimum
-  const uint16_t accel = MAX_DE(pedalbox.accel_1, pedalbox.accel_2);
+  const uint16_t accel = MIN_DE(pedalbox.accel_1, pedalbox.accel_2);
 
   bool curr_conflict = conflicts.has_pedalbox_conflict;
 

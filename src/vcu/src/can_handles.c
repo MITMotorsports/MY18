@@ -1,5 +1,42 @@
 #include "can_handles.h"
 
+
+void handleCAN(CAN_HandleTypeDef *CanHandle) {
+  Frame frame;
+
+  // TODO: Maybe use CanHandle to get last RxMsg here.
+
+  lastRxMsgToFrame(&frame);
+
+  can0_T msgForm;
+  msgForm = identify_can0(&frame);
+
+  switch (msgForm) {
+  case can0_FrontCanNodeBrakeThrottle:
+    handleBrakeThrottleMsg(&frame);
+    break;
+
+  case can0_BMSHeartbeat:
+    handleBMSHeartbeatMsg(&frame);
+    break;
+
+  case can0_CellVoltages:
+    handleCellVoltagesMsg(&frame);
+    break;
+
+  case can0_CurrentSensor_Voltage:
+    handleCurrentSensorVoltageMsg(&frame);
+    break;
+
+  case can0_MCVoltage:
+    handleMCVoltageMsg(&frame);
+    break;
+
+  default:
+    break;
+  }
+}
+
 void handleBrakeThrottleMsg(Frame *msg) {
   can0_FrontCanNodeBrakeThrottle_T unpacked_msg;
 
@@ -71,7 +108,8 @@ void handleButtonRequest(Frame *msg) {
 // void sendDashMsg() {
 //   can0_VcuToDash_T msg;
 //
-//   // msg.rtd_light_on = //is this right? (carMode == VCU_STATE_READY_TO_DRIVE ||
+//   // msg.rtd_light_on = //is this right? (carMode == VCU_STATE_READY_TO_DRIVE
+// ||
 //   // carMode == VCU_STATE_DRIVING);
 //   // msg.ams_light_on = //what;
 //   // msg.imd_light_on = //what;

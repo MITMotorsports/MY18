@@ -12,8 +12,10 @@ typedef struct {
 } Contactors_T;
 
 
-extern Contactors_T contactors;
+extern volatile Contactors_T contactors;
 
+bool any_fatal_contactor_faults(void);
+bool any_recoverable_contactor_faults(void);
 
 bool any_fatal_contactor_weld_faults(void);
 

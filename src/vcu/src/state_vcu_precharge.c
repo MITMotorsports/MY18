@@ -1,5 +1,4 @@
-
-#include "precharge.h"
+#include "state_vcu_precharge.h"
 #include "contactors.h"
 
 int16_t calcTargetVoltage(int16_t packVoltage) {

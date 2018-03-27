@@ -2,10 +2,10 @@
 
 static VCU_STATE_T currentState;
 
-MCVoltage_T mc_voltage = {};
-Voltages_T  voltages = {};
-Pedalbox_T  pedalbox = {};
-Buttons_T   buttons = {};
+volatile MCVoltage_T mc_voltage = {};
+volatile Voltages_T  voltages = {};
+volatile Pedalbox_T  pedalbox = {};
+volatile Buttons_T   buttons = {};
 
 void init_vcu_state(void) {
   // BOARD HEARTBEATS
@@ -62,6 +62,42 @@ VCU_STATE_T set_vcu_state(VCU_STATE_T newState) {
   }
 
   currentState = newState;
+}
+
+void advance_vcu_state(void) {
+  switch (current_vcu_state()) {
+  case VCU_STATE_LV_ONLY:
+    loopLVOnly();
+    break;
+
+  case VCU_STATE_PRECHARGING:
+    loopPrecharge();
+    break;
+
+  case VCU_STATE_CHARGE_FAULT:
+    loopChargeFault();
+    break;
+
+  case VCU_STATE_READY_TO_DRIVE:
+    loopReadyToDrive();
+    break;
+
+  case VCU_STATE_DRIVING:
+    loopDriving();
+    break;
+
+  case VCU_STATE_CONTACTOR_FAULT:
+    loopContactorFault();
+    break;
+
+  case VCU_STATE_HEARTBEAT_FAULT:
+    loopHeartbeatFault();
+    break;
+
+  default:
+    Error_Handler("Inside loopVCU.");
+    break;
+  }
 }
 
 VCU_STATE_T current_vcu_state(void) {

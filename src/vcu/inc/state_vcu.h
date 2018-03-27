@@ -45,16 +45,16 @@ typedef struct {
 
 
 // GLOBAL CONTAINER DEFINITIONS
-extern MCVoltage_T mc_voltage;
-extern Voltages_T  voltages;
-extern Pedalbox_T  pedalbox;
-extern Buttons_T   buttons;
+extern volatile MCVoltage_T mc_voltage;
+extern volatile Voltages_T  voltages;
+extern volatile Pedalbox_T  pedalbox;
+extern volatile Buttons_T   buttons;
 
 
 // INTERACTION FUNCTIONS
 void        init_vcu_state(void);
 VCU_STATE_T set_vcu_state(VCU_STATE_T newState);
-void        transition_vcu_state(void);
+void        advance_vcu_state(void);
 
 VCU_STATE_T current_vcu_state(void);
 

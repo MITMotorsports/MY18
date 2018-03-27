@@ -6,10 +6,10 @@
 
 #include "gpio.h"
 
-void openLowSideContactor();
-void closeLowSideContactor();
+void openLowSideContactor(void);
+void closeLowSideContactor(void);
 
-void openHighSideContactor();
-void closeHighSideContactor();
+void openHighSideContactor(void);
+void closeHighSideContactor(void);
 
 #endif // ifndef __CONTACTORS_H

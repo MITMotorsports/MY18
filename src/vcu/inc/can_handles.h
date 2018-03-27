@@ -8,6 +8,9 @@
 #include "state.h"
 #include "fault.h"
 
+// TODO: Add error checking and have these return aggregate errors.
+void handleCAN(CAN_HandleTypeDef *CanHandle);
+
 void handleBrakeThrottleMsg(Frame *msg);
 void handleMCVoltageMsg(Frame *msg);
 void handleBMSHeartbeatMsg(Frame *msg);

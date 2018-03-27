@@ -36,7 +36,7 @@ ERROR_STATE_T set_error_state(ERROR_STATE_T newState) {
 }
 
 // Actual transitions happen via set_error_state inside the updates.
-void transition_error_state(void) {
+void advance_error_state(void) {
   switch (currentState) {
   case NO_ERROR_STATE:
     update_no_error_state();
@@ -58,11 +58,16 @@ void enter_no_error_state(void) {
 
 void update_no_error_state(void) {
   if (any_fatal_gate_faults() ||
-      any_fatal_contactor_weld_faults()) {
+      any_fatal_contactor_faults() ||
+      any_fatal_conflict_faults())
+  {
     set_error_state(FATAL_ERROR_STATE);
   }
 
-  if (any_recoverable_gate_faults() || any_recoverable_heartbeat_faults()) {
+  if (any_recoverable_gate_faults() ||
+      any_recoverable_heartbeat_faults() ||
+      any_recoverable_conflict_faults())
+  {
     set_error_state(RECOVERABLE_ERROR_STATE);
   }
 }

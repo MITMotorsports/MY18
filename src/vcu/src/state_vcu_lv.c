@@ -1,4 +1,4 @@
-#include "lv_only.h"
+#include "state_vcu_lv.h"
 
 void initLVOnly() {
   printf("\r\nCAR STARTED IN LV MODE\r\n");
@@ -14,7 +14,8 @@ void loopLVOnly() {
 
     // Set low now
     HAL_GPIO_WritePin(GPIO(DRIVER_RST), GPIO_PIN_RESET);
-  } else if (latchingDriverReset) {
+  }
+  else if (latchingDriverReset) {
     // WE ARE GOING TO LATCH FOR N milliseconds
     if (HAL_GetTick() - timeSinceLatchSettingStart > DRIVER_RESET_LATCHING_TIME) {
       latchingDriverReset = false;
@@ -26,7 +27,8 @@ void loopLVOnly() {
 
       closingVCUFET = true;
     }
-  } else if (closingVCUFET) {
+  }
+  else if (closingVCUFET) {
     closingVCUFET = false;
 
     closeLowSideContactor();
