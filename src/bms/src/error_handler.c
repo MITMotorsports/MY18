@@ -1,7 +1,18 @@
 #include "error_handler.h"
-#include "eeprom_config.h"
-#include "board.h"
 
+// TODO: Keep adding things.
+
+static ERROR_HANDLER error_handler_vector[ERROR_NUM_ERRORS] = {
+  { _Error_Handle_Count,   LTC_PEC_count                    },
+  { _Error_Handle_Count,   LTC_CVST_count                   },
+  { _Error_Handle_Count,   LTC_OWT_count                    },
+  { _Error_Handle_Timeout, CELL_UNDER_VOLTAGE_time          },
+  { _Error_Handle_Timeout, CELL_OVER_VOLTAGE_time           },
+  { _Error_Handle_Timeout, CELL_UNDER_TEMP_time             },
+  { _Error_Handle_Timeout, CELL_OVER_TEMP_time              },
+  { _Error_Handle_Timeout, L_CONTACTOR_WELDED_time          },
+  { _Error_Handle_Timeout, H_CONTACTOR_WELDED_time          },
+};
 
 void Error_Init(void) {
   uint32_t i;
@@ -13,7 +24,6 @@ void Error_Init(void) {
     error_vector[i].count      = 0;
   }
 }
-
 
 void Error_Assert(ERROR_T er_t) {
   switch (er_t) {
@@ -37,24 +47,9 @@ void Error_Assert(ERROR_T er_t) {
   }
 }
 
-
 void Error_Pass(ERROR_T er_t) {
   error_vector[er_t].error = false;
-
-  // LTC6804 errors that imply PEC
-  // fine should implicitly pass PEC
-
-  switch (er_t) {
-  case ERROR_LTC6804_CVST:
-  case ERROR_LTC6804_OWT:
-    Error_Pass(ERROR_LTC6804_PEC);
-    break;
-
-  default:
-    break;
-  }
 }
-
 
 static ERROR_HANDLER_STATUS_T _Error_Handle_Timeout(ERROR_STATUS_T *er_stat,
                                                     uint32_t        timeout_ms) {
@@ -72,7 +67,6 @@ static ERROR_HANDLER_STATUS_T _Error_Handle_Timeout(ERROR_STATUS_T *er_stat,
   }
 }
 
-
 static ERROR_HANDLER_STATUS_T _Error_Handle_Count(ERROR_STATUS_T *er_stat,
                                                   uint32_t        timeout_num) {
   if (!er_stat->error) {
@@ -88,7 +82,6 @@ static ERROR_HANDLER_STATUS_T _Error_Handle_Count(ERROR_STATUS_T *er_stat,
     }
   }
 }
-
 
 static ERROR_HANDLER_STATUS_T _Error_Handle_Count_and_Timeout(
   ERROR_STATUS_T *er_stat,
@@ -109,38 +102,27 @@ static ERROR_HANDLER_STATUS_T _Error_Handle_Count_and_Timeout(
   }
 }
 
-
 ERROR_HANDLER_STATUS_T Error_Handle() {
-  ERROR_T i;
-
-  for (i = 0; i < ERROR_NUM_ERRORS; ++i) {
+  for (ERROR_T i = 0; i < ERROR_NUM_ERRORS; ++i) {
     if (Error_ShouldHalt(i)) {
-#ifndef TEST_HARDWARE
-      Set_EEPROM_Error(i);
-#endif // TEST_HARDWARE
       return HANDLER_HALT;
     }
   }
   return HANDLER_FINE;
 }
 
-
 bool Error_ShouldHalt(ERROR_T i) {
   if (error_vector[i].error || error_vector[i].handling) {
-    if (error_handler_vector[i].handler(&error_vector[i], msTicks,
-                                        error_handler_vector[i].timeout)
-        == HANDLER_HALT) {
-      return true;
-    }
+    return (error_handler_vector[i].handler(&error_vector[i], msTicks,
+                                            error_handler_vector[i].timeout)
+            == HANDLER_HALT)
   }
   return false;
 }
 
-
 const ERROR_STATUS_T* Error_GetStatus(ERROR_T er_t) {
   return &error_vector[er_t];
 }
-
 
 ERROR_STATUS_T* Get_Errors(void) {
   return error_vector;
