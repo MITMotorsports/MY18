@@ -54,11 +54,14 @@ void advance_error_state(void) {
 }
 
 void enter_no_error_state(void) {
-  printf("[ERROR FSM] Entered NO_ERROR_STATE!\r\n");
+  printf("[ERROR FSM : NO_ERROR_STATE] ENTERED!\r\n");
 }
 
+#define VS_EQ(name) get_vcu_state() == VCU_STATE_ ## name
+#define VS_NEQ(name) !VS_EQ(name)
+
 void update_no_error_state(void) {
-  if (any_fatal_gate_faults() ||
+  if (VS_NEQ(ROOT) && any_fatal_gate_faults() ||
       any_fatal_precharge_fault() ||
       any_fatal_contactor_faults() ||
       any_fatal_conflict_faults())
@@ -66,8 +69,9 @@ void update_no_error_state(void) {
     set_error_state(FATAL_ERROR_STATE);
   }
 
-  if (any_recoverable_gate_fault() ||
+  if (VS_NEQ(ROOT) && any_recoverable_gate_fault() ||
       any_recoverable_heartbeat_faults() ||
+      any_recoverable_contactor_faults() ||
       any_recoverable_conflict_faults())
   {
     set_error_state(RECOVERABLE_ERROR_STATE);

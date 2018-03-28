@@ -6,6 +6,7 @@
 #include <stdbool.h>
 
 #include "fault.h"
+#include "state.h"
 #include "extern.h"
 
 

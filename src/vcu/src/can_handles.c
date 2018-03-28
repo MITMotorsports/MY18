@@ -32,6 +32,10 @@ void handleCAN(CAN_HandleTypeDef *CanHandle) {
     handleMCVoltageMsg(&frame);
     break;
 
+  case can0_ButtonRequest:
+    handleButtonRequest(&frame);
+    break;
+
   default:
     break;
   }
