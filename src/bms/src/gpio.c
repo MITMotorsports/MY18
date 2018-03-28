@@ -21,14 +21,22 @@ void Board_GPIO_Init(void) {
   Chip_GPIO_SetPinState(LPC_GPIO, PIN_LED3, false);
 
   // SSP for EEPROM
-  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_2, (IOCON_FUNC2 | IOCON_MODE_INACT)); // MISO1
-  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_3, (IOCON_FUNC2 | IOCON_MODE_INACT)); // MOSI1
-  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_1, (IOCON_FUNC2 | IOCON_MODE_INACT)); // SCK1
+  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_2, (IOCON_FUNC2 | IOCON_MODE_INACT)); //
+                                                                                   // MISO1
+  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_3, (IOCON_FUNC2 | IOCON_MODE_INACT)); //
+                                                                                   // MOSI1
+  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_1, (IOCON_FUNC2 | IOCON_MODE_INACT)); //
+                                                                                   // SCK1
 
   // SSP for LTC6804
-  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_8, (IOCON_FUNC1 | IOCON_MODE_PULLUP)); // MISO0
-  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_9, (IOCON_FUNC1 | IOCON_MODE_PULLUP)); // MOSI0
-  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_6, (IOCON_FUNC2 | IOCON_MODE_INACT)); // SCK0
+  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_8,
+                       (IOCON_FUNC1 | IOCON_MODE_PULLUP));                         //
+                                                                                   // MISO0
+  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_9,
+                       (IOCON_FUNC1 | IOCON_MODE_PULLUP));                         //
+                                                                                   // MOSI0
+  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_6, (IOCON_FUNC2 | IOCON_MODE_INACT)); //
+                                                                                   // SCK0
   Chip_IOCON_PinLocSel(LPC_IOCON, IOCON_SCKLOC_PIO0_6);
 
   // TODO: is the cs pin supposed to be initialized?
@@ -46,6 +54,7 @@ void Board_GPIO_Init(void) {
   Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_CONTACTOR_WELD_2);
   Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_2,
                        (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
+
   // for analog mode
   // Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_2,
   //                      (IOCON_FUNC2 | IOCON_ADMODE_EN));
@@ -60,13 +69,16 @@ void Board_GPIO_Init(void) {
   Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_LOW_SIDE_DETECT);
   Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_LOW_SIDE_DETECT,
                        (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
+
   // This is the analog config that does not work. TODO: Firgure out why.
   // Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_LOW_SIDE_DETECT,
-                       // (IOCON_FUNC0 | IOCON_ADMODE_EN | IOCON_MODE_INACT));
+  // (IOCON_FUNC0 | IOCON_ADMODE_EN | IOCON_MODE_INACT));
 
   // Charge Enable Pin
   Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_CHARGER_ENABLE);
-  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CHARGER_ENABLE, IOCON_FUNC0);
+  Chip_IOCON_PinMuxSet(LPC_IOCON,
+                       PIN_IOCON_CHARGER_ENABLE,
+                       IOCON_FUNC0 | IOCON_MODE_INACT);
   Chip_GPIO_SetPinState(LPC_GPIO, PIN_CHARGER_ENABLE, false);
 
   // Fault Pin
@@ -177,9 +189,9 @@ bool Board_Contactor_High_Closed() {
 }
 
 bool Board_Contactor_Low_Welded() {
-  return ! Board_Pin_Read(PIN_CONTACTOR_WELD_2);
+  return !Board_Pin_Read(PIN_CONTACTOR_WELD_2);
 }
 
 bool Board_Contactor_High_Welded() {
-  return ! Board_Pin_Read(PIN_CONTACTOR_WELD_1);
+  return !Board_Pin_Read(PIN_CONTACTOR_WELD_1);
 }
