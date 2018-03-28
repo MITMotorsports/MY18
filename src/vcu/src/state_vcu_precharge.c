@@ -1,34 +1,49 @@
 #include "state_vcu_precharge.h"
-#include "contactors.h"
 
-Time_T prechargeStartTime;
-int16_t  targetVoltage;
-Time_T showVoltageTime;
+int16_t targetVoltage;
+Time_T  prechargeTimeout;
+Time_T  voltagePrintTimeout;
 
-#define TIMETIME 5000
+const Time_T PRINT_VOLTAGE_TIME = 500;
+const Time_T DEAD_RECKON_TIME   = 5000;
 
-int16_t calcTargetVoltage(int16_t packVoltage) {
-  return (packVoltage * 9) / 10; // 90% of pack voltage
+int16_t calcTargetVoltage(int16_t pack) {
+  return (pack * 9) / 10; // 90% of pack voltage
 }
 
 void initPrecharge() {
-  printf("[VCU FSM] STARTING PRECHARGE\r\n");
-  printf("TIME WILL BE %d\r\n", TIMETIME);
-  prechargeStartTime = HAL_GetTick();
-  showVoltageTime    = HAL_GetTick();
+  printf("[VCU FSM : PRECHARGE] ENTERED!\r\n");
+  printf("[VCU FSM : PRECHARGE] DEAD RECKONING TIME IS %dms\r\n",
+         DEAD_RECKON_TIME);
 
-  if (voltages.packVoltage == 0) {
-    printf("[VCU FSM] ERROR! PACK VOLTAGE IS NOT SET\r\n");
-    set_vcu_state(VCU_STATE_PRECHARGE_FAULT);
-  } else {
-    printf("[VCU FSM] PACK VOLTAGE IS %d\r\n", voltages.packVoltage);
-    targetVoltage = calcTargetVoltage(voltages.packVoltage);
-  }
+  // Reset timeout timers to current time.
+  prechargeTimeout    = HAL_GetTick();
+  voltagePrintTimeout = HAL_GetTick();
+
+  closeLowSideContactor();
 }
 
 void loopPrecharge() {
+  // Print the voltage
+  if (HAL_GetTick() - voltagePrintTimeout > PRINT_VOLTAGE_TIME) {
+    printf("[VCU FSM : PRECHARGE] DC Bus: %dV / Pack: %dV\r\n",
+           voltages.bus, voltages.pack);
+
+    voltagePrintTimeout = HAL_GetTick();
+  }
+
+  // Dead reckoning with time
+  if (HAL_GetTick() - prechargeTimeout > DEAD_RECKON_TIME) {
+    closeHighSideContactor(); // TODO: What do you, dear reader, think about
+                              // contactor atomicity and coupling in
+                              // contactors.c?
+
+    set_vcu_state(VCU_STATE_READY_TO_DRIVE);
+    return;
+  }
+
   // Timed method for Voltage checking
-  // if (HAL_GetTick() - prechargeStartTime >= PRECHARGE_TOO_LONG_DURATION) {
+  // if (HAL_GetTick() - prechargeTimeout >= PRECHARGE_TOO_LONG_DURATION) {
 
   // printf("\r\n[ERROR]: PRECHARGE TOOK TOO LONG TO GET TO DESIRED DC BUS
   // VOLTAGE\r\n");
@@ -41,28 +56,4 @@ void loopPrecharge() {
   //    set_vcu_state(VCU_STATE_READY_TO_DRIVE);
 
   // }
-
-  // Print the voltage
-  if (HAL_GetTick() - showVoltageTime > 500) {
-    printf("[VCU FSM] THE DC BUS VOLTAGE MEASURED IS %d\r\n", voltages.dc_bus_voltage);
-    showVoltageTime = HAL_GetTick();
-  }
-
-  // Dead reckoning with time
-  // TODO: REMOVE THE 240 CHECK
-  if (HAL_GetTick() - prechargeStartTime > TIMETIME) {
-
-    printf("ok bois time to close high side\r\n");
-    // safety check for integration testing
-
-    // TODO: Remove true, of course.
-    if (true || voltages.dc_bus_voltage >= 240) {
-      closeHighSideContactor();
-      printf("pls go to rtd\r\n");
-      set_vcu_state(VCU_STATE_READY_TO_DRIVE);
-    } else {
-      printf("[VCU FSM] ERROR! PRECHARGE DID NOT BRING DC BUS VOLTAGE TO %d\r\n", 240);
-      set_vcu_state(VCU_STATE_PRECHARGE_FAULT);
-    }
-  }
 }

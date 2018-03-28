@@ -11,7 +11,7 @@ void update_gate_status(void) {
   gates.bpd_gate = !READ_PIN(BPD_GATE);
 }
 
-bool any_all_gate_faults(void) {
+bool any_all_gate_fault(void) {
   update_gate_status();
 
   return gates.sdn      ||
@@ -21,7 +21,7 @@ bool any_all_gate_faults(void) {
          gates.bpd_gate;
 }
 
-bool any_recoverable_gate_faults(void) {
+bool any_recoverable_gate_fault(void) {
   update_gate_status();
 
   return gates.sdn      ||
@@ -39,7 +39,7 @@ bool any_fatal_gate_faults(void) {
 void print_gate_faults(void) {
   update_gate_status();
 
-  if (any_all_gate_faults()) {
+  if (any_all_gate_fault()) {
     printf("[GATE FAULT] THE FOLLOWING FAULT GATES WERE TRIPPED:\r\n");
 
     if (gates.sdn) {

@@ -65,13 +65,14 @@ void update_no_error_state(void) {
   }
 
   if (any_fatal_gate_faults() ||
+      any_fatal_precharge_fault() ||
       any_fatal_contactor_faults() ||
       any_fatal_conflict_faults())
   {
     set_error_state(FATAL_ERROR_STATE);
   }
 
-  if (any_recoverable_gate_faults() ||
+  if (any_recoverable_gate_fault() ||
       any_recoverable_heartbeat_faults() ||
       any_recoverable_conflict_faults())
   {
@@ -80,7 +81,7 @@ void update_no_error_state(void) {
 }
 
 void enter_recoverable_error_state(void) {
-  printf("[ERROR FSM] Entered RECOVERABLE_ERROR_STATE!\r\n");
+  printf("[ERROR FSM : RECOVERABLE_ERROR_STATE] ENTERED!\r\n");
 }
 
 void update_recoverable_error_state(void) {
@@ -89,7 +90,7 @@ void update_recoverable_error_state(void) {
 }
 
 void enter_fatal_error_state(void) {
-  printf("[ERROR FSM] Entered FATAL_ERROR_STATE!\r\n");
+  printf("[ERROR FSM : FATAL_ERROR_STATE] ENTERED!\r\n");
 }
 
 void update_fatal_error_state(void) {

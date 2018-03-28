@@ -8,11 +8,6 @@ void handleCAN(CAN_HandleTypeDef *CanHandle) {
 
   lastRxMsgToFrame(&frame);
 
-  // TODO: Remove HACK.
-  if (frame.id == 0xD8) {
-    buttons.DriverReset = true;
-    return;
-  }
   can0_T msgForm;
   msgForm = identify_can0(&frame);
 
@@ -86,7 +81,7 @@ void handleCurrentSensorVoltageMsg(Frame *msg) {
 
   unpack_can0_CurrentSensor_Voltage(msg, &unpacked_msg);
 
-  voltages.dc_bus_voltage = unpacked_msg.dc_bus_voltage;
+  voltages.bus = unpacked_msg.dc_bus_voltage;
 }
 
 void handleCellVoltagesMsg(Frame *msg) {
@@ -97,17 +92,20 @@ void handleCellVoltagesMsg(Frame *msg) {
   // So we take the cell voltage of the minimum cell and use that
   // to estimate the lower bound on the back voltage
   // (12 per cell, 6 cells, millivolts)
-  voltages.packVoltage = unpacked_msg.min * 12 * 6 / 1000;
+  voltages.pack = unpacked_msg.min * 12 * 6 / 1000;
 }
 
 void handleButtonRequest(Frame *msg) {
-  can0_ButtonRequest_T unpacked_msg;
-
+  // can0_ButtonRequest_T unpacked_msg;
+  //
   // unpack_can0_ButtonRequest(msg, &unpacked_msg);
-  HAL_GPIO_TogglePin(GPIO(LED));
+  //
   // buttons.RTD          = unpacked_msg.RTD;
-  buttons.DriverReset  = true; // unpacked_msg.DriverReset;
+  // buttons.DriverReset  = unpacked_msg.DriverReset;
   // buttons.ScrollSelect = unpacked_msg.ScrollSelect;
+
+  buttons.RTD         = (msg->data[0] & 2) != 0;
+  buttons.DriverReset = (msg->data[0] & 4) != 0;
 }
 
 // void sendDashMsg() {

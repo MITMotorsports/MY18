@@ -6,17 +6,14 @@
 
 #include "extern.h"
 #include "state.h"
+#include "contactors.h"
 
-#define PRECHARGE_DEAD_RECKONING_TIME   5000
-#define PRECHARGE_TOO_LONG_DURATION 10 * 1000
-#define DC_BUS_VOLTAGE_SCALE_FACTOR  10
-#define SHOW_VOLTAGE_FREQUENCY_UPDATE   500
 
-void    initPrecharge();
+void    initPrecharge(void);
+void    loopPrecharge(void);
 
-void    loopPrecharge();
 
-int16_t calcTargetVoltage(int16_t packVoltage);
+int16_t calcTargetVoltage(int16_t pack);
 
 
 #endif // ifndef __PRECHARGE_H

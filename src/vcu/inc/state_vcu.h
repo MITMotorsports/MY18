@@ -4,9 +4,16 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "state_vcu_root.h"
+#include "state_vcu_lv.h"
+#include "state_vcu_precharge.h"
+#include "state_vcu_rtd.h"
+#include "state_vcu_driving.h"
+
 
 // DEFINITION OF CAR STATES
 typedef enum {
+  VCU_STATE_ROOT,
   VCU_STATE_LV_ONLY,
   VCU_STATE_PRECHARGING,
   VCU_STATE_PRECHARGE_FAULT,
@@ -17,8 +24,8 @@ typedef enum {
 
 // DEFINITION OF CONTAINER TYPES
 typedef struct {
-  int16_t packVoltage;
-  int32_t dc_bus_voltage;
+  int16_t pack;
+  int32_t bus;
 } Voltages_T;
 
 typedef struct {
@@ -37,6 +44,7 @@ typedef struct {
 
 typedef struct {
   bool RTD;
+  bool MasterReset;
   bool DriverReset;
   bool ScrollSelect;
 } Buttons_T;

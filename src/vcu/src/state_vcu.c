@@ -26,19 +26,24 @@ void init_vcu_state(void) {
   mc_voltage.VBC_Vq_Voltage = 0;
 
   // BMS PACK VOLTAGE
-  voltages.packVoltage = 0;
+  voltages.pack = 0;
 
   // BUTTON PRESSES
   buttons.RTD          = 0;
+  buttons.MasterReset  = 0;
   buttons.DriverReset  = 0;
   buttons.ScrollSelect = 0;
 
   // CAR Mode
-  set_vcu_state(VCU_STATE_LV_ONLY);
+  set_vcu_state(VCU_STATE_ROOT);
 }
 
 VCU_STATE_T set_vcu_state(VCU_STATE_T newState) {
-  switch (currentState) {
+  switch (newState) {
+  case VCU_STATE_ROOT:
+    enter_vcu_state_root();
+    break;
+
   case VCU_STATE_LV_ONLY:
     initLVOnly();
     break;
@@ -49,8 +54,6 @@ VCU_STATE_T set_vcu_state(VCU_STATE_T newState) {
 
   case VCU_STATE_READY_TO_DRIVE:
     initReadyToDrive();
-    printf("[VCU FSM] READY TO DRIVE\r\n");
-    printf("[VCU FSM] READY TO DRIVE\r\n");
     break;
 
   case VCU_STATE_DRIVING:
@@ -68,6 +71,10 @@ VCU_STATE_T set_vcu_state(VCU_STATE_T newState) {
 
 void advance_vcu_state(void) {
   switch (current_vcu_state()) {
+  case VCU_STATE_ROOT:
+    update_vcu_state_root();
+    break;
+
   case VCU_STATE_LV_ONLY:
     loopLVOnly();
     break;

@@ -10,10 +10,6 @@
 #define DRIVER_RESET_LATCHING_TIME 2 // millis
 #define CLOSE_VCU_GATE_TIME        2 // millis
 
-bool latchingDriverReset;
-bool closingVCUFET;
-uint32_t timeSinceLatchSettingStart;
-
 void initLVOnly();
 void loopLVOnly();
 

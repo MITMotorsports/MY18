@@ -10,6 +10,7 @@ int main(void) {
 
   GPIO_BEGIN_INIT();
 
+  /// INPUTS
   DGPIO_INIT_IN(       SDN, GPIO_PULLDOWN);
   DGPIO_INIT_IN(  SDN_GATE, GPIO_PULLDOWN);
   DGPIO_INIT_IN(  BMS_GATE, GPIO_PULLDOWN);
@@ -18,13 +19,14 @@ int main(void) {
 
   DGPIO_INIT_IN(MASTER_RST, GPIO_PULLUP);
 
+  /// OUTPUTS
   DGPIO_INIT_OUT( DRIVER_RST, GPIO_PIN_SET);
 
   // Setup an LED for debugging
   DGPIO_INIT_OUT(        LED, GPIO_PIN_RESET);
 
   // Driver Reset GPIO output for when Driver Reset is pressed
-  DGPIO_INIT_OUT( DRIVER_RST, GPIO_PIN_RESET);
+  DGPIO_INIT_OUT( DRIVER_RST, GPIO_PIN_SET);
 
   // SETUP THE CONTACTOR GPIOS
   DGPIO_INIT_OUT(L_CONTACTOR, GPIO_PIN_RESET);
@@ -34,22 +36,12 @@ int main(void) {
   init_states();
 
   while (1) {
-    HAL_GPIO_WritePin(GPIO(DRIVER_RST), GPIO_PIN_RESET);
     advance_states();
 
     static uint32_t lastt = 0;
 
-    if (not_yet_master_rst && !READ_PIN(MASTER_RST)) {
-      not_yet_master_rst = false;
-      printf("MASTER_RST pressed\r\n");
-    }
-
-    if (HAL_GetTick() - lastt > 1000) {
+    if (HAL_GetTick() - lastt > 10000) {
       HAL_GPIO_TogglePin(GPIO(LED));
-      // HAL_GPIO_TogglePin(GPIO(DRIVER_RST));
-
-      // HAL_GPIO_TogglePin(GPIO(L_CONTACTOR));
-      // HAL_GPIO_TogglePin(GPIO(H_CONTACTOR));
 
       lastt = HAL_GetTick();
     }
