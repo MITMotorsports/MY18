@@ -55,15 +55,9 @@ void advance_error_state(void) {
 
 void enter_no_error_state(void) {
   printf("[ERROR FSM] Entered NO_ERROR_STATE!\r\n");
-
-  if (not_yet_master_rst) printf("waiting_master_rst\r\n");
 }
 
 void update_no_error_state(void) {
-  if (not_yet_master_rst) {
-    return;
-  }
-
   if (any_fatal_gate_faults() ||
       any_fatal_precharge_fault() ||
       any_fatal_contactor_faults() ||
@@ -98,6 +92,6 @@ void update_fatal_error_state(void) {
   handle_fatal_fault();
 }
 
-ERROR_STATE_T current_error_state(void) {
+ERROR_STATE_T get_error_state(void) {
   return currentState;
 }

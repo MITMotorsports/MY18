@@ -8,12 +8,9 @@
 #include "state.h"
 #include "contactors.h"
 
+void enter_vcu_state_precharge(void);
+void update_vcu_state_precharge(void);
 
-void    initPrecharge(void);
-void    loopPrecharge(void);
-
-
-int16_t calcTargetVoltage(int16_t pack);
-
+Voltage_T calculate_precharge_target(void);
 
 #endif // ifndef __PRECHARGE_H

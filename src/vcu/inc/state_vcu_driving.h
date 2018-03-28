@@ -9,8 +9,8 @@
 #include "torque_calc.h"
 
 void resetDrivingValues();
-void initDriving();
-void loopDriving();
+void enter_vcu_state_driving();
+void update_vcu_state_driving();
 
 uint16_t torque_command;
 

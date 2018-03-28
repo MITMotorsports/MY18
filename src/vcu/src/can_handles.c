@@ -104,6 +104,7 @@ void handleButtonRequest(Frame *msg) {
   // buttons.DriverReset  = unpacked_msg.DriverReset;
   // buttons.ScrollSelect = unpacked_msg.ScrollSelect;
 
+  // TODO/HACK: Fix CANlib and replace correct unpacker.
   buttons.RTD         = (msg->data[0] & 2) != 0;
   buttons.DriverReset = (msg->data[0] & 4) != 0;
 }
@@ -135,7 +136,7 @@ void handleButtonRequest(Frame *msg) {
 //   // msg.heartbeat_bms_dead = //what;
 //   // msg.heartbeat_dash_dead = //what;
 //   // msg.heartbeat_mc_dead = //what;
-//   // msg.heartbeat_current_sensor_dead = //what;
+//   // msg.heartbeat_get_sensor_dead = //what;
 //   // msg.tsms_off = //what;
 //   // msg.reset_latch_open = //what;
 //   // msg.precharge_running = //what;

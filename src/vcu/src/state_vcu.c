@@ -45,19 +45,19 @@ VCU_STATE_T set_vcu_state(VCU_STATE_T newState) {
     break;
 
   case VCU_STATE_LV_ONLY:
-    initLVOnly();
+    enter_vcu_state_lv();
     break;
 
   case VCU_STATE_PRECHARGING:
-    initPrecharge();
+    enter_vcu_state_precharge();
     break;
 
   case VCU_STATE_READY_TO_DRIVE:
-    initReadyToDrive();
+    enter_vcu_state_rtd();
     break;
 
   case VCU_STATE_DRIVING:
-    initDriving();
+    enter_vcu_state_driving();
     break;
 
   default:
@@ -70,28 +70,28 @@ VCU_STATE_T set_vcu_state(VCU_STATE_T newState) {
 }
 
 void advance_vcu_state(void) {
-  switch (current_vcu_state()) {
+  switch (get_vcu_state()) {
   case VCU_STATE_ROOT:
     update_vcu_state_root();
     break;
 
   case VCU_STATE_LV_ONLY:
-    loopLVOnly();
+    update_vcu_state_lv();
     break;
 
   case VCU_STATE_PRECHARGING:
-    loopPrecharge();
+    update_vcu_state_precharge();
     break;
 
   case VCU_STATE_PRECHARGE_FAULT:
     break;
 
   case VCU_STATE_READY_TO_DRIVE:
-    loopReadyToDrive();
+    update_vcu_state_rtd();
     break;
 
   case VCU_STATE_DRIVING:
-    loopDriving();
+    update_vcu_state_driving();
     break;
 
   default:
@@ -100,6 +100,6 @@ void advance_vcu_state(void) {
   }
 }
 
-VCU_STATE_T current_vcu_state(void) {
+VCU_STATE_T get_vcu_state(void) {
   return currentState;
 }

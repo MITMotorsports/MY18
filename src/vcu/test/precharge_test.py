@@ -49,7 +49,7 @@ class PrechargeTest(object):
         elif newState == PrechargeTest.CHARGING:
             self.initCharging()
         elif newState == PrechargeTest.READY_TO_DRIVE:
-            self.initReadyToDrive()
+            self.enter_vcu_state_rtd()
         elif newState == PrechargeTest.PRESSING_PEDALS:
             self.initPressingPedals()
         elif newState == PrechargeTest.STOPPED:
@@ -80,7 +80,7 @@ class PrechargeTest(object):
     def initCharging(self):
         pauseForUser()
 
-    def initReadyToDrive(self):
+    def enter_vcu_state_rtd(self):
         pauseForUser()
 
     def initPressingPedals(self):

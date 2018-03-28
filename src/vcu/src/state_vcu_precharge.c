@@ -1,17 +1,18 @@
 #include "state_vcu_precharge.h"
 
-int16_t targetVoltage;
-Time_T  prechargeTimeout;
-Time_T  voltagePrintTimeout;
+static Time_T prechargeTimeout;
+static Time_T voltagePrintTimeout;
 
 const Time_T PRINT_VOLTAGE_TIME = 500;
 const Time_T DEAD_RECKON_TIME   = 5000;
 
-int16_t calcTargetVoltage(int16_t pack) {
-  return (pack * 9) / 10; // 90% of pack voltage
+inline Voltage_T calculate_precharge_target(void) {
+  voltages.precharge_target = (voltages.pack * 9) / 10;
+
+  return voltages.precharge_target;
 }
 
-void initPrecharge() {
+void enter_vcu_state_precharge(void) {
   printf("[VCU FSM : PRECHARGE] ENTERED!\r\n");
   printf("[VCU FSM : PRECHARGE] DEAD RECKONING TIME IS %dms\r\n",
          DEAD_RECKON_TIME);
@@ -20,14 +21,16 @@ void initPrecharge() {
   prechargeTimeout    = HAL_GetTick();
   voltagePrintTimeout = HAL_GetTick();
 
-  closeLowSideContactor();
+  calculate_precharge_target();
 }
 
-void loopPrecharge() {
+void update_vcu_state_precharge(void) {
+  closeLowSideContactor();
+
   // Print the voltage
   if (HAL_GetTick() - voltagePrintTimeout > PRINT_VOLTAGE_TIME) {
     printf("[VCU FSM : PRECHARGE] DC Bus: %dV / Pack: %dV\r\n",
-           voltages.bus, voltages.pack);
+           voltages.bus, voltages.precharge_target, voltages.pack);
 
     voltagePrintTimeout = HAL_GetTick();
   }

@@ -41,7 +41,7 @@ void          init_error_state(void);
 void          advance_error_state(void);
 ERROR_STATE_T set_error_state(ERROR_STATE_T newState);
 
-ERROR_STATE_T current_error_state(void);
+ERROR_STATE_T get_error_state(void);
 
 // PRIVATE FUNCTIONS
 

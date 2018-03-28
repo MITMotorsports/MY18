@@ -6,11 +6,11 @@ void resetDrivingValues() {
   pedalbox.accel_2 = 0;
 }
 
-void initDriving() {
+void enter_vcu_state_driving() {
   resetDrivingValues();
 }
 
-void loopDriving() {
+void update_vcu_state_driving() {
   // Send torque commands
   Pedalbox_T localBTState = pedalbox;
 

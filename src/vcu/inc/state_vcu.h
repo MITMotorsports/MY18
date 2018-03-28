@@ -24,8 +24,9 @@ typedef enum {
 
 // DEFINITION OF CONTAINER TYPES
 typedef struct {
-  int16_t pack;
-  int32_t bus;
+  Voltage_T pack;
+  Voltage_T bus;
+  Voltage_T precharge_target;
 } Voltages_T;
 
 typedef struct {
@@ -62,7 +63,7 @@ void        init_vcu_state(void);
 VCU_STATE_T set_vcu_state(VCU_STATE_T newState);
 void        advance_vcu_state(void);
 
-VCU_STATE_T current_vcu_state(void);
+VCU_STATE_T get_vcu_state(void);
 
 
 #endif // ifndef __STATE_VCU_H
