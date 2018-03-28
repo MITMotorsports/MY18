@@ -48,12 +48,11 @@ boards:
         - BMSHeartbeat
         - CellVoltages
         - CellTemperatures
-    subscribe:
+  button_bank:
+    arch: arm
+    publish:
       can0:
-        - BMSRequest
-        - CurrentSensor_Current
-        - CurrentSensor_Voltage
-        - CurrentSensor_Power
+        - ButtonRequest
   mc:
     subscribe:
       can0:
@@ -471,6 +470,7 @@ buses:
               FAN_DISABLE: 0xA
       ButtonRequest:
         can_id: 0x0D8
+        period: 0.05s
         is_big_endian: true
         segments:
           RTD:
