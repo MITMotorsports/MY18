@@ -6,7 +6,6 @@ void handle_fatal_fault(void) {
   // Print the status of all monitored faults
 
   // Just in case we lose a CAN msg, do this multiple times
-  print_gate_faults();
   sendMotorOffCmdMsg();
   sendMotorOffCmdMsg();
   sendMotorOffCmdMsg();
@@ -17,7 +16,8 @@ void handle_fatal_fault(void) {
   openLowSideContactor();
   openHighSideContactor();
 
+  printf("[FAULT : HANDLER : FATAL] NEED POWER CYCLE.\r\n");
   while (1) {
-    Error_Handler("[FAULT : HANDLER : FATAL] NEED POWER CYCLE.\r\n");
+    print_gate_faults();
   }
 }

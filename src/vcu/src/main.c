@@ -37,8 +37,8 @@ int main(void) {
 
   while (1) {
     advance_states();
-
     static uint32_t lastt = 0;
+    // print_gate_faults();
 
     if (HAL_GetTick() - lastt > 10000) {
       HAL_GPIO_TogglePin(GPIO(LED));
