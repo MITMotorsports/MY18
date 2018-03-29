@@ -24,13 +24,14 @@ void enter_vcu_state_precharge(void) {
 
   calculate_precharge_target();
 
-  printf("NOT REAL FATAL FAULT\r\n");
-  handle_fatal_fault();
+  // printf("[BEFORE LOW SIDE] NOT REAL FATAL FAULT\r\n");
+  // handle_fatal_fault();
 }
 
 void update_vcu_state_precharge(void) {
   closeLowSideContactor();
-
+  printf("[AFTER LOW SIDE] NOT REAL FATAL FAULT\r\n");
+  handle_fatal_fault();
   // Print the voltage
   if (HAL_GetTick() - voltagePrintTimeout > PRINT_VOLTAGE_TIME) {
     printf("[VCU FSM : PRECHARGE] DC Bus: %dV / Pack: %dV\r\n",

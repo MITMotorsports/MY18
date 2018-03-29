@@ -1,4 +1,5 @@
 #include "main.h"
+#include "fault_gates.h"
 
 int main(void) {
   HAL_Init();
@@ -32,15 +33,15 @@ int main(void) {
   DGPIO_INIT_OUT(L_CONTACTOR, GPIO_PIN_RESET);
   DGPIO_INIT_OUT(H_CONTACTOR, GPIO_PIN_RESET);
 
-  printf("\r\nMEGALV PERIPHERALS ONLINE\r\n");
+  printf("\r\n\r\nMEGALV PERIPHERALS ONLINE\r\n");
   init_states();
 
   while (1) {
     advance_states();
     static uint32_t lastt = 0;
-    // print_gate_faults();
 
-    if (HAL_GetTick() - lastt > 1000) {
+    print_gate_faults(false);
+    if (HAL_GetTick() - lastt > 5000) {
       HAL_GPIO_TogglePin(GPIO(LED));
 
       lastt = HAL_GetTick();

@@ -29,7 +29,7 @@ void update_vcu_state_lv() {
     printf("[VCU FSM : LV] Setting DRIVER_RST pin LOW for %d ms...\r\n",
            DRIVER_RST_LATCH_TIME);
 
-    // HAL_GPIO_WritePin(GPIO(DRIVER_RST), GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIO(DRIVER_RST), GPIO_PIN_RESET);
 
     latch_driver_rst = true;
     driver_rst_timer = HAL_GetTick();

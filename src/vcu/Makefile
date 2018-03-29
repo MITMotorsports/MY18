@@ -70,7 +70,7 @@ LIBS =
 
 # additional directories with source files (absolute or relative paths to
 # folders with source files, current folder is always included)
-SRCS_DIRS = src src/stm src/system $(CUBE_DIR)/hal_src $(CAN_LIB_DIR) 
+SRCS_DIRS = src src/stm src/system $(CUBE_DIR)/hal_src $(CAN_LIB_DIR)
 
 # extension of C files
 C_EXT = c
@@ -89,11 +89,11 @@ AS_EXT = s
 
 # wildcard for ASM source files (all files with AS_EXT extension found in
 # current folder and SRCS_DIRS folders will be compiled and linked)
-AS_SRCS = $(wildcard $(patsubst %, %/*.$(AS_EXT), . $(SRCS_DIRS))) 
+AS_SRCS = $(wildcard $(patsubst %, %/*.$(AS_EXT), . $(SRCS_DIRS)))
 
 
 # optimization flags ("-O0" - no optimization, "-O1" - optimize, "-O2" -
-# optimize even more, "-Os" - optimize for size or "-O3" - optimize yet more) 
+# optimize even more, "-Os" - optimize for size or "-O3" - optimize yet more)
 OPTIMIZATION = -O0
 
 # set to 1 to optimize size by removing unused code and data during link phase
@@ -149,7 +149,7 @@ CORE_FLAGS = -mcpu=$(CORE) -mthumb
 
 # flags for C compiler
 C_FLAGS = -std=$(C_STD) -g -ggdb3 -fverbose-asm -Wa,-ahlms=$(OUT_DIR_F)$(notdir $(<:.$(C_EXT)=.lst)) -D$(CAN_DRIVER)
-#			c standard	debug(?) 	extra comments	
+#			c standard	debug(?) 	extra comments
 
 # flags for assembler
 AS_FLAGS = -g -ggdb3 -Wa,-amhls=$(OUT_DIR_F)$(notdir $(<:.$(AS_EXT)=.lst))
@@ -318,6 +318,10 @@ copy: all
 program: all
 	@echo "Programming" $(ELF) "with OCD"
 	@$(OCD) -s $(OCD_DIR) $(OCD_FLAGS) -c "program $(ELF) verify reset exit"
+
+reset:
+	@echo "Resetting with OCD"
+	@$(OCD) -s $(OCD_DIR) $(OCD_FLAGS) -c "soft_reset_halt"
 
 #-----------------------------------------------------------------------------#
 # Open up serial port

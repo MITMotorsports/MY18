@@ -36,8 +36,25 @@ bool any_fatal_gate_faults(void) {
          gates.bpd_gate;
 }
 
-void print_gate_faults(void) {
+void print_gate_faults(bool force) {
   update_gate_status();
+
+  static GateFaults_T last_gate_status = {};
+
+  if (!force) {
+    bool change = gates.sdn != last_gate_status.sdn ||
+                  gates.sdn_gate != last_gate_status.sdn_gate ||
+                  gates.bms_gate != last_gate_status.bms_gate ||
+                  gates.imd_gate != last_gate_status.imd_gate ||
+                  gates.bpd_gate != last_gate_status.bpd_gate;
+
+    if (change) {
+      last_gate_status = gates;
+    }
+    else {
+      return;
+    }
+  }
 
   if (any_all_gate_fault()) {
     printf("[GATE FAULT] THE FOLLOWING FAULT GATES WERE TRIPPED:\r\n");

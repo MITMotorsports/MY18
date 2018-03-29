@@ -29,7 +29,7 @@ bool any_all_gate_fault(void);
 bool any_fatal_gate_fault(void);
 bool any_recoverable_gate_fault(void);
 
-void print_gate_faults(void);
+void print_gate_faults(bool force);
 
 
 #endif // ifndef __FAULT_GATES_H
