@@ -94,5 +94,28 @@ int main(void) {
   while(1) {
     fill_input();
     process_output();
+
+    static uint32_t last_print = 0;
+    if (false && msTicks - last_print > 500) {
+      Serial_Print("brake_1: ");
+      Serial_PrintlnNumber(adc.brake_1, 10);
+
+      Serial_Print("brake_2: ");
+      Serial_PrintlnNumber(adc.brake_2, 10);
+
+      Serial_Print("accel_1: ");
+      Serial_PrintlnNumber(adc.accel_1, 10);
+
+      Serial_Print("accel_2: ");
+      Serial_PrintlnNumber(adc.accel_2, 10);
+
+      Serial_Print("accel_1_raw: ");
+      Serial_PrintlnNumber(adc.accel_1_raw, 10);
+
+      Serial_Print("accel_2_raw: ");
+      Serial_PrintlnNumber(adc.accel_2_raw, 10);
+
+      last_print = msTicks;
+    }
   }
 }

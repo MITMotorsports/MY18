@@ -1,12 +1,15 @@
 #include "input.h"
 #include "adc.h"
 
+#define ACCEL_SCALE_MAX 1000
+
 #define ADC_UPDATE_PERIOD_MS 10
 
-#define ACCEL_1_LOWER_BOUND 255
-#define ACCEL_1_UPPER_BOUND 799
-#define ACCEL_2_LOWER_BOUND 257
-#define ACCEL_2_UPPER_BOUND 677
+#define ACCEL_1_LOWER_BOUND 138
+#define ACCEL_1_UPPER_BOUND 488
+
+#define ACCEL_2_LOWER_BOUND 256
+#define ACCEL_2_UPPER_BOUND 881
 
 // Some wheel speed stuff (copied from MY17)
 #define WHEEL_SPEED_TIMEOUT_MS 100
@@ -138,13 +141,13 @@ uint16_t linear_transfer_fn(uint32_t reading, uint16_t desired_width, uint16_t l
 }
 
 uint16_t transform1(uint32_t accel_1_raw) {
-  // Scale to between 0 and 1000
-  return linear_transfer_fn(accel_1_raw, 1000, ACCEL_1_LOWER_BOUND, ACCEL_1_UPPER_BOUND);
+  // Scale to between 0 and ACCEL_SCALE_MAX
+  return linear_transfer_fn(accel_1_raw, ACCEL_SCALE_MAX, ACCEL_1_LOWER_BOUND, ACCEL_1_UPPER_BOUND);
 }
 
 uint16_t transform2(uint32_t accel_2_raw) {
-  // Scale to between 0 and 1000
-  return linear_transfer_fn(accel_2_raw, 1000, ACCEL_2_LOWER_BOUND, ACCEL_2_UPPER_BOUND);
+  // Scale to between 0 and ACCEL_SCALE_MAX
+  return linear_transfer_fn(accel_2_raw, ACCEL_SCALE_MAX, ACCEL_2_LOWER_BOUND, ACCEL_2_UPPER_BOUND);
 }
 
 void Input_handle_interrupt(Speed_Input_T *speed, uint32_t msTicks, uint32_t curr_tick, Wheel_T wheel) {
