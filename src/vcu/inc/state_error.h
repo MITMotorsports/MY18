@@ -34,8 +34,6 @@ typedef struct {
 extern RECOVERABLE_ERROR_T recoverable_errors;
 extern FATAL_ERROR_T fatal_errors;
 
-extern bool not_yet_master_rst;
-
 
 // INTERACTION FUNCTIONS
 void          init_error_state(void);

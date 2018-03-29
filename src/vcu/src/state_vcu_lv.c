@@ -17,7 +17,7 @@ void update_vcu_state_lv() {
   if (latch_driver_rst) {
     // printf("[VCU FSM : LV] Latchin'.\r\n");
     if (HAL_GetTick() - driver_rst_timer > DRIVER_RST_LATCH_TIME) {
-      HAL_GPIO_WritePin(GPIO(DRIVER_RST), GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIO(DRIVER_RST), GPIO_PIN_SET);
       printf("[VCU FSM : LV] Setting DRIVER_RST pin HIGH again.\r\n");
 
       set_vcu_state(VCU_STATE_PRECHARGING);
@@ -29,7 +29,7 @@ void update_vcu_state_lv() {
     printf("[VCU FSM : LV] Setting DRIVER_RST pin LOW for %d ms...\r\n",
            DRIVER_RST_LATCH_TIME);
 
-    HAL_GPIO_WritePin(GPIO(DRIVER_RST), GPIO_PIN_RESET);
+    // HAL_GPIO_WritePin(GPIO(DRIVER_RST), GPIO_PIN_RESET);
 
     latch_driver_rst = true;
     driver_rst_timer = HAL_GetTick();

@@ -1,7 +1,6 @@
 #include "state_error.h"
 
 static ERROR_STATE_T currentState = NO_ERROR_STATE;
-bool not_yet_master_rst           = true;
 
 // Implicitly initialize error structs to false (no errors).
 RECOVERABLE_ERROR_T recoverable_errors = {};
@@ -14,7 +13,7 @@ void init_error_state(void) {
 
 ERROR_STATE_T set_error_state(ERROR_STATE_T newState) {
   if (currentState == FATAL_ERROR_STATE) {
-    printf("[ERROR FSM] Attempted to exit from FATAL_ERROR_STATE! Ignoring...");
+    printf("[ERROR FSM] Attempted to exit from FATAL_ERROR_STATE! Ignoring...\r\n");
     return currentState;
   }
 

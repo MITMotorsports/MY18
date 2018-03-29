@@ -1,4 +1,5 @@
 #include "state_vcu_precharge.h"
+#include "fault.h"
 
 static Time_T prechargeTimeout;
 static Time_T voltagePrintTimeout;
@@ -22,6 +23,9 @@ void enter_vcu_state_precharge(void) {
   voltagePrintTimeout = HAL_GetTick();
 
   calculate_precharge_target();
+
+  printf("NOT REAL FATAL FAULT\r\n");
+  handle_fatal_fault();
 }
 
 void update_vcu_state_precharge(void) {
@@ -37,6 +41,9 @@ void update_vcu_state_precharge(void) {
 
   // Dead reckoning with time
   if (HAL_GetTick() - prechargeTimeout > DEAD_RECKON_TIME) {
+    printf("GOT TO THE BREAKPOINT AT PRECHARGE END");
+
+    while (1) {}
     closeHighSideContactor(); // TODO: What do you, dear reader, think about
                               // contactor atomicity and coupling in
                               // contactors.c?
