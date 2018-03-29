@@ -1,7 +1,7 @@
 #ifndef _CARSTATS_H_
 #define _CARSTATS_H_
 
-#include "CANLib.h"
+#include "CANlib.h"
 
 #include <stdbool.h>
 
@@ -10,7 +10,7 @@ typedef struct {
     int lowest_cell_voltage;
     int max_cell_temp;
     int power;
-    
+
     bool brake_pressed;
     bool accel_pressed;
 

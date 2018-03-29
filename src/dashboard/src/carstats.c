@@ -1,5 +1,4 @@
 #include "carstats.h"
-#include "CANLib.h"
 
 #include <string.h>
 
@@ -66,12 +65,12 @@ void can_handle_vcu_to_dash(carstats_t *cs) {
 
 void can_update_carstats(carstats_t *cs) {
 
-    can0_T msgType; 
+    can0_T msgType;
     msgType = identify_can0(&frame);
 
     switch (msgType) {
         case can0_FrontCanNodeWheelSpeed:
-            can_handle_front_wheel_speed(cs);            
+            can_handle_front_wheel_speed(cs);
             break;
         case can0_RearCanNodeWheelSpeed:
             can_handle_rear_wheel_speed(cs);
