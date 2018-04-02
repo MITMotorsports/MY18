@@ -14,6 +14,9 @@ inline Voltage_T calculate_precharge_target(void) {
 }
 
 void enter_vcu_state_precharge(void) {
+  printf("[TEST] Triggering BEFORE LOW side close action.\r\n");
+  handle_test_fault();
+
   printf("[VCU FSM : PRECHARGE] ENTERED!\r\n");
   printf("[VCU FSM : PRECHARGE] DEAD RECKONING TIME IS %dms\r\n",
          DEAD_RECKON_TIME);
@@ -23,15 +26,14 @@ void enter_vcu_state_precharge(void) {
   voltagePrintTimeout = HAL_GetTick();
 
   calculate_precharge_target();
-
-  // printf("[BEFORE LOW SIDE] NOT REAL FATAL FAULT\r\n");
-  // handle_fatal_fault();
 }
 
 void update_vcu_state_precharge(void) {
   closeLowSideContactor();
-  printf("[AFTER LOW SIDE] NOT REAL FATAL FAULT\r\n");
-  handle_fatal_fault();
+
+  printf("[TEST] Triggering AFTER LOW side close action.\r\n");
+  handle_test_fault();
+
   // Print the voltage
   if (HAL_GetTick() - voltagePrintTimeout > PRINT_VOLTAGE_TIME) {
     printf("[VCU FSM : PRECHARGE] DC Bus: %dV / Pack: %dV\r\n",

@@ -7,4 +7,6 @@
 
 void handle_fatal_fault(void);
 
+void handle_test_fault(void);
+
 #endif

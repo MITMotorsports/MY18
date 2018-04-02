@@ -22,3 +22,15 @@ void handle_fatal_fault(void) {
     // HAL_Delay(1000);
   }
 }
+
+void handle_test_fault(void) {
+  const Time_T reset_timeout = 1000;
+  Time_T in_time = HAL_GetTick();
+
+  printf("[TEST] Reached end of test. Resetting in %dms...\r\n", reset_timeout);
+  while (HAL_GetTick() - in_time < reset_timeout) {
+    print_gate_faults(false);
+  }
+
+  NVIC_SystemReset();
+}
