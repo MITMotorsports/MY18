@@ -411,7 +411,7 @@ buses:
       CurrentSensor_Current:
         can_id: 0x521
         period: 0.05s
-        is_big_endian: true
+        is_big_endian: false
         segments:
           pack_current:
             position: 16
@@ -422,7 +422,7 @@ buses:
       CurrentSensor_Voltage:
         can_id: 0x522
         period: 0.05s
-        is_big_endian: true
+        is_big_endian: false
         segments:
           dc_bus_voltage:
             position: 16
@@ -433,7 +433,7 @@ buses:
       CurrentSensor_Power:
         can_id: 0x526
         period: 0.05s
-        is_big_endian: true
+        is_big_endian: false
         segments:
           power:
             position: 16
@@ -442,9 +442,9 @@ buses:
             signed: false
             unit: W
       CurrentSensor_Energy:
-        can_id: 0x527
+        can_id: 0x528
         period: 0.05s
-        is_big_endian: true
+        is_big_endian: false
         segments:
           pack_energy:
             position: 16
