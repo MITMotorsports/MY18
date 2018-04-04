@@ -3,9 +3,9 @@
 
 #include "stdio.h"
 #include <stdbool.h>
+#include "stm32f2xx_hal.h"
 
 #include "gpio.h"
-
 
 
 // CONTAINER DECLARATION

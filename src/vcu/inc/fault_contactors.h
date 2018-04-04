@@ -4,6 +4,9 @@
 #include "stdio.h"
 #include <stdbool.h>
 
+#include "gpio.h"
+#include "extern.h"
+
 typedef struct {
   bool L_contactor_closed;
   bool H_contactor_closed;

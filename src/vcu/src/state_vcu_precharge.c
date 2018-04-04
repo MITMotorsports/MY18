@@ -14,8 +14,8 @@ inline Voltage_T calculate_precharge_target(void) {
 }
 
 void enter_vcu_state_precharge(void) {
-  printf("[TEST] Triggering BEFORE LOW side close action.\r\n");
-  handle_test_fault();
+  // printf("[TEST] Triggering BEFORE LOW side close action.\r\n");
+  // handle_test_fault();
 
   printf("[VCU FSM : PRECHARGE] ENTERED!\r\n");
   printf("[VCU FSM : PRECHARGE] DEAD RECKONING TIME IS %dms\r\n",
@@ -31,8 +31,8 @@ void enter_vcu_state_precharge(void) {
 void update_vcu_state_precharge(void) {
   closeLowSideContactor();
 
-  printf("[TEST] Triggering AFTER LOW side close action.\r\n");
-  handle_test_fault();
+  // printf("[TEST] Triggering AFTER LOW side close action.\r\n");
+  // handle_test_fault();
 
   // Print the voltage
   if (HAL_GetTick() - voltagePrintTimeout > PRINT_VOLTAGE_TIME) {
@@ -44,9 +44,8 @@ void update_vcu_state_precharge(void) {
 
   // Dead reckoning with time
   if (HAL_GetTick() - prechargeTimeout > DEAD_RECKON_TIME) {
-    printf("GOT TO THE BREAKPOINT AT PRECHARGE END");
-
-    while (1) {}
+    printf("[VCU FSM : PRECHARGE] Waiting for second Driver Reset press to close HIGH side.\r\n");
+    while (!buttons.DriverReset) {}
     closeHighSideContactor(); // TODO: What do you, dear reader, think about
                               // contactor atomicity and coupling in
                               // contactors.c?
