@@ -7,6 +7,7 @@ volatile Contactors_T contactors = {};
 
 bool any_fatal_contactor_faults(void) {
   return any_fatal_contactor_weld_faults();
+  // return false;
 }
 
 bool any_recoverable_contactor_faults(void) {
@@ -17,11 +18,9 @@ const Time_T L_side_timeout = 200;
 
 bool any_fatal_contactor_weld_faults(void) {
   static Time_T last_L_mismatch_time = 0;
-  static bool last_L_mismatch = false;
-  static Time_T last_H_mismatch = 0;
+  static bool   last_L_mismatch      = false;
 
   bool L_mismatch = (READ_PIN(L_CONTACTOR) != contactors.L_contactor_closed);
-  bool H_mismatch = (READ_PIN(H_CONTACTOR) != contactors.H_contactor_closed);
 
   if (L_mismatch) {
     if (last_L_mismatch) {
@@ -30,11 +29,16 @@ bool any_fatal_contactor_weld_faults(void) {
         return true;
       }
     }
-
-    last_L_mismatch_time = HAL_GetTick();
+    else {
+      last_L_mismatch_time = HAL_GetTick();
+    }
   }
 
   last_L_mismatch = L_mismatch;
 
   return false;
+}
+
+void print_contactor_state(bool force) {
+  printf("L SIDE MONITOR %d\r\n", contactors.L_contactor_closed);
 }

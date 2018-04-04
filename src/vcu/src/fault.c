@@ -24,7 +24,7 @@ void handle_fatal_fault(void) {
 }
 
 void handle_test_fault(void) {
-  const Time_T reset_timeout = 1000;
+  const Time_T reset_timeout = 5000;
   Time_T in_time = HAL_GetTick();
 
   printf("[TEST] Reached end of test. Resetting in %dms...\r\n", reset_timeout);

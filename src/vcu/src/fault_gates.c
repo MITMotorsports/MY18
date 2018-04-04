@@ -31,9 +31,30 @@ bool any_recoverable_gate_fault(void) {
 bool any_fatal_gate_faults(void) {
   update_gate_status();
 
-  return gates.bms_gate ||
-         gates.imd_gate ||
-         gates.bpd_gate;
+  static Time_T last_time = 0;
+  static bool   last_val  = 0;
+
+  bool retval = gates.bms_gate ||
+                gates.imd_gate ||
+                gates.bpd_gate;
+  // I like my indents to work well.
+
+  if (retval) {
+    if (last_val) {
+      if (HAL_GetTick() - last_time > 1) {
+        return true;
+      }
+    }
+    // TODO: This should be in an else statement, but this code works so let's
+    //       keep it as is for now...
+
+    // TODO: Get microsecond precision -- based on HAL, or counter with
+    //       threshold dependent on profiled execution period.
+    last_time = HAL_GetTick();
+  }
+
+  last_val = retval;
+  return false;
 }
 
 void print_gate_faults(bool force) {

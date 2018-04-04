@@ -55,7 +55,7 @@ void advance_error_state(void) {
 void enter_no_error_state(void) {
   printf("[ERROR FSM : NO_ERROR_STATE] ENTERED!\r\n");
 }
-
+// TODO: Move the fatal and recoverable fault questions to fault.c/h
 #define VS_EQ(name) get_vcu_state() == VCU_STATE_ ## name
 #define VS_NEQ(name) !VS_EQ(name)
 
@@ -68,13 +68,13 @@ void update_no_error_state(void) {
     set_error_state(FATAL_ERROR_STATE);
   }
 
-  if (VS_NEQ(ROOT) && any_recoverable_gate_fault() ||
-      any_recoverable_heartbeat_faults() ||
-      any_recoverable_contactor_faults() ||
-      any_recoverable_conflict_faults())
-  {
-    set_error_state(RECOVERABLE_ERROR_STATE);
-  }
+  // if (VS_NEQ(ROOT) && any_recoverable_gate_fault() ||
+  //     any_recoverable_heartbeat_faults() ||
+  //     any_recoverable_contactor_faults() ||
+  //     any_recoverable_conflict_faults())
+  // {
+  //   set_error_state(RECOVERABLE_ERROR_STATE);
+  // }
 }
 
 void enter_recoverable_error_state(void) {

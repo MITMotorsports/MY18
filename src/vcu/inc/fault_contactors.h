@@ -22,4 +22,6 @@ bool any_recoverable_contactor_faults(void);
 
 bool any_fatal_contactor_weld_faults(void);
 
+void print_contactor_state(bool force);
+
 #endif // ifndef __FAULT_CONTACTORS_H
