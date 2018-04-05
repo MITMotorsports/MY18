@@ -86,7 +86,7 @@ typedef void (*const COMMAND_EXECUTE_HANDLER)(const char *const *);
 
 typedef struct {
   bool           valid_mode_request;
-  BMS_SSM_MODE_T mode_request;
+  // BMS_SSM_MODE_T mode_request;
   uint32_t       balance_mV;
   bool           measure_on;
   bool           measure_temp;

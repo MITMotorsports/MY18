@@ -26,8 +26,8 @@ typedef struct BMS_STATE {
 
 
 typedef struct BMS_OUTPUT {
-  bool  assert_fault;
-  bool  ltc_deinit;
+  bool attempt_ltc_init;
+  bool *balance_req;
 } BMS_OUTPUT_T;
 
 

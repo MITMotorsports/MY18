@@ -38,7 +38,6 @@ void can_receive_bms_request(BMS_INPUT_T *bms_input) {
   can0_BMSRequest_T msg;
 
   unpack_can0_BMSRequest(&can_input, &msg);
-  bms_input->vcu_mode_request = msg.state;
 }
 
 void can_receive_current(BMS_INPUT_T *bms_input) {

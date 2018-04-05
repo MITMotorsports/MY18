@@ -30,13 +30,17 @@ typedef enum {
   ERROR_NUM_ERRORS
 } ERROR_T;
 
-typedef ERROR_HANDLER_STATUS_T (*ERROR_HANDLER_FUNC)(ERROR_STATUS_T *,
-                                                     const uint32_t);
-
-typedef struct {
-  ERROR_HANDLER_FUNC handler;
-  const uint32_t     timeout;
-} ERROR_HANDLER;
+static const char *const ERROR_NAMES[ERROR_NUM_ERRORS] = {
+  "ERROR_LTC6804_PEC",
+  "ERROR_LTC6804_CVST",
+  "ERROR_LTC6804_OWT",
+  "ERROR_L_CONTACTOR_WELDED",
+  "ERROR_H_CONTACTOR_WELDED",
+  "ERROR_CELL_UNDER_VOLTAGE",
+  "ERROR_CELL_OVER_VOLTAGE",
+  "ERROR_CELL_UNDER_TEMP",
+  "ERROR_CELL_OVER_TEMP",
+};
 
 typedef struct {
   bool     handling;
@@ -45,7 +49,19 @@ typedef struct {
   uint32_t time_stamp;
 } ERROR_STATUS_T;
 
-void Error_Assert(ERROR_T error);
+typedef enum error_handler_status {
+    FINE,
+    FAULT
+} ERROR_HANDLER_STATUS_T;
 
+typedef ERROR_HANDLER_STATUS_T (*ERROR_HANDLER_FUNC)(ERROR_STATUS_T *,
+                                                     const uint32_t);
+typedef struct {
+  ERROR_HANDLER_FUNC handler;
+  const uint32_t     timeout;
+} ERROR_HANDLER;
+
+void Error_Assert(ERROR_T error);
+bool Error_Should_Fault(void);
 
 #endif // ifndef _ERROR_HANDLER_H

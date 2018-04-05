@@ -11,7 +11,6 @@ int main(void) {
   SOC_Init(&pack_status);
 
   Error_Init();
-  SSM_Init(&bms_input, &bms_state, &bms_output);
 
   Board_ADC_Init();
 
@@ -26,6 +25,8 @@ int main(void) {
   // Start with fault line high
   Board_Pin_Set(PIN_BMS_FAULT, true);
 
+  Board_LTC6804_DeInit();
+
   while (1) {
     // Setting fault pin high
     Board_Pin_Set(PIN_BMS_FAULT, GPIO_HIGH);
@@ -34,15 +35,10 @@ int main(void) {
     Process_Input(&bms_input);
     Process_Output(&bms_input, &bms_output, &bms_state);
 
-    // Error Checks
-    if (FatalError()) {
-      Board_Println("Requesting Halt...");
-      break; // Handler requested a Halt
-    }
+
   }
 
   Board_Pin_Set(PIN_BMS_FAULT, false);
-  bms_output.assert_fault = false;
 
   Board_Println("Halting...");
 
@@ -95,11 +91,8 @@ void Process_Output(BMS_INPUT_T  *bms_input,
                     BMS_STATE_T  *bms_state) {
   Board_CAN_Transmit(bms_input, bms_output);
 
-  if (bms_output->ltc_deinit) {
-    Board_LTC6804_DeInit();
-  }
-  else if (bms_output->check_packconfig_with_ltc) {
-    bms_input->ltc_packconfig_check_done = Board_LTC6804_Init(&pack_config,
+  if (bms_output->attempt_ltc_init) {
+    bms_output->attempt_ltc_init = !Board_LTC6804_Init(&pack_config,
                                                               cell_voltages);
   }
   else {
@@ -119,7 +112,6 @@ void Process_Keyboard(void) {
 
 void Init_BMS_Structs(void) {
   bms_state.pack_config = &pack_config;
-  bms_state.curr_mode   = BMS_SSM_MODE_INIT;
 
   // Default pack configuration, from pack.h
   pack_config.module_cell_count          = module_cell_count;
@@ -144,9 +136,6 @@ void Init_BMS_Structs(void) {
   }
 
   bms_input.pack_status      = &pack_status;
-  bms_input.mode_request     = BMS_SSM_MODE_STANDBY;
-  bms_input.vcu_mode_request = BMS_SSM_MODE_STANDBY;
-  bms_input.csb_mode_request = BMS_SSM_MODE_STANDBY;
 
   bms_input.H_contactor_welded = false;
   bms_input.L_contactor_welded = false;
@@ -157,13 +146,11 @@ void Init_BMS_Structs(void) {
   bms_input.ltc_packconfig_check_done = false;
   bms_input.eeprom_read_error         = false;
 
-  bms_output.assert_fault = false;
+  bms_output.attempt_ltc_init = true;
   bms_output.balance_req  = balance_reqs;
   memset(balance_reqs,
          0,
          sizeof(balance_reqs[0]) * MAX_NUM_MODULES * MAX_CELLS_PER_MODULE);
-  bms_output.ltc_deinit                = false;
-  bms_output.check_packconfig_with_ltc = false;
 
   pack_status.cell_voltages_mV     = cell_voltages;
   pack_status.cell_temperatures_dC = cell_temperatures;
