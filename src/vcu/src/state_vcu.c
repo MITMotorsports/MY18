@@ -35,7 +35,8 @@ void init_vcu_state(void) {
   buttons.ScrollSelect = 0;
 
   // CAR Mode
-  set_vcu_state(VCU_STATE_ROOT);
+  // set_vcu_state(VCU_STATE_ROOT);
+  set_vcu_state(VCU_STATE_RTD);
 }
 
 VCU_STATE_T set_vcu_state(VCU_STATE_T newState) {
@@ -44,7 +45,7 @@ VCU_STATE_T set_vcu_state(VCU_STATE_T newState) {
     enter_vcu_state_root();
     break;
 
-  case VCU_STATE_LV_ONLY:
+  case VCU_STATE_LV:
     enter_vcu_state_lv();
     break;
 
@@ -52,7 +53,7 @@ VCU_STATE_T set_vcu_state(VCU_STATE_T newState) {
     enter_vcu_state_precharge();
     break;
 
-  case VCU_STATE_READY_TO_DRIVE:
+  case VCU_STATE_RTD:
     enter_vcu_state_rtd();
     break;
 
@@ -75,7 +76,7 @@ void advance_vcu_state(void) {
     update_vcu_state_root();
     break;
 
-  case VCU_STATE_LV_ONLY:
+  case VCU_STATE_LV:
     update_vcu_state_lv();
     break;
 
@@ -83,10 +84,7 @@ void advance_vcu_state(void) {
     update_vcu_state_precharge();
     break;
 
-  case VCU_STATE_PRECHARGE_FAULT:
-    break;
-
-  case VCU_STATE_READY_TO_DRIVE:
+  case VCU_STATE_RTD:
     update_vcu_state_rtd();
     break;
 

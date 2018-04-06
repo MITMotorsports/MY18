@@ -10,7 +10,6 @@ bool check_pack_voltage(void) {
   // Make sure that we are aware of the pack voltage by now.
   if (voltages.pack == 0) {
     printf("[FAULT : PRECHARGE] ERROR! PACK VOLTAGE IS WRONG\r\n");
-    set_vcu_state(VCU_STATE_PRECHARGE_FAULT);
   }
   // else {
   //   printf("[FAULT : PRECHARGE] PACK VOLTAGE IS %d\r\n", voltages.pack);

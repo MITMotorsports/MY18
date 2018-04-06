@@ -50,7 +50,7 @@ void update_vcu_state_precharge(void) {
                               // contactor atomicity and coupling in
                               // contactors.c?
 
-    set_vcu_state(VCU_STATE_READY_TO_DRIVE);
+    set_vcu_state(VCU_STATE_RTD);
     return;
   }
 
@@ -65,7 +65,7 @@ void update_vcu_state_precharge(void) {
   // targetVoltage) {
 
   //    closeHighSideContactor();
-  //    set_vcu_state(VCU_STATE_READY_TO_DRIVE);
+  //    set_vcu_state(VCU_STATE_RTD);
 
   // }
 }
