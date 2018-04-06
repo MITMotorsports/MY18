@@ -1,34 +1,29 @@
 #include "state_vcu_driving.h"
 
+const Time_T print_period = 1000;
+
+static uint16_t torque_command = 0;
+
 void resetDrivingValues() {
   torque_command   = 0;
-  pedalbox.accel_1 = 0;
-  pedalbox.accel_2 = 0;
 }
 
 void enter_vcu_state_driving() {
+  printf("[VCU FSM : DRIVING] ENTERED!\r\n");
   resetDrivingValues();
 }
 
 void update_vcu_state_driving() {
   // Send torque commands
-  Pedalbox_T localBTState = pedalbox;
+  torque_command = calcTorque(pedalbox.accel_1, pedalbox.accel_2);
 
-  torque_command = calcTorque(localBTState.accel_1, localBTState.accel_2);
+  // sendTorqueCmdMsg(torque_command);
 
-  if (conflicts.actual_implausibility ||
-      conflicts.has_brake_throttle_conflict) {
-    torque_command = 0;
+  // TODO: Debug CAN BUSY? (2) errors that stop us from reading vals.
+  static Time_T last_print = 0;
+  if (HAL_GetTick() - last_print > print_period) {
+    printf("A1:%d A2:%d T:%d\r\n", pedalbox.accel_1, pedalbox.accel_2, torque_command);
+
+    last_print = HAL_GetTick();
   }
-
-  // printf("\r\nbrkcflct: %d\r\n",
-  // conflicts.has_brake_throttle_conflict);
-  // printf("\r\nhrt: %d\r\n", heartbeats.frontCanNode);
-  // printf("\r\naccel: %d\r\n", localBTState.accel_1);
-  // printf("\r\ntrq: %d\r\n", torque_command);
-  // printf("\r\nticks: %d\r\n", HAL_GetTick());
-
-  // HAL_Delay(50);
-
-  sendTorqueCmdMsg(torque_command);
 }

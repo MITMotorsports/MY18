@@ -8,6 +8,12 @@
 #include "state.h"
 #include "fault.h"
 #include "gpio.h"
+#include "extern.h"
+
+#define LIMIT(name)                                         \
+  static Time_T last_sent = 0;                              \
+  if (HAL_GetTick() - last_sent < name ## _period) return;  \
+  last_sent = HAL_GetTick();
 
 // TODO: Add error checking and have these return aggregate errors.
 void handleCAN(CAN_HandleTypeDef *CanHandle);

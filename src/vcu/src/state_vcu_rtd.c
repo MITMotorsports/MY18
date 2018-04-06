@@ -13,14 +13,14 @@ void enter_vcu_state_rtd() {
 }
 
 void update_vcu_state_rtd() {
-  bool brk_pressed = (pedalbox.brake_1 > CONFLICT_BRAKE_RAW) ||
-                     (pedalbox.brake_2 > CONFLICT_BRAKE_RAW);
+  bool brk_pressed = (pedalbox.accel_1 > 500);
 
   if (buttons.RTD) {
     if (rtd_started) {
       if (HAL_GetTick() - rtd_last > RTD_HOLD) {
-        if (brk_pressed) {
+        if (true || brk_pressed) {
           set_vcu_state(VCU_STATE_DRIVING);
+          return;
         }
       }
     }

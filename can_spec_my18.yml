@@ -490,7 +490,7 @@ buses:
             unit: pressed
       MCCommand:
         can_id: 0x0C0 # From manual
-        period: 50ms  # MC needs a message at 2 Hz or higher
+        period: 0.05s  # MC needs a message at 2 Hz or higher
         is_big_endian: true
         segments:
           torque:

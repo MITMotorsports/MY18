@@ -1,5 +1,6 @@
-
 #include "torque_calc.h"
+
+// TODO: Make sure you are right...
 
 uint16_t calcTorque(uint16_t accel1, uint16_t accel2) {
   // Get the min value

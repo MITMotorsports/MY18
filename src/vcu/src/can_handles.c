@@ -153,6 +153,8 @@ void handleButtonRequest(Frame *msg) {
 // }
 
 void sendTorqueCmdMsg(int16_t torque) {
+  LIMIT(can0_MCCommand);
+
   can0_MCCommand_T msg;
 
   msg.torque                        = torque;
