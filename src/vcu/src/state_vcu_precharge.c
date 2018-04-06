@@ -1,11 +1,14 @@
 #include "state_vcu_precharge.h"
 #include "fault.h"
 
+// Choose which bus voltage you want to use:
+#define bus_voltage mc_readings.V_bus
+
 static Time_T prechargeTimeout;
 static Time_T voltagePrintTimeout;
 
 const Time_T PRINT_VOLTAGE_TIME = 500;
-const Time_T DEAD_RECKON_TIME   = 5000;
+const Time_T DEAD_RECKON_TIME   = 10000;
 
 inline Voltage_T calculate_precharge_target(void) {
   voltages.precharge_target = (voltages.pack * 9) / 10;
@@ -36,16 +39,16 @@ void update_vcu_state_precharge(void) {
 
   // Print the voltage
   if (HAL_GetTick() - voltagePrintTimeout > PRINT_VOLTAGE_TIME) {
-    printf("[VCU FSM : PRECHARGE] DC Bus: %dV / Pack: %dV\r\n",
-           voltages.bus, voltages.precharge_target, voltages.pack);
+    printf("[VCU FSM : PRECHARGE] DC Bus: %ddV / Pack: %ddV\r\n",
+           bus_voltage, voltages.precharge_target, voltages.pack);
 
     voltagePrintTimeout = HAL_GetTick();
   }
 
   // Dead reckoning with time
   if (HAL_GetTick() - prechargeTimeout > DEAD_RECKON_TIME) {
-    printf("[VCU FSM : PRECHARGE] Waiting for second Driver Reset press to close HIGH side.\r\n");
-    while (!buttons.DriverReset) {}
+    // printf("[VCU FSM : PRECHARGE] Waiting for second Driver Reset press to close HIGH side.\r\n");
+    // while (!buttons.DriverReset) {}
     closeHighSideContactor(); // TODO: What do you, dear reader, think about
                               // contactor atomicity and coupling in
                               // contactors.c?

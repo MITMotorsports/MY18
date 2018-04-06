@@ -23,17 +23,21 @@ typedef enum {
 
 // DEFINITION OF CONTAINER TYPES
 typedef struct {
-  Voltage_T pack;
   Voltage_T bus;
+  Voltage_T pack;
   Voltage_T precharge_target;
 } Voltages_T;
 
 typedef struct {
-  int16_t busVoltage;
-  int16_t outVoltage;
-  int16_t VAB_Vd_Voltage;
-  int16_t VBC_Vq_Voltage;
-} MCVoltage_T;
+  int16_t V_bus;
+  int16_t V_out;
+  int16_t V_VAB_Vd;
+  int16_t V_VBC_Vq;
+} MCReadings_T;
+
+typedef struct {
+  int16_t V_bus;
+} CSReadings_T;
 
 typedef struct {
   int16_t accel_1;
@@ -51,10 +55,12 @@ typedef struct {
 
 
 // GLOBAL CONTAINER DEFINITIONS
-extern volatile MCVoltage_T mc_voltage;
 extern volatile Voltages_T  voltages;
 extern volatile Pedalbox_T  pedalbox;
 extern volatile Buttons_T   buttons;
+
+extern volatile MCReadings_T mc_readings;
+extern volatile CSReadings_T cs_readings;
 
 
 // INTERACTION FUNCTIONS

@@ -525,27 +525,27 @@ buses:
       MCVoltage:
         can_id: 0x0A7
         period: 1cs
-        is_big_endian: true
+        is_big_endian: false
         segments:
-          busVoltage:
+          bus:
             position: 0
             length: 16
             unit: dV
             signed: true
             c_type: int16_t
-          outVoltage:
+          out:
             position: 16
             length: 16
             unit: dV
             signed: true
             c_type: int16_t
-          VAB_Vd_Voltage:
+          VAB_Vd:
             position: 32
             length: 16
             unit: dV
             signed: true
             c_type: int16_t
-          VBC_Vq_Voltage:
+          VBC_Vq:
             position: 48
             length: 16
             unit: dV

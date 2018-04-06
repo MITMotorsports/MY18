@@ -59,10 +59,10 @@ void handleMCVoltageMsg(Frame *msg) {
 
   unpack_can0_MCVoltage(msg, &unpacked_msg);
 
-  mc_voltage.busVoltage     = unpacked_msg.busVoltage;
-  mc_voltage.outVoltage     = unpacked_msg.outVoltage;
-  mc_voltage.VAB_Vd_Voltage = unpacked_msg.VAB_Vd_Voltage;
-  mc_voltage.VBC_Vq_Voltage = unpacked_msg.VBC_Vq_Voltage;
+  mc_readings.V_bus    = unpacked_msg.bus;
+  mc_readings.V_out    = unpacked_msg.out;
+  mc_readings.V_VAB_Vd = unpacked_msg.VAB_Vd;
+  mc_readings.V_VBC_Vq = unpacked_msg.VBC_Vq;
 
   heartbeats.mc = HAL_GetTick();
 }
@@ -85,7 +85,7 @@ void handleCurrentSensorVoltageMsg(Frame *msg) {
 
   unpack_can0_CurrentSensor_Voltage(msg, &unpacked_msg);
 
-  voltages.bus = unpacked_msg.dc_bus_voltage;
+  cs_readings.V_bus = unpacked_msg.dc_bus_voltage;
 }
 
 void handleCellVoltagesMsg(Frame *msg) {
@@ -95,8 +95,8 @@ void handleCellVoltagesMsg(Frame *msg) {
 
   // So we take the cell voltage of the minimum cell and use that
   // to estimate the lower bound on the back voltage
-  // (12 per cell, 6 cells, millivolts)
-  voltages.pack = unpacked_msg.min * 12 * 6 / 1000;
+  // (12 per cell, 6 cells, millivolts to decivolts)
+  voltages.pack = unpacked_msg.max * 12 * 6 / 100;
 }
 
 void handleButtonRequest(Frame *msg) {

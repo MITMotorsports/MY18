@@ -1,6 +1,9 @@
 # Explicitly get rid of bin folders
 src/**/bin
 
+# Annoying ropeproject
+**/.ropeproject
+
 # vim
 *.swp
 
