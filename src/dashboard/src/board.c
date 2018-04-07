@@ -33,6 +33,12 @@ bool Pin_Read(uint8_t port, uint8_t pin) {
     return Chip_GPIO_GetPinState(LPC_GPIO, port, pin);
 }
 
+uint16_t ADC_Read(ADC_CHANNEL_T ch) {
+    uint16_t v;
+    Chip_ADC_ReadValue(LPC_ADC, ch, &v);
+    return v;
+}
+
 void Board_GPIO_Init(void) {
     Chip_GPIO_Init(LPC_GPIO);
 
@@ -55,4 +61,8 @@ void Board_GPIO_Init(void) {
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIN_OLED_SCLK, IOCON_FUNC1);
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIN_OLED_SDI,  IOCON_FUNC1);
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIN_OLED_SDO,  IOCON_FUNC1);
+
+    // ADC stuff
+    Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_KNOB, IOCON_FUNC2 | IOCON_ADMODE_EN);
+    Chip_ADC_EnableChannel(LPC_ADC, KNOB_CHANNEL, ENABLE);
 }

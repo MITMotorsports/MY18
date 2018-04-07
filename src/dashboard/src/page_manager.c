@@ -110,9 +110,7 @@ void draw_traction_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_clearline(oled, 2);
     oled_set_pos(oled, 2, 0);
     oled_print(oled, "TORQUE ");
-    oled_print(oled, pm->stats->torque_requested);
-    oled_print(oled, "/");
-    oled_print(oled, pm->stats->torque_mc);
+    oled_print_num(oled, pm->stats->torque_mc);
 }
 
 void draw_wheel_speed_page(page_manager_t *pm, NHD_US2066_OLED *oled) {

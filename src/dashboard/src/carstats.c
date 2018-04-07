@@ -1,5 +1,4 @@
 #include "carstats.h"
-#include "CANLib.h"
 
 #include <string.h>
 
@@ -21,19 +20,25 @@ void can_handle_rear_wheel_speed(carstats_t *cs) {
     cs->rear_right_wheel_speed = msg.rear_right_wheel_speed;
 }
 
-void can_handle_bms_cell_temps(carstats_t *cs) {
-    can0_BMSCellTemps_T msg;
-    unpack_can0_BMSCellTemps(&frame, &msg);
+void can_handle_cell_temps(carstats_t *cs) {
+    can0_CellTemperatures_T msg;
+    unpack_can0_CellTemperatures(&frame, &msg);
 
-    cs->max_cell_temp = msg.max_cell_temp;
+    cs->max_cell_temp = msg.max;
 }
 
-void can_handle_bms_pack_status(carstats_t *cs) {
-    can0_BmsPackStatus_T msg;
-    unpack_can0_BmsPackStatus(&frame, &msg);
+void can_handle_cell_voltages(carstats_t *cs) {
+    can0_CellVoltages_T msg;
+    unpack_can0_CellVoltages(&frame, &msg);
 
-    cs->battery_voltage     = msg.pack_voltage;
-    cs->lowest_cell_voltage = msg.min_cell_voltage;
+    cs->lowest_cell_voltage = msg.min;
+}
+
+void can_handle_current_sensor_voltage(carstats_t *cs) {
+    can0_CurrentSensor_Voltage_T msg;
+    unpack_can0_CurrentSensor_Voltage(&frame, &msg);
+
+    cs->battery_voltage = msg.pack_voltage;
 }
 
 void can_handle_current_sensor_power(carstats_t *cs) {
@@ -58,34 +63,26 @@ void can_handle_vcu_to_dash(carstats_t *cs) {
     memcpy(&(cs->vcu_data), &msg, sizeof(msg));
 }
 
-void can_handle_front_can_node_output(carstats_t *cs) {
-    can0_FrontCanNodeOutput_T msg;
-    unpack_can0_FrontCanNodeOutput(&frame, &msg);
-
-    cs->torque_requested = msg.requested_torque;
-}
-
 void can_update_carstats(carstats_t *cs) {
 
-    can0_T msgType; 
+    can0_T msgType;
     msgType = identify_can0(&frame);
 
     switch (msgType) {
         case can0_FrontCanNodeWheelSpeed:
-            can_handle_front_wheel_speed(cs);            
-            break;
-        case can0_FrontCanNodeOutput:
-            can_handle_front_can_node_output(cs);
+            can_handle_front_wheel_speed(cs);
             break;
         case can0_RearCanNodeWheelSpeed:
             can_handle_rear_wheel_speed(cs);
             break;
-        case can0_BMSCellTemps:
-            can_handle_bms_cell_temps(cs);
+        case can0_CellTemperatures:
+            can_handle_cell_temps(cs);
             break;
-        case can0_BmsPackStatus:
-            can_handle_bms_pack_status(cs);
+        case can0_CellVoltages:
+            can_handle_cell_voltages(cs);
             break;
+        case can0_CurrentSensor_Voltage:
+            can_handle_current_sensor_voltage(cs);
         case can0_CurrentSensor_Power:
             can_handle_current_sensor_power(cs);
         case can0_MC_Command:
