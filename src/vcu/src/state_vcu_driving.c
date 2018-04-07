@@ -20,13 +20,15 @@ void enter_vcu_state_driving() {
 void update_vcu_state_driving() {
   if (stall_until_safe) {
     // Do not drive yet unless everything has been let go.
-    if (!buttons.RTD || pedalbox_min(accel) > PEDALBOX_ACCEL_RELEASE) return;
+    if (buttons.RTD || pedalbox_min(accel) > PEDALBOX_ACCEL_RELEASE) return;
 
+    printf("[VCU FSM : DRIVING] You may drive, heathen. GLHF\r\n");
     stall_until_safe = false;
   }
 
   // Send torque commands
-  torque_command = calcTorque(pedalbox_avg(accel));
+  // torque_command = calcTorque(pedalbox_avg(accel));
+  torque_command = 0;
 
   sendTorqueCmdMsg(torque_command);
 

@@ -13,8 +13,7 @@ bool any_recoverable_conflict_faults(void) {
 bool any_fatal_conflict_faults(void) {
   update_conflicts();
   update_implausibility();
-  return conflicts.accel   ||
-         conflicts.brake_accel;
+  return conflicts.accel;
 }
 
 void update_conflicts() {
