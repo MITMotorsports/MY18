@@ -13,6 +13,8 @@ void handle_fatal_fault(void) {
 
   resetDrivingValues(); // from the driving file
 
+  HAL_Delay(200);
+
   openLowSideContactor();
   openHighSideContactor();
 

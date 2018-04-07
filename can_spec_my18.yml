@@ -506,8 +506,8 @@ buses:
             signed: signed
             unit: RPM
           direction_is_counterclockwise: # when viewed from shaft end of motor
-            position: 32
-            length: 8
+            position: 39
+            length: 1
             c_type: bool
           inverter_enabled:
             position: 47

@@ -27,8 +27,8 @@ void update_vcu_state_driving() {
   }
 
   // Send torque commands
-  // torque_command = calcTorque(pedalbox_avg(accel));
-  torque_command = 0;
+  torque_command = calcTorque(pedalbox_avg(accel));
+  // torque_command = 0;
 
   sendTorqueCmdMsg(torque_command);
 

@@ -4,11 +4,12 @@
 void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *hcan) {
   HAL_StatusTypeDef CAN_RX_STATUS = HAL_CAN_Receive_IT(hcan, CAN_FIFO0);
 
-  if (CAN_RX_STATUS != HAL_OK) {
+  if (CAN_RX_STATUS == HAL_OK) {
+    handleCAN(hcan);
+  }
+  else {
     printf("[CAN RX] ERROR: CAN_RX_STATUS = %d\r\n", (int)CAN_RX_STATUS);
   }
-
-  handleCAN(hcan);
 }
 
 void HAL_CAN_TxCpltCallback(CAN_HandleTypeDef *hcan) {
@@ -178,8 +179,8 @@ void sendTorqueCmdMsg(int16_t torque) {
 
   msg.torque                        = torque;
   msg.angular_vel                   = 0;
-  msg.direction_is_counterclockwise = 0;
-  msg.inverter_enabled              = true; // INVERTER ENABLED
+  msg.direction_is_counterclockwise = 1;
+  msg.inverter_enabled              = true;
   msg.discharge_enabled             = false;
   msg.speed_mode                    = false;
   msg.torque_limit                  = 0;
@@ -188,13 +189,16 @@ void sendTorqueCmdMsg(int16_t torque) {
 }
 
 void sendMotorOffCmdMsg() {
+  LIMIT(can0_MCCommand);
+
   can0_MCCommand_T msg;
 
   msg.torque                        = 0;
   msg.angular_vel                   = 0;
   msg.direction_is_counterclockwise = 0;
-  msg.inverter_enabled              = 0; // INVERTER DISABLED
-  msg.discharge_enabled             = 0;
+  msg.inverter_enabled              = false;
+  msg.discharge_enabled             = false;
+  msg.speed_mode                    = false;
   msg.torque_limit                  = 0;
 
   can0_MCCommand_Write(&msg);
