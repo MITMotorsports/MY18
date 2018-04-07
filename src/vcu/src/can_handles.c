@@ -11,7 +11,9 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *hcan) {
   handleCAN(hcan);
 }
 
-// void HAL_CAN_TxCpltCallback(CAN_HandleTypeDef *hcan) {}
+void HAL_CAN_TxCpltCallback(CAN_HandleTypeDef *hcan) {
+  // printf("TX CB CALLED\r\n");
+}
 
 // void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan) {
 //   printf("[CAN ERR] %d\r\n", (int)hcan->State);
@@ -174,42 +176,18 @@ void sendTorqueCmdMsg(int16_t torque) {
 
   can0_MCCommand_T msg;
 
-  // msg.torque                        = torque;
-  msg.torque                        = 300;
-  msg.angular_vel                   = 500;
+  msg.torque                        = torque;
+  msg.angular_vel                   = 0;
   msg.direction_is_counterclockwise = 0;
-  msg.inverter_enabled              = 1; // INVERTER ENABLED
-  msg.discharge_enabled             = 0;
-  msg.speed_mode                    = 0;
+  msg.inverter_enabled              = true; // INVERTER ENABLED
+  msg.discharge_enabled             = false;
+  msg.speed_mode                    = false;
   msg.torque_limit                  = 0;
-
-  Frame frame;
-  pack_can0_MCCommand(&msg, &frame);
-
-  // CAN_HandleTypeDef hcan;
-  //
-  // if (frame.extended) {
-  //   hcan.pTxMsg->ExtId = frame.id;
-  //   hcan.pTxMsg->IDE   = CAN_ID_EXT;
-  // }
-  // else {
-  //   hcan.pTxMsg->StdId = frame.id;
-  //   hcan.pTxMsg->IDE   = CAN_ID_STD;
-  // }
-  //
-  // hcan.pTxMsg->DLC = frame.len;
-  // hcan.pTxMsg->RTR = CAN_RTR_DATA;
-  //
-  // memcpy(hcan.pTxMsg->Data, frame.data, sizeof(uint8_t) * 8);
-
-  // HAL_CAN_Transmit(&hcan, 10);
 
   can0_MCCommand_Write(&msg);
 }
 
 void sendMotorOffCmdMsg() {
-  return;
-
   can0_MCCommand_T msg;
 
   msg.torque                        = 0;

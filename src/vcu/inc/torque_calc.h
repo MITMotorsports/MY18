@@ -9,7 +9,6 @@
 #define MAX_ACCEL_VAL 1000
 #define MIN_ACCEL_VAL 0
 
-uint16_t calcTorque(uint16_t accel1,
-                    uint16_t accel2);
+uint16_t calcTorque(uint16_t accel);
 
 #endif // ifndef __TORQUE_CALC

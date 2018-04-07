@@ -3,7 +3,6 @@
 static VCU_STATE_T currentState;
 
 volatile Voltages_T   voltages    = {};
-volatile Pedalbox_T   pedalbox    = {};
 volatile Buttons_T    buttons     = {};
 volatile MCReadings_T mc_readings = {};
 volatile CSReadings_T cs_readings = {};

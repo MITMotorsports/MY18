@@ -2,7 +2,8 @@
 
 const Time_T print_period = 1000;
 
-static uint16_t torque_command = 0;
+static uint16_t torque_command   = 0;
+static bool     stall_until_safe = true;
 
 void resetDrivingValues() {
   torque_command = 0;
@@ -11,15 +12,24 @@ void resetDrivingValues() {
 void enter_vcu_state_driving() {
   printf("[VCU FSM : DRIVING] ENTERED!\r\n");
   resetDrivingValues();
+
+  stall_until_safe = true;
+  printf("[VCU FSM : DRIVING] Release accelerator and RTD.\r\n");
 }
 
 void update_vcu_state_driving() {
+  if (stall_until_safe) {
+    // Do not drive yet unless everything has been let go.
+    if (!buttons.RTD || pedalbox_min(accel) > PEDALBOX_ACCEL_RELEASE) return;
+
+    stall_until_safe = false;
+  }
+
   // Send torque commands
-  torque_command = calcTorque(pedalbox.accel_1, pedalbox.accel_2);
+  torque_command = calcTorque(pedalbox_avg(accel));
 
   sendTorqueCmdMsg(torque_command);
 
-  // TODO: Debug CAN BUSY? (2) errors that stop us from reading vals.
   static Time_T last_print = 0;
 
   if (HAL_GetTick() - last_print > print_period) {
@@ -33,9 +43,9 @@ void update_vcu_state_driving() {
     last_print = HAL_GetTick();
   }
 
-  // if (buttons.RTD) {
-  //   printf("[VCU FSM : DRIVING] RTD pressed. Going to RTD mode. Makes sense amirite?\r\n");
-  //   set_vcu_state(VCU_STATE_RTD);
-  //   return;
-  // }
+  if (buttons.RTD) {
+    printf("[VCU FSM : DRIVING] RTD pressed. Going to RTD mode. Makes sense amirite?\r\n");
+    set_vcu_state(VCU_STATE_RTD);
+    return;
+  }
 }

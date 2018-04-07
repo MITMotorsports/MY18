@@ -40,13 +40,6 @@ typedef struct {
 } CSReadings_T;
 
 typedef struct {
-  int16_t accel_1;
-  int16_t accel_2;
-  int16_t brake_1;
-  int16_t brake_2;
-} Pedalbox_T;
-
-typedef struct {
   bool RTD;
   bool MasterReset;
   bool DriverReset;
@@ -56,7 +49,6 @@ typedef struct {
 
 // GLOBAL CONTAINER DEFINITIONS
 extern volatile Voltages_T  voltages;
-extern volatile Pedalbox_T  pedalbox;
 extern volatile Buttons_T   buttons;
 
 extern volatile MCReadings_T mc_readings;

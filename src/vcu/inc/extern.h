@@ -10,4 +10,7 @@ typedef uint16_t Voltage_T; // in dV
 #define MAX_DE(a, b) ((a > b) ? a : b)
 #define MIN_DE(a, b) ((a < b) ? a : b)
 
+// These are divided separately for a reason.
+#define AVG(a, b)    (a / 2 + b / 2)
+
 #endif // ifndef __ERROR_H

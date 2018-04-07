@@ -13,12 +13,12 @@ void enter_vcu_state_rtd() {
 }
 
 void update_vcu_state_rtd() {
-  bool brk_pressed = (pedalbox.accel_1 > 500);
+  bool brk_pressed = true; // pedalbox_max(brake) > PEDALBOX_BRAKE_BEGIN;
 
   if (buttons.RTD) {
     if (rtd_started) {
       if (HAL_GetTick() - rtd_last > RTD_HOLD) {
-        if (true || brk_pressed) {
+        if (brk_pressed) {
           set_vcu_state(VCU_STATE_DRIVING);
           return;
         }
