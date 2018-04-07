@@ -80,10 +80,12 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
 }
 
 void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
-    oled_set_pos(oled, 0, 1);
-    oled_print_char(oled, CHAR_LEFT_BRACKET);
-    oled_print(oled, "AERO");
-    oled_print_char(oled, CHAR_RIGHT_BRACKET);
+    if (pm->stats->vcu_data.active_aero_on) {
+        oled_set_pos(oled, 0, 1);
+        oled_print_char(oled, CHAR_LEFT_BRACKET);
+        oled_print(oled, "AERO");
+        oled_print_char(oled, CHAR_RIGHT_BRACKET);
+    }
 
     oled_clearline(oled, 1);
     oled_set_pos(oled, 1, 0);
@@ -92,7 +94,13 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     oled_clearline(oled, 2);
     oled_set_pos(oled, 2, 0);
-    oled_print(oled, "PWR 50kW");
+
+    int power_kW = pm->stats->power / 1000;
+    oled_print(oled, "PWR");
+    oled_print_num(oled, power_kW);
+    oled_print(oled, "kW");
+
+
     oled_rprint(oled, "CELL 3.3V");
 
     
