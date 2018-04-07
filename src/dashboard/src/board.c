@@ -72,68 +72,68 @@ void handle_can_error(Can_ErrorID_T error) {
   if ((error != Can_Error_NONE) && (error != Can_Error_NO_RX)) {
     switch (error) {
     case Can_Error_NONE:
-      //Board_Print("Can_Error_NONE\n");
+      Board_Print("Can_Error_NONE\n");
       break;
 
     case Can_Error_NO_RX:
-      //Board_Print("Can_Error_NO_RX\n");
+      Board_Print("Can_Error_NO_RX\n");
       break;
 
     case Can_Error_EPASS:
-      //Board_Print("Can_Error_EPASS\n");
+      Board_Print("Can_Error_EPASS\n");
       break;
 
     case Can_Error_WARN:
-      //Board_Print("Can_Error_WARN\n");
+      Board_Print("Can_Error_WARN\n");
       break;
 
     case Can_Error_BOFF:
-      //Board_Print("Can_Error_BOFF\n");
+      Board_Print("Can_Error_BOFF\n");
       break;
 
     case Can_Error_STUF:
-      //Board_Print("Can_Error_STUF\n");
+      Board_Print("Can_Error_STUF\n");
       break;
 
     case Can_Error_FORM:
-      //Board_Print("Can_Error_FORM\n");
+      Board_Print("Can_Error_FORM\n");
       break;
 
     case Can_Error_ACK:
-      //Board_Print("Can_Error_ACK\n");
+      Board_Print("Can_Error_ACK\n");
       break;
 
     case Can_Error_BIT1:
-      //Board_Print("Can_Error_BIT1\n");
+      Board_Print("Can_Error_BIT1\n");
       break;
 
     case Can_Error_BIT0:
-      //Board_Print("Can_Error_BIT0\n");
+      Board_Print("Can_Error_BIT0\n");
       break;
 
     case Can_Error_CRC:
-      //Board_Print("Can_Error_CRC\n");
+      Board_Print("Can_Error_CRC\n");
       break;
 
     case Can_Error_UNUSED:
-      //Board_Print("Can_Error_UNUSED\n");
+      Board_Print("Can_Error_UNUSED\n");
       break;
 
     case Can_Error_UNRECOGNIZED_MSGOBJ:
-      //Board_Print("Can_Error_UNRECOGNIZED_MSGOBJ\n");
+      Board_Print("Can_Error_UNRECOGNIZED_MSGOBJ\n");
       break;
 
     case Can_Error_UNRECOGNIZED_ERROR:
-      //Board_Print("Can_Error_UNRECOGNIZED_ERROR\n");
+      Board_Print("Can_Error_UNRECOGNIZED_ERROR\n");
       break;
 
     case Can_Error_TX_BUFFER_FULL:
-      //Board_Print("Can_Error_TX_BUFFER_FULL\n");
+      Board_Print("Can_Error_TX_BUFFER_FULL\n");
       CAN_Init();
       break;
 
     case Can_Error_RX_BUFFER_FULL:
-      //Board_Print("Can_Error_RX_BUFFER_FULL\n");
+      Board_Print("Can_Error_RX_BUFFER_FULL\n");
       CAN_Init();
       break;
     }

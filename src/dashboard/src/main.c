@@ -1,7 +1,8 @@
 #include "board.h"
+#include "uart.h"
 #include "config.h"
-#include "NHD_US2066.h"
 #include "CANlib.h"
+#include "NHD_US2066.h"
 
 #include "led.h"
 #include "dispatch.h"
@@ -12,6 +13,7 @@
 int main(void) {
     Board_Chip_Init();
     Board_GPIO_Init();
+    Board_UART_Init(UART_BAUD);
     // need a delay after init or the display
     // will sometimes be messed up
     Delay(100);
