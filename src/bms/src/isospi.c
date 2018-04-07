@@ -210,6 +210,12 @@ bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config,
     // Board_Println("ltc init done");
     _ltc6804_initialized = true;
     _ltc6804_init_state  = 0;
+
+    //no longer ignore these errors
+    Error_Recognize(ERROR_LTC_PEC);
+    Error_Recognize(ERROR_LTC_CVST);
+    Error_Recognize(ERROR_LTC_OWT);
+
     return true;
   }
   return false;

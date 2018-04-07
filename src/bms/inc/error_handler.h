@@ -13,8 +13,8 @@
 #define CELL_OVER_VOLTAGE_time     1000
 #define CELL_UNDER_TEMP_time       10000
 #define CELL_OVER_TEMP_time        10000
-#define L_CONTACTOR_WELDED_time    2000
-#define H_CONTACTOR_WELDED_time    2000
+#define L_CONTACTOR_WELDED_time    1000
+#define H_CONTACTOR_WELDED_time    1000
 
 
 typedef enum {

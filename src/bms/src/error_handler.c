@@ -114,6 +114,8 @@ bool Error_Should_Fault(void) {
 
     if(error_vector[i].error || error_vector[i].handling) {
       bool fault = (error_handler_vector[i].handler(&error_vector[i], error_handler_vector[i].timeout) == FAULT);
+
+      //if handler requests Fault and we care about that error
       if(fault && errors_to_check[i]) {
         return true;
       }
@@ -129,4 +131,12 @@ const ERROR_STATUS_T* Error_GetStatus(ERROR_T er_t) {
 
 ERROR_STATUS_T* Get_Errors(void) {
   return error_vector;
+}
+
+void Error_Ignore(ERROR_T er_t) {
+  errors_to_check[er_t] = false;
+}
+
+void Error_Recognize(ERROR_T er_t) {
+  errors_to_check[er_t] = true;
 }
