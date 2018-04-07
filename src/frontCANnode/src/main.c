@@ -19,39 +19,11 @@ volatile uint32_t msTicks;
 
 static ADC_Input_T adc;
 static Speed_Input_T speed;
-static Input_T input;
 
-static Output_T output;
+Input_T input;
 
 void SysTick_Handler(void) {
   msTicks++;
-}
-
-void handle_interrupt(LPC_TIMER_T* timer, Speed_Input_T *speed, Wheel_T wheel) {
-  Chip_TIMER_Reset(timer);            /* Reset the timer immediately */
-  Chip_TIMER_ClearCapture(timer, 0);      /* Clear the capture */
-  const uint32_t curr_tick = Chip_TIMER_ReadCapture(timer, 0) / CYCLES_PER_MICROSECOND;
-  Input_handle_interrupt(speed, msTicks, curr_tick, wheel);
-}
-
-// Interrupt handler for timer 0 capture pin. This function get called automatically on
-// a rising edge of the signal going into the timer capture pin
-void TIMER32_0_IRQHandler(void) {
-  handle_interrupt(LPC_TIMER32_0, input.speed, LEFT);
-}
-
-// Interrupt handler for timer 1 capture pin. This function get called automatically on
-// a rising edge of the signal going into the timer capture pin
-void TIMER32_1_IRQHandler(void) {
-  handle_interrupt(LPC_TIMER32_1, input.speed, RIGHT);
-}
-
-void Set_Interrupt_Priorities(void) {
-  /* Give 32 bit timer capture interrupts the highest priority */
-  NVIC_SetPriority(TIMER_32_0_IRQn, 0);
-  NVIC_SetPriority(TIMER_32_1_IRQn, 1);
-  /* Give the SysTick function a lower priority */
-  NVIC_SetPriority(SysTick_IRQn, 2);
 }
 
 void initialize_structs(void) {
@@ -67,11 +39,11 @@ void initialize_structs(void) {
 
 void fill_input(void) {
   input.msTicks = msTicks;
-  Input_fill_input(&input);
+  Input_fill_input();
 }
 
 void process_output(void) {
-  Output_process_output(&input, &output);
+  Output_process_output();
 }
 
 int main(void) {
@@ -118,4 +90,33 @@ int main(void) {
       last_print = msTicks;
     }
   }
+}
+
+// Interrupt configs
+
+void handle_interrupt(LPC_TIMER_T* timer, Speed_Input_T *speed, Wheel_T wheel) {
+  Chip_TIMER_Reset(timer);            /* Reset the timer immediately */
+  Chip_TIMER_ClearCapture(timer, 0);      /* Clear the capture */
+  const uint32_t curr_tick = Chip_TIMER_ReadCapture(timer, 0) / CYCLES_PER_MICROSECOND;
+  Input_handle_interrupt(msTicks, curr_tick, wheel);
+}
+
+// Interrupt handler for timer 0 capture pin. This function get called automatically on
+// a rising edge of the signal going into the timer capture pin
+void TIMER32_0_IRQHandler(void) {
+  handle_interrupt(LPC_TIMER32_0, input.speed, LEFT);
+}
+
+// Interrupt handler for timer 1 capture pin. This function get called automatically on
+// a rising edge of the signal going into the timer capture pin
+void TIMER32_1_IRQHandler(void) {
+  handle_interrupt(LPC_TIMER32_1, input.speed, RIGHT);
+}
+
+void Set_Interrupt_Priorities(void) {
+  /* Give 32 bit timer capture interrupts the highest priority */
+  NVIC_SetPriority(TIMER_32_0_IRQn, 0);
+  NVIC_SetPriority(TIMER_32_1_IRQn, 1);
+  /* Give the SysTick function a lower priority */
+  NVIC_SetPriority(SysTick_IRQn, 2);
 }

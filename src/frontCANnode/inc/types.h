@@ -63,11 +63,4 @@ typedef struct {
   uint32_t msTicks;
 } Input_T;
 
-typedef struct {
-  uint32_t can_brakethrottle_ms; // for FrontCanNodeOutput
-  uint32_t can_wheel_speed_ms; // for FrontCanNodeWheelSpeed
-  bool send_brakethrottle_msg;
-  bool send_wheel_speed_msg;
-} Output_T;
-
 #endif // TYPES_H

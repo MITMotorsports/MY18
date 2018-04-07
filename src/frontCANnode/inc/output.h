@@ -5,8 +5,12 @@
 #include <stdint.h>
 
 #include "types.h"
+#include "serial.h"
 
-void Output_initialize(Output_T *output);
-void Output_process_output(Input_T *input, Output_T *output);
+#include "chip.h"
+#include "can.h"
+
+void Output_initialize(void);
+void Output_process_output(void);
 
 #endif

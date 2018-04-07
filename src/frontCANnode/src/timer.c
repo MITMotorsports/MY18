@@ -1,7 +1,7 @@
 // Copied from MY17
 // Pin numbers match, so nothing changed
 
-#include "chip.h"
+#include "timer.h"
 
 void Timer_Init(void) {
   // Timer Initalization
