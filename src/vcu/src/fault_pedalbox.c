@@ -7,7 +7,7 @@ volatile Pedalbox_T  pedalbox  = {};
 bool any_recoverable_conflict_faults(void) {
   update_conflicts();
   update_implausibility();
-  return false;
+  return conflicts.brake_accel;
 }
 
 bool any_fatal_conflict_faults(void) {
@@ -19,7 +19,9 @@ bool any_fatal_conflict_faults(void) {
 void update_conflicts() {
   if (conflicts.brake_accel) {
     // Clear conflict if accel was released.
+    // printf("[FAULT : PEDALBOX : BRAKE_ACCEL] Conflict.\r\n");
     if (pedalbox_min(accel) < PEDALBOX_ACCEL_RELEASE) {
+      printf("[FAULT : PEDALBOX : BRAKE_ACCEL] Potential release.\r\n");
       conflicts.brake_accel = false;
     }
     else {

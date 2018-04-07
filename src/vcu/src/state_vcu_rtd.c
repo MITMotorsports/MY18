@@ -12,9 +12,8 @@ void enter_vcu_state_rtd() {
   rtd_last    = 0;
 
   // Clear MC faults
-  printf("[VCU FSM : RTD] Clearing MC faults.\r\n");
+  printf("[VCU FSM : RTD] Clearing MC faults...\r\n");
   send_mc_fault_clear();
-  printf("[VCU FSM : RTD] Cleared MC faults.\r\n");
 }
 
 void update_vcu_state_rtd() {
