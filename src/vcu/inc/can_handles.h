@@ -9,6 +9,7 @@
 #include "fault.h"
 #include "gpio.h"
 #include "extern.h"
+#include "fault_heartbeats.h"
 
 #define LIMIT(name)                                         \
   static Time_T last_sent = 0;                              \

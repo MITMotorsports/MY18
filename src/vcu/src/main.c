@@ -1,5 +1,6 @@
 #include "main.h"
 #include "fault_gates.h"
+#include "can_handles.h"
 
 int main(void) {
   HAL_Init();
@@ -38,6 +39,7 @@ int main(void) {
 
   while (1) {
     advance_states();
+    sendDashMsg();
     static uint32_t lastt = 0;
 
     print_gate_faults(false);
