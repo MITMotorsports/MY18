@@ -14,11 +14,11 @@ int main(void) {
     Board_Chip_Init();
     Board_GPIO_Init();
     Board_UART_Init(UART_BAUD);
+    CAN_Init();
+
     // need a delay after init or the display
     // will sometimes be messed up
     Delay(100);
-
-    init_can0_dash();
 
     Pin_Write(PIN_OLED_CS, 0);
     Pin_Write(PIN_OLED_RS, 1);
