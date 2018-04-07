@@ -41,7 +41,7 @@ void init_vcu_state(void) {
   // CAR Mode
   set_vcu_state(VCU_STATE_ROOT);
   // TODO: Remove this skip to RTD.
-  // set_vcu_state(VCU_STATE_RTD);
+  // set_vcu_state(VCU_STATE_DRIVING);
 }
 
 VCU_STATE_T set_vcu_state(VCU_STATE_T newState) {

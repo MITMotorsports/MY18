@@ -1,10 +1,26 @@
 #include "can_handles.h"
 
 
-void handleCAN(CAN_HandleTypeDef *CanHandle) {
+void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *hcan) {
+  HAL_StatusTypeDef CAN_RX_STATUS = HAL_CAN_Receive_IT(hcan, CAN_FIFO0);
+
+  if (CAN_RX_STATUS != HAL_OK) {
+    printf("[CAN RX] ERROR: CAN_RX_STATUS = %d\r\n", (int)CAN_RX_STATUS);
+  }
+
+  handleCAN(hcan);
+}
+
+// void HAL_CAN_TxCpltCallback(CAN_HandleTypeDef *hcan) {}
+
+// void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan) {
+//   printf("[CAN ERR] %d\r\n", (int)hcan->State);
+// }
+
+void handleCAN(CAN_HandleTypeDef *hcan) {
   Frame frame;
 
-  // TODO: Maybe use CanHandle to get last RxMsg here.
+  // TODO: Maybe use hcan to get last RxMsg here.
 
   lastRxMsgToFrame(&frame);
 
@@ -152,26 +168,52 @@ void handleButtonRequest(Frame *msg) {
 //   can0_VcuToDash_Write(&msg);
 // }
 
+
 void sendTorqueCmdMsg(int16_t torque) {
   LIMIT(can0_MCCommand);
 
   can0_MCCommand_T msg;
 
-  msg.torque                        = torque;
-  msg.speed                         = 0;
+  // msg.torque                        = torque;
+  msg.torque                        = 300;
+  msg.angular_vel                   = 500;
   msg.direction_is_counterclockwise = 0;
   msg.inverter_enabled              = 1; // INVERTER ENABLED
   msg.discharge_enabled             = 0;
+  msg.speed_mode                    = 0;
   msg.torque_limit                  = 0;
+
+  Frame frame;
+  pack_can0_MCCommand(&msg, &frame);
+
+  // CAN_HandleTypeDef hcan;
+  //
+  // if (frame.extended) {
+  //   hcan.pTxMsg->ExtId = frame.id;
+  //   hcan.pTxMsg->IDE   = CAN_ID_EXT;
+  // }
+  // else {
+  //   hcan.pTxMsg->StdId = frame.id;
+  //   hcan.pTxMsg->IDE   = CAN_ID_STD;
+  // }
+  //
+  // hcan.pTxMsg->DLC = frame.len;
+  // hcan.pTxMsg->RTR = CAN_RTR_DATA;
+  //
+  // memcpy(hcan.pTxMsg->Data, frame.data, sizeof(uint8_t) * 8);
+
+  // HAL_CAN_Transmit(&hcan, 10);
 
   can0_MCCommand_Write(&msg);
 }
 
 void sendMotorOffCmdMsg() {
+  return;
+
   can0_MCCommand_T msg;
 
   msg.torque                        = 0;
-  msg.speed                         = 0;
+  msg.angular_vel                   = 0;
   msg.direction_is_counterclockwise = 0;
   msg.inverter_enabled              = 0; // INVERTER DISABLED
   msg.discharge_enabled             = 0;

@@ -1,6 +1,6 @@
 #include "state_vcu_rtd.h"
 
-const Time_T RTD_HOLD = 3000;
+const Time_T RTD_HOLD = 1500;
 
 static bool   rtd_started;
 static Time_T rtd_last;

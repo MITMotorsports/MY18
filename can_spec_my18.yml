@@ -491,37 +491,41 @@ buses:
       MCCommand:
         can_id: 0x0C0 # From manual
         period: 0.05s  # MC needs a message at 2 Hz or higher
-        is_big_endian: true
+        is_big_endian: false
         segments:
           torque:
             position: 0
             length: 16
-            c_type: uint16_t
-            signed: false
-            unit: daJ # 10 joules
-          speed:
+            c_type: int16_t
+            signed: true
+            unit: dNm
+          angular_vel:
             position: 16
             length: 16
-            c_type: uint16_t
-            signed: false
+            c_type: int16_t
+            signed: signed
             unit: RPM
           direction_is_counterclockwise: # when viewed from shaft end of motor
             position: 32
-            length: 1
+            length: 8
             c_type: bool
           inverter_enabled:
-            position: 40
+            position: 47
             length: 1
             c_type: bool
           discharge_enabled:
-            position: 41
+            position: 46
+            length: 1
+            c_type: bool
+          speed_mode:
+            position: 45
             length: 1
             c_type: bool
           torque_limit:
             position: 48
             length: 16
-            c_type: uint16_t
-            unit: daJ # 10 joules
+            c_type: int16_t
+            unit: dNm
       MCVoltage:
         can_id: 0x0A7
         period: 1cs
