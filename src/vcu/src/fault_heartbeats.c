@@ -41,10 +41,6 @@ bool any_recoverable_heartbeat_faults(void) {
     return true;
   }
 
-  if (check_CS_heartbeat_bad()) {
-    printf("[FAULT : HEARTBEATS] CURRENT SENSOR HEARTBEAT TIMEOUT.\r\n");
-    return true;
-  }
 
   return false;
 }
