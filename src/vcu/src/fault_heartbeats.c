@@ -3,7 +3,7 @@
 volatile Heartbeats_T heartbeats = {};
 
 const Time_T BMS_HB_MAX_TIME = 1000;
-const Time_T FCN_HB_MAX_TIME = 1000;
+const Time_T FCN_HB_MAX_TIME = 10000;
 
 
 // Returns true if there are any heartbeat faults.
@@ -13,10 +13,10 @@ bool any_recoverable_heartbeat_faults(void) {
     return true;
   }
 
-  // if (HAL_GetTick() - heartbeats.fcn > FCN_HB_MAX_TIME) {
-  //   printf("[FAULT : HEARTBEATS] FCN HEARTBEAT TIMEOUT.\r\n");
-  //   return true;
-  // }
+  if (HAL_GetTick() - heartbeats.fcn > FCN_HB_MAX_TIME) {
+    printf("[FAULT : HEARTBEATS] FCN HEARTBEAT TIMEOUT.\r\n");
+    return true;
+  }
 
   return false;
 }

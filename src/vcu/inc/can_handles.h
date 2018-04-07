@@ -28,5 +28,6 @@ void handleButtonRequest(Frame *msg);
 void sendDashMsg();
 void sendTorqueCmdMsg(int16_t torque);
 void sendMotorOffCmdMsg();
+void send_mc_fault_clear();
 
 #endif // ifndef __CAN_HANDLES_H

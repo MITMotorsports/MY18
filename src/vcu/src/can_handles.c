@@ -207,3 +207,15 @@ void sendMotorOffCmdMsg() {
 
   can0_MCCommand_Write(&msg);
 }
+
+void send_mc_fault_clear() {
+  can0_MCParameterRequest_T msg;
+
+  // RMS CAN protocol page 34
+
+  msg.address = 20;
+  msg.write   = true;
+  msg.data    = 0;
+
+  can0_MCParameterRequest_Write(&msg);
+}

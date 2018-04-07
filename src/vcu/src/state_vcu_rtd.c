@@ -1,6 +1,6 @@
 #include "state_vcu_rtd.h"
 
-const Time_T RTD_HOLD = 10;
+const Time_T RTD_HOLD = 3000;
 
 static bool   rtd_started;
 static Time_T rtd_last;
@@ -10,6 +10,11 @@ void enter_vcu_state_rtd() {
   printf("[VCU FSM : RTD] Hold RTD button for %dms and press brake.\r\n", RTD_HOLD);
   rtd_started = false;
   rtd_last    = 0;
+
+  // Clear MC faults
+  printf("[VCU FSM : RTD] Clearing MC faults.\r\n");
+  send_mc_fault_clear();
+  printf("[VCU FSM : RTD] Cleared MC faults.\r\n");
 }
 
 void update_vcu_state_rtd() {

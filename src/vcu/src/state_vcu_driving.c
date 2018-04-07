@@ -19,6 +19,7 @@ void enter_vcu_state_driving() {
 
 void update_vcu_state_driving() {
   if (stall_until_safe) {
+    sendMotorOffCmdMsg();
     // Do not drive yet unless everything has been let go.
     if (buttons.RTD || pedalbox_min(accel) > PEDALBOX_ACCEL_RELEASE) return;
 

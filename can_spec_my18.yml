@@ -526,6 +526,26 @@ buses:
             length: 16
             c_type: int16_t
             unit: dNm
+      MCParameterRequest:
+        can_id: 0x0C1
+        is_big_endian: false
+        segments:
+          address:
+            position: 0
+            length: 16
+            c_type: int16_t
+            signed: true
+            unit: dNm
+          write:  # make an enum {read, write}
+            position: 23
+            length: 1
+            c_type: bool
+            signed: signed
+            unit: RPM
+          data:
+            position: 32
+            length: 16
+            c_type: int16_t
       MCVoltage:
         can_id: 0x0A7
         period: 1cs
