@@ -79,18 +79,47 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
     }
 }
 
+// looks like:
+
+// [AERO]   [PRECHARGE]
+// TRQ 150    PACK 300V
+// PWR 60kW   CELL 3.3V
+// RPM 3400   TEMP  30C
+
 void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+    oled_set_pos(oled, 0, 1);
     if (pm->stats->vcu_data.active_aero_on) {
-        oled_set_pos(oled, 0, 1);
         oled_print_char(oled, CHAR_LEFT_BRACKET);
         oled_print(oled, "AERO");
         oled_print_char(oled, CHAR_RIGHT_BRACKET);
     }
 
+    switch (pm->stats->vcu_state) {
+        case VCU_STATE_ROOT:
+        case VCU_STATE_LV:
+            oled_rprint(oled, "[LV]");
+            break;
+        case VCU_STATE_PRECHARGING:
+            oled_rprint(oled, "[PRECHARGE]");
+            break;
+        case VCU_STATE_RTD:
+            oled_rprint(oled, "[RTD]");
+            break;
+        case VCU_STATE_DRIVING:
+            oled_rprint(oled, "[DRIVE]");
+            break;
+    }
+
     oled_clearline(oled, 1);
     oled_set_pos(oled, 1, 0);
-    oled_print(oled, "TRQ 30/50");
-    oled_rprint(oled, "PACK 300V");
+    oled_print(oled, "TRQ ");
+    int torque_Nm = pm->stats->torque_mc / 10;
+    oled_print_num(oled, torque_Nm);
+
+    int pack_V = pm->stats->battery_voltage;
+    oled_rprint_pad(oled, "PACK", 5);
+    oled_rprint_num_pad(oled, pack_V, 1);
+    oled_rprint(oled, "V");
 
     oled_clearline(oled, 2);
     oled_set_pos(oled, 2, 0);
@@ -100,14 +129,25 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_print_num(oled, power_kW);
     oled_print(oled, "kW");
 
-
-    oled_rprint(oled, "CELL 3.3V");
+    int cell_mV = pm->stats->lowest_cell_voltage;
+    int cell_V = cell_mV / 1000;
+    int cell_dV = (cell_mV / 100) % 10;
+    oled_rprint_pad(oled, "CELL", 5);
+    oled_rprint_num_pad(oled, cell_V, 3);
+    oled_rprint_pad(oled, ".", 2);
+    oled_rprint_num_pad(oled, cell_dV, 1);
+    oled_rprint(oled, "V");
 
     
     oled_clearline(oled, 3);
     oled_set_pos(oled, 3, 0);
-    oled_print(oled, "SPD 100kph");
-    oled_rprint(oled, "TEMP  30C");
+    oled_print(oled, "RPM");
+    oled_print_num(oled, pm->stats->motor_rpm);
+
+    int temp_C = pm->stats->max_cell_temp / 10;
+    oled_rprint_pad(oled, "TEMP", 5);
+    oled_rprint_num_pad(oled, temp_C, 1);
+    oled_rprint(oled, "C");
 }
 
 void draw_takeover_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
@@ -121,6 +161,12 @@ void draw_traction_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_print_num(oled, pm->stats->torque_mc);
 }
 
+// looks like:
+
+// 
+//
+// 1000RPM      1000RPM
+// 1000RPM      1000RPM
 void draw_wheel_speed_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_clearline(oled, 2);
     oled_set_pos(oled, 2, 0);
