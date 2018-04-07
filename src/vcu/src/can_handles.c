@@ -8,7 +8,11 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *hcan) {
     handleCAN(hcan);
   }
   else {
-    printf("[CAN RX] ERROR: CAN_RX_STATUS = %d\r\n", (int)CAN_RX_STATUS);
+    printf("[CAN RX] ERROR: HAL_StatusTypeDef is %d\r\n", (int)CAN_RX_STATUS);
+    printf("[CAN RX] ERROR: HAL_CAN_StateTypeDef is %d\r\n", hcan->State);
+    printf("[CAN RX] ERROR: ErrorCode is %d\r\n", hcan->ErrorCode);
+
+    handle_fatal_fault();
   }
 }
 
