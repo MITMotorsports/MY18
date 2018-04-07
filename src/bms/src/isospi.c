@@ -278,6 +278,12 @@ void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status) {
       Error_Clear(ERROR_CELL_OVER_VOLTAGE);
     }
 
+    //sum voltages of every cell
+    int i;
+    for(i = 0; i<MAX_NUM_MODULES * MAX_CELLS_PER_MODULE; i++) {
+      pack_status->pack_voltage_sum_mV += pack_status->cell_voltages_mV[i];
+    }
+
 #if false
     Board_Print_BLOCKING("MIN voltage: ");
     Board_PrintNum(pack_status->pack_cell_min_mV, 10);
