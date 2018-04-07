@@ -391,6 +391,25 @@ buses:
               LIMP_50: 0x1
               LIMP_33: 0x2
               LIMP_25: 0x3
+          vcu_car_state:
+            position: 53
+            length: 3
+            c_type: enum
+            enum:
+              VCU_STATE_ROOT: 0x0
+              VCU_STATE_LV: 0x1
+              VCU_STATE_PRECHARGING: 0x2
+              VCU_STATE_RTD: 0x3
+              VCU_STATE_DRIVING: 0x4
+          vcu_error_state:
+            position: 56
+            length: 3
+            c_type: enum
+            enum:
+              NO_ERROR_STATE: 0x0
+              RECOVERABLE_ERROR_STATE: 0x1
+              FATAL_ERROR_STATE: 0x2
+              
       RearCanNodeWheelSpeed:
         can_id: 0x0D1
         period: 0.02s
