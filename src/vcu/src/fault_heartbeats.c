@@ -2,22 +2,45 @@
 
 volatile Heartbeats_T heartbeats = {};
 
-const Time_T BMS_HB_MAX_TIME = 400;
-const Time_T FCN_HB_MAX_TIME = 400;
+const Time_T BMS_HB_MAX_TIME = 1000;
+const Time_T FCN_HB_MAX_TIME = 10000;
+const Time_T MC_HB_MAX_TIME = 1000;
+const Time_T CS_HB_MAX_TIME = 1000;
 
+
+bool check_BMS_heartbeat_bad(void) {
+  return (HAL_GetTick() - heartbeats.bms > BMS_HB_MAX_TIME);
+}
+
+bool check_FCN_heartbeat_bad(void) {
+  return (HAL_GetTick() - heartbeats.fcn > FCN_HB_MAX_TIME);
+}
+
+bool check_MC_heartbeat_bad(void) {
+  return (HAL_GetTick() - heartbeats.mc > MC_HB_MAX_TIME);
+}
+
+bool check_CS_heartbeat_bad(void) {
+  return (HAL_GetTick() - heartbeats.current_sensor > CS_HB_MAX_TIME);
+}
 
 // Returns true if there are any heartbeat faults.
 bool any_recoverable_heartbeat_faults(void) {
-  // TODO: Remove, of course.
-  return false;
-
-  if (HAL_GetTick() - heartbeats.bms > BMS_HB_MAX_TIME) {
+  if (check_BMS_heartbeat_bad()) {
+    printf("[FAULT : HEARTBEATS] BMS HEARTBEAT TIMEOUT.\r\n");
     return true;
   }
 
-  if (HAL_GetTick() - heartbeats.fcn > FCN_HB_MAX_TIME) {
+  if (check_FCN_heartbeat_bad()) {
+    printf("[FAULT : HEARTBEATS] FCN HEARTBEAT TIMEOUT.\r\n");
     return true;
   }
+
+  if (check_MC_heartbeat_bad()) {
+  	printf("[FAULT : HEARTBEATS] MC HEARTBEAT TIMEOUT.\r\n");
+    return true;
+  }
+
 
   return false;
 }

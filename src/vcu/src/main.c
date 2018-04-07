@@ -1,5 +1,6 @@
 #include "main.h"
 #include "fault_gates.h"
+#include "can_handles.h"
 
 int main(void) {
   HAL_Init();
@@ -38,11 +39,13 @@ int main(void) {
 
   while (1) {
     advance_states();
+    sendDashMsg();
     static uint32_t lastt = 0;
 
     print_gate_faults(false);
     if (HAL_GetTick() - lastt > 5000) {
       HAL_GPIO_TogglePin(GPIO(LED));
+      // printf("[ALIVE]\r\n");
 
       lastt = HAL_GetTick();
     }
@@ -58,21 +61,6 @@ void Error_Handler(const char *s) {
 }
 
 // THE NETHER REGIONS -- TREAD CAREFULLY
-
-void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *CanHandle) {
-  // printf("CAN stat: %#010x\r\n", (int)CanHandle->State);
-
-  HAL_StatusTypeDef CAN_RX_STATUS = HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0);
-
-  if (CAN_RX_STATUS != HAL_OK) {
-    // char *ERRMSG;
-    // sprintf(ERRMSG, "CAN RX Error is %d", (int) CAN_RX_STATUS);
-    // Error_Handler(ERRMSG);
-    printf("ERROR IN CAN %d\r\n", (int)CAN_RX_STATUS);
-  }
-
-  handleCAN(CanHandle);
-}
 
 // FOR REFERENCE:
 // typedef enum

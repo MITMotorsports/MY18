@@ -9,6 +9,6 @@ void update_vcu_state_root(void) {
   // Master Reset is normally high.
   if (!READ_PIN(MASTER_RST)) {
     printf("[VCU FSM : ROOT] MASTER RESET pressed.\r\n");
-    set_vcu_state(VCU_STATE_LV_ONLY);
+    set_vcu_state(VCU_STATE_LV);
   }
 }

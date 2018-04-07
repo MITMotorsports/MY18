@@ -63,7 +63,11 @@ int main(void) {
     while(1);
   }
 
+  Frame devnull;
+
   while(1) {
+    Can_RawRead(&devnull);
+
     fill_input();
     process_output();
 

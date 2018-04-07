@@ -2,10 +2,10 @@
 
 static VCU_STATE_T currentState;
 
-volatile MCVoltage_T mc_voltage = {};
-volatile Voltages_T  voltages = {};
-volatile Pedalbox_T  pedalbox = {};
-volatile Buttons_T   buttons = {};
+volatile Voltages_T   voltages    = {};
+volatile Buttons_T    buttons     = {};
+volatile MCReadings_T mc_readings = {};
+volatile CSReadings_T cs_readings = {};
 
 void init_vcu_state(void) {
   // BOARD HEARTBEATS
@@ -19,11 +19,14 @@ void init_vcu_state(void) {
   pedalbox.brake_1 = 0;
   pedalbox.brake_2 = 0;
 
-  // DC BUS VOLTAGE OF MOTOR CONTROLLER
-  mc_voltage.busVoltage     = 0;
-  mc_voltage.outVoltage     = 0;
-  mc_voltage.VAB_Vd_Voltage = 0;
-  mc_voltage.VBC_Vq_Voltage = 0;
+  // MOTOR CONTROLLER READINGS
+  mc_readings.V_bus    = 0;
+  mc_readings.V_out    = 0;
+  mc_readings.V_VAB_Vd = 0;
+  mc_readings.V_VBC_Vq = 0;
+
+  // CURRENT SENSOR READINGS
+  cs_readings.V_bus = 0;
 
   // BMS PACK VOLTAGE
   voltages.pack = 0;
@@ -36,6 +39,8 @@ void init_vcu_state(void) {
 
   // CAR Mode
   set_vcu_state(VCU_STATE_ROOT);
+  // TODO: Remove this skip to RTD.
+  // set_vcu_state(VCU_STATE_DRIVING);
 }
 
 VCU_STATE_T set_vcu_state(VCU_STATE_T newState) {
@@ -44,7 +49,7 @@ VCU_STATE_T set_vcu_state(VCU_STATE_T newState) {
     enter_vcu_state_root();
     break;
 
-  case VCU_STATE_LV_ONLY:
+  case VCU_STATE_LV:
     enter_vcu_state_lv();
     break;
 
@@ -52,7 +57,7 @@ VCU_STATE_T set_vcu_state(VCU_STATE_T newState) {
     enter_vcu_state_precharge();
     break;
 
-  case VCU_STATE_READY_TO_DRIVE:
+  case VCU_STATE_RTD:
     enter_vcu_state_rtd();
     break;
 
@@ -61,6 +66,7 @@ VCU_STATE_T set_vcu_state(VCU_STATE_T newState) {
     break;
 
   default:
+
     // TODO: Add recoverer.
     Error_Handler("Inside set_vcu_state.");
     return;
@@ -75,7 +81,7 @@ void advance_vcu_state(void) {
     update_vcu_state_root();
     break;
 
-  case VCU_STATE_LV_ONLY:
+  case VCU_STATE_LV:
     update_vcu_state_lv();
     break;
 
@@ -83,10 +89,7 @@ void advance_vcu_state(void) {
     update_vcu_state_precharge();
     break;
 
-  case VCU_STATE_PRECHARGE_FAULT:
-    break;
-
-  case VCU_STATE_READY_TO_DRIVE:
+  case VCU_STATE_RTD:
     update_vcu_state_rtd();
     break;
 

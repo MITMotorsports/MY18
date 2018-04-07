@@ -391,6 +391,25 @@ buses:
               LIMP_50: 0x1
               LIMP_33: 0x2
               LIMP_25: 0x3
+          vcu_car_state:
+            position: 53
+            length: 3
+            c_type: enum
+            enum:
+              VCU_STATE_ROOT: 0x0
+              VCU_STATE_LV: 0x1
+              VCU_STATE_PRECHARGING: 0x2
+              VCU_STATE_RTD: 0x3
+              VCU_STATE_DRIVING: 0x4
+          vcu_error_state:
+            position: 56
+            length: 3
+            c_type: enum
+            enum:
+              NO_ERROR_STATE: 0x0
+              RECOVERABLE_ERROR_STATE: 0x1
+              FATAL_ERROR_STATE: 0x2
+              
       RearCanNodeWheelSpeed:
         can_id: 0x0D1
         period: 0.02s
@@ -411,7 +430,7 @@ buses:
       CurrentSensor_Current:
         can_id: 0x521
         period: 0.05s
-        is_big_endian: true
+        is_big_endian: false
         segments:
           pack_current:
             position: 16
@@ -422,7 +441,7 @@ buses:
       CurrentSensor_Voltage:
         can_id: 0x522
         period: 0.05s
-        is_big_endian: true
+        is_big_endian: false
         segments:
           dc_bus_voltage:
             position: 16
@@ -433,7 +452,7 @@ buses:
       CurrentSensor_Power:
         can_id: 0x526
         period: 0.05s
-        is_big_endian: true
+        is_big_endian: false
         segments:
           power:
             position: 16
@@ -442,9 +461,9 @@ buses:
             signed: false
             unit: W
       CurrentSensor_Energy:
-        can_id: 0x527
+        can_id: 0x528
         period: 0.05s
-        is_big_endian: true
+        is_big_endian: false
         segments:
           pack_energy:
             position: 16
@@ -490,62 +509,86 @@ buses:
             unit: pressed
       MCCommand:
         can_id: 0x0C0 # From manual
-        period: 50ms  # MC needs a message at 2 Hz or higher
-        is_big_endian: true
+        period: 0.05s  # MC needs a message at 2 Hz or higher
+        is_big_endian: false
         segments:
           torque:
             position: 0
             length: 16
-            c_type: uint16_t
-            signed: false
-            unit: daJ # 10 joules
-          speed:
+            c_type: int16_t
+            signed: true
+            unit: dNm
+          angular_vel:
             position: 16
             length: 16
-            c_type: uint16_t
-            signed: false
+            c_type: int16_t
+            signed: signed
             unit: RPM
           direction_is_counterclockwise: # when viewed from shaft end of motor
-            position: 32
+            position: 39
             length: 1
             c_type: bool
           inverter_enabled:
-            position: 40
+            position: 47
             length: 1
             c_type: bool
           discharge_enabled:
-            position: 41
+            position: 46
+            length: 1
+            c_type: bool
+          speed_mode:
+            position: 45
             length: 1
             c_type: bool
           torque_limit:
             position: 48
             length: 16
-            c_type: uint16_t
-            unit: daJ # 10 joules
+            c_type: int16_t
+            unit: dNm
+      MCParameterRequest:
+        can_id: 0x0C1
+        is_big_endian: false
+        segments:
+          address:
+            position: 0
+            length: 16
+            c_type: int16_t
+            signed: true
+            unit: dNm
+          write:  # make an enum {read, write}
+            position: 23
+            length: 1
+            c_type: bool
+            signed: signed
+            unit: RPM
+          data:
+            position: 32
+            length: 16
+            c_type: int16_t
       MCVoltage:
         can_id: 0x0A7
         period: 1cs
-        is_big_endian: true
+        is_big_endian: false
         segments:
-          busVoltage:
+          bus:
             position: 0
             length: 16
             unit: dV
             signed: true
             c_type: int16_t
-          outVoltage:
+          out:
             position: 16
             length: 16
             unit: dV
             signed: true
             c_type: int16_t
-          VAB_Vd_Voltage:
+          VAB_Vd:
             position: 32
             length: 16
             unit: dV
             signed: true
             c_type: int16_t
-          VBC_Vq_Voltage:
+          VBC_Vq:
             position: 48
             length: 16
             unit: dV

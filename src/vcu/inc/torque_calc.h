@@ -4,12 +4,13 @@
 #include "stdio.h"
 #include "stm32f2xx_hal.h"
 
-#define MAX_TORQUE              5 // N-m
-#define TORQUE_SCALE_FACTOR     100
-#define MAX_SENSOR_VAL          1024
-#define MIN_SENSOR_VAL          0
+#include "fault_pedalbox.h"
 
-uint16_t calcTorque(uint16_t accel1,
-                    uint16_t accel2);
+// TODO: Extract MAX_TORQUE from RMS EEPROM (over CAN?)
+#define MAX_TORQUE    1600 // unit: dNm
+#define MAX_ACCEL_VAL 1000
+#define MIN_ACCEL_VAL 0
+
+uint16_t calcTorque(uint16_t accel);
 
 #endif // ifndef __TORQUE_CALC
