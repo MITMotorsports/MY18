@@ -151,7 +151,7 @@ void sendDashMsg() {
   msg.hv_light_on = (contactors.L_contactor_closed && contactors.H_contactor_closed);
   msg.traction_control = 0;
   msg.limp_mode_on = 0;
-  msg.lv_warning_on = 
+  msg.lv_warning_on = 0;
   msg.active_aero_on = 0;
   msg.regen_on = 0;
   msg.shutdown_esd_drain_open = gates.sdn;
