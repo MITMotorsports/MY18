@@ -65,6 +65,14 @@ void can_handle_vcu_to_dash(carstats_t *cs) {
     memcpy(&(cs->vcu_data), &msg, sizeof(msg));
 }
 
+void can_handle_bms_heartbeat(carstats_t *cs) {
+    can0_BMSHeartbeat_T msg;
+    unpack_can0_BMSHeartbeat(&frame, &msg);
+
+    cs->last_bms_heartbeat = msTicks;
+    cs->soc = msg.soc;
+}
+
 void can_update_carstats(carstats_t *cs) {
 
     handle_can_error(Can_RawRead(&frame));
@@ -87,13 +95,21 @@ void can_update_carstats(carstats_t *cs) {
             break;
         case can0_CurrentSensor_Voltage:
             can_handle_current_sensor_voltage(cs);
+            break;
         case can0_CurrentSensor_Power:
             can_handle_current_sensor_power(cs);
+            break;
         case can0_MCCommand:
             can_handle_mc_command(cs);
+            break;
         case can0_VcuToDash:
+            Board_Println("VCU TO DASH");
             can_handle_vcu_to_dash(cs);
+            break;
+        case CAN_UNKNOWN_MSG:
+            Board_Println("Unknown");
         default:
+
             // do nothing
             break;
     }

@@ -22,6 +22,9 @@ static bool active_aero_enabled = false;
 #define BUTTON_DOWN false
 #define OLED_UPDATE_INTERVAL_MS 100
 
+// dead after (ms)
+#define BMS_HEARTBEAT_EXPIRE 1000
+
 void update_lights(void);
 void send_dash_request(can0_DashRequest_type_T type);
 
@@ -86,7 +89,7 @@ void update_lights(void) {
     else
         LED_IMD_off();
 
-    if (carstats.vcu_data.ams_light_on)
+    if (msTicks < carstats.last_bms_heartbeat + BMS_HEARTBEAT_EXPIRE)
         LED_AMS_on();
     else
         LED_AMS_off();

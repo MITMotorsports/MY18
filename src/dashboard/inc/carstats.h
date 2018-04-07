@@ -21,6 +21,9 @@ typedef struct {
     bool brake_pressed;
     bool accel_pressed;
 
+    uint32_t last_bms_heartbeat;
+    int soc;
+
     // motor controller torque
     int torque_mc;
     int motor_rpm;
