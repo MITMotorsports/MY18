@@ -17,10 +17,13 @@ static NHD_US2066_OLED oled;
 
 static uint32_t nextOLEDUpdate;
 
+static bool active_aero_enabled = false;
+
 #define BUTTON_DOWN false
 #define OLED_UPDATE_INTERVAL_MS 100
 
 void update_lights(void);
+void send_dash_request(can0_DashRequest_type_T type);
 
 void dispatch_init() {
     init_button_state(&left_button);
@@ -46,6 +49,13 @@ void dispatch_update() {
 
     if (right_button.action == BUTTON_ACTION_TAP) {
         page_manager_next_page(&page_manager);
+
+        active_aero_enabled = !active_aero_enabled;
+        if (active_aero_enabled) {
+            send_dash_request(can0_DashRequest_type_ACTIVE_AERO_ENABLE);
+        } else {
+            send_dash_request(can0_DashRequest_type_ACTIVE_AERO_DISABLE);
+        }
     } else if (right_button.action == BUTTON_ACTION_HOLD) {
         page_manager_prev_page(&page_manager);
     }
@@ -81,4 +91,11 @@ void update_lights(void) {
     else
         LED_AMS_off();
 
+}
+
+void send_dash_request(can0_DashRequest_type_T type) {
+    can0_DashRequest_T msg;
+    msg.type = type;
+    
+    handle_can_error(can0_DashRequest_Write(&msg));
 }
