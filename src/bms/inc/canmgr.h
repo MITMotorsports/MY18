@@ -32,10 +32,10 @@ void can_receive_energy(BMS_INPUT_T *bms_input);
 void Board_CAN_Transmit(BMS_INPUT_T  *bms_input,
                         BMS_OUTPUT_T *bms_output);
 
-void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input);
+Can_ErrorID_T can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input);
 
-void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input);
+Can_ErrorID_T can_transmit_cell_temperatures(BMS_INPUT_T *bms_input);
 
-void can_transmit_cell_voltages(BMS_INPUT_T *bms_input);
+Can_ErrorID_T can_transmit_cell_voltages(BMS_INPUT_T *bms_input);
 
 #endif // ifdef _CANMGR_H

@@ -3,7 +3,7 @@
 target remote localhost:3333
 
 # firmware .elf file
-file bin/uart_hal.elf
+file bin/vcu.elf
 
 # reset and halt the device
 mon reset halt

@@ -20,6 +20,7 @@
 #define MODULE_CELL_COUNT 12
 #define MIN_CELL_TEMP_dC -30
 #define FAN_ON_THRESHOLD_dC 450
+#define MAX_CHARGE 7100
 
 typedef struct BMS_PACK_CONFIG {
   uint32_t cell_min_mV;                // minimum cell voltage (millivolts)

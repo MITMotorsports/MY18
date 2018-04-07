@@ -1,4 +1,5 @@
 #include "gpio.h"
+#include "uart.h"
 
 // Digital GPIO Initialization
 void Board_GPIO_Init(void) {
@@ -20,28 +21,22 @@ void Board_GPIO_Init(void) {
   Chip_GPIO_SetPinState(LPC_GPIO, PIN_LED3, false);
 
   // SSP for EEPROM
-  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_2, (IOCON_FUNC2 | IOCON_MODE_INACT)); /*
-                                                                                      MISO1
-                                                                                    */
-  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_3, (IOCON_FUNC2 | IOCON_MODE_INACT)); /*
-                                                                                      MOSI1
-                                                                                    */
-  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_1, (IOCON_FUNC2 | IOCON_MODE_INACT)); /*
-                                                                                      SCK1
-                                                                                    */
+  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_2, (IOCON_FUNC2 | IOCON_MODE_INACT)); //
+                                                                                   // MISO1
+  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_3, (IOCON_FUNC2 | IOCON_MODE_INACT)); //
+                                                                                   // MOSI1
+  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO2_1, (IOCON_FUNC2 | IOCON_MODE_INACT)); //
+                                                                                   // SCK1
 
   // SSP for LTC6804
   Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_8,
-                       (IOCON_FUNC1 | IOCON_MODE_PULLUP));                         /*
-                                                                                      MISO0
-                                                                                    */
+                       (IOCON_FUNC1 | IOCON_MODE_PULLUP));                         //
+                                                                                   // MISO0
   Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_9,
-                       (IOCON_FUNC1 | IOCON_MODE_PULLUP));                         /*
-                                                                                      MOSI0
-                                                                                    */
-  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_6, (IOCON_FUNC2 | IOCON_MODE_INACT)); /*
-                                                                                      SCK0
-                                                                                    */
+                       (IOCON_FUNC1 | IOCON_MODE_PULLUP));                         //
+                                                                                   // MOSI0
+  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_6, (IOCON_FUNC2 | IOCON_MODE_INACT)); //
+                                                                                   // SCK0
   Chip_IOCON_PinLocSel(LPC_IOCON, IOCON_SCKLOC_PIO0_6);
 
   // TODO: is the cs pin supposed to be initialized?
@@ -53,29 +48,37 @@ void Board_GPIO_Init(void) {
   // Contactor Weld
   Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_CONTACTOR_WELD_1);
   Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_1,
-                       (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_PULLUP));
+                       (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
+
 
   Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_CONTACTOR_WELD_2);
-
-  // Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_2, (IOCON_FUNC1 |
-  // IOCON_DIGMODE_EN | IOCON_MODE_PULLUP));
-  // for analog mode
   Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_2,
-                       (IOCON_FUNC2 | IOCON_ADMODE_EN));
+                       (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
+
+  // for analog mode
+  // Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTOR_WELD_2,
+  //                      (IOCON_FUNC2 | IOCON_ADMODE_EN));
 
   // High Side Detect
-  Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_HIGH_SIDE_DETECT);
+  // No internal pull up/down. Exists in hardware.
+  Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_HIGH_SIDE_DETECT);
   Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_HIGH_SIDE_DETECT,
-                       (IOCON_FUNC0 | IOCON_MODE_INACT));
+                       (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
 
   // Low Side Detect
-  Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_LOW_SIDE_DETECT);
+  Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_LOW_SIDE_DETECT);
   Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_LOW_SIDE_DETECT,
-                       (IOCON_FUNC0 | IOCON_MODE_INACT));
+                       (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
+
+  // This is the analog config that does not work. TODO: Firgure out why.
+  // Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_LOW_SIDE_DETECT,
+  // (IOCON_FUNC0 | IOCON_ADMODE_EN | IOCON_MODE_INACT));
 
   // Charge Enable Pin
   Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_CHARGER_ENABLE);
-  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CHARGER_ENABLE, IOCON_FUNC0);
+  Chip_IOCON_PinMuxSet(LPC_IOCON,
+                       PIN_IOCON_CHARGER_ENABLE,
+                       IOCON_FUNC0 | IOCON_MODE_INACT);
   Chip_GPIO_SetPinState(LPC_GPIO, PIN_CHARGER_ENABLE, false);
 
   // Fault Pin
@@ -150,46 +153,45 @@ void Board_GPIO_Init(void) {
   Chip_GPIO_SetPinState(LPC_GPIO, PIN_48, false);
 }
 
-void Board_LED_Set(uint8_t led_gpio, uint8_t led_pin, bool state) {
+// Set the value of a GPIO pin
+inline void Board_Pin_Set(uint8_t led_gpio, uint8_t led_pin, bool state) {
   Chip_GPIO_SetPinState(LPC_GPIO, led_gpio, led_pin, state);
 }
 
-void Board_FAULT_Set(bool state) {
-  Chip_GPIO_SetPinState(LPC_GPIO, PIN_BMS_FAULT, state);
+// Read the value of a GPIO pin
+inline bool Board_Pin_Read(uint8_t gpio, uint8_t pin) {
+  return Chip_GPIO_GetPinState(LPC_GPIO, gpio, pin);
 }
 
-void Board_LED_Toggle(uint8_t led_gpio, uint8_t led_pin) {
-  Chip_GPIO_SetPinState(LPC_GPIO, led_gpio, led_pin,
-                        1 - Chip_GPIO_GetPinState(LPC_GPIO, led_gpio, led_pin));
+// Toggle a GPIO pin
+inline void Board_Pin_Toggle(uint8_t gpio, uint8_t pin) {
+  Chip_GPIO_SetPinState(LPC_GPIO, gpio, pin, !Board_Pin_Read(gpio, pin));
 }
 
-void Board_Contactors_Set(bool close_contactors) {
-  Chip_GPIO_SetPinState(LPC_GPIO, PIN_BMS_FAULT, close_contactors);
-}
-
-bool Board_Contactors_Closed(void) {
-  return Chip_GPIO_GetPinState(LPC_GPIO, PIN_BMS_FAULT);
-}
+// Read from an ADC channel
 
 // Analog Pin Initialization
 void Board_ADC_Init() {
   Chip_ADC_Init(LPC_ADC, &adc_setup);
   Chip_ADC_EnableChannel(LPC_ADC, ADC_CH4, ENABLE);
+  Chip_ADC_EnableChannel(LPC_ADC, ADC_CH5, ENABLE);
+  Chip_ADC_EnableChannel(LPC_ADC, ADC_CH7, ENABLE);
   Chip_ADC_SetBurstCmd(LPC_ADC, 1);
   Chip_ADC_SetStartMode(LPC_ADC, ADC_START_NOW, ADC_TRIGGERMODE_RISING);
 }
 
-bool Board_Contactor_Two_Welded() {
-  int16_t adc_data;
-
-  while (!Chip_ADC_ReadStatus(LPC_ADC, ADC_CH4, ADC_DR_DONE_STAT)) {}
-  Chip_ADC_ReadValue(LPC_ADC, ADC_CH4, &adc_data);
-  return adc_data < 800;
+bool Board_Contactor_Low_Closed() {
+  return Board_Pin_Read(PIN_LOW_SIDE_DETECT);
 }
 
-// Digital
-bool Board_Contactor_One_Welded(void) {
-  // returns False when shorted
+bool Board_Contactor_High_Closed() {
+  return Board_Pin_Read(PIN_HIGH_SIDE_DETECT);
+}
 
-  return Chip_GPIO_GetPinState(LPC_GPIO, PIN_CONTACTOR_WELD_1);
+bool Board_Contactor_Low_Welded() {
+  return !Board_Pin_Read(PIN_CONTACTOR_WELD_2);
+}
+
+bool Board_Contactor_High_Welded() {
+  return !Board_Pin_Read(PIN_CONTACTOR_WELD_1);
 }

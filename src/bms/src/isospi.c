@@ -266,7 +266,7 @@ void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status) {
     pack_status->pack_cell_min_mV = ltc6804_adc_res.pack_cell_min_mV;
     pack_status->pack_cell_max_mV = ltc6804_adc_res.pack_cell_max_mV;
 
-#ifdef DEBUG_PRINT
+#if false
     Board_Print_BLOCKING("MIN voltage: ");
     Board_PrintNum(pack_status->pack_cell_min_mV, 10);
     Board_Print_BLOCKING("MAX voltage: ");

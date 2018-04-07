@@ -5,6 +5,7 @@
 #include "microrl.h"
 #include "console_types.h"
 #include "error_handler.h"
+#include "soc.h"
 
 /***************************************
         Private Variables
@@ -139,7 +140,8 @@ static void get(const char *const *argv) {
       utoa(bms_state->pack_config->max_cell_temp_dC, tempstr, 10);
       Board_Println(tempstr);
       break;
-
+    case RWL_soc:
+      break;
     case RWL_LENGTH:
       break;
     }
@@ -254,12 +256,16 @@ static void set(const char *const *argv) {
   }
 
   if (foundloc) {
-    uint8_t ret;
-
-    // ret = EEPROM_ChangeConfig(rwloc,my_atou(argv[2]));
-    if (ret != 0) {
-      Board_Println("Set failed (command not yet implemented?)!");
+    // uint8_t ret;
+    if(rwloc == RWL_soc) {
+      bms_input->pack_status->state_of_charge = 100;
+      SOC_Max(bms_input->pack_status);
+      Board_Println("Set state of charge to 100%");
     }
+    // ret = EEPROM_ChangeConfig(rwloc,my_atou(argv[2]));
+    // if (ret != 0) {
+    //   Board_Println("Set failed (command not yet implemented?)!");
+    // }
   } else {
     // loop over r/o entries
     ro_loc_label_t roloc;
