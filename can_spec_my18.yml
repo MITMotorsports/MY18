@@ -74,7 +74,7 @@ buses:
     messages:
       FrontCanNodeBrakeThrottle:
         can_id: 0x0D0
-        period: 0.2s
+        period: 0.02s
         is_big_endian: true
         segments:
           accel_1:
@@ -409,7 +409,7 @@ buses:
               NO_ERROR_STATE: 0x0
               RECOVERABLE_ERROR_STATE: 0x1
               FATAL_ERROR_STATE: 0x2
-              
+
       RearCanNodeWheelSpeed:
         can_id: 0x0D1
         period: 0.02s
