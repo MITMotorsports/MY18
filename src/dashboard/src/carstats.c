@@ -1,5 +1,7 @@
 #include "carstats.h"
 
+#include "board.h"
+
 #include <string.h>
 
 Frame frame;
@@ -38,7 +40,7 @@ void can_handle_current_sensor_voltage(carstats_t *cs) {
     can0_CurrentSensor_Voltage_T msg;
     unpack_can0_CurrentSensor_Voltage(&frame, &msg);
 
-    cs->battery_voltage = msg.pack_voltage;
+    cs->battery_voltage = msg.dc_bus_voltage;
 }
 
 void can_handle_current_sensor_power(carstats_t *cs) {
@@ -49,11 +51,11 @@ void can_handle_current_sensor_power(carstats_t *cs) {
 }
 
 void can_handle_mc_command(carstats_t *cs) {
-    can0_MC_Command_T msg;
-    unpack_can0_MC_Command(&frame, &msg);
+    can0_MCCommand_T msg;
+    unpack_can0_MCCommand(&frame, &msg);
 
     cs->torque_mc = msg.torque;
-    cs->motor_rpm = msg.speed;
+    cs->motor_rpm = msg.angular_vel;
 }
 
 void can_handle_vcu_to_dash(carstats_t *cs) {
@@ -64,6 +66,8 @@ void can_handle_vcu_to_dash(carstats_t *cs) {
 }
 
 void can_update_carstats(carstats_t *cs) {
+
+    handle_can_error(Can_RawRead(&frame));
 
     can0_T msgType;
     msgType = identify_can0(&frame);
@@ -85,7 +89,7 @@ void can_update_carstats(carstats_t *cs) {
             can_handle_current_sensor_voltage(cs);
         case can0_CurrentSensor_Power:
             can_handle_current_sensor_power(cs);
-        case can0_MC_Command:
+        case can0_MCCommand:
             can_handle_mc_command(cs);
         case can0_VcuToDash:
             can_handle_vcu_to_dash(cs);

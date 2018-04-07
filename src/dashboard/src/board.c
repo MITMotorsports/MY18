@@ -66,3 +66,76 @@ void Board_GPIO_Init(void) {
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_KNOB, IOCON_FUNC2 | IOCON_ADMODE_EN);
     Chip_ADC_EnableChannel(LPC_ADC, KNOB_CHANNEL, ENABLE);
 }
+
+
+void handle_can_error(Can_ErrorID_T error) {
+  if ((error != Can_Error_NONE) && (error != Can_Error_NO_RX)) {
+    switch (error) {
+    case Can_Error_NONE:
+      //Board_Print("Can_Error_NONE\n");
+      break;
+
+    case Can_Error_NO_RX:
+      //Board_Print("Can_Error_NO_RX\n");
+      break;
+
+    case Can_Error_EPASS:
+      //Board_Print("Can_Error_EPASS\n");
+      break;
+
+    case Can_Error_WARN:
+      //Board_Print("Can_Error_WARN\n");
+      break;
+
+    case Can_Error_BOFF:
+      //Board_Print("Can_Error_BOFF\n");
+      break;
+
+    case Can_Error_STUF:
+      //Board_Print("Can_Error_STUF\n");
+      break;
+
+    case Can_Error_FORM:
+      //Board_Print("Can_Error_FORM\n");
+      break;
+
+    case Can_Error_ACK:
+      //Board_Print("Can_Error_ACK\n");
+      break;
+
+    case Can_Error_BIT1:
+      //Board_Print("Can_Error_BIT1\n");
+      break;
+
+    case Can_Error_BIT0:
+      //Board_Print("Can_Error_BIT0\n");
+      break;
+
+    case Can_Error_CRC:
+      //Board_Print("Can_Error_CRC\n");
+      break;
+
+    case Can_Error_UNUSED:
+      //Board_Print("Can_Error_UNUSED\n");
+      break;
+
+    case Can_Error_UNRECOGNIZED_MSGOBJ:
+      //Board_Print("Can_Error_UNRECOGNIZED_MSGOBJ\n");
+      break;
+
+    case Can_Error_UNRECOGNIZED_ERROR:
+      //Board_Print("Can_Error_UNRECOGNIZED_ERROR\n");
+      break;
+
+    case Can_Error_TX_BUFFER_FULL:
+      //Board_Print("Can_Error_TX_BUFFER_FULL\n");
+      CAN_Init();
+      break;
+
+    case Can_Error_RX_BUFFER_FULL:
+      //Board_Print("Can_Error_RX_BUFFER_FULL\n");
+      CAN_Init();
+      break;
+    }
+  }
+}
