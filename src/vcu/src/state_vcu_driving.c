@@ -1,6 +1,6 @@
 #include "state_vcu_driving.h"
 
-const Time_T print_period = 1000;
+const Time_T print_period = 20;
 
 static uint16_t torque_command   = 0;
 static bool     stall_until_safe = true;
