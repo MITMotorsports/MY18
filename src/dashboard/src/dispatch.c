@@ -42,6 +42,19 @@ void dispatch_init() {
     Delay(100);
 
     nextOLEDUpdate = 0;
+
+    // init carstats fields
+    carstats.battery_voltage         = -1;
+    carstats.lowest_cell_voltage     = -1;
+    carstats.max_cell_temp           = -1;
+    carstats.power                   = -1;
+    carstats.soc                     = -1;
+    carstats.torque_mc               = -1;
+    carstats.motor_rpm               = -1;
+    carstats.front_left_wheel_speed  = -1;
+    carstats.front_right_wheel_speed = -1;
+    carstats.rear_left_wheel_speed   = -1;
+    carstats.rear_right_wheel_speed  = -1;
 }
 
 void dispatch_update() {

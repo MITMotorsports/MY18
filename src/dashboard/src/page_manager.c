@@ -1,5 +1,7 @@
 #include "page_manager.h"
 
+#define DATA_UNKNOWN "?"
+
 void page_manager_init(page_manager_t *pm, carstats_t *stats) {
     pm->page = 0;
     pm->stats = stats;
@@ -114,41 +116,65 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_clearline(oled, 1);
     oled_set_pos(oled, 1, 0);
     oled_print(oled, "TRQ ");
-    int torque_Nm = pm->stats->torque_mc / 10;
-    oled_print_num(oled, torque_Nm);
+    if (pm->stats->torque_mc >= 0) {
+        int torque_Nm = pm->stats->torque_mc / 10;
+        oled_print_num(oled, torque_Nm);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
 
-    int pack_V = pm->stats->battery_voltage;
     oled_rprint_pad(oled, "PACK", 5);
-    oled_rprint_num_pad(oled, pack_V, 1);
-    oled_rprint(oled, "V");
+    if (pm->stats->battery_voltage >= 0) {
+        int pack_V = pm->stats->battery_voltage/10;
+        oled_rprint_num_pad(oled, pack_V, 1);
+        oled_rprint(oled, "V");
+    } else {
+        oled_rprint(oled, DATA_UNKNOWN);
+    }
 
     oled_clearline(oled, 2);
     oled_set_pos(oled, 2, 0);
 
-    int power_kW = pm->stats->power / 1000;
     oled_print(oled, "PWR ");
-    oled_print_num(oled, power_kW);
-    oled_print(oled, "kW");
+    if (pm->stats->power >= 0) {
+        int power_kW = pm->stats->power / 1000;
+        oled_print_num(oled, power_kW);
+        oled_print(oled, "kW");
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
 
-    int cell_mV = pm->stats->lowest_cell_voltage;
-    int cell_V = cell_mV / 1000;
-    int cell_dV = (cell_mV / 100) % 10;
     oled_rprint_pad(oled, "CELL", 5);
-    oled_rprint_num_pad(oled, cell_V, 3);
-    oled_rprint_pad(oled, ".", 2);
-    oled_rprint_num_pad(oled, cell_dV, 1);
-    oled_rprint(oled, "V");
+    if (pm->stats->lowest_cell_voltage >= 0) {
+        int cell_mV = pm->stats->lowest_cell_voltage;
+        int cell_V = cell_mV / 1000;
+        int cell_dV = (cell_mV / 100) % 10;
+        oled_rprint_num_pad(oled, cell_V, 3);
+        oled_rprint_pad(oled, ".", 2);
+        oled_rprint_num_pad(oled, cell_dV, 1);
+        oled_rprint(oled, "V");
+    } else {
+        oled_rprint(oled, DATA_UNKNOWN);
+    }
 
     
     oled_clearline(oled, 3);
     oled_set_pos(oled, 3, 0);
     oled_print(oled, "RPM ");
-    oled_print_num(oled, pm->stats->motor_rpm);
+    if (pm->stats->motor_rpm >= 0) {
+        oled_print_num(oled, pm->stats->motor_rpm);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
 
-    int temp_C = pm->stats->max_cell_temp / 10;
     oled_rprint_pad(oled, "TEMP", 5);
-    oled_rprint_num_pad(oled, temp_C, 1);
-    oled_rprint(oled, "C");
+    if (pm->stats->max_cell_temp >= 0) {
+        int temp_C = pm->stats->max_cell_temp / 10;
+        oled_rprint_num_pad(oled, temp_C, 1);
+        oled_rprint(oled, "C");
+    } else {
+        oled_rprint(oled, DATA_UNKNOWN);
+    }
 }
 
 void draw_takeover_page(page_manager_t *pm, NHD_US2066_OLED *oled) {

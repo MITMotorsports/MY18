@@ -38,8 +38,6 @@ int main(void) {
     f.data[0] = 0;
     f.extended = false;
 
-
-    bool toggle = false;
     while (1) {
         //f.data[0] += 1;
         //handle_can_error(Can_RawWrite(&f));
@@ -53,14 +51,7 @@ int main(void) {
         //    LED_RTD_on();
         //}
 
-        toggle = !toggle;
-        if (toggle)
-            LED_AMS_on();
-        else
-            LED_AMS_off();
-
         dispatch_update();
-        Delay(1);
     }
 
     return 0;
