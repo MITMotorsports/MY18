@@ -67,7 +67,7 @@ buses:
     messages:
       FrontCanNodeBrakeThrottle:
         can_id: 0x090
-        period: 13s
+        period: 13ms
         is_big_endian: true
         segments:
           accel_1:
@@ -93,7 +93,7 @@ buses:
       FrontCanNodeWheelSpeed:
         can_id: 0x0F0
         is_big_endian: true
-        period: 23ms
+        period: 1000s
         segments:
           front_right_wheel_speed:
             position: 0
@@ -262,11 +262,11 @@ buses:
             length: 3
             c_type: enum
             enum:
-              VCU_STATE_ROOT: 0x0
-              VCU_STATE_LV: 0x1
-              VCU_STATE_PRECHARGING: 0x2
-              VCU_STATE_RTD: 0x3
-              VCU_STATE_DRIVING: 0x4
+              VCU_STATE_ROOT: 0
+              VCU_STATE_LV: 1
+              VCU_STATE_PRECHARGING: 2
+              VCU_STATE_RTD: 3
+              VCU_STATE_DRIVING: 4
           error_state:
             position: 3
             length: 3

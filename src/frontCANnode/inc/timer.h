@@ -1,6 +1,8 @@
 #ifndef TIMER_H
 #define TIMER_H
 
+extern volatile uint32_t msTicks;
+
 /**
  * @details intializes timers
  */

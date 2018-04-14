@@ -143,7 +143,7 @@ void sendHeartbeatMsg() {
 
   can0_VCUHeartbeat_T msg;
 
-  msg.vcu_state = get_vcu_state();
+  msg.vcu_state   = get_vcu_state();
   msg.error_state = get_error_state();
 
   can0_VCUHeartbeat_Write(&msg);

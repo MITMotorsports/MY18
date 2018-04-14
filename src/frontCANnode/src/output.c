@@ -6,9 +6,6 @@
 
 #include <CANlib.h>
 
-const uint8_t can_brakethrottle_period = can0_FrontCanNodeBrakeThrottle_period;
-const uint8_t can_wheel_speed_period = can0_FrontCanNodeWheelSpeed_period;
-
 static bool resettingPeripheral = false;
 
 Can_ErrorID_T write_can_brakethrottle_msg(Input_T *input);
@@ -24,30 +21,12 @@ void Output_initialize(Output_T *output) {
 }
 
 void Output_process_output(Input_T *input, Output_T *output) {
-  if(period_reached(output->can_brakethrottle_ms, can_brakethrottle_period, input->msTicks)) {
-    output->can_brakethrottle_ms = input->msTicks;
-    output->send_brakethrottle_msg = true;
-  }
-
-  if(period_reached(output->can_wheel_speed_ms, can_wheel_speed_period, input->msTicks)) {
-    output->can_wheel_speed_ms = input->msTicks;
-    output->send_wheel_speed_msg = true;
-  }
-
-  if(output->send_brakethrottle_msg) {
-    output->send_brakethrottle_msg = false;
-    Can_ErrorID_T error = write_can_brakethrottle_msg(input);
-    handle_can_error(error);
-  }
-
-  if(output->send_wheel_speed_msg) {
-    output->send_wheel_speed_msg = false;
-    Can_ErrorID_T error = write_can_wheel_speed_msg(input);
-    handle_can_error(error);
-  }
+  handle_can_error(write_can_brakethrottle_msg(input));
 }
 
 Can_ErrorID_T write_can_brakethrottle_msg(Input_T *input) {
+  LIMIT(can0_FrontCanNodeBrakeThrottle_period);
+
   can0_FrontCanNodeBrakeThrottle_T msg;
 
   msg.brake_1 = input->adc->brake_1;
