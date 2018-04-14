@@ -66,8 +66,8 @@ buses:
     is_extended: false
     messages:
       FrontCanNodeBrakeThrottle:
-        can_id: 0x0D0
-        period: 21s
+        can_id: 0x090
+        period: 13s
         is_big_endian: true
         segments:
           accel_1:
