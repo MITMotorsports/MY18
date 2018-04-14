@@ -1,7 +1,7 @@
 #include "fault_pedalbox.h"
 
-Conflicts_T conflicts = {};
-volatile Pedalbox_T  pedalbox  = {};
+Conflicts_T conflicts        = {};
+volatile Pedalbox_T pedalbox = {};
 
 
 bool any_recoverable_conflict_faults(void) {
@@ -20,7 +20,8 @@ void update_conflicts() {
   if (conflicts.brake_accel) {
     // Clear conflict if accel was released.
     // printf("[FAULT : PEDALBOX : BRAKE_ACCEL] Conflict.\r\n");
-    if (pedalbox_min(accel) < PEDALBOX_ACCEL_RELEASE) {
+    if ((pedalbox_min(accel) < PEDALBOX_ACCEL_RELEASE) &&
+        (pedalbox.brake_1 < PEDALBOX_BRAKE_BEGIN)) {
       printf("[FAULT : PEDALBOX : BRAKE_ACCEL] Potential release.\r\n");
       conflicts.brake_accel = false;
     }
