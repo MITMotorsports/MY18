@@ -108,7 +108,7 @@ void handleCurrentSensorVoltageMsg(Frame *msg) {
 
   unpack_can0_CurrentSensor_Voltage(msg, &unpacked_msg);
 
-  cs_readings.V_bus = unpacked_msg.dc_bus_voltage;
+  cs_readings.V_bus = unpacked_msg.voltage;
 
   heartbeats.current_sensor = HAL_GetTick();
 }

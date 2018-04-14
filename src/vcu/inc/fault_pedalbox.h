@@ -27,7 +27,8 @@
 #define PEDALBOX_ACCEL_RELEASE 50
 
 // When the calipers begin to do anything significant.
-#define PEDALBOX_BRAKE_BEGIN 320
+#define PEDALBOX_BRAKE_BEGIN 150
+#define PEDALBOX_BRAKE_RTD   320
 
 
 typedef struct {

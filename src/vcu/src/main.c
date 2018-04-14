@@ -43,9 +43,8 @@ int main(void) {
     static uint32_t lastt = 0;
 
     print_gate_faults(false);
-    if (HAL_GetTick() - lastt > 5000) {
+    if (HAL_GetTick() - lastt > 1000) {
       HAL_GPIO_TogglePin(GPIO(LED));
-      // printf("[ALIVE]\r\n");
 
       lastt = HAL_GetTick();
     }
