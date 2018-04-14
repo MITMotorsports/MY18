@@ -3,6 +3,7 @@
 // TODO: Keep adding things.
 static ERROR_STATUS_T error_vector[ERROR_NUM_ERRORS];
 static bool errors_to_check[ERROR_NUM_ERRORS];
+static bool errors_timed_out[ERROR_NUM_ERRORS];
 
 static ERROR_HANDLER_STATUS_T _Error_Handle_Count(ERROR_STATUS_T *er_stat,
                                                   uint32_t        timeout_num) {
@@ -44,8 +45,8 @@ static ERROR_HANDLER error_handler_vector[ERROR_NUM_ERRORS] = {
   { _Error_Handle_Timeout, CELL_OVER_VOLTAGE_time           },
   { _Error_Handle_Timeout, CELL_UNDER_TEMP_time             },
   { _Error_Handle_Timeout, CELL_OVER_TEMP_time              },
-  { _Error_Handle_Timeout, L_CONTACTOR_WELDED_time          },
-  { _Error_Handle_Timeout, H_CONTACTOR_WELDED_time          },
+  { _Error_Handle_Timeout, L_CONTACTOR_ERROR_time          },
+  { _Error_Handle_Timeout, H_CONTACTOR_ERROR_time          },
 };
 
 void Error_Init(void) {
@@ -112,17 +113,25 @@ bool Error_Should_Fault(void) {
 
   for (ERROR_T i = 0; i < ERROR_NUM_ERRORS; ++i) {
 
-    if(error_vector[i].error || error_vector[i].handling) {
+    if((error_vector[i].error || error_vector[i].handling ) && errors_to_check[i]) {
       bool fault = (error_handler_vector[i].handler(&error_vector[i], error_handler_vector[i].timeout) == FAULT);
 
-      //if handler requests Fault and we care about that error
-      if(fault && errors_to_check[i]) {
+      if(fault) {
         return true;
       }
 
     }
   }
   return false;
+}
+
+//called when trasmitting bms heartbeat for specfic errors
+bool Check_Error(ERROR_T er_t) {
+  if (errors_to_check[er_t]) {
+    return error_handler_vector[er_t].handler(&error_vector[er_t], error_handler_vector[er_t].timeout) == FAULT;
+  } else {
+    return false;
+  }
 }
 
 const ERROR_STATUS_T* Error_GetStatus(ERROR_T er_t) {

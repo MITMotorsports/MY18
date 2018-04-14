@@ -80,15 +80,15 @@ void Process_Input(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
   bms_input->L_contactor_closed = Board_Contactor_Low_Closed();
 
   if(bms_input->H_contactor_welded != bms_input->H_contactor_closed) {
-    Error_Present(ERROR_H_CONTACTOR_WELDED);
+    Error_Present(ERROR_H_CONTACTOR_ERROR);
   } else {
-    Error_Clear(ERROR_H_CONTACTOR_WELDED);
+    Error_Clear(ERROR_H_CONTACTOR_ERROR);
   }
 
   if(bms_input->L_contactor_welded != bms_input->L_contactor_closed) {
-    Error_Present(ERROR_L_CONTACTOR_WELDED);
+    Error_Present(ERROR_L_CONTACTOR_ERROR);
   } else {
-    Error_Clear(ERROR_L_CONTACTOR_WELDED);
+    Error_Clear(ERROR_L_CONTACTOR_ERROR);
   }
 
 #ifdef DEBUG_PRINT

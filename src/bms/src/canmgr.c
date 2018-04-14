@@ -44,25 +44,21 @@ void can_receive_current(BMS_INPUT_T *bms_input) {
   can0_CurrentSensor_Current_T msg;
 
   unpack_can0_CurrentSensor_Current(&can_input, &msg);
-  bms_input->pack_status->pack_current_mA = msg.pack_current >
-                                            0 ? msg.pack_current : -msg.
-                                            pack_current;
+  bms_input->pack_status->pack_current_mA = msg.current;
 }
 
 void can_receive_voltage(BMS_INPUT_T *bms_input) {
   can0_CurrentSensor_Voltage_T msg;
 
   unpack_can0_CurrentSensor_Voltage(&can_input, &msg);
-  bms_input->pack_status->pack_voltage_mV = msg.pack_voltage >
-                                            0 ? msg.pack_voltage : -msg.
-                                            pack_voltage;
+  bms_input->pack_status->pack_voltage_mV = msg.voltage;
 }
 
 void can_receive_energy(BMS_INPUT_T *bms_input) {
   can0_CurrentSensor_Energy_T msg;
 
   unpack_can0_CurrentSensor_Energy(&can_input, &msg);
-  bms_input->pack_status->pack_energy_wH = msg.pack_energy;
+  bms_input->pack_status->pack_energy_wH = msg.energy;
 }
 
 Frame can_output;
@@ -91,7 +87,7 @@ void Board_CAN_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
     }
   }
 
-  
+
 
   // TODO: agree upon resending only if updated or
   // repeating existing info on bus (bms_input0->msTicks)
@@ -105,25 +101,17 @@ Can_ErrorID_T can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
   if ((msTicks - last_time) > can0_BMSHeartbeat_period) {
     const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
-    ERROR_STATUS_T *errors = Get_Errors();
     can0_BMSHeartbeat_T msg;
 
-    // msg.error_pec = errors[ERROR_LTC6804_PEC].error == true;
-    // msg.error_cvst = errors[ERROR_LTC6804_CVST].error == true;
-    // msg.error_owt = errors[ERROR_LTC6804_OWT].error == true;
-    // msg.error_eeprom = errors[ERROR_EEPROM].error == true;
-    // msg.error_cell_under_voltage = errors[ERROR_CELL_UNDER_VOLTAGE].error == true;
-    // msg.error_cell_over_voltage = errors[ERROR_CELL_OVER_VOLTAGE].error == true;
-    // msg.error_cell_under_temp = errors[ERROR_CELL_UNDER_TEMP].error == true;
-    // msg.error_cell_over_temp = errors[ERROR_CELL_OVER_TEMP].error == true;
-    // msg.error_over_current = errors[ERROR_OVER_CURRENT].error == true;
-    // msg.error_can = errors[ERROR_CAN].error == true;
-    // msg.error_conflicting_mode_requests = errors[ERROR_CONFLICTING_MODE_REQUESTS].error == true;
-    // msg.error_vcu_dead = errors[ERROR_VCU_DEAD].error == true;
-    // msg.error_control_flow = errors[ERROR_CONTROL_FLOW].error == true;
-    // msg.error_blown_fuse = errors[ERROR_BLOWN_FUSE].error == true;
-    // msg.error_L_contactor_welded = errors[ERROR_L_CONTACTOR_WELDED].error == true;
-    // msg.error_H_contactor_welded = errors[ERROR_H_CONTACTOR_WELDED].error == true;
+    // msg.error_pec = Check_Error(ERROR_LTC_PEC);
+    // msg.error_cvst = Check_Error(ERROR_LTC_CVST);
+    // msg.error_owt = Check_Error(ERROR_LTC_OWT);
+    // msg.error_L_contactor = Check_Error(ERROR_L_CONTACTOR_ERROR);
+    // msg.error_H_contactor = Check_Error(ERROR_H_CONTACTOR_ERROR);
+    // msg.error_cell_under_voltage = Check_Error(ERROR_CELL_UNDER_VOLTAGE);
+    // msg.error_cell_over_voltage = Check_Error(ERROR_CELL_OVER_VOLTAGE);
+    // msg.error_cell_under_temp = Check_Error(ERROR_CELL_UNDER_TEMP);
+    // msg.error_cell_over_temp = Check_Error(ERROR_CELL_OVER_TEMP);
 
     Frame manual;
     manual.id = can0_BMSHeartbeat_can_id;
