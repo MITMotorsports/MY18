@@ -45,15 +45,13 @@ bool any_fatal_gate_faults(void) {
         return true;
       }
     }
-    // TODO: This should be in an else statement, but this code works so let's
-    //       keep it as is for now...
-
-    // TODO: Get microsecond precision -- based on HAL, or counter with
-    //       threshold dependent on profiled execution period.
-    last_time = HAL_GetTick();
+    else {
+      last_time = HAL_GetTick();
+    }
   }
 
   last_val = retval;
+
   return false;
 }
 
