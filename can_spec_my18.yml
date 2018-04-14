@@ -406,7 +406,7 @@ buses:
         period: 50ms
         is_big_endian: false
         segments:
-          pack_current:
+          current:
             position: 16
             length: 32
             c_type: int32_t
@@ -417,7 +417,7 @@ buses:
         period: 50ms
         is_big_endian: false
         segments:
-          dc_bus_voltage:
+          voltage:
             position: 16
             length: 32
             c_type: int32_t
@@ -439,7 +439,7 @@ buses:
         period: 50ms
         is_big_endian: false
         segments:
-          pack_energy:
+          energy:
             position: 16
             length: 32
             c_type: int32_t
