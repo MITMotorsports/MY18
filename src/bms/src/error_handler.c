@@ -47,6 +47,7 @@ static ERROR_HANDLER error_handler_vector[ERROR_NUM_ERRORS] = {
   { _Error_Handle_Timeout, CELL_OVER_TEMP_time              },
   { _Error_Handle_Timeout, L_CONTACTOR_ERROR_time          },
   { _Error_Handle_Timeout, H_CONTACTOR_ERROR_time          },
+  { _Error_Handle_Count, CONTROL_FLOW_count                },
 };
 
 void Error_Init(void) {

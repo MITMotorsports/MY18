@@ -15,6 +15,7 @@
 #define CELL_OVER_TEMP_time        10000
 #define L_CONTACTOR_ERROR_time    1000
 #define H_CONTACTOR_ERROR_time    1000
+#define CONTROL_FLOW_count        1
 
 
 typedef enum {
@@ -27,6 +28,7 @@ typedef enum {
   ERROR_CELL_OVER_VOLTAGE,
   ERROR_CELL_UNDER_TEMP,
   ERROR_CELL_OVER_TEMP,
+  ERROR_CONTROL_FLOW,
   ERROR_NUM_ERRORS
 } ERROR_T;
 
@@ -40,6 +42,7 @@ static const char *const ERROR_NAMES[ERROR_NUM_ERRORS] = {
   "ERROR_CELL_OVER_VOLTAGE",
   "ERROR_CELL_UNDER_TEMP",
   "ERROR_CELL_OVER_TEMP",
+  "ERROR_CONTROL_FLOW"
 };
 
 typedef struct {

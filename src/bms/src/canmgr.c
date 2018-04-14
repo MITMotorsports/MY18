@@ -111,7 +111,7 @@ Can_ErrorID_T can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
     msg.error_cell_over_voltage = Check_Error(ERROR_CELL_OVER_VOLTAGE);
     msg.error_cell_under_temp = Check_Error(ERROR_CELL_UNDER_TEMP);
     msg.error_cell_over_temp = Check_Error(ERROR_CELL_OVER_TEMP);
-
+    msg.error_control_flow = Check_Error(ERROR_CONTROL_FLOW);
     // Frame manual;
     // manual.id = can0_BMSHeartbeat_can_id;
     // manual.len = 1;

@@ -367,7 +367,7 @@ void Board_LTC6804_GetCellTemperatures(BMS_PACK_STATUS_T *pack_status,
     } else {
       Board_Println(
         "Invalid value of currentThermistor Board_LTC6804_GetCellTemperatures");
-      // Error_Present(ERROR_CONTROL_FLOW);
+      Error_Present(ERROR_CONTROL_FLOW);
     }
 
     // shift bits into shift resgister

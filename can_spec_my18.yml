@@ -175,68 +175,56 @@ buses:
             position: 2
             length: 1
             c_type: bool
-          error_cell_under_voltage:
+          error_L_contactor_error:
             position: 3
             length: 1
             c_type: bool
-          error_cell_over_voltage:
+          error_H_contactor_error:
             position: 4
             length: 1
             c_type: bool
-          error_cell_under_temp:
+          error_cell_under_voltage:
             position: 5
             length: 1
             c_type: bool
-          error_cell_over_temp:
+          error_cell_over_voltage:
             position: 6
             length: 1
             c_type: bool
-          error_over_current:
+          error_cell_under_temp:
             position: 7
             length: 1
             c_type: bool
-          error_can:
+          error_cell_over_temp:
             position: 8
             length: 1
             c_type: bool
-          error_conflicting_mode_requests:
+          error_control_flow:
             position: 9
             length: 1
             c_type: bool
-          error_control_flow:
+          error_blown_fuse:
             position: 10
             length: 1
             c_type: bool
-          error_blown_fuse:
+          L_contactor_closed:
             position: 11
             length: 1
             c_type: bool
-          error_L_contactor_error:
+          H_contactor_closed:
             position: 12
             length: 1
             c_type: bool
-          error_H_contactor_error:
+          L_contactor_welded:
             position: 13
             length: 1
             c_type: bool
-          L_contactor_closed:
+          H_contactor_welded:
             position: 14
             length: 1
             c_type: bool
-          H_contactor_closed:
-            position: 15
-            length: 1
-            c_type: bool
-          L_contactor_welded:
-            position: 16
-            length: 1
-            c_type: bool
-          H_contactor_welded:
-            position: 17
-            length: 1
-            c_type: bool
           soc:
-            position: 18
+            position: 15
             length: 8
             c_type: uint8_t
       BMSRequest:
