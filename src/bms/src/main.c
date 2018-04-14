@@ -37,8 +37,8 @@ int main(void) {
     // Setting fault pin high
     Board_Pin_Set(PIN_BMS_FAULT, GPIO_HIGH);
 
-    // Process_Keyboard()
-    Process_Input(&bms_input);
+    Process_Keyboard();
+    Process_Input(&bms_input, &bms_output);
     Process_Output(&bms_input, &bms_output, &bms_state);
 
     //TODO: charger enable pin for charger
@@ -59,17 +59,19 @@ int main(void) {
 }
 
 
-void Process_Input(BMS_INPUT_T *bms_input) {
+void Process_Input(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
   Board_CAN_Receive(bms_input);
-  Board_GetModeRequest(&console_output, bms_input);
-  Board_LTC6804_ProcessInputs(&pack_status, &bms_state);
+  // Board_GetModeRequest(&console_output, bms_input);
+  if (!bms_output->attempt_ltc_init) {
+    Board_LTC6804_ProcessInputs(&pack_status, &bms_state);
+  }
 
   // TODO: Reenable after Roman
   // SOC_Estimate(&pack_status);
 
   // Pack voltage estimation
-  BMS_VOLTAGE_ESTIMATE_T vol = Pack_Estimate_Total_Voltage(&pack_config,
-                                                           &pack_status);
+  // BMS_VOLTAGE_ESTIMATE_T vol = Pack_Estimate_Total_Voltage(&pack_config,
+  //                                                          &pack_status);
 
   bms_input->H_contactor_welded = Board_Contactor_High_Welded();
   bms_input->L_contactor_welded = Board_Contactor_Low_Welded();

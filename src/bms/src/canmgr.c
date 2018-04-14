@@ -91,6 +91,8 @@ void Board_CAN_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
     }
   }
 
+  
+
   // TODO: agree upon resending only if updated or
   // repeating existing info on bus (bms_input0->msTicks)
 }
