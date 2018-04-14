@@ -31,7 +31,7 @@ boards:
         - DashRequest
         - MCVoltage
   dash:
-    arch: avr
+    arch: arm
     publish:
       can0:
         - DashRequest
