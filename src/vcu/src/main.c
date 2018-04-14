@@ -39,7 +39,7 @@ int main(void) {
 
   while (1) {
     advance_states();
-    sendDashMsg();
+    sendHeartbeatMsg();
     static uint32_t lastt = 0;
 
     print_gate_faults(false);
