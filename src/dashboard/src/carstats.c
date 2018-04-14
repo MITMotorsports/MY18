@@ -79,6 +79,9 @@ void can_update_carstats(carstats_t *cs) {
 
     can0_T msgType;
     msgType = identify_can0(&frame);
+    Board_Print_BLOCKING("ID: ");
+    Board_PrintNum(frame.id, 10);
+    Board_Println_BLOCKING("");
 
     switch (msgType) {
         case can0_FrontCanNodeWheelSpeed:
@@ -107,7 +110,6 @@ void can_update_carstats(carstats_t *cs) {
             can_handle_vcu_to_dash(cs);
             break;
         case CAN_UNKNOWN_MSG:
-            Board_Println("Unknown");
         default:
 
             // do nothing

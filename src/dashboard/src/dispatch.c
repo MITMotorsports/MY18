@@ -20,7 +20,7 @@ static uint32_t nextOLEDUpdate;
 static bool active_aero_enabled = false;
 
 #define BUTTON_DOWN false
-#define OLED_UPDATE_INTERVAL_MS 100
+#define OLED_UPDATE_INTERVAL_MS 50
 
 // dead after (ms)
 #define BMS_HEARTBEAT_EXPIRE 1000
@@ -45,6 +45,23 @@ void dispatch_init() {
 }
 
 void dispatch_update() {
+    /*
+    Frame frame;
+    handle_can_error(Can_RawRead(&frame));
+
+    can0_T msgType = identify_can0(&frame);
+    oled_clearline(&oled, 0);
+    oled_set_pos(&oled, 0, 0);
+    if (msgType != CAN_UNKNOWN_MSG) {
+        oled_print_num(&oled, frame.id);
+    } else {
+        oled_print(&oled, "Unknown");
+    }
+
+    oled_update(&oled);
+    */
+
+
     bool left_button_down  = (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN);
     bool right_button_down = (Pin_Read(PIN_BUTTON2) == BUTTON_DOWN);
     update_button_state(&left_button, left_button_down);
@@ -70,6 +87,7 @@ void dispatch_update() {
         nextOLEDUpdate = msTicks + OLED_UPDATE_INTERVAL_MS;
         page_manager_update(&page_manager, &oled);
         oled_update(&oled);
+
     }
 }
 

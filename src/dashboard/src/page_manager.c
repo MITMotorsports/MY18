@@ -88,25 +88,26 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
 void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_set_pos(oled, 0, 1);
-    if (pm->stats->vcu_data.active_aero_on) {
+    if (pm->stats->vcu_data.active_aero_on && false) {
         oled_print_char(oled, CHAR_LEFT_BRACKET);
         oled_print(oled, "AERO");
         oled_print_char(oled, CHAR_RIGHT_BRACKET);
     }
 
+    
     switch (pm->stats->vcu_state) {
         case VCU_STATE_ROOT:
         case VCU_STATE_LV:
-            oled_rprint(oled, "[LV]");
+            oled_rprint(oled, "\xFALV\xFC");
             break;
         case VCU_STATE_PRECHARGING:
-            oled_rprint(oled, "[PRECHARGE]");
+            oled_rprint(oled, "\xFAPRECHARGE\xFC");
             break;
         case VCU_STATE_RTD:
-            oled_rprint(oled, "[RTD]");
+            oled_rprint(oled, "\xFARTD\xFC");
             break;
         case VCU_STATE_DRIVING:
-            oled_rprint(oled, "[DRIVE]");
+            oled_rprint(oled, "\xFADRIVE\xFC");
             break;
     }
 
@@ -125,7 +126,7 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_set_pos(oled, 2, 0);
 
     int power_kW = pm->stats->power / 1000;
-    oled_print(oled, "PWR");
+    oled_print(oled, "PWR ");
     oled_print_num(oled, power_kW);
     oled_print(oled, "kW");
 
@@ -141,7 +142,7 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     
     oled_clearline(oled, 3);
     oled_set_pos(oled, 3, 0);
-    oled_print(oled, "RPM");
+    oled_print(oled, "RPM ");
     oled_print_num(oled, pm->stats->motor_rpm);
 
     int temp_C = pm->stats->max_cell_temp / 10;
