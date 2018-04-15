@@ -221,9 +221,9 @@ int main(void) {
   Board_ADC_Init();
 
   // setup readline/console
-  microrl_init(&rl, Board_Print);
-  microrl_set_execute_callback(&rl, executerl);
-  console_init(&bms_input, &bms_state, &console_output);
+  // microrl_init(&rl, Board_Print);
+  // microrl_set_execute_callback(&rl, executerl);
+  // console_init(&bms_input, &bms_state, &console_output);
   int32_t count = msTicks;
 
   Board_Println("Currently running: "HASH);

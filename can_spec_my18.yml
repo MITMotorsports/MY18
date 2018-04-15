@@ -555,7 +555,6 @@ buses:
             c_type: int16_t
             unit: dA
       Current_Sensor_Config:
-        period: 1s # Fake, just there to make can lib not complain
         can_id: 0x411
         is_big_endian: true
         segments:
