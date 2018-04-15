@@ -442,3 +442,31 @@ buses:
             unit: dV
             signed: true
             c_type: int16_t
+      MCTemperature1:
+        can_id: 0x0A0
+        is_big_endian: false
+        segments:
+          module_a_temp:
+            position: 0
+            length: 16
+            unit: dC
+            signed: true
+            c_type: int16_t
+          module_b_temp:
+            position: 16
+            length: 16
+            unit: dC
+            signed: true
+            c_type: int16_t
+          module_c_temp:
+            position: 32
+            length: 16
+            unit: dC
+            signed: true
+            c_type: int16_t
+          gate_driver_temp:
+            position: 48
+            length: 16
+            unit: dC
+            signed: true
+            c_type: int16_t
