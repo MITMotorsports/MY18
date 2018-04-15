@@ -1,6 +1,11 @@
 #include "page_manager.h"
 
+#include "board.h"
+#include "NHD_US2066_charset.h"
+
 #define DATA_UNKNOWN "?"
+
+uint32_t last_top_update = 0;
 
 void page_manager_init(page_manager_t *pm, carstats_t *stats) {
     pm->page = 0;
@@ -83,34 +88,53 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
 // looks like:
 
-// [AERO]   [PRECHARGE]
+// ERROR    [PRECHARGE]
 // TRQ 150    PACK 300V
 // PWR 60kW   CELL 3.3V
 // RPM 3400   TEMP  30C
 
 void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
-    oled_set_pos(oled, 0, 1);
-    if (pm->stats->vcu_data.active_aero_on && false) {
-        oled_print_char(oled, CHAR_LEFT_BRACKET);
-        oled_print(oled, "AERO");
-        oled_print_char(oled, CHAR_RIGHT_BRACKET);
-    }
+    if (msTicks > last_top_update + 500) {
+        last_top_update = msTicks + 500;
+        oled_clearline(oled, 0);
+        oled_set_pos(oled, 0, 0);
+        char buf[20];
+        memset(buf, ' ', 20);
+        oled_print(oled, buf);
+        // TODO: this
+        if (false) {
+            oled_print_char(oled, CHAR_LEFT_BRACKET);
+            oled_print(oled, "AERO");
+            oled_print_char(oled, CHAR_RIGHT_BRACKET);
+        }
 
-    
-    switch (pm->stats->vcu_state) {
-        case VCU_STATE_ROOT:
-        case VCU_STATE_LV:
-            oled_rprint(oled, "\xFALV\xFC");
-            break;
-        case VCU_STATE_PRECHARGING:
-            oled_rprint(oled, "\xFAPRECHARGE\xFC");
-            break;
-        case VCU_STATE_RTD:
-            oled_rprint(oled, "\xFARTD\xFC");
-            break;
-        case VCU_STATE_DRIVING:
-            oled_rprint(oled, "\xFADRIVE\xFC");
-            break;
+        if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
+            oled_print(oled, "RECOV");
+        } else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
+            oled_print(oled, "FATAL");
+        }
+
+        if (msTicks > pm->stats->last_vcu_heartbeat + 1000) { 
+            oled_rprint(oled, "\xFAVCU DEAD\xFC");
+        } else {
+            switch (pm->stats->vcu_state) {
+                case can0_VCUHeartbeat_vcu_state_VCU_STATE_ROOT:
+                    oled_rprint(oled, "\xFAROOT\xFC");
+                    break;
+                case can0_VCUHeartbeat_vcu_state_VCU_STATE_LV:
+                    oled_rprint(oled, "\xFALV\xFC");
+                    break;
+                case can0_VCUHeartbeat_vcu_state_VCU_STATE_PRECHARGING:
+                    oled_rprint(oled, "\xFAPRECHARGE\xFC");
+                    break;
+                case can0_VCUHeartbeat_vcu_state_VCU_STATE_RTD:
+                    oled_rprint(oled, "\xFARTD\xFC");
+                    break;
+                case can0_VCUHeartbeat_vcu_state_VCU_STATE_DRIVING:
+                    oled_rprint(oled, "\xFA""DRIVE\xFC");
+                    break;
+            }
+        }
     }
 
     oled_clearline(oled, 1);
@@ -135,11 +159,20 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_clearline(oled, 2);
     oled_set_pos(oled, 2, 0);
 
+    /*
     oled_print(oled, "PWR ");
     if (pm->stats->power >= 0) {
         int power_kW = pm->stats->power / 1000;
         oled_print_num(oled, power_kW);
         oled_print(oled, "kW");
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }*/
+    oled_print(oled, "IGBT ");
+    if (pm->stats->max_igbt_temp >= 0) {
+        int igbt_temp_C = pm->stats->max_igbt_temp / 10;
+        oled_print_num(oled, igbt_temp_C);
+        oled_print(oled, "C");
     } else {
         oled_print(oled, DATA_UNKNOWN);
     }

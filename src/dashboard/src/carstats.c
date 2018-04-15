@@ -1,6 +1,7 @@
 #include "carstats.h"
 
 #include "board.h"
+#include "uart.h"
 
 #include <string.h>
 
@@ -65,11 +66,13 @@ void can_handle_mc_command(carstats_t *cs) {
     cs->motor_rpm = msg.angular_vel;
 }
 
-void can_handle_vcu_to_dash(carstats_t *cs) {
-    can0_VcuToDash_T msg;
-    unpack_can0_VcuToDash(&frame, &msg);
+void can_handle_vcu_heartbeat(carstats_t *cs) {
+    can0_VCUHeartbeat_T msg;
+    unpack_can0_VCUHeartbeat(&frame, &msg);
 
-    memcpy(&(cs->vcu_data), &msg, sizeof(msg));
+    cs->vcu_state          = msg.vcu_state;
+    cs->error_state        = msg.error_state;
+    cs->last_vcu_heartbeat = msTicks;
 }
 
 void can_handle_bms_heartbeat(carstats_t *cs) {
@@ -78,6 +81,19 @@ void can_handle_bms_heartbeat(carstats_t *cs) {
 
     cs->last_bms_heartbeat = msTicks;
     cs->soc = msg.soc;
+}
+
+void can_handle_mc_temperature1(carstats_t *cs) {
+    can0_MCTemperature1_T msg;
+    unpack_can0_MCTemperature1(&frame, &msg);
+
+    int16_t max = msg.module_a_temp;
+    if (msg.module_b_temp > max)
+        max = msg.module_b_temp;
+    if (msg.module_c_temp > max)
+        max = msg.module_c_temp;
+
+    cs->max_igbt_temp = max;
 }
 
 void can_update_carstats(carstats_t *cs) {
@@ -112,13 +128,14 @@ void can_update_carstats(carstats_t *cs) {
         case can0_MCCommand:
             can_handle_mc_command(cs);
             break;
-        case can0_VcuToDash:
-            Board_Println("VCU TO DASH");
-            can_handle_vcu_to_dash(cs);
-            break;
         case can0_MCVoltage:
             can_handle_mc_voltage(cs);
             break;
+        case can0_VCUHeartbeat:
+            can_handle_vcu_heartbeat(cs);
+            break;
+        case can0_MCTemperature1:
+            can_handle_mc_temperature1(cs);
         default:
 
             // do nothing

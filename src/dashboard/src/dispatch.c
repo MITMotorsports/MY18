@@ -55,26 +55,13 @@ void dispatch_init() {
     carstats.front_right_wheel_speed = -1;
     carstats.rear_left_wheel_speed   = -1;
     carstats.rear_right_wheel_speed  = -1;
+    carstats.max_igbt_temp           = -1;
+    carstats.vcu_state               = can0_VCUHeartbeat_vcu_state_VCU_STATE_ROOT;
+    carstats.last_vcu_heartbeat      = msTicks;
+    carstats.last_bms_heartbeat      = msTicks;
 }
 
 void dispatch_update() {
-    /*
-    Frame frame;
-    handle_can_error(Can_RawRead(&frame));
-
-    can0_T msgType = identify_can0(&frame);
-    oled_clearline(&oled, 0);
-    oled_set_pos(&oled, 0, 0);
-    if (msgType != CAN_UNKNOWN_MSG) {
-        oled_print_num(&oled, frame.id);
-    } else {
-        oled_print(&oled, "Unknown");
-    }
-
-    oled_update(&oled);
-    */
-
-
     bool left_button_down  = (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN);
     bool right_button_down = (Pin_Read(PIN_BUTTON2) == BUTTON_DOWN);
     update_button_state(&left_button, left_button_down);
@@ -105,17 +92,18 @@ void dispatch_update() {
 }
 
 void update_lights(void) {
-    if (carstats.vcu_data.rtd_light_on)
+    // TODO: RTD, IMD, AMS lights
+    if (carstats.vcu_state == can0_VCUHeartbeat_vcu_state_VCU_STATE_DRIVING)
         LED_RTD_on();
     else
         LED_RTD_off();
 
-    if (carstats.vcu_data.hv_light_on)
+    if (carstats.battery_voltage / 10 > 60)
         LED_HV_on();
     else
         LED_HV_off();
 
-    if (carstats.vcu_data.imd_light_on)
+    if (false)
         LED_IMD_on();
     else
         LED_IMD_off();
