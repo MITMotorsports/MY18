@@ -66,6 +66,9 @@ boards:
         - CurrentSensor_Current
         - CurrentSensor_Voltage
         - CurrentSensor_Power
+    subscribe:
+      can0:
+        - Current_Sensor_Config
 
 buses:
   can0:
@@ -430,7 +433,7 @@ buses:
       CurrentSensor_Current:
         can_id: 0x521
         period: 0.05s
-        is_big_endian: false
+        is_big_endian: true
         segments:
           pack_current:
             position: 16
@@ -594,3 +597,48 @@ buses:
             unit: dV
             signed: true
             c_type: int16_t
+      Current_Sensor_Config:
+        period: 1s # Fake, just there to make can lib not complain
+        can_id: 0x411
+        is_big_endian: true
+        segments:
+          muxbyte:
+            position: 0
+            length: 8
+            signed: false
+            c_type: uint8_t
+          db1:
+            position: 8
+            length: 8
+            signed: false
+            c_type: uint8_t
+          db2:
+            position: 16
+            length: 8
+            signed: false
+            c_type: uint8_t
+          db3:
+            position: 24
+            length: 8
+            signed: false
+            c_type: uint8_t
+          db4:
+            position: 32
+            length: 8
+            signed: false
+            c_type: uint8_t
+          db5:
+            position: 40
+            length: 8
+            signed: false
+            c_type: uint8_t
+          db6:
+            position: 48
+            length: 8
+            signed: false
+            c_type: uint8_t
+          db7:
+            position: 56
+            length: 8
+            signed: false
+            c_type: uint8_t
