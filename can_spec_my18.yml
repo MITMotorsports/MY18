@@ -280,13 +280,8 @@ buses:
               FATAL_ERROR_STATE: 0x2
       CurrentSensor_Current:
         can_id: 0x521
-<<<<<<< HEAD
         period: 0.05s
         is_big_endian: true
-=======
-        period: 50ms
-        is_big_endian: false
->>>>>>> 58ab286b2d5365a0c0ed8d02d4c3f49b5babee5d
         segments:
           current:
             position: 16
@@ -450,6 +445,115 @@ buses:
             unit: dV
             signed: true
             c_type: int16_t
+      MCMotor_Position_Info:
+        can_id: 0x0A5
+        period: 0.01s
+        is_big_endian: false
+        segments:
+          motor_angle:
+            position: 0
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dDegrees
+          motor_speed:
+            position: 16
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: RPM
+          electrical_output_freq:
+            position: 32
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dHz
+          delta_resolved_filter:
+            position: 48
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dDegrees
+      MCFlux_Info:
+        can_id: 0x0A8
+        period: 0.01s
+        is_big_endian: false
+        segments:
+          flux_command:
+            position: 0
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: mWb
+          flux_feedback:
+            position: 16
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: mWb
+          Iq_feedback:
+            position: 32
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dA
+          Id_feedback:
+            position: 48
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dA
+      MCTorque_Timer_Info:
+        can_id: 0x0AC
+        period: 0.01s
+        is_big_endian: false
+        segments:
+          commanded_torque:
+            position: 0
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dNm
+          torque_feedback:
+            position: 16
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dNm
+          power_on_timer:
+            position: 32
+            length: 32
+            signed: true
+            c_type: uint32_t
+            unit: ticks # Occurs every 3ms
+      MCModulation_Indx_Flux_Weakening_Info:
+        can_id: 0x0AD
+        period: 0.01s
+        is_big_endian: false
+        segments:
+          modulation_index:
+            position: 0
+            length: 16
+            signed: false # Not actually sure
+            c_type: uint16_t
+          flux_weakening_output:
+            position: 16
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dA
+          Iq_command:
+            position: 32
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dA
+          Id_command:
+            position: 48
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dA
       Current_Sensor_Config:
         period: 1s # Fake, just there to make can lib not complain
         can_id: 0x411
