@@ -1,6 +1,7 @@
 #include "carstats.h"
 
 #include "board.h"
+#include "uart.h"
 
 #include <string.h>
 
@@ -14,13 +15,13 @@ void can_handle_front_wheel_speed(carstats_t *cs) {
     cs->front_right_wheel_speed = msg.front_right_wheel_speed;
 }
 
-void can_handle_rear_wheel_speed(carstats_t *cs) {
-    can0_RearCanNodeWheelSpeed_T msg;
-    unpack_can0_RearCanNodeWheelSpeed(&frame, &msg);
-
-    cs->rear_left_wheel_speed  = msg.rear_left_wheel_speed;
-    cs->rear_right_wheel_speed = msg.rear_right_wheel_speed;
-}
+//void can_handle_rear_wheel_speed(carstats_t *cs) {
+//    can0_RearCanNodeWheelSpeed_T msg;
+//    unpack_can0_RearCanNodeWheelSpeed(&frame, &msg);
+//
+//    cs->rear_left_wheel_speed  = msg.rear_left_wheel_speed;
+//    cs->rear_right_wheel_speed = msg.rear_right_wheel_speed;
+//}
 
 void can_handle_cell_temps(carstats_t *cs) {
     can0_CellTemperatures_T msg;
@@ -40,7 +41,14 @@ void can_handle_current_sensor_voltage(carstats_t *cs) {
     can0_CurrentSensor_Voltage_T msg;
     unpack_can0_CurrentSensor_Voltage(&frame, &msg);
 
-    cs->battery_voltage = msg.dc_bus_voltage;
+    //cs->battery_voltage = msg.dc_bus_voltage;
+}
+
+void can_handle_mc_voltage(carstats_t *cs) {
+    can0_MCVoltage_T msg;
+    unpack_can0_MCVoltage(&frame, &msg);
+
+    cs->battery_voltage = msg.bus;
 }
 
 void can_handle_current_sensor_power(carstats_t *cs) {
@@ -58,11 +66,13 @@ void can_handle_mc_command(carstats_t *cs) {
     cs->motor_rpm = msg.angular_vel;
 }
 
-void can_handle_vcu_to_dash(carstats_t *cs) {
-    can0_VcuToDash_T msg;
-    unpack_can0_VcuToDash(&frame, &msg);
+void can_handle_vcu_heartbeat(carstats_t *cs) {
+    can0_VCUHeartbeat_T msg;
+    unpack_can0_VCUHeartbeat(&frame, &msg);
 
-    memcpy(&(cs->vcu_data), &msg, sizeof(msg));
+    cs->vcu_state          = msg.vcu_state;
+    cs->error_state        = msg.error_state;
+    cs->last_vcu_heartbeat = msTicks;
 }
 
 void can_handle_bms_heartbeat(carstats_t *cs) {
@@ -73,20 +83,36 @@ void can_handle_bms_heartbeat(carstats_t *cs) {
     cs->soc = msg.soc;
 }
 
+void can_handle_mc_temperature1(carstats_t *cs) {
+    can0_MCTemperature1_T msg;
+    unpack_can0_MCTemperature1(&frame, &msg);
+
+    int16_t max = msg.module_a_temp;
+    if (msg.module_b_temp > max)
+        max = msg.module_b_temp;
+    if (msg.module_c_temp > max)
+        max = msg.module_c_temp;
+
+    cs->max_igbt_temp = max;
+}
+
 void can_update_carstats(carstats_t *cs) {
 
     handle_can_error(Can_RawRead(&frame));
 
     can0_T msgType;
     msgType = identify_can0(&frame);
+    Board_Print_BLOCKING("ID: ");
+    Board_PrintNum(frame.id, 10);
+    Board_Println_BLOCKING("");
 
     switch (msgType) {
         case can0_FrontCanNodeWheelSpeed:
             can_handle_front_wheel_speed(cs);
             break;
-        case can0_RearCanNodeWheelSpeed:
-            can_handle_rear_wheel_speed(cs);
-            break;
+        //case can0_RearCanNodeWheelSpeed:
+        //    can_handle_rear_wheel_speed(cs);
+        //    break;
         case can0_CellTemperatures:
             can_handle_cell_temps(cs);
             break;
@@ -102,12 +128,14 @@ void can_update_carstats(carstats_t *cs) {
         case can0_MCCommand:
             can_handle_mc_command(cs);
             break;
-        case can0_VcuToDash:
-            Board_Println("VCU TO DASH");
-            can_handle_vcu_to_dash(cs);
+        case can0_MCVoltage:
+            can_handle_mc_voltage(cs);
             break;
-        case CAN_UNKNOWN_MSG:
-            Board_Println("Unknown");
+        case can0_VCUHeartbeat:
+            can_handle_vcu_heartbeat(cs);
+            break;
+        case can0_MCTemperature1:
+            can_handle_mc_temperature1(cs);
         default:
 
             // do nothing

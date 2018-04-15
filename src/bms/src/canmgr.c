@@ -45,25 +45,21 @@ void can_receive_current(BMS_INPUT_T *bms_input) {
   can0_CurrentSensor_Current_T msg;
 
   unpack_can0_CurrentSensor_Current(&can_input, &msg);
-  bms_input->pack_status->pack_current_mA = msg.pack_current >
-                                            0 ? msg.pack_current : -msg.
-                                            pack_current;
+  bms_input->pack_status->pack_current_mA = msg.current;
 }
 
 void can_receive_voltage(BMS_INPUT_T *bms_input) {
   can0_CurrentSensor_Voltage_T msg;
 
   unpack_can0_CurrentSensor_Voltage(&can_input, &msg);
-  bms_input->pack_status->pack_voltage_mV = msg.pack_voltage >
-                                            0 ? msg.pack_voltage : -msg.
-                                            pack_voltage;
+  bms_input->pack_status->pack_voltage_mV = msg.voltage;
 }
 
 void can_receive_energy(BMS_INPUT_T *bms_input) {
   can0_CurrentSensor_Energy_T msg;
 
   unpack_can0_CurrentSensor_Energy(&can_input, &msg);
-  bms_input->pack_status->pack_energy_wH = msg.pack_energy;
+  bms_input->pack_status->pack_energy_wH = msg.energy;
 }
 
 Frame can_output;
