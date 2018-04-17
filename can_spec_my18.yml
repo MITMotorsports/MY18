@@ -1,6 +1,6 @@
 name: MY18
 units:
-  - Nm = newtonmeter = N * m = J
+  - newtonmeter = N * m = J = Nm
   - tick = 3 ms
   - RPM = 360 deg / min
   - presses = dimensionless
