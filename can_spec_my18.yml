@@ -1,4 +1,9 @@
 name: MY18
+units:
+  - Nm = newtonmeter = N * m = J
+  - tick = 3 ms
+  - RPM = 360 deg / min
+  - presses = dimensionless
 archs:
   - avr
   - arm
@@ -120,7 +125,7 @@ buses:
             length: 10
             c_type: int16_t
             signed: false
-            unit: dC
+            unit: decidegC
           argmin:
             position: 10
             length: 9
@@ -131,7 +136,7 @@ buses:
             length: 10
             c_type: int16_t
             signed: false
-            unit: dC
+            unit: decidegC
           argmax:
             position: 29
             length: 9
@@ -321,7 +326,7 @@ buses:
             length: 32
             c_type: int32_t
             signed: false
-            unit: Whrs
+            unit: Wh
       DashRequest:
         can_id: 0x0D2
         is_big_endian: true
@@ -347,17 +352,17 @@ buses:
             position: 0
             length: 1
             c_type: bool
-            unit: pressed
+            unit: presses
           DriverReset:
             position: 1
             length: 1
             c_type: bool
-            unit: pressed
+            unit: presses
           ScrollSelect:
             position: 2
             length: 1
             c_type: bool
-            unit: pressed
+            unit: presses
       MCCommand:
         can_id: 0x0C0 # From manual
         period: 19ms  # MC needs a message at 2 Hz or higher
@@ -455,7 +460,7 @@ buses:
             length: 16
             signed: true
             c_type: int16_t
-            unit: dDegrees
+            unit: ddeg
           motor_speed:
             position: 16
             length: 16
@@ -473,7 +478,7 @@ buses:
             length: 16
             signed: true
             c_type: int16_t
-            unit: dDegrees
+            unit: ddeg
       MCFlux_Info:
         can_id: 0x0A8
         period: 0.01s
@@ -525,7 +530,7 @@ buses:
             length: 32
             signed: true
             c_type: uint32_t
-            unit: ticks # Occurs every 3ms
+            unit: tick
       MCModulation_Indx_Flux_Weakening_Info:
         can_id: 0x0AD
         period: 0.01s
@@ -605,24 +610,24 @@ buses:
           module_a_temp:
             position: 0
             length: 16
-            unit: dC
+            unit: decidegC
             signed: true
             c_type: int16_t
           module_b_temp:
             position: 16
             length: 16
-            unit: dC
+            unit: decidegC
             signed: true
             c_type: int16_t
           module_c_temp:
             position: 32
             length: 16
-            unit: dC
+            unit: decidegC
             signed: true
             c_type: int16_t
           gate_driver_temp:
             position: 48
             length: 16
-            unit: dC
+            unit: decidegC
             signed: true
             c_type: int16_t
