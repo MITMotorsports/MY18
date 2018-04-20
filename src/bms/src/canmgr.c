@@ -107,6 +107,8 @@ Can_ErrorID_T can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
     msg.error_owt = Check_Error(ERROR_LTC_OWT);
     msg.error_L_contactor_error = Check_Error(ERROR_L_CONTACTOR_ERROR);
     msg.error_H_contactor_error = Check_Error(ERROR_H_CONTACTOR_ERROR);
+    msg.error_L_contactor_weld = Check_Error(ERROR_L_CONTACTOR_WELD);
+    msg.error_H_contactor_weld = Check_Error(ERROR_H_CONTACTOR_WELD);
     msg.error_cell_under_voltage = Check_Error(ERROR_CELL_UNDER_VOLTAGE);
     msg.error_cell_over_voltage = Check_Error(ERROR_CELL_OVER_VOLTAGE);
     msg.error_cell_under_temp = Check_Error(ERROR_CELL_UNDER_TEMP);
@@ -151,6 +153,8 @@ Can_ErrorID_T can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
     msg.min = ps->pack_cell_min_mV;
     msg.max = ps->pack_cell_max_mV;
 
+    //can message size too small for 3 32 bit
+    // msg.sum = ps->pack_voltage_sum_mV;
     err = can0_CellVoltages_Write(&msg);
 
     last_time = msTicks;

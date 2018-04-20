@@ -183,48 +183,56 @@ buses:
             position: 4
             length: 1
             c_type: bool
-          error_cell_under_voltage:
+          error_L_contactor_weld:
             position: 5
             length: 1
             c_type: bool
-          error_cell_over_voltage:
+          error_H_contactor_weld:
             position: 6
             length: 1
             c_type: bool
-          error_cell_under_temp:
+          error_cell_under_voltage:
             position: 7
             length: 1
             c_type: bool
-          error_cell_over_temp:
+          error_cell_over_voltage:
             position: 8
             length: 1
             c_type: bool
-          error_control_flow:
+          error_cell_under_temp:
             position: 9
             length: 1
             c_type: bool
-          error_blown_fuse:
+          error_cell_over_temp:
             position: 10
             length: 1
             c_type: bool
-          L_contactor_closed:
+          error_control_flow:
             position: 11
             length: 1
             c_type: bool
-          H_contactor_closed:
+          error_blown_fuse:
             position: 12
             length: 1
             c_type: bool
-          L_contactor_welded:
+          L_contactor_closed:
             position: 13
             length: 1
             c_type: bool
-          H_contactor_welded:
+          H_contactor_closed:
             position: 14
             length: 1
             c_type: bool
-          soc:
+          L_contactor_welded:
             position: 15
+            length: 1
+            c_type: bool
+          H_contactor_welded:
+            position: 16
+            length: 1
+            c_type: bool
+          soc:
+            position: 17
             length: 8
             c_type: uint8_t
       BMSRequest:

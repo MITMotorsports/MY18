@@ -2,8 +2,9 @@
 
 // TODO: Keep adding things.
 static ERROR_STATUS_T error_vector[ERROR_NUM_ERRORS];
+
+//Specifies which errors we care about, by index
 static bool errors_to_check[ERROR_NUM_ERRORS];
-static bool errors_timed_out[ERROR_NUM_ERRORS];
 
 static ERROR_HANDLER_STATUS_T _Error_Handle_Count(ERROR_STATUS_T *er_stat,
                                                   uint32_t        timeout_num) {
@@ -23,6 +24,7 @@ static ERROR_HANDLER_STATUS_T _Error_Handle_Count(ERROR_STATUS_T *er_stat,
 
 static ERROR_HANDLER_STATUS_T _Error_Handle_Timeout(ERROR_STATUS_T *er_stat,
                                                     uint32_t        timeout_ms) {
+  // Board_Println("Call to Handle Timeout");
   if (er_stat->error == false) {
     er_stat->handling = false;
     return FINE;
@@ -41,12 +43,14 @@ static ERROR_HANDLER error_handler_vector[ERROR_NUM_ERRORS] = {
   { _Error_Handle_Count,   LTC_PEC_count                    },
   { _Error_Handle_Count,   LTC_CVST_count                   },
   { _Error_Handle_Count,   LTC_OWT_count                    },
+  { _Error_Handle_Timeout, L_CONTACTOR_ERROR_time          },
+  { _Error_Handle_Timeout, H_CONTACTOR_ERROR_time          },
+  { _Error_Handle_Timeout, L_CONTACTOR_WELD_time          },
+  { _Error_Handle_Timeout, H_CONTACTOR_WELD_time          },
   { _Error_Handle_Timeout, CELL_UNDER_VOLTAGE_time          },
   { _Error_Handle_Timeout, CELL_OVER_VOLTAGE_time           },
   { _Error_Handle_Timeout, CELL_UNDER_TEMP_time             },
   { _Error_Handle_Timeout, CELL_OVER_TEMP_time              },
-  { _Error_Handle_Timeout, L_CONTACTOR_ERROR_time          },
-  { _Error_Handle_Timeout, H_CONTACTOR_ERROR_time          },
   { _Error_Handle_Count, CONTROL_FLOW_count                },
 };
 
@@ -111,22 +115,24 @@ static ERROR_HANDLER_STATUS_T _Error_Handle_Count_and_Timeout(
 
 //to be called in loop in main
 bool Error_Should_Fault(void) {
-
   for (ERROR_T i = 0; i < ERROR_NUM_ERRORS; ++i) {
 
+    //if error is present and we care
     if((error_vector[i].error || error_vector[i].handling ) && errors_to_check[i]) {
       bool fault = (error_handler_vector[i].handler(&error_vector[i], error_handler_vector[i].timeout) == FAULT);
 
+      //if that error has timed-out
       if(fault) {
+        Board_Println(ERROR_NAMES[i]);
+        Board_Println("Fault");
         return true;
       }
-
     }
   }
   return false;
 }
 
-//called when trasmitting bms heartbeat for specfic errors
+//called when checking which errors to send over CAN
 bool Check_Error(ERROR_T er_t) {
   if (errors_to_check[er_t]) {
     return error_handler_vector[er_t].handler(&error_vector[er_t], error_handler_vector[er_t].timeout) == FAULT;

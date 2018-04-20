@@ -286,6 +286,7 @@ void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status) {
 
     //sum voltages of every cell
     int i;
+    pack_status->pack_voltage_sum_mV = 0.0;
     for(i = 0; i<MAX_NUM_MODULES * MAX_CELLS_PER_MODULE; i++) {
       pack_status->pack_voltage_sum_mV += pack_status->cell_voltages_mV[i];
     }
@@ -295,6 +296,8 @@ void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status) {
     Board_PrintNum(pack_status->pack_cell_min_mV, 10);
     Board_Print_BLOCKING("MAX voltage: ");
     Board_PrintNum(pack_status->pack_cell_max_mV, 10);
+    Board_Print_BLOCKING("AVG Voltage: ");
+    Board_PrintNum(pack_status->pack_voltage_sum_mV, 10);
 #endif
 
     // TODO: Use this to your advantage.

@@ -41,6 +41,10 @@ int main(void) {
     Process_Input(&bms_input, &bms_output);
     Process_Output(&bms_input, &bms_output, &bms_state);
 
+    if(Error_Should_Fault()) {
+      Board_Println("Requesting Halt..");
+      break;
+    }
     //TODO: charger enable pin for charger
 
 
@@ -81,14 +85,18 @@ void Process_Input(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
 
   if(bms_input->H_contactor_welded != bms_input->H_contactor_closed) {
     Error_Present(ERROR_H_CONTACTOR_ERROR);
+    Error_Present(ERROR_H_CONTACTOR_WELD);
   } else {
     Error_Clear(ERROR_H_CONTACTOR_ERROR);
+    Error_Clear(ERROR_H_CONTACTOR_WELD);
   }
 
   if(bms_input->L_contactor_welded != bms_input->L_contactor_closed) {
     Error_Present(ERROR_L_CONTACTOR_ERROR);
+    Error_Present(ERROR_L_CONTACTOR_WELD);
   } else {
     Error_Clear(ERROR_L_CONTACTOR_ERROR);
+    Error_Clear(ERROR_L_CONTACTOR_WELD);
   }
 
 #ifdef DEBUG_PRINT
@@ -111,6 +119,7 @@ void Process_Input(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
 void Process_Output(BMS_INPUT_T  *bms_input,
                     BMS_OUTPUT_T *bms_output,
                     BMS_STATE_T  *bms_state) {
+
   Board_CAN_Transmit(bms_input, bms_output);
 
   if (bms_output->attempt_ltc_init) {
