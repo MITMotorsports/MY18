@@ -1,9 +1,9 @@
+
 name: MY18
 units:
   - newtonmeter = N * m = J = Nm
   - tick = 3 ms
   - RPM = 360 deg / min
-  - presses = dimensionless
 archs:
   - avr
   - arm
@@ -164,80 +164,68 @@ buses:
         period: 103ms
         is_big_endian: true
         segments:
-          # error_pec:
-          #   position: 0
-          #   length: 1
-          #   c_type: bool
-          # error_cvst:
-          #   position: 1
-          #   length: 1
-          #   c_type: bool
-          # error_owt:
-          #   position: 2
-          #   length: 1
-          #   c_type: bool
-          # error_eeprom:
-          #   position: 3
-          #   length: 1
-          #   c_type: bool
-          # error_cell_under_voltage:
-          #   position: 4
-          #   length: 1
-          #   c_type: bool
-          # error_cell_over_voltage:
-          #   position: 5
-          #   length: 1
-          #   c_type: bool
-          # error_cell_under_temp:
-          #   position: 6
-          #   length: 1
-          #   c_type: bool
-          # error_cell_over_temp:
-          #   position: 7
-          #   length: 1
-          #   c_type: bool
-          # error_over_current:
-          #   position: 8
-          #   length: 1
-          #   c_type: bool
-          # error_can:
-          #   position: 9
-          #   length: 1
-          #   c_type: bool
-          # error_conflicting_mode_requests:
-          #   position: 10
-          #   length: 1
-          #   c_type: bool
-          # error_vcu_dead:
-          #   position: 11
-          #   length: 1
-          #   c_type: bool
-          # error_control_flow:
-          #   position: 12
-          #   length: 1
-          #   c_type: bool
-          # error_blown_fuse:
-          #   position: 13
-          #   length: 1
-          #   c_type: bool
-          # error_L_contactor_welded:
-          #   position: 14
-          #   length: 1
-          #   c_type: bool
-          # error_H_contactor_welded:
-          #   position: 15
-          #   length: 1
-          #   c_type: bool
-          L_contactor_closed:
+          error_pec:
             position: 0
             length: 1
             c_type: bool
-          H_contactor_closed:
+          error_cvst:
+            position: 1
+            length: 1
+            c_type: bool
+          error_owt:
+            position: 2
+            length: 1
+            c_type: bool
+          error_L_contactor_error:
+            position: 3
+            length: 1
+            c_type: bool
+          error_H_contactor_error:
             position: 4
             length: 1
             c_type: bool
-          L_contactor_welded:
+          error_L_contactor_weld:
+            position: 5
+            length: 1
+            c_type: bool
+          error_H_contactor_weld:
+            position: 6
+            length: 1
+            c_type: bool
+          error_cell_under_voltage:
+            position: 7
+            length: 1
+            c_type: bool
+          error_cell_over_voltage:
             position: 8
+            length: 1
+            c_type: bool
+          error_cell_under_temp:
+            position: 9
+            length: 1
+            c_type: bool
+          error_cell_over_temp:
+            position: 10
+            length: 1
+            c_type: bool
+          error_control_flow:
+            position: 11
+            length: 1
+            c_type: bool
+          error_blown_fuse:
+            position: 12
+            length: 1
+            c_type: bool
+          L_contactor_closed:
+            position: 13
+            length: 1
+            c_type: bool
+          H_contactor_closed:
+            position: 14
+            length: 1
+            c_type: bool
+          L_contactor_welded:
+            position: 15
             length: 1
             c_type: bool
           H_contactor_welded:
@@ -245,7 +233,7 @@ buses:
             length: 1
             c_type: bool
           soc:
-            position: 20
+            position: 17
             length: 8
             c_type: uint8_t
       BMSRequest:
@@ -352,17 +340,14 @@ buses:
             position: 0
             length: 1
             c_type: bool
-            unit: presses
           DriverReset:
             position: 1
             length: 1
             c_type: bool
-            unit: presses
           ScrollSelect:
             position: 2
             length: 1
             c_type: bool
-            unit: presses
       MCCommand:
         can_id: 0x0C0 # From manual
         period: 19ms  # MC needs a message at 2 Hz or higher
