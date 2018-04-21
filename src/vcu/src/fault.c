@@ -37,7 +37,7 @@ void handle_fatal_fault(void) {
   printf("[FAULT : HANDLER : FATAL] NEED POWER CYCLE.\r\n");
   while (1) {
     print_gate_faults(false);
-    HAL_Delay(1000);
+    sendHeartbeatMsg();
   }
 }
 
