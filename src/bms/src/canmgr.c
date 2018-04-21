@@ -63,113 +63,154 @@ void can_receive_energy(BMS_INPUT_T *bms_input) {
 
 Frame can_output;
 void Board_CAN_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
-  Can_ErrorID_T err[3];
 
-  err[0] = can_transmit_bms_heartbeat(bms_input);
-  err[1] = can_transmit_cell_voltages(bms_input);
-  err[2] = can_transmit_cell_temperatures(bms_input);
-
-  for (size_t i = 0; i < 3; ++i) {
-    switch (err[i]) {
-      case Can_Error_NONE:
-      case Can_Error_UNUSED:
-        break;
-      default:
-        Board_Print_BLOCKING("CAN SEND ERROR in msg ");
-        Board_PrintNum(i, 10);
-        Board_Print_BLOCKING("it was ");
-        Board_PrintNum((int) err[i], 10);
-        Board_Println_BLOCKING("IMA FLUSH THE BUFFER THX");
-        CAN_Flush_Tx();
-        CAN_Clear_Error();
-        CAN_ResetPeripheral();
-        init_can0_bms();
-    }
-  }
-
+  can_transmit_bms_heartbeat(bms_input);
+  can_transmit_cell_voltages(bms_input);
+  can_transmit_cell_temperatures(bms_input);
 
 
   // TODO: agree upon resending only if updated or
   // repeating existing info on bus (bms_input0->msTicks)
 }
 
-Can_ErrorID_T can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
-  static uint32_t last_time = 0;
+void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
 
-  Can_ErrorID_T err = Can_Error_UNUSED;
+  LIMIT(can0_BMSHeartbeat_period);
 
-  if ((msTicks - last_time) > can0_BMSHeartbeat_period) {
+  can0_BMSHeartbeat_T msg;
 
-    can0_BMSHeartbeat_T msg;
+  msg.error_pec = Check_Error(ERROR_LTC_PEC, false);
+  msg.error_cvst = Check_Error(ERROR_LTC_CVST, false);
+  msg.error_owt = Check_Error(ERROR_LTC_OWT, false);
+  msg.error_L_contactor_error = Check_Error(ERROR_L_CONTACTOR_ERROR, false);
+  msg.error_H_contactor_error = Check_Error(ERROR_H_CONTACTOR_ERROR, false);
+  msg.error_L_contactor_weld = Check_Error(ERROR_L_CONTACTOR_WELD, false);
+  msg.error_H_contactor_weld = Check_Error(ERROR_H_CONTACTOR_WELD, false);
+  msg.error_cell_under_voltage = Check_Error(ERROR_CELL_UNDER_VOLTAGE, false);
+  msg.error_cell_over_voltage = Check_Error(ERROR_CELL_OVER_VOLTAGE, false);
+  msg.error_cell_under_temp = Check_Error(ERROR_CELL_UNDER_TEMP, false);
+  msg.error_cell_over_temp = Check_Error(ERROR_CELL_OVER_TEMP, false);
+  msg.error_control_flow = Check_Error(ERROR_CONTROL_FLOW, false);
 
-    msg.error_pec = Check_Error(ERROR_LTC_PEC, false);
-    msg.error_cvst = Check_Error(ERROR_LTC_CVST, false);
-    msg.error_owt = Check_Error(ERROR_LTC_OWT, false);
-    msg.error_L_contactor_error = Check_Error(ERROR_L_CONTACTOR_ERROR, false);
-    msg.error_H_contactor_error = Check_Error(ERROR_H_CONTACTOR_ERROR, false);
-    msg.error_L_contactor_weld = Check_Error(ERROR_L_CONTACTOR_WELD, false);
-    msg.error_H_contactor_weld = Check_Error(ERROR_H_CONTACTOR_WELD, false);
-    msg.error_cell_under_voltage = Check_Error(ERROR_CELL_UNDER_VOLTAGE, false);
-    msg.error_cell_over_voltage = Check_Error(ERROR_CELL_OVER_VOLTAGE, false);
-    msg.error_cell_under_temp = Check_Error(ERROR_CELL_UNDER_TEMP, false);
-    msg.error_cell_over_temp = Check_Error(ERROR_CELL_OVER_TEMP, false);
-    msg.error_control_flow = Check_Error(ERROR_CONTROL_FLOW, false);
+  msg.L_contactor_closed = bms_input->L_contactor_closed;
+  msg.H_contactor_closed = bms_input->H_contactor_closed;
+  msg.L_contactor_welded = bms_input->L_contactor_welded;
+  msg.H_contactor_welded = bms_input->H_contactor_welded;
 
-    msg.L_contactor_closed = bms_input->L_contactor_closed;
-    msg.H_contactor_closed = bms_input->H_contactor_closed;
-    msg.L_contactor_welded = bms_input->L_contactor_welded;
-    msg.H_contactor_welded = bms_input->H_contactor_welded;
+  // msg.soc = 7;
+  handle_can_error(can0_BMSHeartbeat_Write(&msg));
 
-    // msg.soc = 7;
-    err = can0_BMSHeartbeat_Write(&msg);
 
-    last_time = msTicks;
-  }
-
-  return err;
 }
 
-Can_ErrorID_T can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
-  static uint32_t last_time = 0;
-  Can_ErrorID_T err = Can_Error_UNUSED;
+void can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
+  LIMIT(can0_CellVoltages_period);
 
-  if ((msTicks - last_time) > can0_CellVoltages_period) {
-    const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
+  const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
-    // TODO: Get info about argmin/argmax.
-    can0_CellVoltages_T msg;
+  // TODO: Get info about argmin/argmax.
+  can0_CellVoltages_T msg;
 
-    msg.min = ps->pack_cell_min_mV;
-    msg.max = ps->pack_cell_max_mV;
+  msg.min = ps->pack_cell_min_mV;
+  msg.max = ps->pack_cell_max_mV;
 
-    //can message size too small for 3 32 bit
-    // msg.sum = ps->pack_voltage_sum_mV;
-    err = can0_CellVoltages_Write(&msg);
+  //can message size too small for 3 32 bit
+  // msg.sum = ps->pack_voltage_sum_mV;
+  handle_can_error(can0_CellVoltages_Write(&msg));
 
-    last_time = msTicks;
-  }
 
-  return err;
 }
 
-Can_ErrorID_T can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
-  static uint32_t last_time = 0;
+void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
+  
+  LIMIT(can0_CellTemperatures_period);
 
-  Can_ErrorID_T err = Can_Error_UNUSED;
+  const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
-  if ((msTicks - last_time) > can0_CellTemperatures_period) {
-    const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
+  can0_CellTemperatures_T msg;
+  msg.min = ps->min_cell_temp_dC;
+  msg.argmin = ps->min_cell_temp_position;
+  msg.max = ps->max_cell_temp_dC;
+  msg.argmax = ps->max_cell_temp_position;
 
-    can0_CellTemperatures_T msg;
-    msg.min = ps->min_cell_temp_dC;
-    msg.argmin = ps->min_cell_temp_position;
-    msg.max = ps->max_cell_temp_dC;
-    msg.argmax = ps->max_cell_temp_position;
+  handle_can_error(can0_CellTemperatures_Write(&msg));
 
-    err = can0_CellTemperatures_Write(&msg);
+}
 
-    last_time = msTicks;
+void handle_can_error(Can_ErrorID_T error) {
+  if ((error != Can_Error_NONE) && (error != Can_Error_NO_RX)) {
+    switch (error) {
+    case Can_Error_NONE:
+      Board_Print("Can_Error_NONE\n");
+      break;
+
+    case Can_Error_NO_RX:
+      Board_Print("Can_Error_NO_RX\n");
+      break;
+
+    case Can_Error_EPASS:
+      Board_Print("Can_Error_EPASS\n");
+      break;
+
+    case Can_Error_WARN:
+      Board_Print("Can_Error_WARN\n");
+      break;
+
+    case Can_Error_BOFF:
+      Board_Print("Can_Error_BOFF\n");
+      break;
+
+    case Can_Error_STUF:
+      Board_Print("Can_Error_STUF\n");
+      break;
+
+    case Can_Error_FORM:
+      Board_Print("Can_Error_FORM\n");
+      break;
+
+    case Can_Error_ACK:
+      Board_Print("Can_Error_ACK\n");
+      break;
+
+    case Can_Error_BIT1:
+      Board_Print("Can_Error_BIT1\n");
+      break;
+
+    case Can_Error_BIT0:
+      Board_Print("Can_Error_BIT0\n");
+      break;
+
+    case Can_Error_CRC:
+      Board_Print("Can_Error_CRC\n");
+      break;
+
+    case Can_Error_UNUSED:
+      Board_Print("Can_Error_UNUSED\n");
+      break;
+
+    case Can_Error_UNRECOGNIZED_MSGOBJ:
+      Board_Print("Can_Error_UNRECOGNIZED_MSGOBJ\n");
+      break;
+
+    case Can_Error_UNRECOGNIZED_ERROR:
+      Board_Print("Can_Error_UNRECOGNIZED_ERROR\n");
+      break;
+
+    case Can_Error_TX_BUFFER_FULL:
+      Board_Print("Can_Error_TX_BUFFER_FULL\n");
+      CAN_Flush_Tx();
+      CAN_Clear_Error();
+      CAN_ResetPeripheral();
+      init_can0_bms();
+      break;
+
+    case Can_Error_RX_BUFFER_FULL:
+      Board_Print("Can_Error_RX_BUFFER_FULL\n");
+      CAN_Flush_Tx();
+      CAN_Clear_Error();
+      CAN_ResetPeripheral();
+      init_can0_bms();
+      break;
+    }
   }
-
-  return err;
 }

@@ -15,9 +15,9 @@ int main(void) {
   Board_ADC_Init();
 
   // setup readline/console
-  // microrl_init(&rl, Board_Print);
-  // microrl_set_execute_callback(&rl, executerl);
-  // console_init(&bms_input, &bms_state, &console_output);
+  microrl_init(&rl, Board_Print);
+  microrl_set_execute_callback(&rl, executerl);
+  console_init(&bms_input, &bms_state, &console_output);
 
   Board_Println("Currently running: "HASH);
   Board_Println("Flashed by: "AUTHOR);

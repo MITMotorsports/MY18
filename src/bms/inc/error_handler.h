@@ -7,7 +7,7 @@
 #include "board.h"
 
 #define LTC_PEC_count              100
-#define LTC_CVST_count             2
+#define LTC_CVST_count             1
 #define LTC_OWT_count              10
 #define CELL_UNDER_VOLTAGE_time    1000
 #define CELL_OVER_VOLTAGE_time     1000
