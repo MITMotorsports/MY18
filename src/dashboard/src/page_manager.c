@@ -147,7 +147,7 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
         oled_print(oled, DATA_UNKNOWN);
     }
 
-    oled_rprint_pad(oled, "PACK", 5);
+    oled_rprint_pad(oled, "BUS", 6);
     if (pm->stats->battery_voltage >= 0) {
         int pack_V = pm->stats->battery_voltage/10;
         oled_rprint_num_pad(oled, pack_V, 1);
