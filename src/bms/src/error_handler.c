@@ -119,12 +119,7 @@ bool Error_Should_Fault(void) {
 
     //if error is present and we care
     if((error_vector[i].error || error_vector[i].handling ) && errors_to_check[i]) {
-      bool fault = (error_handler_vector[i].handler(&error_vector[i], error_handler_vector[i].timeout) == FAULT);
-
-      //if that error has timed-out
-      if(fault) {
-        Board_Println(ERROR_NAMES[i]);
-        Board_Println("Fault");
+      if (Check_Error(i, false)) {
         return true;
       }
     }
@@ -133,8 +128,8 @@ bool Error_Should_Fault(void) {
 }
 
 //called when checking which errors to send over CAN
-bool Check_Error(ERROR_T er_t) {
-  if (errors_to_check[er_t]) {
+bool Check_Error(ERROR_T er_t, bool Force_Check) {
+  if (errors_to_check[er_t] || Force_Check) {
     return error_handler_vector[er_t].handler(&error_vector[er_t], error_handler_vector[er_t].timeout) == FAULT;
   } else {
     return false;

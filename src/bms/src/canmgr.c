@@ -102,27 +102,18 @@ Can_ErrorID_T can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
 
     can0_BMSHeartbeat_T msg;
 
-    msg.error_pec = Check_Error(ERROR_LTC_PEC);
-    msg.error_cvst = Check_Error(ERROR_LTC_CVST);
-    msg.error_owt = Check_Error(ERROR_LTC_OWT);
-    msg.error_L_contactor_error = Check_Error(ERROR_L_CONTACTOR_ERROR);
-    msg.error_H_contactor_error = Check_Error(ERROR_H_CONTACTOR_ERROR);
-    msg.error_L_contactor_weld = Check_Error(ERROR_L_CONTACTOR_WELD);
-    msg.error_H_contactor_weld = Check_Error(ERROR_H_CONTACTOR_WELD);
-    msg.error_cell_under_voltage = Check_Error(ERROR_CELL_UNDER_VOLTAGE);
-    msg.error_cell_over_voltage = Check_Error(ERROR_CELL_OVER_VOLTAGE);
-    msg.error_cell_under_temp = Check_Error(ERROR_CELL_UNDER_TEMP);
-    msg.error_cell_over_temp = Check_Error(ERROR_CELL_OVER_TEMP);
-    msg.error_control_flow = Check_Error(ERROR_CONTROL_FLOW);
-    // Frame manual;
-    // manual.id = can0_BMSHeartbeat_can_id;
-    // manual.len = 1;
-    // manual.extended = false;
-    // manual.data[0] = 0;
-    // if (bms_input->L_contactor_closed) manual.data[0] += 2;
-    // if (bms_input->H_contactor_closed) manual.data[0] += 4;
-    // if (bms_input->L_contactor_welded) manual.data[0] += 8;
-    // if (bms_input->H_contactor_welded) manual.data[0] += 16;
+    msg.error_pec = Check_Error(ERROR_LTC_PEC, false);
+    msg.error_cvst = Check_Error(ERROR_LTC_CVST, false);
+    msg.error_owt = Check_Error(ERROR_LTC_OWT, false);
+    msg.error_L_contactor_error = Check_Error(ERROR_L_CONTACTOR_ERROR, false);
+    msg.error_H_contactor_error = Check_Error(ERROR_H_CONTACTOR_ERROR, false);
+    msg.error_L_contactor_weld = Check_Error(ERROR_L_CONTACTOR_WELD, false);
+    msg.error_H_contactor_weld = Check_Error(ERROR_H_CONTACTOR_WELD, false);
+    msg.error_cell_under_voltage = Check_Error(ERROR_CELL_UNDER_VOLTAGE, false);
+    msg.error_cell_over_voltage = Check_Error(ERROR_CELL_OVER_VOLTAGE, false);
+    msg.error_cell_under_temp = Check_Error(ERROR_CELL_UNDER_TEMP, false);
+    msg.error_cell_over_temp = Check_Error(ERROR_CELL_OVER_TEMP, false);
+    msg.error_control_flow = Check_Error(ERROR_CONTROL_FLOW, false);
 
     msg.L_contactor_closed = bms_input->L_contactor_closed;
     msg.H_contactor_closed = bms_input->H_contactor_closed;
@@ -131,8 +122,6 @@ Can_ErrorID_T can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
 
     // msg.soc = 7;
     err = can0_BMSHeartbeat_Write(&msg);
-
-    // err = Can_RawWrite(&manual);
 
     last_time = msTicks;
   }
