@@ -98,15 +98,6 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
         last_top_update = msTicks + 500;
         oled_clearline(oled, 0);
         oled_set_pos(oled, 0, 0);
-        char buf[20];
-        memset(buf, ' ', 20);
-        oled_print(oled, buf);
-        // TODO: this
-        if (false) {
-            oled_print_char(oled, CHAR_LEFT_BRACKET);
-            oled_print(oled, "AERO");
-            oled_print_char(oled, CHAR_RIGHT_BRACKET);
-        }
 
         if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
             oled_print(oled, "RECOV");
