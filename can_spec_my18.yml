@@ -4,7 +4,6 @@ units:
   - newtonmeter = N * m = J = Nm
   - tick = 3 ms
   - RPM = 360 deg / min
-  - presses = dimensionless
 archs:
   - avr
   - arm
@@ -341,17 +340,14 @@ buses:
             position: 0
             length: 1
             c_type: bool
-            unit: presses
           DriverReset:
             position: 1
             length: 1
             c_type: bool
-            unit: presses
           ScrollSelect:
             position: 2
             length: 1
             c_type: bool
-            unit: presses
       MCCommand:
         can_id: 0x0C0 # From manual
         period: 19ms  # MC needs a message at 2 Hz or higher
