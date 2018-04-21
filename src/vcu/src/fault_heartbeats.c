@@ -9,40 +9,69 @@ const Time_T CS_HB_MAX_TIME = 1000;
 
 
 bool check_BMS_heartbeat_bad(void) {
-  return (HAL_GetTick() - heartbeats.bms > BMS_HB_MAX_TIME);
+  static bool last_ret = false;
+  bool ret = (HAL_GetTick() - heartbeats.bms > BMS_HB_MAX_TIME);
+
+  if (ret != last_ret) {
+    last_ret = ret;
+
+    if (ret) {
+      printf("[FAULT : HEARTBEATS] BMS HEARTBEAT TIMEOUT.\r\n");
+    }
+    else {
+      printf("[FAULT : HEARTBEATS] BMS HEARTBEAT OK.\r\n");
+    }
+  }
+
+  return ret;
 }
 
 bool check_FCN_heartbeat_bad(void) {
-  return (HAL_GetTick() - heartbeats.fcn > FCN_HB_MAX_TIME);
+  static bool last_ret = false;
+  bool ret = (HAL_GetTick() - heartbeats.fcn > FCN_HB_MAX_TIME);
+
+  if (ret != last_ret) {
+    last_ret = ret;
+
+    if (ret) {
+      printf("[FAULT : HEARTBEATS] FCN HEARTBEAT TIMEOUT.\r\n");
+    }
+    else {
+      printf("[FAULT : HEARTBEATS] FCN HEARTBEAT OK.\r\n");
+    }
+  }
+
+
+  return ret;
 }
 
 bool check_MC_heartbeat_bad(void) {
-  return (HAL_GetTick() - heartbeats.mc > MC_HB_MAX_TIME);
+  static bool last_ret = false;
+  bool ret =  (HAL_GetTick() - heartbeats.mc > MC_HB_MAX_TIME);
+
+  if (ret != last_ret) {
+    last_ret = ret;
+
+    if (ret) {
+      printf("[FAULT : HEARTBEATS] MC HEARTBEAT TIMEOUT.\r\n");
+    }
+    else {
+      printf("[FAULT : HEARTBEATS] MC HEARTBEAT OK.\r\n");
+    }
+  }
+
+  return ret;
 }
 
-bool check_CS_heartbeat_bad(void) {
-  return (HAL_GetTick() - heartbeats.current_sensor > CS_HB_MAX_TIME);
-}
+// bool check_CS_heartbeat_bad(void) {
+  // return (HAL_GetTick() - heartbeats.current_sensor > CS_HB_MAX_TIME);
+// }
 
 // Returns true if there are any heartbeat faults.
 bool any_recoverable_heartbeat_faults(void) {
-  if (check_BMS_heartbeat_bad()) {
-    printf("[FAULT : HEARTBEATS] BMS HEARTBEAT TIMEOUT.\r\n");
-    return true;
-  }
-
-  if (check_FCN_heartbeat_bad()) {
-    printf("[FAULT : HEARTBEATS] FCN HEARTBEAT TIMEOUT.\r\n");
-    return true;
-  }
-
-  if (check_MC_heartbeat_bad()) {
-  	printf("[FAULT : HEARTBEATS] MC HEARTBEAT TIMEOUT.\r\n");
-    return true;
-  }
-
-
-  return false;
+  return check_BMS_heartbeat_bad() ||
+         check_FCN_heartbeat_bad() ||
+         check_MC_heartbeat_bad();
 }
 
 // void printHeartbeatFailures(void) {

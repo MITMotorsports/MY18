@@ -70,12 +70,10 @@ void Board_CAN_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
 }
 
 void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
-  LIMIT(can0_BMSHeartbeat_period);
+  Board_BlockingDelay(3);
+  // const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
-  const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
-
-  ERROR_STATUS_T *errors = Get_Errors();
-  can0_BMSHeartbeat_T msg;
+  // can0_BMSHeartbeat_T msg;
 
   // msg.error_pec = errors[ERROR_LTC6804_PEC].error == true;
   // msg.error_cvst = errors[ERROR_LTC6804_CVST].error == true;
@@ -111,8 +109,8 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
 
   // msg.soc = 7;
   // handle_can_error(can0_BMSHeartbeat_Write(&msg));
-
-  handle_can_error(Can_RawWrite(&manual));
+  Can_RawWrite(&manual);
+  // handle_can_error(Can_RawWrite(&manual));
 }
 
 void can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
