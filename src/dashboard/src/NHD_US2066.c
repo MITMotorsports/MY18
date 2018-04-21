@@ -263,3 +263,12 @@ void oled_set_double_height_mode(NHD_US2066_OLED *oled,
     OLED_command(cmd);
     OLED_command(0b00101100);
 }
+
+void oled_set_clk_div(NHD_US2066_OLED *oled, uint8_t div, uint8_t freq) {
+    if (div > 0xF) div = 0xF;
+    if (freq > 0xF) freq = 0xF;
+
+    unsigned char cmd = div | (freq << 4);
+    OLED_command(0xD5);
+    OLED_command(cmd);
+}
