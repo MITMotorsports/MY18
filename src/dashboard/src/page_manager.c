@@ -94,8 +94,8 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
 // RPM 3400   TEMP  30C
 
 void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
-    if (msTicks > last_top_update + 500) {
-        last_top_update = msTicks + 500;
+    if (msTicks > last_top_update + 250) {
+        last_top_update = msTicks + 250;
         oled_clearline(oled, 0);
         oled_set_pos(oled, 0, 0);
 
