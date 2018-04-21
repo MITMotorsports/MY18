@@ -32,7 +32,25 @@ int main(void) {
 
     dispatch_init();
 
+    Frame f;
+    f.id = 0x04;
+    f.len = 1;
+    f.data[0] = 0;
+    f.extended = false;
+
     while (1) {
+        //f.data[0] += 1;
+        //handle_can_error(Can_RawWrite(&f));
+        //Board_Println("Sent shit");
+        //Delay(100);
+        //handle_can_error(Can_RawRead(&f));
+        //Board_Print_BLOCKING("ID: ");
+        //Board_PrintNum(f.id, 10);
+        //Board_Println_BLOCKING("");
+        //if (f.id == 0x522) {
+        //    LED_RTD_on();
+        //}
+
         dispatch_update();
     }
 

@@ -26,7 +26,7 @@ void handleCurrentSensorVoltageMsg(Frame *msg);
 void handleCellVoltagesMsg(Frame *msg);
 void handleButtonRequest(Frame *msg);
 
-void sendDashMsg();
+void sendHeartbeatMsg();
 void sendTorqueCmdMsg(int16_t torque);
 void sendMotorOffCmdMsg();
 void send_mc_fault_clear();

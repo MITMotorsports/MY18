@@ -24,13 +24,9 @@ void Board_CAN_Init(void);
 
 // - Receive
 void Board_CAN_Receive(BMS_INPUT_T *bms_input);
-
 void can_receive_bms_request(BMS_INPUT_T *bms_input);
-
 void can_receive_current(BMS_INPUT_T *bms_input);
-
 void can_receive_voltage(BMS_INPUT_T *bms_input);
-
 void can_receive_energy(BMS_INPUT_T *bms_input);
 
 // - Transmit

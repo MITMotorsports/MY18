@@ -99,13 +99,13 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
 
   // msg.soc = 7;
   handle_can_error(can0_BMSHeartbeat_Write(&msg));
-
-
 }
+
+
 
 void can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
   LIMIT(can0_CellVoltages_period);
-
+  
   const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
   // TODO: Get info about argmin/argmax.
