@@ -70,7 +70,8 @@ void Board_CAN_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
 }
 
 void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
-  Board_BlockingDelay(3);
+  LIMIT(can0_BMSHeartbeat_period);
+
   // const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
   // can0_BMSHeartbeat_T msg;

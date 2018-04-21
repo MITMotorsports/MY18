@@ -14,7 +14,7 @@ bool any_recoverable_contactor_faults(void) {
   return false;
 }
 
-const Time_T L_side_timeout = 1000;
+const Time_T L_side_timeout = 5000;
 
 bool any_fatal_contactor_weld_faults(void) {
   static Time_T last_L_mismatch_time = 0;

@@ -160,8 +160,8 @@ buses:
             signed: false
             unit: mV
       BMSHeartbeat:
-        can_id: 0x0D9
-        period: 29ms
+        can_id: 0x0DF
+        period: 103ms
         is_big_endian: true
         segments:
           # error_pec:
