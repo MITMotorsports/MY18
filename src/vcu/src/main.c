@@ -34,7 +34,12 @@ int main(void) {
   DGPIO_INIT_OUT(L_CONTACTOR, GPIO_PIN_RESET);
   DGPIO_INIT_OUT(H_CONTACTOR, GPIO_PIN_RESET);
 
-  printf("\r\n\r\nMEGALV PERIPHERALS ONLINE\r\n");
+  printf(ASCII_ART);
+  printf("Currently running: "HASH"\r\n");
+  printf("Flashed by: "AUTHOR"\r\n");
+
+  printf("\r\n\r\n");
+
   init_states();
 
   while (1) {
