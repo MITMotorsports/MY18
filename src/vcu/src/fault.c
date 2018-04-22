@@ -42,7 +42,7 @@ void handle_fatal_fault(void) {
 }
 
 void handle_recoverable_fault(void) {
-  sendTorqueCmdMsg(0);
+  sendMotorOffCmdMsg();
   resetDrivingValues();
 }
 
