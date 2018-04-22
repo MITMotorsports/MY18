@@ -97,7 +97,7 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
   msg.L_contactor_welded = bms_input->L_contactor_welded;
   msg.H_contactor_welded = bms_input->H_contactor_welded;
 
-  // msg.soc = 7;
+  msg.soc = 7;
   handle_can_error(can0_BMSHeartbeat_Write(&msg));
 }
 
@@ -105,7 +105,7 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
 
 void can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
   LIMIT(can0_CellVoltages_period);
-  
+
   const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
   // TODO: Get info about argmin/argmax.
@@ -122,7 +122,7 @@ void can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
 }
 
 void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
-  
+
   LIMIT(can0_CellTemperatures_period);
 
   const BMS_PACK_STATUS_T *ps = bms_input->pack_status;

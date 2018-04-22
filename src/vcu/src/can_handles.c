@@ -89,15 +89,27 @@ void handleMCVoltageMsg(Frame *msg) {
   heartbeats.mc = HAL_GetTick();
 }
 
-void handleBMSHeartbeatMsg(Frame *msg) {
-  // can0_BMSHeartbeat_T unpacked_msg;
-  // unpack_can0_BMSHeartbeat(msg, &unpacked_msg);
+void handleBMSHeartbeatMsg(Frame *frame) {
+  can0_BMSHeartbeat_T msg;
+  unpack_can0_BMSHeartbeat(frame, &msg);
 
-  // TODO: Make not manual.
-  contactors.L_contactor_closed = (msg->data[0] & 2) != 0;
-  contactors.H_contactor_closed = (msg->data[0] & 4) != 0;
-  contactors.L_contactor_welded = (msg->data[0] & 8) != 0;
-  contactors.H_contactor_welded = (msg->data[0] & 16) != 0;
+  // msg.error_pec;
+  // msg.error_cvst;
+  // msg.error_owt;
+  // msg.error_L_contactor_error;
+  // msg.error_H_contactor_error;
+  // msg.error_L_contactor_weld;
+  // msg.error_H_contactor_weld;
+  // msg.error_cell_under_voltage;
+  // msg.error_cell_over_voltage;
+  // msg.error_cell_under_temp;
+  // msg.error_cell_over_temp;
+  // msg.error_control_flow;
+
+  contactors.L_contactor_closed = msg.L_contactor_closed;
+  contactors.H_contactor_closed = msg.H_contactor_closed;
+  contactors.L_contactor_welded = msg.L_contactor_welded;
+  contactors.H_contactor_welded = msg.H_contactor_welded;
 
   heartbeats.bms = HAL_GetTick();
 }
