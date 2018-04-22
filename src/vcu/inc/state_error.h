@@ -18,22 +18,6 @@ typedef enum {
 } ERROR_STATE_T;
 
 
-// CONTAINER DEFINITIONS
-typedef struct {
-  bool HEARTBEAT_ERROR;
-  bool SHUTDOWN_ERROR;  // Only includes SHUTDOWN_SENSE(_GATE) AKA ESD
-} RECOVERABLE_ERROR_T;
-
-typedef struct {
-  bool GATE_ERROR;
-  bool CONFLICT_ERROR;
-} FATAL_ERROR_T;
-
-
-// CONTAINER DECLARATIONS
-extern RECOVERABLE_ERROR_T recoverable_errors;
-extern FATAL_ERROR_T fatal_errors;
-
 
 // INTERACTION FUNCTIONS
 void          init_error_state(void);

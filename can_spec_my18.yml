@@ -283,6 +283,43 @@ buses:
               NO_ERROR_STATE: 0x0
               RECOVERABLE_ERROR_STATE: 0x1
               FATAL_ERROR_STATE: 0x2
+      VCUErrors:
+        can_id: 0x0F4
+        period: 111ms
+        is_big_endian: true
+        segments:
+          recoverable_conflict:
+            position: 0
+            length: 1
+            c_type: bool
+          recoverable_gate:
+            position: 1
+            length: 1
+            c_type: bool
+          recoverable_heartbeat:
+            position: 2
+            length: 1
+            c_type: bool
+          recoverable_contactor:
+            position: 3
+            length: 1
+            c_type: bool
+          fatal_contactor:
+            position: 4
+            length: 1
+            c_type: bool
+          fatal_gate:
+            position: 5
+            length: 1
+            c_type: bool
+          fatal_precharge:
+            position: 6
+            length: 1
+            c_type: bool
+          fatal_conflict:
+            position: 7
+            length: 1
+            c_type: bool
       CurrentSensor_Current:
         can_id: 0x521
         period: 0.05s

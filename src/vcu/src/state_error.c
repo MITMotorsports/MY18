@@ -1,12 +1,6 @@
 #include "state_error.h"
 
-
 static ERROR_STATE_T currentState = NO_ERROR_STATE;
-
-// Implicitly initialize error structs to false (no errors).
-RECOVERABLE_ERROR_T recoverable_errors = {};
-FATAL_ERROR_T fatal_errors             = {};
-
 
 void init_error_state(void) {
   set_error_state(NO_ERROR_STATE);
@@ -53,8 +47,8 @@ void advance_error_state(void) {
   }
 }
 
-#define TRANSITION_FATAL() if (any_fatal_faults()) set_error_state(FATAL_ERROR_STATE);
-#define TRANSITION_RECOVERABLE() if (any_recoverable_faults()) set_error_state(RECOVERABLE_ERROR_STATE);
+#define TRANSITION_FATAL() if (update_fatal_faults()) set_error_state(FATAL_ERROR_STATE);
+#define TRANSITION_RECOVERABLE() if (update_recoverable_faults()) set_error_state(RECOVERABLE_ERROR_STATE);
 
 void enter_no_error_state(void) {
   printf("[ERROR FSM : NO_ERROR_STATE] ENTERED!\r\n");
@@ -72,7 +66,7 @@ void enter_recoverable_error_state(void) {
 void update_recoverable_error_state(void) {
   TRANSITION_FATAL();
   // If no recoverable faults appear it means we've cleared.
-  if (!any_recoverable_faults()) set_error_state(NO_ERROR_STATE);
+  if (!update_recoverable_faults()) set_error_state(NO_ERROR_STATE);
 
   handle_recoverable_fault();
 }

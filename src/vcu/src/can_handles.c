@@ -8,9 +8,10 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *hcan) {
     handleCAN(hcan);
   }
   else {
-    printf("[CAN RX] ERROR: HAL_StatusTypeDef is %d\r\n", (int)CAN_RX_STATUS);
+    printf("[CAN RX] ERROR: HAL_StatusTypeDef is %d\r\n",    (int)CAN_RX_STATUS);
     printf("[CAN RX] ERROR: HAL_CAN_StateTypeDef is %d\r\n", hcan->State);
-    printf("[CAN RX] ERROR: ErrorCode is %d\r\n", hcan->ErrorCode);
+    printf("[CAN RX] ERROR: ErrorCode is %d\r\n",            hcan->ErrorCode);
+
     // handle_fatal_fault();
   }
 }
@@ -137,7 +138,7 @@ void handleButtonRequest(Frame *msg) {
   buttons.DriverReset = (msg->data[0] & 4) != 0;
 }
 
-void sendHeartbeatMsg() {
+void send_VCUHeartbeat() {
   LIMIT(can0_VCUHeartbeat);
 
   can0_VCUHeartbeat_T msg;
@@ -148,6 +149,28 @@ void sendHeartbeatMsg() {
   can0_VCUHeartbeat_Write(&msg);
 }
 
+void send_VCUErrors() {
+  LIMIT(can0_VCUErrors);
+
+  can0_VCUErrors_T msg;
+
+  msg.fatal_gate      = fatal_faults.gate;
+  msg.fatal_precharge = fatal_faults.precharge;
+  msg.fatal_contactor = fatal_faults.contactor;
+  msg.fatal_conflict  = fatal_faults.conflict;
+
+  msg.recoverable_gate      = recoverable_faults.gate;
+  msg.recoverable_heartbeat = recoverable_faults.heartbeat;
+  msg.recoverable_conflict  = recoverable_faults.conflict;
+  msg.recoverable_contactor = recoverable_faults.contactor;
+
+  can0_VCUErrors_Write(&msg);
+}
+
+void send_VCU() {
+  send_VCUHeartbeat();
+  send_VCUErrors();
+}
 
 void sendTorqueCmdMsg(int16_t torque) {
   LIMIT(can0_MCCommand);
