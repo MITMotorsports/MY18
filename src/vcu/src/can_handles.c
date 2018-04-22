@@ -156,7 +156,7 @@ void sendTorqueCmdMsg(int16_t torque) {
 
   msg.torque                        = torque;
   msg.angular_vel                   = 0;
-  msg.direction_is_counterclockwise = 1;
+  msg.direction_is_counterclockwise = false;
   msg.inverter_enabled              = true;
   msg.discharge_enabled             = false;
   msg.speed_mode                    = false;
