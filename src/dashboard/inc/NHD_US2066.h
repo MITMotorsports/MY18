@@ -17,6 +17,7 @@ typedef struct {
     // need to be nlines * ncols long
     char buf[OLED_NLINES * OLED_NCOLS];
     bool lineupdates[OLED_NLINES];
+    uint32_t line_hashes[OLED_NLINES];
 
     uint8_t contrast;
 
