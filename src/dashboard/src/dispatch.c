@@ -35,11 +35,33 @@ void dispatch_init() {
     page_manager_init(&page_manager, &carstats);
 
     oled_init(&oled);
-    Delay(100);
+    Delay(50);
     oled_init_commands(&oled);
-    Delay(100);
+    Delay(50);
     oled_clear(&oled);
-    Delay(100);
+    Delay(50);
+
+    // necessary
+    oled_set_double_height_mode(&oled, NHD_US2066_DOUBLE_HEIGHT_MIDDLE);
+    oled_set_pos(&oled, 0, 0);
+    oled_print_char(&oled, CHAR_DIAMOND);
+    for (int i = 1; i < 19; i++) oled_print(&oled, "-");
+    oled_print_char(&oled, CHAR_DIAMOND);
+    oled_set_pos(&oled, 1, 0);
+    oled_print_char(&oled, CHAR_PIPE);
+    oled_set_pos(&oled, 1, 8);
+    oled_print(&oled, "MY18");
+    oled_set_pos(&oled, 1, 19);
+    oled_print_char(&oled, CHAR_PIPE);
+    oled_set_pos(&oled, 2, 0);
+    oled_print_char(&oled, CHAR_DIAMOND);
+    for (int i = 1; i < 19; i++) oled_print(&oled, "-");
+    oled_print_char(&oled, CHAR_DIAMOND);
+    oled_update(&oled);
+    Delay(600);
+    oled_set_double_height_mode(&oled, NHD_US2066_DOUBLE_HEIGHT_NONE);
+    oled_clear(&oled);
+
 
     nextOLEDUpdate = 0;
 
