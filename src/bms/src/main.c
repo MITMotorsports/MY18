@@ -43,7 +43,7 @@ int main(void) {
 
     if(Error_Should_Fault()) {
       Board_Println("Requesting Halt..");
-      break;
+      // break;
     }
     //TODO: charger enable pin for charger
 
