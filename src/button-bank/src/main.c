@@ -7,10 +7,6 @@
 car_states_t car_state = {};
 volatile uint32_t msTicks;
 
-static void Delay(uint32_t dlyTicks) {
-	uint32_t curTicks = msTicks;
-	while ((msTicks - curTicks) < dlyTicks);
-}
 
 int main(void) {
   SystemCoreClockUpdate();
@@ -32,13 +28,12 @@ int main(void) {
 
   button_states_t hold;
   SET_STRUCT_ZERO(hold);
-  Frame p;
 
   uint32_t last_buzz = 0;
 
   while (1) {
-    // Clear RX buffer
-    Can_RawRead(&p);
+    // Update from CAN bus
+    can_read();
 
     button_states_t current = poll_buttons();
     hold.rtd          |= current.rtd;
@@ -48,8 +43,7 @@ int main(void) {
       SET_STRUCT_ZERO(hold);
     }
 
-    bool buzz = (car_state.vcu_state == can0_VCUHeartbeat_vcu_state_VCU_STATE_RTD);
-    SET_PIN(BUZZER, buzz);
+    buzz();
 
     print_buttons(current);
   }
@@ -63,6 +57,29 @@ button_states_t poll_buttons(void) {
   bs.rtd          = !(READ_PIN(RTD) == BTN_DOWN);
   bs.driver_reset = !(READ_PIN(DRIVER_RST) == BTN_DOWN);
   return bs;
+}
+
+void buzz() {
+  static bool last = false;
+  static uint32_t last_start = 0;
+  bool current = (car_state.vcu_state == can0_VCUHeartbeat_vcu_state_VCU_STATE_RTD);
+
+  bool buzz = false;
+  if (current) {
+    if (last) {
+      if (msTicks - last_start < BUZZ_DURATION) {
+        buzz = true;
+      }
+    }
+    else {
+      last_start = msTicks;
+      buzz = true;
+    }
+  }
+
+  last = current;
+
+  SET_PIN(BUZZER, buzz);
 }
 
 void print_buttons(button_states_t bs) {
@@ -114,13 +131,24 @@ bool send_buttonrequest(button_states_t hold) {
   return false;
 }
 
-// void handle_vcu_heartbeat() {
-//   can0_VCUHeartbeat_T msg;
-//   unpack_can0_VCUHeartbeat(&frame, &msg);
-//
-//   cs.vcu_state   = msg.vcu_state;
-//   cs.error_state = msg.error_state;
-// }
+void can_read() {
+  Frame raw;
+  Can_RawRead(&raw);
+
+  switch (identify_can0(&raw)) {
+    case can0_VCUHeartbeat:
+      handle_vcu_heartbeat(raw);
+      break;
+  }
+}
+
+void handle_vcu_heartbeat(Frame *frame) {
+  can0_VCUHeartbeat_T msg;
+  unpack_can0_VCUHeartbeat(frame, &msg);
+
+  car_state.vcu_state   = msg.vcu_state;
+  car_state.error_state = msg.error_state;
+}
 
 void can_error_handler(Can_ErrorID_T error) {
   if ((error != Can_Error_NONE) && (error != Can_Error_NO_RX)) {

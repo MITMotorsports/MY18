@@ -11,6 +11,8 @@
 
 extern volatile uint32_t msTicks;
 
+#define BUZZ_DURATION 2000
+
 /// GPIO CONFIGS
 
 // INPUTS
