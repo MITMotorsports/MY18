@@ -3,14 +3,15 @@
 
 #include <string.h>
 
-#include "sysinit.h"
 #include "chip.h"
-
+#include "sysinit.h"
 #include "CANlib.h"
 
 #include "uart.h"
 
 extern volatile uint32_t msTicks;
+
+#define BUZZ_DURATION 2000
 
 /// GPIO CONFIGS
 
@@ -24,14 +25,14 @@ extern volatile uint32_t msTicks;
 #define RTD        1, 4
 #define RTD_IOCON  IOCON_PIO1_2
 
-#define BTN_CONFIG IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_PULLDOWN
+#define BTN_CONFIG IOCON_FUNC0 | IOCON_DIGMODE_EN
 #define BTN_DOWN true // Map GPIO to button state. (pull resistor dependent)
 
 
 // OUTPUTS
 #define BUZZER 1, 5
 #define BUZZER_IOCON IOCON_PIO1_5
-#define BUZZER_CONFIG (IOCON_FUNC0)
+#define BUZZER_CONFIG IOCON_FUNC0
 
 /// GPIO MACROS
 #define READ_PIN(name) Chip_GPIO_GetPinState(LPC_GPIO, name)
@@ -44,6 +45,11 @@ typedef struct {
   bool rtd;
   bool driver_reset;
 } button_states_t;
+
+typedef struct {
+  can0_VCUHeartbeat_vcu_state_T vcu_state;
+  can0_VCUHeartbeat_error_state_T error_state;
+} car_states_t;
 
 
 /// FUNCTION DEFINITIONS
@@ -61,6 +67,6 @@ void            print_buttons(button_states_t bs);
 
 // CAN FUNCTIONS
 bool send_buttonrequest(button_states_t hold);
-void handle_can_error(Can_ErrorID_T error);
+void can_error_handler(Can_ErrorID_T error);
 
 #endif // ifndef __MAIN_H
