@@ -4,15 +4,21 @@
 #define OUT_STRINGIFY(val) ((val) ? "HIGH\n" : "LOW\n")
 #define SET_STRUCT_ZERO(name) memset(&name, 0, sizeof(name));
 
+car_states_t car_state = {};
 volatile uint32_t msTicks;
+
 
 int main(void) {
   SystemCoreClockUpdate();
+  GPIO_Init();
 
   Board_UART_Init(UART_BAUD);
 
   Board_Print("CAN INITIALIZATION\n");
   CAN_Init();
+
+  Board_Println("Currently running: "HASH);
+  Board_Println("Flashed by: "AUTHOR);
 
   if (SysTick_Config(SystemCoreClock / 1000)) {
     while (1);  // error
@@ -20,18 +26,14 @@ int main(void) {
 
   Board_Print("DONE INITIALIZING\n");
 
-  Board_Println("Currently running: "HASH);
-  Board_Println("Flashed by: "AUTHOR);
-
   button_states_t hold;
   SET_STRUCT_ZERO(hold);
-  Frame p;
 
   uint32_t last_buzz = 0;
 
   while (1) {
-    // Clear RX buffer
-    Can_RawRead(&p);
+    // Update from CAN bus
+    can_read();
 
     button_states_t current = poll_buttons();
     hold.rtd          |= current.rtd;
@@ -41,15 +43,7 @@ int main(void) {
       SET_STRUCT_ZERO(hold);
     }
 
-    if (false && msTicks - last_buzz > 1000) {
-      static bool buzz = false;
-      SET_PIN(BUZZER, buzz);
-      Board_Print("[BUZZER] ");
-      Board_Println(OUT_STRINGIFY(buzz));
-
-      buzz = !buzz;
-      last_buzz = msTicks;
-    }
+    buzz();
 
     print_buttons(current);
   }
@@ -60,9 +54,32 @@ int main(void) {
 button_states_t poll_buttons(void) {
   button_states_t bs;
 
-  bs.rtd          = (READ_PIN(RTD) == BTN_DOWN);
-  bs.driver_reset = (READ_PIN(DRIVER_RST) == BTN_DOWN);
+  bs.rtd          = !(READ_PIN(RTD) == BTN_DOWN);
+  bs.driver_reset = !(READ_PIN(DRIVER_RST) == BTN_DOWN);
   return bs;
+}
+
+void buzz() {
+  static bool last = false;
+  static uint32_t last_start = 0;
+  bool current = (car_state.vcu_state == can0_VCUHeartbeat_vcu_state_VCU_STATE_RTD);
+
+  bool buzz = false;
+  if (current) {
+    if (last) {
+      if (msTicks - last_start < BUZZ_DURATION) {
+        buzz = true;
+      }
+    }
+    else {
+      last_start = msTicks;
+      buzz = true;
+    }
+  }
+
+  last = current;
+
+  SET_PIN(BUZZER, buzz);
 }
 
 void print_buttons(button_states_t bs) {
@@ -94,7 +111,7 @@ bool send_buttonrequest(button_states_t hold) {
     // hold.rtd          = false;
     // hold.driver_reset = false;
     //
-    // handle_can_error(can0_ButtonRequest_Write(&msg));
+    // can_error_handler(can0_ButtonRequest_Write(&msg));
 
     Frame manual;
 
@@ -104,7 +121,7 @@ bool send_buttonrequest(button_states_t hold) {
     manual.data[0] += (hold.rtd) ? 2 : 0;
     manual.data[0] += (hold.driver_reset) ? 4 : 0;
 
-    handle_can_error(Can_RawWrite(&manual));
+    can_error_handler(Can_RawWrite(&manual));
 
     hold.rtd = hold.driver_reset = 0;
 
@@ -114,7 +131,26 @@ bool send_buttonrequest(button_states_t hold) {
   return false;
 }
 
-void handle_can_error(Can_ErrorID_T error) {
+void can_read() {
+  Frame raw;
+  Can_RawRead(&raw);
+
+  switch (identify_can0(&raw)) {
+    case can0_VCUHeartbeat:
+      handle_vcu_heartbeat(raw);
+      break;
+  }
+}
+
+void handle_vcu_heartbeat(Frame *frame) {
+  can0_VCUHeartbeat_T msg;
+  unpack_can0_VCUHeartbeat(frame, &msg);
+
+  car_state.vcu_state   = msg.vcu_state;
+  car_state.error_state = msg.error_state;
+}
+
+void can_error_handler(Can_ErrorID_T error) {
   if ((error != Can_Error_NONE) && (error != Can_Error_NO_RX)) {
     switch (error) {
     case Can_Error_NONE:
@@ -194,6 +230,8 @@ void SysTick_Handler(void) {
 }
 
 void GPIO_Init(void) {
+  Chip_GPIO_Init(LPC_GPIO);
+
   /// INPUTS
   Chip_GPIO_SetPinDIRInput(LPC_GPIO, DRIVER_RST);
   Chip_IOCON_PinMuxSet(LPC_IOCON, DRIVER_RST_IOCON, BTN_CONFIG);
@@ -205,8 +243,7 @@ void GPIO_Init(void) {
   Chip_IOCON_PinMuxSet(LPC_IOCON, RTD_IOCON, BTN_CONFIG);
 
   /// OUTPUTS
-  Chip_GPIO_SetPinDIROutput(LPC_GPIO, RTD);
-  Chip_IOCON_PinMuxSet(LPC_IOCON, RTD_IOCON, BUZZER_CONFIG);
-
-  Chip_GPIO_Init(LPC_GPIO);
+  // Chip_GPIO_SetPinDIROutput(LPC_GPIO, BUZZER);
+  // Chip_IOCON_PinMuxSet(LPC_IOCON, BUZZER_IOCON, BUZZER_CONFIG);
+  Chip_GPIO_WriteDirBit(LPC_GPIO, BUZZER, true);
 }

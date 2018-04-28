@@ -57,6 +57,20 @@ void OLED_data(unsigned char c) {
     _OLED_send_serial(c, 0xFA);
 }
 
+uint32_t _compute_line_hash(NHD_US2066_OLED *oled, int line) {
+    if (line < 0 || line > OLED_NLINES) return 0;
+
+    // according to some dude
+    // https://stackoverflow.com/a/7666577
+    uint32_t hash = 5381;
+    for (int i = 0; i < OLED_NCOLS; i++) {
+        int chr = (int) oled->buf[__pos2idx(oled, line, i)];
+        hash = ((hash<<5) + hash) + chr;
+    }
+
+    return hash;
+}
+
 void oled_init(NHD_US2066_OLED *oled) {
     oled->nlines = OLED_NLINES;
     oled->ncols = OLED_NCOLS;
@@ -74,6 +88,10 @@ void oled_init(NHD_US2066_OLED *oled) {
     // blank display
     for (i = 0; i < oled->nlines * oled->ncols; i++) {
         oled->buf[i] = ' ';
+    }
+
+    for (i = 0; i < oled->nlines; i++) {
+        oled->line_hashes[i] = _compute_line_hash(oled, i);
     }
 }
 
@@ -200,9 +218,13 @@ void oled_update(NHD_US2066_OLED *oled) {
         unsigned char cmdarray[NHD_0420CW_NLINES] = {0x02, 0xA0, 0xC0, 0xE0};
         for (i = 0; i < NHD_0420CW_NLINES; i++) {
             if (oled->lineupdates[i]) {
-                OLED_command(cmdarray[i]);
-                _oled_writeline(oled, i);
-                oled->lineupdates[i] = false;
+                uint32_t hash = _compute_line_hash(oled, i);
+                if (hash != oled->line_hashes[i]) {
+                    oled->line_hashes[i] = hash;
+                    OLED_command(cmdarray[i]);
+                    _oled_writeline(oled, i);
+                    oled->lineupdates[i] = false;
+                }
             }
         }
     }
@@ -262,4 +284,13 @@ void oled_set_double_height_mode(NHD_US2066_OLED *oled,
     OLED_command(0b00101110);
     OLED_command(cmd);
     OLED_command(0b00101100);
+}
+
+void oled_set_clk_div(NHD_US2066_OLED *oled, uint8_t div, uint8_t freq) {
+    if (div > 0xF) div = 0xF;
+    if (freq > 0xF) freq = 0xF;
+
+    unsigned char cmd = div | (freq << 4);
+    OLED_command(0xD5);
+    OLED_command(cmd);
 }

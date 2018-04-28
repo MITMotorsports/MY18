@@ -5,8 +5,6 @@
 
 #define DATA_UNKNOWN "?"
 
-uint32_t last_top_update = 0;
-
 void page_manager_init(page_manager_t *pm, carstats_t *stats) {
     pm->page = 0;
     pm->stats = stats;
@@ -94,37 +92,34 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
 // RPM 3400   TEMP  30C
 
 void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
-    if (msTicks > last_top_update + 500) {
-        last_top_update = msTicks + 500;
-        oled_clearline(oled, 0);
-        oled_set_pos(oled, 0, 0);
+    oled_clearline(oled, 0);
+    oled_set_pos(oled, 0, 0);
 
-        if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
-            oled_print(oled, "RECOV");
-        } else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
-            oled_print(oled, "FATAL");
-        }
+    if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
+        oled_print(oled, "RECOV");
+    } else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
+        oled_print(oled, "FATAL");
+    }
 
-        if (msTicks > pm->stats->last_vcu_heartbeat + 1000) { 
-            oled_rprint(oled, "\xFAVCU DEAD\xFC");
-        } else {
-            switch (pm->stats->vcu_state) {
-                case can0_VCUHeartbeat_vcu_state_VCU_STATE_ROOT:
-                    oled_rprint(oled, "\xFAROOT\xFC");
-                    break;
-                case can0_VCUHeartbeat_vcu_state_VCU_STATE_LV:
-                    oled_rprint(oled, "\xFALV\xFC");
-                    break;
-                case can0_VCUHeartbeat_vcu_state_VCU_STATE_PRECHARGING:
-                    oled_rprint(oled, "\xFAPRECHARGE\xFC");
-                    break;
-                case can0_VCUHeartbeat_vcu_state_VCU_STATE_RTD:
-                    oled_rprint(oled, "\xFARTD\xFC");
-                    break;
-                case can0_VCUHeartbeat_vcu_state_VCU_STATE_DRIVING:
-                    oled_rprint(oled, "\xFA""DRIVE\xFC");
-                    break;
-            }
+    if (msTicks > pm->stats->last_vcu_heartbeat + 1000) { 
+        oled_rprint(oled, "\xFAVCU DEAD\xFC");
+    } else {
+        switch (pm->stats->vcu_state) {
+            case can0_VCUHeartbeat_vcu_state_VCU_STATE_ROOT:
+                oled_rprint(oled, "\xFAROOT\xFC");
+                break;
+            case can0_VCUHeartbeat_vcu_state_VCU_STATE_LV:
+                oled_rprint(oled, "\xFALV\xFC");
+                break;
+            case can0_VCUHeartbeat_vcu_state_VCU_STATE_PRECHARGING:
+                oled_rprint(oled, "\xFAPRECHARGE\xFC");
+                break;
+            case can0_VCUHeartbeat_vcu_state_VCU_STATE_RTD:
+                oled_rprint(oled, "\xFARTD\xFC");
+                break;
+            case can0_VCUHeartbeat_vcu_state_VCU_STATE_DRIVING:
+                oled_rprint(oled, "\xFA""DRIVE\xFC");
+                break;
         }
     }
 
@@ -199,6 +194,12 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     } else {
         oled_rprint(oled, DATA_UNKNOWN);
     }
+}
+
+void draw_charging_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+    carstats_t *stats = pm->stats;
+
+
 }
 
 void draw_takeover_page(page_manager_t *pm, NHD_US2066_OLED *oled) {

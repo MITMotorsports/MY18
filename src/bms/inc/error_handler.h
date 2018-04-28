@@ -76,5 +76,4 @@ bool Error_Should_Fault(void);
 
 bool Check_Error(ERROR_T er_t, bool Force_Check);
 
-
 #endif // ifndef _ERROR_HANDLER_H

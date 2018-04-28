@@ -79,7 +79,7 @@ void Error_Present(ERROR_T er_t) {
   // default:
   //   break;
   // }
-  Board_Println(ERROR_NAMES[er_t]);
+  // Board_Println(ERROR_NAMES[er_t]);
   if (!error_vector[er_t].error) {
     error_vector[er_t].error      = true;
     error_vector[er_t].time_stamp = msTicks;
