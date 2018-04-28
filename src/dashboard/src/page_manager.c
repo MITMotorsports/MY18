@@ -196,6 +196,12 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     }
 }
 
+void draw_charging_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+    carstats_t *stats = pm->stats;
+
+
+}
+
 void draw_takeover_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     //oled_clearline(oled, 0);
 }
