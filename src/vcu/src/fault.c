@@ -1,21 +1,34 @@
 #include "fault.h"
 
+FATAL_FAULTS_T fatal_faults             = {};
+RECOVERABLE_FAULTS_T recoverable_faults = {};
+
 // TODO: Move the fatal and recoverable fault questions to fault.c/h
 #define VS_EQ(name) (get_vcu_state() == VCU_STATE_ ## name)
 #define VS_NEQ(name) !VS_EQ(name)
 
-bool any_fatal_faults(void) {
-  return VS_NEQ(ROOT) && any_fatal_gate_faults() ||
-         any_fatal_precharge_fault()             ||
-         any_fatal_contactor_faults()            ||
-         any_fatal_conflict_faults();
+bool update_fatal_faults(void) {
+  fatal_faults.gate      = any_fatal_gate_faults();
+  fatal_faults.precharge = any_fatal_precharge_fault();
+  fatal_faults.contactor = any_fatal_contactor_faults();
+  fatal_faults.conflict  = any_fatal_conflict_faults();
+
+  return VS_NEQ(ROOT) && fatal_faults.gate ||
+         fatal_faults.precharge            ||
+         fatal_faults.contactor            ||
+         fatal_faults.conflict;
 }
 
-bool any_recoverable_faults(void) {
-  return VS_NEQ(ROOT) && any_recoverable_gate_fault() ||
-         any_recoverable_heartbeat_faults()           ||
-         any_recoverable_conflict_faults()            ||
-         any_recoverable_contactor_faults();
+bool update_recoverable_faults(void) {
+  recoverable_faults.gate      = any_recoverable_gate_fault();
+  recoverable_faults.heartbeat = any_recoverable_heartbeat_faults();
+  recoverable_faults.conflict  = any_recoverable_conflict_faults();
+  recoverable_faults.contactor = any_recoverable_contactor_faults();
+
+  return VS_NEQ(ROOT) && VS_NEQ(LV) && recoverable_faults.gate ||
+         recoverable_faults.heartbeat                          ||
+         recoverable_faults.conflict                           ||
+         recoverable_faults.contactor;
 }
 
 void handle_fatal_fault(void) {
@@ -35,22 +48,24 @@ void handle_fatal_fault(void) {
   openHighSideContactor();
 
   printf("[FAULT : HANDLER : FATAL] NEED POWER CYCLE.\r\n");
+
   while (1) {
     print_gate_faults(false);
-    sendHeartbeatMsg();
+    send_VCU();
   }
 }
 
 void handle_recoverable_fault(void) {
-  sendTorqueCmdMsg(0);
+  sendMotorOffCmdMsg();
   resetDrivingValues();
 }
 
 void handle_test_fault(void) {
   const Time_T reset_timeout = 5000;
-  Time_T in_time = HAL_GetTick();
+  Time_T in_time             = HAL_GetTick();
 
   printf("[TEST] Reached end of test. Resetting in %dms...\r\n", reset_timeout);
+
   while (HAL_GetTick() - in_time < reset_timeout) {
     print_gate_faults(false);
   }

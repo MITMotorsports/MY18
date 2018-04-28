@@ -7,9 +7,11 @@
 
 typedef struct {
     int battery_voltage;
-    int lowest_cell_voltage;
-    int max_cell_temp;
+    int battery_current;
+    int max_cell_voltage, min_cell_voltage;
+    int max_cell_temp, min_cell_temp;
     int power;
+
     bool brake_pressed;
     bool accel_pressed;
 
