@@ -46,6 +46,7 @@ bool check_FCN_heartbeat_bad(void) {
 }
 
 bool check_MC_heartbeat_bad(void) {
+  return false;
   static bool last_ret = false;
   bool ret =  (HAL_GetTick() - heartbeats.mc > MC_HB_MAX_TIME);
 

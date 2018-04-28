@@ -106,6 +106,7 @@ void handleBMSHeartbeatMsg(Frame *frame) {
   // msg.error_cell_under_temp;
   // msg.error_cell_over_temp;
   // msg.error_control_flow;
+  bms_errors = msg;
 
   contactors.L_contactor_closed = msg.L_contactor_closed;
   contactors.H_contactor_closed = msg.H_contactor_closed;
