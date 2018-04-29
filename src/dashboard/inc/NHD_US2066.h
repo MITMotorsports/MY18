@@ -17,6 +17,7 @@ typedef struct {
     // need to be nlines * ncols long
     char buf[OLED_NLINES * OLED_NCOLS];
     bool lineupdates[OLED_NLINES];
+    uint32_t line_hashes[OLED_NLINES];
 
     uint8_t contrast;
 
@@ -82,5 +83,11 @@ typedef enum {
 
 void oled_set_double_height_mode(NHD_US2066_OLED *oled,
     NHD_US2066_double_height_mode mode);
+
+// Set clock division and oscillator frequency
+//  - `div` must be between 0x0 and 0xF. Divides display clock by `div` + 1
+//  - `freq` must be between 0x0 and 0xF. Sets oscillator frequency.
+//     Larger value = higher frequency.
+void oled_set_clk_div(NHD_US2066_OLED *oled, uint8_t div, uint8_t freq);
 
 #endif

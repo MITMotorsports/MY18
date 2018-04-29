@@ -65,10 +65,24 @@ void CellTemperatures_UpdateMaxMinAvgCellTemperatures(
   // update pack_status
   pack_status->max_cell_temp_dC = maxCellTemperature;
   pack_status->min_cell_temp_dC = minCellTemperature;
+
   pack_status->avg_cell_temp_dC =
     cellTemperaturesSum / (num_modules * MAX_THERMISTORS_PER_MODULE);
   pack_status->max_cell_temp_position = maxCellTemperaturePosition;
   pack_status->min_cell_temp_position = minCellTemperaturePosition;
+
+  //Error checks for cell temperatures
+  if(pack_status->max_cell_temp_dC > MAX_CELL_TEMP_dC) {
+    Error_Present(ERROR_CELL_OVER_TEMP);
+  } else {
+    Error_Clear(ERROR_CELL_OVER_TEMP);
+  }
+  if(pack_status->min_cell_temp_dC < MIN_CELL_TEMP_dC) {
+    Error_Present(ERROR_CELL_UNDER_TEMP);
+  } else {
+    Error_Clear(ERROR_CELL_UNDER_TEMP);
+  }
+
 }
 
 /**************************************************************************************

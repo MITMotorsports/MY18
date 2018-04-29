@@ -1,7 +1,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#include "chip.h"
+extern volatile uint32_t msTicks;
 
 /**
  * @details intializes timers
