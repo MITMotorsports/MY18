@@ -18,7 +18,7 @@ String dir_name;
 String log_name;
 
 void set_failover_filename(String& filename) {
-  filename = "failover.daq";
+  filename = "failover.tsv";
 }
 
 class CommonListener : public CANListener {
@@ -131,6 +131,9 @@ void setup(void) {
   File log_file = SD.open(log_name.c_str(), FILE_WRITE);
 
   if (log_file) {
+    // New log begin delimiter
+    log_file.write('~');
+
     log_file.print(millis());
     log_file.write('\t');
 
@@ -165,7 +168,7 @@ String time_string() {
 }
 
 void loop(void) {
-  static bool led_state = true;
+  static bool led_state = false;
   static uint32_t last_flip = millis();
 
   if (millis() - last_flip > 1000) {
