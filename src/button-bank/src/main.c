@@ -54,8 +54,8 @@ int main(void) {
 button_states_t poll_buttons(void) {
   button_states_t bs;
 
-  bs.rtd          = !(READ_PIN(RTD) == BTN_DOWN);
-  bs.driver_reset = !(READ_PIN(DRIVER_RST) == BTN_DOWN);
+  bs.rtd          = (READ_PIN(RTD) == BTN_DOWN);
+  bs.driver_reset = (READ_PIN(DRIVER_RST) == BTN_DOWN);
   return bs;
 }
 
