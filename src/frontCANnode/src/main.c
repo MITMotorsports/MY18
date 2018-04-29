@@ -26,26 +26,6 @@ void SysTick_Handler(void) {
   msTicks++;
 }
 
-void initialize_structs(void) {
-  adc.accel_1_raw = 0;
-  adc.accel_2_raw = 0;
-  adc.accel_1 = 0;
-  adc.accel_2 = 0;
-  adc.brake_1 = 0;
-  adc.brake_2 = 0;
-  input.adc = &adc;
-  input.speed = &speed;
-}
-
-void fill_input(void) {
-  input.msTicks = msTicks;
-  Input_fill_input();
-}
-
-void process_output(void) {
-  Output_process_output();
-}
-
 int main(void) {
   SystemCoreClockUpdate();
 
@@ -54,7 +34,7 @@ int main(void) {
 
   ADC_Init();
 
-  initialize_structs();
+  Input_initialize();
 
   Serial_Println("Started up!");
 
@@ -68,11 +48,12 @@ int main(void) {
   while(1) {
     Can_RawRead(&devnull);
 
-    fill_input();
-    process_output();
+    input.msTicks = msTicks;
+    Input_fill_input();
+    Output_process_output();
 
     static uint32_t last_print = 0;
-    if (false && msTicks - last_print > 500) {
+    if (false && msTicks - last_print > 10) {
       Serial_Print("brake_1: ");
       Serial_PrintlnNumber(adc.brake_1, 10);
 
@@ -86,10 +67,10 @@ int main(void) {
       Serial_PrintlnNumber(adc.accel_2, 10);
 
       Serial_Print("accel_1_raw: ");
-      Serial_PrintlnNumber(adc.accel_1_raw, 10);
+      Serial_PrintlnNumber(adc.accel_1_raws[ACCEL_LOG_LENGTH-1], 10);
 
       Serial_Print("accel_2_raw: ");
-      Serial_PrintlnNumber(adc.accel_2_raw, 10);
+      Serial_PrintlnNumber(adc.accel_2_raws[ACCEL_LOG_LENGTH-1], 10);
 
       last_print = msTicks;
     }

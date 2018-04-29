@@ -6,15 +6,24 @@ extern volatile uint32_t msTicks;
 void update_adc(void);
 void update_wheel_speed(void);
 void update_can(void);
+uint32_t filter(uint32_t reading);
 
 uint16_t transform1(uint32_t accel_1_raw);
 uint16_t transform2(uint32_t accel_2_raw);
 
+uint16_t adc_log[10];
+
 void Input_initialize() {
   input.adc->accel_1 = 0;
   input.adc->accel_2 = 0;
-  input.adc->accel_1_raw = 0;
-  input.adc->accel_2_raw = 0;
+  for (int i = 0; i < ACCEL_LOG_LENGTH; i++) {
+    input.adc->accel_1_raws[i] = 0;
+    input.adc->accel_2_raws[i] = 0;
+  }
+  for (int i = 0; i < BRAKE_LOG_LENGTH; i++) {
+    input.adc->brake_1_raws[i] = 0;
+    input.adc->brake_2_raws[i] = 0;
+  }
   input.adc->brake_1 = 0;
   input.adc->brake_2 = 0;
   input.adc->steering_pot = 0;
@@ -29,16 +38,43 @@ void update_adc() {
   ADC_Input_T *adc = input.adc;
   uint32_t next_updated = adc->last_updated + ADC_UPDATE_PERIOD_MS;
 
+
   if (next_updated < input.msTicks) {
-    adc->accel_1_raw = ADC_Read(ACCEL_1_CHANNEL);
-    adc->accel_2_raw = ADC_Read(ACCEL_2_CHANNEL);
-    adc->brake_1 = ADC_Read(BRAKE_1_CHANNEL);
-    adc->brake_2 = ADC_Read(BRAKE_2_CHANNEL);
+    // Update accels
+    for (int i = 0; i < ACCEL_LOG_LENGTH - 1; i++) {
+      adc->accel_1_raws[i] = adc->accel_1_raws[i+1];
+      adc->accel_2_raws[i] = adc->accel_2_raws[i+1];
+    }
+    adc->accel_1_raws[ACCEL_LOG_LENGTH-1] = ADC_Read(ACCEL_1_CHANNEL);
+    adc->accel_2_raws[ACCEL_LOG_LENGTH-1] = ADC_Read(ACCEL_2_CHANNEL);
+    uint32_t accel_1_sum = 0;
+    uint32_t accel_2_sum = 0;
+    for (int i = 0; i < ACCEL_LOG_LENGTH; i ++) {
+      accel_1_sum += adc->accel_1_raws[i];
+      accel_2_sum += adc->accel_2_raws[i];
+    }
+    adc->accel_1 = transform1(accel_1_sum / ACCEL_LOG_LENGTH);
+    adc->accel_2 = transform2(accel_2_sum / ACCEL_LOG_LENGTH);
+
+    // Update brakes
+    for (int i = 0; i < BRAKE_LOG_LENGTH - 1; i++) {
+      adc->brake_1_raws[i] = adc->brake_1_raws[i+1];
+      adc->brake_2_raws[i] = adc->brake_2_raws[i+1];
+    }
+    adc->brake_1_raws[BRAKE_LOG_LENGTH-1] = ADC_Read(BRAKE_1_CHANNEL);
+    adc->brake_2_raws[BRAKE_LOG_LENGTH-1] = ADC_Read(BRAKE_2_CHANNEL);
+    uint32_t brake_1_sum = 0;
+    uint32_t brake_2_sum = 0;
+    for (int i = 0; i < BRAKE_LOG_LENGTH; i ++) {
+      brake_1_sum += adc->brake_1_raws[i];
+      brake_2_sum += adc->brake_2_raws[i];
+    }
+    adc->brake_1 = brake_1_sum / BRAKE_LOG_LENGTH;
+    adc->brake_2 = brake_2_sum / BRAKE_LOG_LENGTH;
+
+    // Update other sensors
     adc->steering_pot = ADC_Read(STEERING_CHANNEL);
     adc->last_updated = input.msTicks;
-
-    adc->accel_1 = transform1(adc->accel_1_raw);
-    adc->accel_2 = transform2(adc->accel_2_raw);
   }
 }
 
@@ -161,4 +197,8 @@ void Input_handle_interrupt(uint32_t msTicks, uint32_t curr_tick, Wheel_T wheel)
 
   // Update timestamp
   speed->last_updated[wheel] = msTicks;
+}
+
+uint32_t filter(uint32_t reading) {
+  return reading;
 }

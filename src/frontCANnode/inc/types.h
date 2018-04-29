@@ -5,6 +5,9 @@
 #include <stdbool.h>
 #include "CANlib.h"
 
+#define ACCEL_LOG_LENGTH 10
+#define BRAKE_LOG_LENGTH 10
+
 // Some wheel speed stuff
 #define NUM_TEETH 23
 #define SUM_ALL_TEETH (NUM_TEETH * (NUM_TEETH + 1) / 2)
@@ -12,11 +15,14 @@
 
 typedef struct {
   // Raw accel values are read straight off of the adc
-  uint16_t accel_1_raw;
-  uint16_t accel_2_raw;
+  uint16_t accel_1_raws[ACCEL_LOG_LENGTH];
+  uint16_t accel_2_raws[ACCEL_LOG_LENGTH];
   // These accel values have been scaled to between 0 and 1000
   uint16_t accel_1;
   uint16_t accel_2;
+
+  uint16_t brake_1_raws[BRAKE_LOG_LENGTH];
+  uint16_t brake_2_raws[BRAKE_LOG_LENGTH];
 
   uint16_t brake_1;
   uint16_t brake_2;
