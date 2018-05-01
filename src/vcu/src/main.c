@@ -27,6 +27,9 @@ int main(void) {
   // Setup an LED for debugging
   DGPIO_INIT_OUT(        LED, GPIO_PIN_RESET);
 
+  // Brake Light
+  DGPIO_INIT_OUT(BRAKE_LIGHT, GPIO_PIN_RESET);
+
   // Driver Reset GPIO output for when Driver Reset is pressed
   DGPIO_INIT_OUT( DRIVER_RST, GPIO_PIN_SET);
 
@@ -34,6 +37,7 @@ int main(void) {
   DGPIO_INIT_OUT(L_CONTACTOR, GPIO_PIN_RESET);
   DGPIO_INIT_OUT(H_CONTACTOR, GPIO_PIN_RESET);
 
+  // BEGIN
   printf(ASCII_ART);
   printf("Currently running: "HASH"\r\n");
   printf("Flashed by: "AUTHOR"\r\n");
@@ -45,6 +49,11 @@ int main(void) {
   while (1) {
     advance_states();
     send_VCU();
+
+    // TODO: Find a better location for this.
+    // Update brake light all the time.
+    HAL_GPIO_WritePin(GPIO(BRAKE_LIGHT),
+                      pedalbox.brake_1 > PEDALBOX_BRAKE_BEGIN);
 
     static uint32_t lastt = 0;
 
