@@ -11,8 +11,8 @@ static bool resettingPeripheral = false;
 extern Input_T input;
 extern volatile uint32_t msTicks;
 
-void write_can_brakethrottle_msg(void);
-void write_can_wheel_speed_msg(void);
+Can_ErrorID_T write_can_brakethrottle_msg(void);
+Can_ErrorID_T write_can_wheel_speed_msg(void);
 void handle_can_error(Can_ErrorID_T error);
 bool period_reached(uint32_t start, uint32_t period, uint32_t msTicks);
 
@@ -21,33 +21,29 @@ void Output_process_output() {
   write_can_wheel_speed_msg();
 }
 
-void Output_process_output(Input_T *input, Output_T *output) {
-  handle_can_error(write_can_brakethrottle_msg(input));
-}
 
-Can_ErrorID_T write_can_brakethrottle_msg(Input_T *input) {
+Can_ErrorID_T write_can_brakethrottle_msg() {
   LIMIT(can0_FrontCanNodeBrakeThrottle_period);
 
   can0_FrontCanNodeBrakeThrottle_T msg;
 
-  msg.brake_1 = input->adc->brake_1;
-  msg.brake_2 = input->adc->brake_2;
-  msg.accel_1 = input->adc->accel_1;
-  msg.accel_2 = input->adc->accel_2;
+  msg.brake_1 = input.adc->brake_1;
+  msg.brake_2 = input.adc->brake_2;
+  msg.accel_1 = input.adc->accel_1;
+  msg.accel_2 = input.adc->accel_2;
 
   return can0_FrontCanNodeBrakeThrottle_Write(&msg);
 }
 
-  if (msTicks > last_time + can0_FrontCanNodeBrakeThrottle_period) {
-    last_time = msTicks;
+Can_ErrorID_T write_can_wheel_speed_msg() {
+  LIMIT(can0_FrontCanNodeWheelSpeed_period)
 
-    can0_FrontCanNodeWheelSpeed_T msg;
+  can0_FrontCanNodeWheelSpeed_T msg;
 
-    msg.front_right_wheel_speed = speed->front_right_wheel_speed;
-    msg.front_left_wheel_speed = speed->front_left_wheel_speed;
+  msg.front_right_wheel_speed = input.speed->front_right_wheel_speed;
+  msg.front_left_wheel_speed = input.speed->front_left_wheel_speed;
 
-    handle_can_error(can0_FrontCanNodeWheelSpeed_Write(&msg));
-  }
+  return can0_FrontCanNodeWheelSpeed_Write(&msg);
 }
 
 void handle_can_error(Can_ErrorID_T error) {

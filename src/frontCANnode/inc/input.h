@@ -2,6 +2,7 @@
 #define _INPUT_H_
 
 #include "types.h"
+#include "chip.h"
 
 #include "adc.h"
 
