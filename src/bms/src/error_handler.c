@@ -63,9 +63,10 @@ void Error_Init(void) {
     error_vector[i].time_stamp = 0;
     error_vector[i].count      = 0;
 
-    errors_to_check[i] = true;
-
+    Error_Recognize(i);
   }
+  
+  Error_Ignore(ERROR_H_CONTACTOR_WELD);
 }
 
 void Error_Present(ERROR_T er_t) {
@@ -118,7 +119,7 @@ bool Error_Should_Fault(void) {
   for (ERROR_T i = 0; i < ERROR_NUM_ERRORS; ++i) {
 
     //if error is present and we care
-    if((error_vector[i].error || error_vector[i].handling ) && errors_to_check[i]) {
+    if(errors_to_check[i] && (error_vector[i].error || error_vector[i].handling)) {
       if (Check_Error(i, false)) {
         return true;
       }
@@ -144,10 +145,10 @@ ERROR_STATUS_T* Get_Errors(void) {
   return error_vector;
 }
 
-void Error_Ignore(ERROR_T er_t) {
+inline void Error_Ignore(ERROR_T er_t) {
   errors_to_check[er_t] = false;
 }
 
-void Error_Recognize(ERROR_T er_t) {
+inline void Error_Recognize(ERROR_T er_t) {
   errors_to_check[er_t] = true;
 }
