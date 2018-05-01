@@ -26,17 +26,60 @@ void SysTick_Handler(void) {
   msTicks++;
 }
 
+void initialize_input() {
+  // Initialize adc
+  adc.accel_1 = 0;
+  adc.accel_2 = 0;
+
+  for (int i = 0; i < ACCEL_LOG_LENGTH; i++) {
+    adc.accel_1_raws[i] = 0;
+    adc.accel_2_raws[i] = 0;
+  }
+
+  for (int i = 0; i < BRAKE_LOG_LENGTH; i++) {
+    adc.brake_1_raws[i] = 0;
+    adc.brake_2_raws[i] = 0;
+  }
+  adc.brake_1 = 0;
+  adc.brake_2 = 0;
+  adc.steering_pot = 0;
+
+  input.adc = &adc;
+
+  // Initialize wheel speed sensor
+  for (int i = 0; i < NUM_WHEELS; i++) {
+    speed.num_ticks[i] = 0;
+    speed.big_sum[i] = 0;
+    speed.little_sum[i] = 0;
+    speed.last_updated[i] = 0;
+    speed.disregard[i] = false;
+    speed.wheel_stopped[i] = true;
+
+    for (int j = 0; j < NUM_TEETH; j++) {
+      speed.last_tick[i][j] = 0;
+    }
+  }
+
+  speed.last_speed_read_ms = 0;
+  speed.front_right_wheel_speed = 0;
+  speed.front_left_wheel_speed = 0;
+
+  input.speed = &speed;
+}
+
 int main(void) {
   SystemCoreClockUpdate();
 
   Serial_Init(SERIAL_BAUDRATE);
+
   init_can0_can_node();
 
   ADC_Init();
 
-  Input_initialize();
-
+  initialize_input();
   Serial_Println("Started up!");
+
+
 
   if (SysTick_Config (SystemCoreClock / 1000)) {
     // Error

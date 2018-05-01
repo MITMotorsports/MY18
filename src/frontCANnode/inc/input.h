@@ -26,7 +26,6 @@
 #define MILLIREVS_PER_REV_F 1000.0
 #define SECONDS_PER_MINUTE 60
 
-void Input_initialize(void);
 void Input_fill_input(void);
 void Input_handle_interrupt(uint32_t msTicks, uint32_t curr_tick, Wheel_T wheel);
 

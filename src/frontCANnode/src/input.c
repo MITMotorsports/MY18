@@ -13,22 +13,6 @@ uint16_t transform2(uint32_t accel_2_raw);
 
 uint16_t adc_log[10];
 
-void Input_initialize() {
-  input.adc->accel_1 = 0;
-  input.adc->accel_2 = 0;
-  for (int i = 0; i < ACCEL_LOG_LENGTH; i++) {
-    input.adc->accel_1_raws[i] = 0;
-    input.adc->accel_2_raws[i] = 0;
-  }
-  for (int i = 0; i < BRAKE_LOG_LENGTH; i++) {
-    input.adc->brake_1_raws[i] = 0;
-    input.adc->brake_2_raws[i] = 0;
-  }
-  input.adc->brake_1 = 0;
-  input.adc->brake_2 = 0;
-  input.adc->steering_pot = 0;
-}
-
 void Input_fill_input() {
   update_adc();
   update_wheel_speed();

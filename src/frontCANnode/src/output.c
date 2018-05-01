@@ -17,8 +17,8 @@ void handle_can_error(Can_ErrorID_T error);
 bool period_reached(uint32_t start, uint32_t period, uint32_t msTicks);
 
 void Output_process_output() {
-  write_can_brakethrottle_msg();
-  write_can_wheel_speed_msg();
+  handle_can_error(write_can_brakethrottle_msg());
+  handle_can_error(write_can_wheel_speed_msg());
 }
 
 
