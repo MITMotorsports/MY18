@@ -64,8 +64,13 @@
 #define DRIVER_RST_PIN                GPIO_PIN_1
 #define DRIVER_RST_PORT               GPIOC
 
+
 #define BRAKE_LIGHT_PIN               GPIO_PIN_13
 #define BRAKE_LIGHT_PORT              GPIOB
+
+
+#define HVDCDC_PIN                    GPIO_PIN_1
+#define HVDCDC_PORT                   GPIOB
 
 
 #define L_CONTACTOR_PIN               GPIO_PIN_7

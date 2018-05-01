@@ -29,6 +29,9 @@ void enter_vcu_state_precharge(void) {
   voltagePrintTimeout = HAL_GetTick();
 
   calculate_precharge_target();
+
+  // Write HVDCDC pin high to disable it
+  HAL_GPIO_WritePin(GPIO(HVDCDC), GPIO_PIN_SET);
 }
 
 void update_vcu_state_precharge(void) {
@@ -52,6 +55,9 @@ void update_vcu_state_precharge(void) {
     closeHighSideContactor(); // TODO: What do you, dear reader, think about
                               // contactor atomicity and coupling in
                               // contactors.c?
+
+    // Write HVDCDC pin low to enable it agian
+    HAL_GPIO_WritePin(GPIO(HVDCDC), GPIO_PIN_RESET);
 
     set_vcu_state(VCU_STATE_RTD);
     return;
