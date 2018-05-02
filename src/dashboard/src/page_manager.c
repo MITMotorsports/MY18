@@ -199,7 +199,37 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 void draw_charging_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     carstats_t *stats = pm->stats;
 
+    oled_clearline(oled, 0);
+    oled_set_pos(oled, 0, 0);
+    oled_print(oled, "CHARGING");
 
+    oled_rprint_pad(oled, "SOC", 4);
+    oled_rprint_num(oled, stats->soc);
+
+    oled_clearline(oled, 1);
+    oled_set_pos(oled, 1, 0);
+    oled_print(oled, "BUS ");
+    oled_print_num(oled, stats->battery_voltage/10);
+    oled_print(oled, "V");
+    oled_set_pos(oled, 1, 8);
+    oled_print_num(oled, stats->battery_current);
+    oled_print(oled, "mA");
+
+    oled_clearline(oled, 2);
+    oled_set_pos(oled, 2, 0);
+    oled_print(oled, "CELL ");
+    oled_print_num(oled, stats->min_cell_voltage/1000);
+    oled_print(oled, "V / ");
+    oled_print_num(oled, stats->max_cell_voltage/1000);
+    oled_print(oled, "V");
+
+    oled_clearline(oled, 3);
+    oled_set_pos(oled, 3, 0);
+    oled_print(oled, "TEMP ");
+    oled_print_num(oled, stats->min_cell_temp/10);
+    oled_print(oled, "C / ");
+    oled_print_num(oled, stats->max_cell_temp/10);
+    oled_print(oled, "C");
 }
 
 void draw_takeover_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
