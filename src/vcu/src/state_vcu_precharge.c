@@ -49,7 +49,8 @@ void update_vcu_state_precharge(void) {
   }
 
   // Dead reckoning with time
-  if (HAL_GetTick() - prechargeTimeout > DEAD_RECKON_TIME) {
+  if (HAL_GetTick() - prechargeTimeout > DEAD_RECKON_TIME ||
+      bus_voltage > voltages.precharge_target) {
     // printf("[VCU FSM : PRECHARGE] Waiting for second Driver Reset press to close HIGH side.\r\n");
     // while (!buttons.DriverReset) {}
     closeHighSideContactor(); // TODO: What do you, dear reader, think about
