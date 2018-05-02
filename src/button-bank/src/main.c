@@ -98,6 +98,11 @@ void print_buttons(button_states_t bs) {
     Board_Println(BTN_STRINGIFY(bs.driver_reset));
   }
 
+  if (bs.scroll_select != last_bs.scroll_select) {
+    Board_Print("ScrollSelect is ");
+    Board_Println(BTN_STRINGIFY(bs.scroll_select));
+  }
+
   last_bs = bs;
 }
 
