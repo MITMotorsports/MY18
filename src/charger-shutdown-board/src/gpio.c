@@ -17,12 +17,6 @@ void Board_GPIO_Init(void) {
 
 
 
-
-  // TODO: is the cs pin supposed to be initialized?
-  // Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_2, (IOCON_FUNC0 |
-  // IOCON_MODE_INACT));
-
-
   // Charge Enable Pin
   Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_CHARGER_ENABLE);
   Chip_IOCON_PinMuxSet(LPC_IOCON,
@@ -30,7 +24,7 @@ void Board_GPIO_Init(void) {
                        IOCON_FUNC0 | IOCON_MODE_INACT);
   Chip_GPIO_SetPinState(LPC_GPIO, PIN_CHARGER_ENABLE, false);
 
-  // Fault Pin
+  //BMS Fault Pin
   Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_BMS_FAULT);
   Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_BMS_FAULT, IOCON_FUNC0);
   Chip_GPIO_SetPinState(LPC_GPIO, PIN_BMS_FAULT, false);
