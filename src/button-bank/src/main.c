@@ -36,8 +36,9 @@ int main(void) {
     can_read();
 
     button_states_t current = poll_buttons();
-    hold.rtd          |= current.rtd;
-    hold.driver_reset |= current.driver_reset;
+    hold.rtd           |= current.rtd;
+    hold.driver_reset  |= current.driver_reset;
+    hold.scroll_select |= current.scroll_select;
 
     if (send_buttonrequest(hold)) {
       SET_STRUCT_ZERO(hold);
@@ -54,8 +55,10 @@ int main(void) {
 button_states_t poll_buttons(void) {
   button_states_t bs;
 
-  bs.rtd          = (READ_PIN(RTD) == BTN_DOWN);
-  bs.driver_reset = (READ_PIN(DRIVER_RST) == BTN_DOWN);
+  bs.rtd           = (READ_PIN(RTD)        == BTN_DOWN);
+  bs.driver_reset  = (READ_PIN(DRIVER_RST) == BTN_DOWN);
+  bs.scroll_select = (READ_PIN(SCROLL_SEL) == BTN_DOWN);
+
   return bs;
 }
 
@@ -120,6 +123,7 @@ bool send_buttonrequest(button_states_t hold) {
     manual.data[0]  = 0;
     manual.data[0] += (hold.rtd) ? 2 : 0;
     manual.data[0] += (hold.driver_reset) ? 4 : 0;
+    manual.data[0] += (hold.scroll_select) ? 8 : 0;
 
     can_error_handler(Can_RawWrite(&manual));
 

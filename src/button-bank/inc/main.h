@@ -44,6 +44,7 @@ extern volatile uint32_t msTicks;
 typedef struct {
   bool rtd;
   bool driver_reset;
+  bool scroll_select;
 } button_states_t;
 
 typedef struct {
