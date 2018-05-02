@@ -147,6 +147,7 @@ void can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request) {
             break;
         case can0_MCTemperature1:
             can_handle_mc_temperature1(cs);
+            break;
         case can0_ButtonRequest:
             unpack_can0_ButtonRequest(&frame, button_request);
             break;
