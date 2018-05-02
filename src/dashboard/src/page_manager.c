@@ -164,8 +164,8 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     }
 
     oled_rprint_pad(oled, "CELL", 5);
-    if (pm->stats->lowest_cell_voltage >= 0) {
-        int cell_mV = pm->stats->lowest_cell_voltage;
+    if (pm->stats->min_cell_voltage >= 0) {
+        int cell_mV = pm->stats->min_cell_voltage;
         int cell_V = cell_mV / 1000;
         int cell_dV = (cell_mV / 100) % 10;
         oled_rprint_num_pad(oled, cell_V, 3);

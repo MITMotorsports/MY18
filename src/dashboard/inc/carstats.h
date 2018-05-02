@@ -11,6 +11,7 @@ typedef struct {
     int max_cell_voltage, min_cell_voltage;
     int max_cell_temp, min_cell_temp;
     int power;
+    int32_t current;
 
     bool brake_pressed;
     bool accel_pressed;
@@ -33,6 +34,6 @@ typedef struct {
     int16_t max_igbt_temp;
 } carstats_t;
 
-void can_update_carstats(carstats_t *cs);
+void can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request);
 
 #endif

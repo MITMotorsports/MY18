@@ -35,7 +35,7 @@ void can_handle_cell_voltages(carstats_t *cs) {
     can0_CellVoltages_T msg;
     unpack_can0_CellVoltages(&frame, &msg);
 
-    cs->max_cell_voltage = ms.max;
+    cs->max_cell_voltage = msg.max;
     cs->min_cell_voltage = msg.min;
 }
 
@@ -102,10 +102,10 @@ void can_handle_current_sensor_current(carstats_t *cs) {
     can0_CurrentSensor_Current_T msg;
     unpack_can0_CurrentSensor_Current(&frame, &msg);
 
-    cs->current = current;
+    cs->current = msg.current;
 }
 
-void can_update_carstats(carstats_t *cs) {
+void can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request) {
 
     handle_can_error(Can_RawRead(&frame));
 
@@ -147,6 +147,9 @@ void can_update_carstats(carstats_t *cs) {
             break;
         case can0_MCTemperature1:
             can_handle_mc_temperature1(cs);
+        case can0_ButtonRequest:
+            unpack_can0_ButtonRequest(&frame, button_request);
+            break;
         default:
 
             // do nothing
