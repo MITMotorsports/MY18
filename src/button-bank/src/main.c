@@ -1,3 +1,5 @@
+#define _BUTTONBANK_V2_
+
 #include "main.h"
 
 #define BTN_STRINGIFY(val) ((val) ? "pressed\n" : "released\n")

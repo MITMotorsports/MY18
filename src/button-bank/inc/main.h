@@ -16,6 +16,17 @@ extern volatile uint32_t msTicks;
 /// GPIO CONFIGS
 
 // INPUTS
+#ifdef _BUTTONBANK_V2_
+#define DRIVER_RST 1, 2
+#define DRIVER_RST_IOCON IOCON_PIO1_2
+
+#define SCROLL_SEL 3, 1
+#define SCROLL_SEL_IOCON IOCON_PIO3_1
+
+#define RTD        1, 1
+#define RTD_IOCON  IOCON_PIO1_1
+
+#else
 #define DRIVER_RST 1, 1
 #define DRIVER_RST_IOCON IOCON_PIO1_1
 
@@ -24,6 +35,7 @@ extern volatile uint32_t msTicks;
 
 #define RTD        1, 4
 #define RTD_IOCON  IOCON_PIO1_2
+#endif
 
 #define BTN_CONFIG IOCON_FUNC0 | IOCON_DIGMODE_EN
 #define BTN_DOWN true // Map GPIO to button state. (pull resistor dependent)
