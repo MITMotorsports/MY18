@@ -136,6 +136,7 @@ void can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request) {
             break;
         case can0_CurrentSensor_Current:
             can_handle_current_sensor_current(cs);
+            break;
         case can0_MCCommand:
             can_handle_mc_command(cs);
             break;
