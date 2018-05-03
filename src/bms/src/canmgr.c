@@ -1,0 +1,221 @@
+#include "canmgr.h"
+
+// CAN Initialization
+void Board_CAN_Init() {
+  init_can0_bms();
+}
+
+void Board_CAN_Receive(BMS_INPUT_T *bms_input) {
+  Can_RawRead(&can_input);
+  can0_T msgForm = identify_can0(&can_input);
+
+  switch (msgForm) {
+  case can0_BMSRequest:
+    can_receive_bms_request(bms_input);
+    break;
+
+  case can0_CurrentSensor_Current:
+    can_receive_current(bms_input);
+    break;
+
+  case can0_CurrentSensor_Voltage:
+    can_receive_voltage(bms_input);
+    break;
+
+  case can0_CurrentSensor_Energy:
+    can_receive_energy(bms_input);
+    break;
+
+  case CAN_UNKNOWN_MSG:
+    break;
+
+  default:
+    break;
+  }
+}
+
+void can_receive_bms_request(BMS_INPUT_T *bms_input) {
+  can0_BMSRequest_T msg;
+
+  unpack_can0_BMSRequest(&can_input, &msg);
+  bms_input->vcu_mode_request = msg.state;
+}
+
+void can_receive_current(BMS_INPUT_T *bms_input) {
+  can0_CurrentSensor_Current_T msg;
+
+  unpack_can0_CurrentSensor_Current(&can_input, &msg);
+  bms_input->pack_status->pack_current_mA = msg.current;
+}
+
+void can_receive_voltage(BMS_INPUT_T *bms_input) {
+  can0_CurrentSensor_Voltage_T msg;
+
+  unpack_can0_CurrentSensor_Voltage(&can_input, &msg);
+  bms_input->pack_status->pack_voltage_mV = msg.voltage;
+}
+
+void can_receive_energy(BMS_INPUT_T *bms_input) {
+  can0_CurrentSensor_Energy_T msg;
+
+  unpack_can0_CurrentSensor_Energy(&can_input, &msg);
+  bms_input->pack_status->pack_energy_wH = msg.energy;
+}
+
+Frame can_output;
+void Board_CAN_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
+  can_transmit_bms_heartbeat(bms_input);
+  can_transmit_cell_voltages(bms_input);
+  can_transmit_cell_temperatures(bms_input);
+}
+
+void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
+  LIMIT(can0_BMSHeartbeat_period);
+
+  // const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
+
+  // can0_BMSHeartbeat_T msg;
+
+  // msg.error_pec = errors[ERROR_LTC6804_PEC].error == true;
+  // msg.error_cvst = errors[ERROR_LTC6804_CVST].error == true;
+  // msg.error_owt = errors[ERROR_LTC6804_OWT].error == true;
+  // msg.error_eeprom = errors[ERROR_EEPROM].error == true;
+  // msg.error_cell_under_voltage = errors[ERROR_CELL_UNDER_VOLTAGE].error == true;
+  // msg.error_cell_over_voltage = errors[ERROR_CELL_OVER_VOLTAGE].error == true;
+  // msg.error_cell_under_temp = errors[ERROR_CELL_UNDER_TEMP].error == true;
+  // msg.error_cell_over_temp = errors[ERROR_CELL_OVER_TEMP].error == true;
+  // msg.error_over_current = errors[ERROR_OVER_CURRENT].error == true;
+  // msg.error_can = errors[ERROR_CAN].error == true;
+  // msg.error_conflicting_mode_requests = errors[ERROR_CONFLICTING_MODE_REQUESTS].error == true;
+  // msg.error_vcu_dead = errors[ERROR_VCU_DEAD].error == true;
+  // msg.error_control_flow = errors[ERROR_CONTROL_FLOW].error == true;
+  // msg.error_blown_fuse = errors[ERROR_BLOWN_FUSE].error == true;
+  // msg.error_L_contactor_welded = errors[ERROR_L_CONTACTOR_WELDED].error == true;
+  // msg.error_H_contactor_welded = errors[ERROR_H_CONTACTOR_WELDED].error == true;
+
+  Frame manual;
+  manual.id = can0_BMSHeartbeat_can_id;
+  manual.len = 1;
+  manual.extended = false;
+  manual.data[0] = 0;
+  if (bms_input->L_contactor_closed) manual.data[0] += 2;
+  if (bms_input->H_contactor_closed) manual.data[0] += 4;
+  if (bms_input->L_contactor_welded) manual.data[0] += 8;
+  if (bms_input->H_contactor_welded) manual.data[0] += 16;
+
+  // msg.L_contactor_closed = bms_input->L_contactor_closed;
+  // msg.H_contactor_closed = bms_input->H_contactor_closed;
+  // msg.L_contactor_welded = bms_input->L_contactor_welded;
+  // msg.H_contactor_welded = bms_input->H_contactor_welded;
+
+  // msg.soc = 7;
+  // handle_can_error(can0_BMSHeartbeat_Write(&msg));
+  Can_RawWrite(&manual);
+  // handle_can_error(Can_RawWrite(&manual));
+}
+
+void can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
+  LIMIT(can0_CellVoltages_period);
+
+  const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
+
+  // TODO: Get info about argmin/argmax.
+  can0_CellVoltages_T msg;
+
+  msg.min = ps->pack_cell_min_mV;
+  msg.max = ps->pack_cell_max_mV;
+
+  handle_can_error(can0_CellVoltages_Write(&msg));
+}
+
+void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
+  LIMIT(can0_CellTemperatures_period);
+
+  const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
+
+  can0_CellTemperatures_T msg;
+  msg.min = ps->min_cell_temp_dC;
+  msg.argmin = ps->min_cell_temp_position;
+  msg.max = ps->max_cell_temp_dC;
+  msg.argmax = ps->max_cell_temp_position;
+
+  handle_can_error(can0_CellTemperatures_Write(&msg));
+}
+
+void handle_can_error(Can_ErrorID_T error) {
+  if ((error != Can_Error_NONE) && (error != Can_Error_NO_RX)) {
+    switch (error) {
+    case Can_Error_NONE:
+      Board_Print("Can_Error_NONE\n");
+      break;
+
+    case Can_Error_NO_RX:
+      Board_Print("Can_Error_NO_RX\n");
+      break;
+
+    case Can_Error_EPASS:
+      Board_Print("Can_Error_EPASS\n");
+      break;
+
+    case Can_Error_WARN:
+      Board_Print("Can_Error_WARN\n");
+      break;
+
+    case Can_Error_BOFF:
+      Board_Print("Can_Error_BOFF\n");
+      break;
+
+    case Can_Error_STUF:
+      Board_Print("Can_Error_STUF\n");
+      break;
+
+    case Can_Error_FORM:
+      Board_Print("Can_Error_FORM\n");
+      break;
+
+    case Can_Error_ACK:
+      Board_Print("Can_Error_ACK\n");
+      break;
+
+    case Can_Error_BIT1:
+      Board_Print("Can_Error_BIT1\n");
+      break;
+
+    case Can_Error_BIT0:
+      Board_Print("Can_Error_BIT0\n");
+      break;
+
+    case Can_Error_CRC:
+      Board_Print("Can_Error_CRC\n");
+      break;
+
+    case Can_Error_UNUSED:
+      Board_Print("Can_Error_UNUSED\n");
+      break;
+
+    case Can_Error_UNRECOGNIZED_MSGOBJ:
+      Board_Print("Can_Error_UNRECOGNIZED_MSGOBJ\n");
+      break;
+
+    case Can_Error_UNRECOGNIZED_ERROR:
+      Board_Print("Can_Error_UNRECOGNIZED_ERROR\n");
+      break;
+
+    case Can_Error_TX_BUFFER_FULL:
+      Board_Print("Can_Error_TX_BUFFER_FULL\n");
+      CAN_Flush_Tx();
+      CAN_Clear_Error();
+      CAN_ResetPeripheral();
+      init_can0_bms();
+      break;
+
+    case Can_Error_RX_BUFFER_FULL:
+      Board_Print("Can_Error_RX_BUFFER_FULL\n");
+      CAN_Flush_Tx();
+      CAN_Clear_Error();
+      CAN_ResetPeripheral();
+      init_can0_bms();
+      break;
+    }
+  }
+}

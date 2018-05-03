@@ -1,0 +1,670 @@
+name: MY18
+units:
+  - newtonmeter = N * m = J = Nm
+  - tick = 3 ms
+  - RPM = 360 deg / min
+  - presses = dimensionless
+archs:
+  - avr
+  - arm
+boards:
+  can_node:
+    arch: arm
+    publish:
+      can0:
+        - FrontCanNodeBrakeThrottle
+        - FrontCanNodeWheelSpeed
+    subscribe:
+      can0:
+        - VCUHeartbeat
+  vcu:
+    arch: avr
+    publish:
+      can0:
+        - VCUHeartbeat
+        - BMSRequest
+        - MCCommand
+    subscribe:
+      can0:
+        - FrontCanNodeBrakeThrottle
+        - DashRequest
+        - MCVoltage
+  dash:
+    arch: arm
+    publish:
+      can0:
+        - DashRequest
+    subscribe:
+      can0:
+        - VCUHeartbeat
+        - BMSHeartbeat
+        - FrontCanNodeBrakeThrottle
+  bms:
+    arch: arm
+    publish:
+      can0:
+        - BMSHeartbeat
+        - CellVoltages
+        - CellTemperatures
+  button_bank:
+    arch: arm
+    publish:
+      can0:
+        - ButtonRequest
+  mc:
+    subscribe:
+      can0:
+        - MCCommand
+    publish:
+      can0:
+        - MCVoltage
+  current_sensor:
+    publish:
+      can0:
+        - CurrentSensor_Current
+        - CurrentSensor_Voltage
+        - CurrentSensor_Power
+    subscribe:
+      can0:
+        - Current_Sensor_Config
+
+buses:
+  can0:
+    baudrate: 500000
+    is_extended: false
+    messages:
+      FrontCanNodeBrakeThrottle:
+        can_id: 0x090
+        period: 13ms
+        is_big_endian: true
+        segments:
+          accel_1:
+            position: 0
+            length: 16
+            c_type: uint16_t
+            signed: false
+          accel_2:
+            position: 16
+            length: 16
+            c_type: uint16_t
+            signed: false
+          brake_1:
+            position: 32
+            length: 16
+            c_type: uint16_t
+            signed: false
+          brake_2:
+            position: 48
+            length: 16
+            c_type: uint16_t
+            signed: false
+      FrontCanNodeWheelSpeed:
+        can_id: 0x0F0
+        is_big_endian: true
+        period: 1000s
+        segments:
+          front_right_wheel_speed:
+            position: 0
+            length: 32
+            c_type: uint32_t
+            signed: false
+            unit: mRPM
+          front_left_wheel_speed:
+            position: 32
+            length: 32
+            c_type: uint32_t
+            signed: false
+            unit: mRPM
+      CellTemperatures:
+        can_id: 0x0F1
+        period: 10s
+        is_big_endian: true
+        segments:
+          min:
+            position: 0
+            length: 10
+            c_type: int16_t
+            signed: false
+            unit: decidegC
+          argmin:
+            position: 10
+            length: 9
+            c_type: uint16_t
+            signed: false
+          max:
+            position: 19
+            length: 10
+            c_type: int16_t
+            signed: false
+            unit: decidegC
+          argmax:
+            position: 29
+            length: 9
+            c_type: uint16_t
+            signed: false
+      CellVoltages:
+        can_id: 0x0F2
+        period: 31ms
+        is_big_endian: true
+        segments:
+          min:
+            position: 0
+            length: 32
+            c_type: uint32_t
+            signed: false
+            unit: mV
+          max:
+            position: 32
+            length: 32
+            c_type: uint32_t
+            signed: false
+            unit: mV
+      BMSHeartbeat:
+        can_id: 0x0DF
+        period: 103ms
+        is_big_endian: true
+        segments:
+          # error_pec:
+          #   position: 0
+          #   length: 1
+          #   c_type: bool
+          # error_cvst:
+          #   position: 1
+          #   length: 1
+          #   c_type: bool
+          # error_owt:
+          #   position: 2
+          #   length: 1
+          #   c_type: bool
+          # error_eeprom:
+          #   position: 3
+          #   length: 1
+          #   c_type: bool
+          # error_cell_under_voltage:
+          #   position: 4
+          #   length: 1
+          #   c_type: bool
+          # error_cell_over_voltage:
+          #   position: 5
+          #   length: 1
+          #   c_type: bool
+          # error_cell_under_temp:
+          #   position: 6
+          #   length: 1
+          #   c_type: bool
+          # error_cell_over_temp:
+          #   position: 7
+          #   length: 1
+          #   c_type: bool
+          # error_over_current:
+          #   position: 8
+          #   length: 1
+          #   c_type: bool
+          # error_can:
+          #   position: 9
+          #   length: 1
+          #   c_type: bool
+          # error_conflicting_mode_requests:
+          #   position: 10
+          #   length: 1
+          #   c_type: bool
+          # error_vcu_dead:
+          #   position: 11
+          #   length: 1
+          #   c_type: bool
+          # error_control_flow:
+          #   position: 12
+          #   length: 1
+          #   c_type: bool
+          # error_blown_fuse:
+          #   position: 13
+          #   length: 1
+          #   c_type: bool
+          # error_L_contactor_welded:
+          #   position: 14
+          #   length: 1
+          #   c_type: bool
+          # error_H_contactor_welded:
+          #   position: 15
+          #   length: 1
+          #   c_type: bool
+          L_contactor_closed:
+            position: 0
+            length: 1
+            c_type: bool
+          H_contactor_closed:
+            position: 4
+            length: 1
+            c_type: bool
+          L_contactor_welded:
+            position: 8
+            length: 1
+            c_type: bool
+          H_contactor_welded:
+            position: 16
+            length: 1
+            c_type: bool
+          soc:
+            position: 20
+            length: 8
+            c_type: uint8_t
+      BMSRequest:
+        can_id: 0x0D3
+        is_big_endian: true
+        segments:
+          state:
+            position: 0
+            length: 1
+            c_type: enum
+            enum:
+              DISCHARGE_ENABLE: 0x0
+              DISCHARGE_DISABLE: 0x1
+              NO_REQUEST: 0x2
+      VCUHeartbeat:
+        can_id: 0x0F3
+        period: 41ms
+        is_big_endian: true
+        segments:
+          vcu_state:
+            position: 0
+            length: 3
+            c_type: enum
+            enum:
+              VCU_STATE_ROOT: 0
+              VCU_STATE_LV: 1
+              VCU_STATE_PRECHARGING: 2
+              VCU_STATE_RTD: 3
+              VCU_STATE_DRIVING: 4
+          error_state:
+            position: 3
+            length: 3
+            c_type: enum
+            enum:
+              NO_ERROR_STATE: 0x0
+              RECOVERABLE_ERROR_STATE: 0x1
+              FATAL_ERROR_STATE: 0x2
+      VCUErrors:
+        can_id: 0x0F4
+        period: 111ms
+        is_big_endian: true
+        segments:
+          recoverable_conflict:
+            position: 0
+            length: 1
+            c_type: bool
+          recoverable_gate:
+            position: 1
+            length: 1
+            c_type: bool
+          recoverable_heartbeat:
+            position: 2
+            length: 1
+            c_type: bool
+          recoverable_contactor:
+            position: 3
+            length: 1
+            c_type: bool
+          fatal_contactor:
+            position: 4
+            length: 1
+            c_type: bool
+          fatal_gate:
+            position: 5
+            length: 1
+            c_type: bool
+          fatal_precharge:
+            position: 6
+            length: 1
+            c_type: bool
+          fatal_conflict:
+            position: 7
+            length: 1
+            c_type: bool
+      CurrentSensor_Current:
+        can_id: 0x521
+        period: 0.05s
+        is_big_endian: true
+        segments:
+          current:
+            position: 16
+            length: 32
+            c_type: int32_t
+            signed: true
+            unit: mA
+      CurrentSensor_Voltage:
+        can_id: 0x522
+        period: 50ms
+        is_big_endian: false
+        segments:
+          voltage:
+            position: 16
+            length: 32
+            c_type: int32_t
+            signed: true
+            unit: mV
+      CurrentSensor_Power:
+        can_id: 0x526
+        period: 50ms
+        is_big_endian: false
+        segments:
+          power:
+            position: 16
+            length: 32
+            c_type: int32_t
+            signed: false
+            unit: W
+      CurrentSensor_Energy:
+        can_id: 0x528
+        period: 50ms
+        is_big_endian: false
+        segments:
+          energy:
+            position: 16
+            length: 32
+            c_type: int32_t
+            signed: false
+            unit: Wh
+      DashRequest:
+        can_id: 0x0D2
+        is_big_endian: true
+        segments:
+          type:
+            position: 0
+            length: 3
+            c_type: enum
+            enum:
+              NO_REQUEST: 0x0
+              TRACTION_CONTROL_ENABLE: 0x5
+              TRACTION_CONTROL_DISABLE: 0x6
+              ACTIVE_AERO_ENABLE: 0x7
+              ACTIVE_AERO_DISABLE: 0x8
+              FAN_ENABLE: 0x9
+              FAN_DISABLE: 0xA
+      ButtonRequest:
+        can_id: 0x0D8
+        period: 51ms
+        is_big_endian: true
+        segments:
+          RTD:
+            position: 0
+            length: 1
+            c_type: bool
+            unit: presses
+          DriverReset:
+            position: 1
+            length: 1
+            c_type: bool
+            unit: presses
+          ScrollSelect:
+            position: 2
+            length: 1
+            c_type: bool
+            unit: presses
+      MCCommand:
+        can_id: 0x0C0 # From manual
+        period: 19ms  # MC needs a message at 2 Hz or higher
+        is_big_endian: false
+        segments:
+          torque:
+            position: 0
+            length: 16
+            c_type: int16_t
+            signed: true
+            unit: dNm
+          angular_vel:
+            position: 16
+            length: 16
+            c_type: int16_t
+            signed: signed
+            unit: RPM
+          direction_is_counterclockwise: # when viewed from shaft end of motor
+            position: 39
+            length: 1
+            c_type: bool
+          inverter_enabled:
+            position: 47
+            length: 1
+            c_type: bool
+          discharge_enabled:
+            position: 46
+            length: 1
+            c_type: bool
+          speed_mode:
+            position: 45
+            length: 1
+            c_type: bool
+          torque_limit:
+            position: 48
+            length: 16
+            c_type: int16_t
+            unit: dNm
+      MCParameterRequest:
+        can_id: 0x0C1
+        is_big_endian: false
+        segments:
+          address:
+            position: 0
+            length: 16
+            c_type: int16_t
+            signed: true
+            unit: dNm
+          write:  # make an enum {read, write}
+            position: 23
+            length: 1
+            c_type: bool
+            signed: signed
+            unit: RPM
+          data:
+            position: 32
+            length: 16
+            c_type: int16_t
+      MCVoltage:
+        can_id: 0x0A7
+        period: 1cs
+        is_big_endian: false
+        segments:
+          bus:
+            position: 0
+            length: 16
+            unit: dV
+            signed: true
+            c_type: int16_t
+          out:
+            position: 16
+            length: 16
+            unit: dV
+            signed: true
+            c_type: int16_t
+          VAB_Vd:
+            position: 32
+            length: 16
+            unit: dV
+            signed: true
+            c_type: int16_t
+          VBC_Vq:
+            position: 48
+            length: 16
+            unit: dV
+            signed: true
+            c_type: int16_t
+      MCMotor_Position_Info:
+        can_id: 0x0A5
+        period: 0.01s
+        is_big_endian: false
+        segments:
+          motor_angle:
+            position: 0
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: ddeg
+          motor_speed:
+            position: 16
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: RPM
+          electrical_output_freq:
+            position: 32
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dHz
+          delta_resolved_filter:
+            position: 48
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: ddeg
+      MCFlux_Info:
+        can_id: 0x0A8
+        period: 0.01s
+        is_big_endian: false
+        segments:
+          flux_command:
+            position: 0
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: mWb
+          flux_feedback:
+            position: 16
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: mWb
+          Iq_feedback:
+            position: 32
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dA
+          Id_feedback:
+            position: 48
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dA
+      MCTorque_Timer_Info:
+        can_id: 0x0AC
+        period: 0.01s
+        is_big_endian: false
+        segments:
+          commanded_torque:
+            position: 0
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dNm
+          torque_feedback:
+            position: 16
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dNm
+          power_on_timer:
+            position: 32
+            length: 32
+            signed: true
+            c_type: uint32_t
+            unit: tick
+      MCModulation_Indx_Flux_Weakening_Info:
+        can_id: 0x0AD
+        period: 0.01s
+        is_big_endian: false
+        segments:
+          modulation_index:
+            position: 0
+            length: 16
+            signed: false # Not actually sure
+            c_type: uint16_t
+          flux_weakening_output:
+            position: 16
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dA
+          Iq_command:
+            position: 32
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dA
+          Id_command:
+            position: 48
+            length: 16
+            signed: true
+            c_type: int16_t
+            unit: dA
+      Current_Sensor_Config:
+        can_id: 0x411
+        is_big_endian: true
+        segments:
+          muxbyte:
+            position: 0
+            length: 8
+            signed: false
+            c_type: uint8_t
+          db1:
+            position: 8
+            length: 8
+            signed: false
+            c_type: uint8_t
+          db2:
+            position: 16
+            length: 8
+            signed: false
+            c_type: uint8_t
+          db3:
+            position: 24
+            length: 8
+            signed: false
+            c_type: uint8_t
+          db4:
+            position: 32
+            length: 8
+            signed: false
+            c_type: uint8_t
+          db5:
+            position: 40
+            length: 8
+            signed: false
+            c_type: uint8_t
+          db6:
+            position: 48
+            length: 8
+            signed: false
+            c_type: uint8_t
+          db7:
+            position: 56
+            length: 8
+            signed: false
+            c_type: uint8_t
+      MCTemperature1:
+        can_id: 0x0A0
+        is_big_endian: false
+        segments:
+          module_a_temp:
+            position: 0
+            length: 16
+            unit: decidegC
+            signed: true
+            c_type: int16_t
+          module_b_temp:
+            position: 16
+            length: 16
+            unit: decidegC
+            signed: true
+            c_type: int16_t
+          module_c_temp:
+            position: 32
+            length: 16
+            unit: decidegC
+            signed: true
+            c_type: int16_t
+          gate_driver_temp:
+            position: 48
+            length: 16
+            unit: decidegC
+            signed: true
+            c_type: int16_t

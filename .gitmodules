@@ -1,0 +1,13 @@
+[submodule "lib/lpc11cx4-library"]
+	path = lib/lpc11cx4-library
+	url = https://github.com/MITMotorsports/lpc11cx4-library.git
+	branch = fsae
+[submodule "lib/stm32f2_libs"]
+	path = lib/stm32f2_libs
+	url = https://github.com/MITMotorsports/stm32f2_libs.git
+	branch = master
+[submodule "lib/CANlib"]
+	path = lib/CANlib
+	url = https://github.com/MITMotorsports/CANlib.git
+	branch = master
+    ignore = dirty
