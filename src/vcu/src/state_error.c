@@ -74,7 +74,7 @@ void update_recoverable_error_state(void) {
     // Resume from LV state (precharge needs to happen again)
     // This will let the car try to go through precharge again
     // by flipping the DRIVER_RST pin.
-    set_vcu_state(VCU_STATE_LV);
+    if (get_vcu_state() != VCU_STATE_LV) set_vcu_state(VCU_STATE_LV);
   }
 
   // If no recoverable faults appear it means we've cleared.
