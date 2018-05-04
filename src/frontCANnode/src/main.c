@@ -78,6 +78,8 @@ int main(void) {
 
   initialize_input();
   Serial_Println("Started up!");
+  Serial_Println("Currently running "HASH);
+  Serial_Println("Flashed by: "AUTHOR);
 
 
 
