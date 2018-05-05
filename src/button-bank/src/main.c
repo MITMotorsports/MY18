@@ -30,6 +30,11 @@ int main(void) {
 
   Board_Print("DONE INITIALIZING\n");
 
+  SET_PIN(DRIVER_RST_LED, LED_OFF);
+  SET_PIN(RTD_LED, LED_OFF);
+  SET_PIN(BTN_A_LED, LED_OFF);
+  SET_PIN(BTN_B_LED, LED_OFF);
+
   button_states_t hold;
   SET_STRUCT_ZERO(hold);
 
@@ -261,4 +266,9 @@ void GPIO_Init(void) {
   // Chip_GPIO_SetPinDIROutput(LPC_GPIO, BUZZER);
   // Chip_IOCON_PinMuxSet(LPC_IOCON, BUZZER_IOCON, BUZZER_CONFIG);
   Chip_GPIO_WriteDirBit(LPC_GPIO, BUZZER, true);
+
+  Chip_GPIO_WriteDirBit(LPC_GPIO, RTD_LED, true);
+  Chip_GPIO_WriteDirBit(LPC_GPIO, DRIVER_RST_LED, true);
+  Chip_GPIO_WriteDirBit(LPC_GPIO, BTN_A_LED, true);
+  Chip_GPIO_WriteDirBit(LPC_GPIO, BTN_B_LED, true);
 }

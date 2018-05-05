@@ -26,6 +26,18 @@ extern volatile uint32_t msTicks;
 #define RTD        1, 1
 #define RTD_IOCON  IOCON_PIO1_1
 
+#define DRIVER_RST_LED 1, 0
+#define DRIVER_RST_LED_IOCON IOCON_PIO1_0
+
+#define RTD_LED 3, 0
+#define RTD_LED_IOCON IOCON_PIO3_0
+
+#define BTN_A_LED 2, 3
+#define BTN_A_LED_IOCON IOCON_PIO2_3
+
+#define BTN_B_LED 1, 3
+#define BTN_B_LED_IOCON IOCON_PIO1_3
+
 #else
 #define DRIVER_RST 1, 1
 #define DRIVER_RST_IOCON IOCON_PIO1_1
@@ -39,6 +51,8 @@ extern volatile uint32_t msTicks;
 
 #define BTN_CONFIG IOCON_FUNC0 | IOCON_DIGMODE_EN
 #define BTN_DOWN false // Map GPIO to button state. (pull resistor dependent)
+#define LED_ON true
+#define LED_OFF false
 
 
 // OUTPUTS
