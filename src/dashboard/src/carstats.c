@@ -74,6 +74,8 @@ void can_handle_vcu_heartbeat(carstats_t *cs) {
 
     cs->vcu_state          = msg.vcu_state;
     cs->error_state        = msg.error_state;
+    cs->estop_hit          = msg.estop_hit;
+
     cs->last_vcu_heartbeat = msTicks;
 }
 
@@ -111,9 +113,9 @@ void can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request) {
 
     can0_T msgType;
     msgType = identify_can0(&frame);
-    Board_Print_BLOCKING("ID: ");
-    Board_PrintNum(frame.id, 10);
-    Board_Println_BLOCKING("");
+    // Board_Print_BLOCKING("ID: ");
+    // Board_PrintNum(frame.id, 10);
+    // Board_Println_BLOCKING("");
 
     switch (msgType) {
         case can0_FrontCanNodeWheelSpeed:

@@ -29,6 +29,7 @@ typedef struct {
 
     can0_VCUHeartbeat_vcu_state_T vcu_state;
     can0_VCUHeartbeat_error_state_T error_state;
+    bool estop_hit;
     uint32_t last_vcu_heartbeat;
 
     int16_t max_igbt_temp;

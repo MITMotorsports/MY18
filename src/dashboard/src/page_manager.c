@@ -96,12 +96,14 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_set_pos(oled, 0, 0);
 
     if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
-        oled_print(oled, "RECOV");
+        oled_print(oled, (pm->stats->estop_hit)? "RECOV:ESTOP": "RECOV");
     } else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
         oled_print(oled, "FATAL");
+    } else if (pm->stats->estop_hit) {
+        oled_print(oled, "ESTOP");
     }
 
-    if (msTicks > pm->stats->last_vcu_heartbeat + 1000) { 
+    if (msTicks > pm->stats->last_vcu_heartbeat + 1000) {
         oled_rprint(oled, "\xFAVCU DEAD\xFC");
     } else {
         switch (pm->stats->vcu_state) {
@@ -123,8 +125,8 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
         }
     }
 
-    oled_clearline(oled, 1);
     oled_set_pos(oled, 1, 0);
+    oled_clearline(oled, 1);
     oled_print(oled, "TRQ ");
     if (pm->stats->torque_mc >= 0) {
         int torque_Nm = pm->stats->torque_mc / 10;
@@ -176,7 +178,7 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
         oled_rprint(oled, DATA_UNKNOWN);
     }
 
-    
+
     oled_clearline(oled, 3);
     oled_set_pos(oled, 3, 0);
     oled_print(oled, "RPM ");
@@ -245,7 +247,7 @@ void draw_traction_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
 // looks like:
 
-// 
+//
 //
 // 1000RPM      1000RPM
 // 1000RPM      1000RPM
@@ -256,7 +258,7 @@ void draw_wheel_speed_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_print(oled, "RPM");
     oled_rprint_num_pad(oled, pm->stats->front_right_wheel_speed, 3);
     oled_rprint(oled, "RPM");
-    
+
     oled_clearline(oled, 3);
     oled_set_pos(oled, 3, 0);
     oled_print_num(oled, pm->stats->rear_left_wheel_speed);

@@ -158,6 +158,7 @@ void send_VCUHeartbeat() {
 
   msg.vcu_state   = get_vcu_state();
   msg.error_state = get_error_state();
+  msg.estop_hit   = gates.sdn;
 
   can0_VCUHeartbeat_Write(&msg);
 }
