@@ -1,6 +1,7 @@
 #include "main.h"
 
 volatile uint32_t msTicks;
+const uint32_t OscRateIn =24000000;
 
 void SysTick_Handler(void){
 	msTicks++;
