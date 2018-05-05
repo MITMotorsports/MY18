@@ -9,6 +9,8 @@
 car_states_t car_state = {};
 volatile uint32_t msTicks;
 
+void buzz(void);
+void can_read(void);
 
 int main(void) {
   SystemCoreClockUpdate();
@@ -64,7 +66,7 @@ button_states_t poll_buttons(void) {
   return bs;
 }
 
-void buzz() {
+void buzz(void) {
   static bool last = false;
   static uint32_t last_start = 0;
   bool current = (car_state.vcu_state == can0_VCUHeartbeat_vcu_state_VCU_STATE_RTD);
@@ -142,23 +144,25 @@ bool send_buttonrequest(button_states_t hold) {
   return false;
 }
 
-void can_read() {
-  Frame raw;
-  Can_RawRead(&raw);
-
-  switch (identify_can0(&raw)) {
-    case can0_VCUHeartbeat:
-      handle_vcu_heartbeat(raw);
-      break;
-  }
-}
-
 void handle_vcu_heartbeat(Frame *frame) {
   can0_VCUHeartbeat_T msg;
   unpack_can0_VCUHeartbeat(frame, &msg);
 
   car_state.vcu_state   = msg.vcu_state;
   car_state.error_state = msg.error_state;
+}
+
+void can_read(void) {
+  Frame raw;
+  Can_RawRead(&raw);
+
+  switch (identify_can0(&raw)) {
+    case can0_VCUHeartbeat:
+      handle_vcu_heartbeat(&raw);
+      break;
+    default:
+      break;
+  }
 }
 
 void can_error_handler(Can_ErrorID_T error) {
