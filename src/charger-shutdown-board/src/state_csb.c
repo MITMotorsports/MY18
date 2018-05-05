@@ -23,6 +23,7 @@ CSB_STATE_T set_csb_state(CSB_STATE_T newState){
 	default:
 		return;
 	}
+	currentState=newState;
 }
 
 void advance_csb_state(void){
