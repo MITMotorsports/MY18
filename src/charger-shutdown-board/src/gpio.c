@@ -29,6 +29,21 @@ void Board_GPIO_Init(void) {
   Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_BMS_FAULT, IOCON_FUNC0);
   Chip_GPIO_SetPinState(LPC_GPIO, PIN_BMS_FAULT, false);
 
+//IMD Fault Pin
+  Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_IMD_IN);
+  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_IMD_IN, IOCON_FUNC0);
+  Chip_GPIO_SetPinState(LPC_GPIO, PIN_IMD_IN, false);
+ 
+//Interlock Fault Pin
+  Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_INTERLOCK);
+  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_INTERLOCK, IOCON_FUNC0);
+  Chip_GPIO_SetPinState(LPC_GPIO, PIN_INTERLOCK, false);
+
+//Precharge Pin
+
+  Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_PRECHARGE);
+  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_PRECHARGE, IOCON_FUNC0);
+  Chip_GPIO_SetPinState(LPC_GPIO, PIN_PRECHARGE, false);
 }
 
 // Set the value of a GPIO pin
