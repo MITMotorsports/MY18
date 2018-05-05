@@ -37,13 +37,13 @@ inline void Board_Pin_Set(uint8_t led_gpio, uint8_t led_pin, bool state) {
 }
 
 // Read the value of a GPIO pin
-inline bool Board_Pin_Read(uint8_t gpio, uint8_t pin) {
-  return Chip_GPIO_GetPinState(LPC_GPIO, gpio, pin);
+inline bool Board_Pin_Read(uint8_t port, uint8_t pin) {
+  return Chip_GPIO_GetPinState(LPC_GPIO, port, pin);
 }
 
 // Toggle a GPIO pin
-inline void Board_Pin_Toggle(uint8_t gpio, uint8_t pin) {
-  Chip_GPIO_SetPinState(LPC_GPIO, gpio, pin, !Board_Pin_Read(gpio, pin));
+inline void Board_Pin_Toggle(uint8_t port, uint8_t pin) {
+  Chip_GPIO_SetPinState(LPC_GPIO, port, pin, !Board_Pin_Read(port, pin));
 }
 
 
