@@ -38,7 +38,7 @@ extern volatile uint32_t msTicks;
 #endif
 
 #define BTN_CONFIG IOCON_FUNC0 | IOCON_DIGMODE_EN
-#define BTN_DOWN true // Map GPIO to button state. (pull resistor dependent)
+#define BTN_DOWN false // Map GPIO to button state. (pull resistor dependent)
 
 
 // OUTPUTS
