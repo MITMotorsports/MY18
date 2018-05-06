@@ -10,6 +10,7 @@ car_states_t car_state = {};
 volatile uint32_t msTicks;
 
 void buzz(void);
+void button_leds(void);
 void can_read(void);
 
 int main(void) {
@@ -54,6 +55,7 @@ int main(void) {
     }
 
     buzz();
+    button_leds();
 
     print_buttons(current);
   }
@@ -92,6 +94,32 @@ void buzz(void) {
   last = current;
 
   SET_PIN(BUZZER, buzz);
+}
+
+uint32_t next_led_blink = 0;
+uint32_t led_blink_period = 500;
+
+void button_leds(void) {
+    switch (car_state.vcu_state) {
+        case can0_VCUHeartbeat_vcu_state_VCU_STATE_RTD:
+        SET_PIN(DRIVER_RST_LED, LED_OFF);
+        if (msTicks > next_led_blink) {
+            SET_PIN(RTD_LED, !READ_PIN(RTD_LED)); // toggle
+            next_led_blink = msTicks + led_blink_period;
+        }
+
+        case can0_VCUHeartbeat_vcu_state_VCU_STATE_LV:
+        SET_PIN(RTD_LED, LED_OFF);
+        if (msTicks > next_led_blink) {
+            SET_PIN(DRIVER_RST_LED, !READ_PIN(DRIVER_RST_LED)); // toggle
+            next_led_blink = msTicks + led_blink_period;
+        }
+
+        default:
+        SET_PIN(DRIVER_RST_LED, LED_OFF);
+        SET_PIN(RTD_LED, LED_OFF);
+        break;
+    }
 }
 
 void print_buttons(button_states_t bs) {
@@ -141,7 +169,8 @@ bool send_buttonrequest(button_states_t hold) {
 
     can_error_handler(Can_RawWrite(&manual));
 
-    hold.rtd = hold.driver_reset = 0;
+    hold.rtd = 0;
+    hold.driver_reset = 0;
 
     return true;
   }
@@ -155,6 +184,11 @@ void handle_vcu_heartbeat(Frame *frame) {
 
   car_state.vcu_state   = msg.vcu_state;
   car_state.error_state = msg.error_state;
+
+    Board_Print_BLOCKING("VCU STATE ");
+    char *thing = msg.vcu_state == can0_VCUHeartbeat_vcu_state_VCU_STATE_ROOT ? "root" : "not root";
+    Board_Print_BLOCKING(thing);
+    Board_Print_BLOCKING("\n");
 }
 
 void can_read(void) {
@@ -271,4 +305,9 @@ void GPIO_Init(void) {
   Chip_GPIO_WriteDirBit(LPC_GPIO, DRIVER_RST_LED, true);
   Chip_GPIO_WriteDirBit(LPC_GPIO, BTN_A_LED, true);
   Chip_GPIO_WriteDirBit(LPC_GPIO, BTN_B_LED, true);
+
+  Chip_IOCON_PinMuxSet(LPC_IOCON, RTD_LED_IOCON, IOCON_FUNC0);
+  Chip_IOCON_PinMuxSet(LPC_IOCON, DRIVER_RST_LED_IOCON, IOCON_FUNC1);
+  Chip_IOCON_PinMuxSet(LPC_IOCON, BTN_A_LED_IOCON, IOCON_FUNC0);
+  Chip_IOCON_PinMuxSet(LPC_IOCON, BTN_B_LED_IOCON, IOCON_FUNC0);
 }
