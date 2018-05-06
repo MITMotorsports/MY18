@@ -13,6 +13,9 @@ void buzz(void);
 void button_leds(void);
 void can_read(void);
 
+uint32_t next_led_blink = 0;
+#define LED_BLINK_PERIOD 500
+
 int main(void) {
   SystemCoreClockUpdate();
   GPIO_Init();
@@ -31,6 +34,8 @@ int main(void) {
 
   Board_Print("DONE INITIALIZING\n");
 
+  next_led_blink = 0;
+
   SET_PIN(DRIVER_RST_LED, LED_OFF);
   SET_PIN(RTD_LED, LED_OFF);
   SET_PIN(BTN_A_LED, LED_OFF);
@@ -40,6 +45,8 @@ int main(void) {
   SET_STRUCT_ZERO(hold);
 
   uint32_t last_buzz = 0;
+
+  SET_PIN(BUZZER, false);
 
   while (1) {
     // Update from CAN bus
@@ -96,24 +103,23 @@ void buzz(void) {
   SET_PIN(BUZZER, buzz);
 }
 
-uint32_t next_led_blink = 0;
-uint32_t led_blink_period = 500;
-
 void button_leds(void) {
     switch (car_state.vcu_state) {
-        case can0_VCUHeartbeat_vcu_state_VCU_STATE_RTD:
+        case can0_VCUHeartbeat_vcu_state_VCU_STATE_LV:
         SET_PIN(DRIVER_RST_LED, LED_OFF);
         if (msTicks > next_led_blink) {
             SET_PIN(RTD_LED, !READ_PIN(RTD_LED)); // toggle
-            next_led_blink = msTicks + led_blink_period;
+            next_led_blink = msTicks + LED_BLINK_PERIOD;
         }
+        break;
 
-        case can0_VCUHeartbeat_vcu_state_VCU_STATE_LV:
+        case can0_VCUHeartbeat_vcu_state_VCU_STATE_RTD:
         SET_PIN(RTD_LED, LED_OFF);
         if (msTicks > next_led_blink) {
             SET_PIN(DRIVER_RST_LED, !READ_PIN(DRIVER_RST_LED)); // toggle
-            next_led_blink = msTicks + led_blink_period;
+            next_led_blink = msTicks + LED_BLINK_PERIOD;
         }
+        break;
 
         default:
         SET_PIN(DRIVER_RST_LED, LED_OFF);
@@ -140,7 +146,8 @@ void print_buttons(button_states_t bs) {
     Board_Println(BTN_STRINGIFY(bs.scroll_select));
   }
 
-  last_bs = bs;
+  // this breaks everything for some reason
+  //last_bs = bs;
 }
 
 bool send_buttonrequest(button_states_t hold) {
@@ -184,11 +191,6 @@ void handle_vcu_heartbeat(Frame *frame) {
 
   car_state.vcu_state   = msg.vcu_state;
   car_state.error_state = msg.error_state;
-
-    Board_Print_BLOCKING("VCU STATE ");
-    char *thing = msg.vcu_state == can0_VCUHeartbeat_vcu_state_VCU_STATE_ROOT ? "root" : "not root";
-    Board_Print_BLOCKING(thing);
-    Board_Print_BLOCKING("\n");
 }
 
 void can_read(void) {
