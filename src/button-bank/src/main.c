@@ -83,7 +83,7 @@ button_states_t poll_buttons(void) {
 void buzz(void) {
   static bool last = false;
   static uint32_t last_start = 0;
-  bool current = (car_state.vcu_state == can0_VCUHeartbeat_vcu_state_VCU_STATE_RTD);
+  bool current = (car_state.vcu_state == can0_VCUHeartbeat_vcu_state_VCU_STATE_DRIVING);
 
   bool buzz = false;
   if (current) {
