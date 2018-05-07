@@ -272,7 +272,7 @@ buses:
               NO_ERROR_STATE: 0x0
               RECOVERABLE_ERROR_STATE: 0x1
               FATAL_ERROR_STATE: 0x2
-          estop_hit
+          estop_hit:
             position: 6
             length: 1
             c_type: bool
