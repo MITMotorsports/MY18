@@ -1,4 +1,3 @@
-
 name: MY18
 units:
   - newtonmeter = N * m = J = Nm
@@ -273,6 +272,10 @@ buses:
               NO_ERROR_STATE: 0x0
               RECOVERABLE_ERROR_STATE: 0x1
               FATAL_ERROR_STATE: 0x2
+          estop_hit
+            position: 6
+            length: 1
+            c_type: bool
       VCUErrors:
         can_id: 0x0F4
         period: 111ms
