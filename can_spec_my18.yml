@@ -62,7 +62,9 @@ boards:
     publish:
       can0:
         - CurrentSensor_Current
-        - CurrentSensor_Voltage
+        - CurrentSensor_Voltage1
+        - CurrentSensor_Voltage2
+        - CurrentSensor_Voltage3
         - CurrentSensor_Power
     subscribe:
       can0:
@@ -319,12 +321,112 @@ buses:
             c_type: int32_t
             signed: true
             unit: mA
-      CurrentSensor_Voltage:
+      CurrentSensor_Voltage1:
         can_id: 0x522
         period: 50ms
-        is_big_endian: false
+        is_big_endian: true
         segments:
-          voltage:
+          mux_id:
+            position: 0
+            length: 8
+            c_type: uint8_t
+            signed: false
+          msg_count:
+            position: 8
+            length: 4
+            c_type: uint8_t
+            signed: false
+          over_current_signal:
+            position: 12
+            length: 1
+            c_type: bool
+          channel_error:
+            position: 13
+            length: 1
+            c_type: bool
+          measurement_error:
+            position: 14
+            length: 1
+            c_type: bool
+          system_error:
+            position: 15
+            length: 1
+            c_type: bool
+          result:
+            position: 16
+            length: 32
+            c_type: int32_t
+            signed: true
+            unit: mV
+      CurrentSensor_Voltage2:
+        can_id: 0x523
+        period: 50ms
+        is_big_endian: true
+        segments:
+          mux_id:
+            position: 0
+            length: 8
+            c_type: uint8_t
+            signed: false
+          msg_count:
+            position: 8
+            length: 4
+            c_type: uint8_t
+            signed: false
+          over_current_signal:
+            position: 12
+            length: 1
+            c_type: bool
+          channel_error:
+            position: 13
+            length: 1
+            c_type: bool
+          measurement_error:
+            position: 14
+            length: 1
+            c_type: bool
+          system_error:
+            position: 15
+            length: 1
+            c_type: bool
+          result:
+            position: 16
+            length: 32
+            c_type: int32_t
+            signed: true
+            unit: mV
+      CurrentSensor_Voltage3:
+        can_id: 0x524
+        period: 50ms
+        is_big_endian: true
+        segments:
+          mux_id:
+            position: 0
+            length: 8
+            c_type: uint8_t
+            signed: false
+          msg_count:
+            position: 8
+            length: 4
+            c_type: uint8_t
+            signed: false
+          over_current_signal:
+            position: 12
+            length: 1
+            c_type: bool
+          channel_error:
+            position: 13
+            length: 1
+            c_type: bool
+          measurement_error:
+            position: 14
+            length: 1
+            c_type: bool
+          system_error:
+            position: 15
+            length: 1
+            c_type: bool
+          result:
             position: 16
             length: 32
             c_type: int32_t
@@ -333,18 +435,46 @@ buses:
       CurrentSensor_Power:
         can_id: 0x526
         period: 50ms
-        is_big_endian: false
+        is_big_endian: true
         segments:
-          power:
+          mux_id:
+            position: 0
+            length: 8
+            c_type: uint8_t
+            signed: false
+          msg_count:
+            position: 8
+            length: 4
+            c_type: uint8_t
+            signed: false
+          over_current_signal:
+            position: 12
+            length: 1
+            c_type: bool
+          channel_error:
+            position: 13
+            length: 1
+            c_type: bool
+          measurement_error:
+            position: 14
+            length: 1
+            c_type: bool
+          system_error:
+            position: 15
+            length: 1
+            c_type: bool
+          result:
             position: 16
             length: 32
             c_type: int32_t
-            signed: false
+            signed: true
             unit: W
+
+
       CurrentSensor_Energy:
         can_id: 0x528
         period: 50ms
-        is_big_endian: false
+        is_big_endian: true
         segments:
           energy:
             position: 16
