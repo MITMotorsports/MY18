@@ -47,7 +47,7 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleCellVoltagesMsg(&frame);
     break;
 
-  case can0_CurrentSensor_Voltage:
+  case can0_CurrentSensor_Voltage1:
     handleCurrentSensorVoltageMsg(&frame);
     break;
 
@@ -117,11 +117,11 @@ void handleBMSHeartbeatMsg(Frame *frame) {
 }
 
 void handleCurrentSensorVoltageMsg(Frame *msg) {
-  can0_CurrentSensor_Voltage_T unpacked_msg;
+  can0_CurrentSensor_Voltage1_T unpacked_msg;
 
-  unpack_can0_CurrentSensor_Voltage(msg, &unpacked_msg);
+  unpack_can0_CurrentSensor_Voltage1(msg, &unpacked_msg);
 
-  cs_readings.V_bus = unpacked_msg.voltage;
+  cs_readings.V_bus = unpacked_msg.result;
 
   heartbeats.current_sensor = HAL_GetTick();
 }
