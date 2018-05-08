@@ -37,6 +37,7 @@ typedef struct {
 
 typedef struct {
   int16_t V_bus;
+  int32_t power;
 } CSReadings_T;
 
 typedef struct {

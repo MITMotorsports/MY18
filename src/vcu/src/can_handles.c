@@ -8,7 +8,7 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *hcan) {
     handleCAN(hcan);
   }
   else {
-    printf("[CAN RX] ERROR: HAL_StatusTypeDef is %d\r\n",    (int)CAN_RX_STATUS);
+    printf("[CAN RX] ERROR: HAL_StatusTypeDef s %d\r\n",    (int)CAN_RX_STATUS);
     printf("[CAN RX] ERROR: HAL_CAN_StateTypeDef is %d\r\n", hcan->State);
     printf("[CAN RX] ERROR: ErrorCode is %d\r\n",            hcan->ErrorCode);
 
@@ -57,6 +57,10 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
 
   case can0_ButtonRequest:
     handleButtonRequest(&frame);
+    break;
+
+  case can0_CurrentSensor_Power:
+    handleCurrentSensor_Power(&frame);
     break;
 
   default:
@@ -149,6 +153,14 @@ void handleButtonRequest(Frame *msg) {
   // TODO/HACK: Fix CANlib and replace correct unpacker.
   buttons.RTD         = (msg->data[0] & 2) != 0;
   buttons.DriverReset = (msg->data[0] & 4) != 0;
+}
+
+void handleCurrentSensor_Power(Frame *msg) {
+  can0_CurrentSensor_Power_T unpacked_msg;
+
+  unpack_can0_CurrentSensor_Power(msg, &unpacked_msg);
+
+  cs_readings.power = unpacked_msg.result;
 }
 
 void send_VCUHeartbeat() {

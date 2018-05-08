@@ -21,7 +21,7 @@ void enter_vcu_state_rtd() {
 
 void update_vcu_state_rtd() {
   sendMotorOffCmdMsg();
-  bool brk_pressed = pedalbox_max(brake) > PEDALBOX_BRAKE_RTD;
+  bool brk_pressed = true;//pedalbox_max(brake) > PEDALBOX_BRAKE_RTD;
 
   if (buttons.RTD) {
     if (rtd_started) {

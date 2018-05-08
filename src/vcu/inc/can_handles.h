@@ -25,6 +25,7 @@ void handleBMSHeartbeatMsg(Frame *msg);
 void handleCurrentSensorVoltageMsg(Frame *msg);
 void handleCellVoltagesMsg(Frame *msg);
 void handleButtonRequest(Frame *msg);
+void handleCurrentSensor_Power(Frame *msg);
 
 void send_VCUHeartbeat();
 void send_VCUErrors();
