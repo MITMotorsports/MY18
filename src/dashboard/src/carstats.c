@@ -57,7 +57,7 @@ void can_handle_current_sensor_power(carstats_t *cs) {
     can0_CurrentSensor_Power_T msg;
     unpack_can0_CurrentSensor_Power(&frame, &msg);
 
-    cs->power = msg.power;
+    cs->power = msg.result;
 }
 
 void can_handle_mc_command(carstats_t *cs) {

@@ -127,10 +127,20 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     oled_set_pos(oled, 1, 0);
     oled_clearline(oled, 1);
+    /*
     oled_print(oled, "TRQ ");
     if (pm->stats->torque_mc >= 0) {
         int torque_Nm = pm->stats->torque_mc / 10;
         oled_print_num(oled, torque_Nm);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+    */
+    oled_print(oled, "PWR ");
+    if (pm->stats->power >= 0) {
+        int power = pm->stats->power;
+        oled_print_num(oled, power);
+        oled_print(oled, "W");
     } else {
         oled_print(oled, DATA_UNKNOWN);
     }
@@ -181,9 +191,18 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     oled_clearline(oled, 3);
     oled_set_pos(oled, 3, 0);
+    /*
     oled_print(oled, "RPM ");
     if (pm->stats->motor_rpm >= 0) {
         oled_print_num(oled, pm->stats->motor_rpm);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+    */
+    oled_print(oled, "CUR ");
+    if (pm->stats->motor_rpm >= 0) {
+        oled_print_num(oled, pm->stats->current / 1000);
+        oled_print(oled, "A");
     } else {
         oled_print(oled, DATA_UNKNOWN);
     }
