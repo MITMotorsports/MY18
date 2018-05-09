@@ -30,7 +30,8 @@ int main(void) {
   DGPIO_INIT_OUT(     HVDCDC, GPIO_PIN_RESET);
 
   // Battery Fans
-  DGPIO_INIT_OUT(       BFAN, GPIO_PIN_RESET);
+  // Actually high all the time
+  DGPIO_INIT_OUT(       BFAN, GPIO_PIN_SET);
 
   // Setup an LED for debugging
   DGPIO_INIT_OUT(        LED, GPIO_PIN_RESET);
