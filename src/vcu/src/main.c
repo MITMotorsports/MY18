@@ -29,6 +29,9 @@ int main(void) {
   //   - Normally LOW, except during precharge
   DGPIO_INIT_OUT(     HVDCDC, GPIO_PIN_RESET);
 
+  // Battery Fans
+  DGPIO_INIT_OUT(       BFAN, GPIO_PIN_RESET);
+
   // Setup an LED for debugging
   DGPIO_INIT_OUT(        LED, GPIO_PIN_RESET);
 
