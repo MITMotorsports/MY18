@@ -40,8 +40,10 @@ Can_ErrorID_T write_can_wheel_speed_msg() {
 
   can0_FrontCanNodeWheelSpeed_T msg;
 
-  msg.front_right_wheel_speed = input.speed->front_right_wheel_speed;
-  msg.front_left_wheel_speed = input.speed->front_left_wheel_speed;
+  msg.front_right_A_wheel_speed = input.speed->front_right_A_wheel_speed;
+  msg.front_right_B_wheel_speed = input.speed->front_right_B_wheel_speed;
+  msg.front_left_A_wheel_speed = input.speed->front_left_A_wheel_speed;
+  msg.front_left_B_wheel_speed = input.speed->front_left_B_wheel_speed;
 
   return can0_FrontCanNodeWheelSpeed_Write(&msg);
 }

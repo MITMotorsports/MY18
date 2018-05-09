@@ -61,8 +61,10 @@ void initialize_input() {
   }
 
   speed.last_speed_read_ms = 0;
-  speed.front_right_wheel_speed = 0;
-  speed.front_left_wheel_speed = 0;
+  speed.front_right_A_wheel_speed = 0;
+  speed.front_right_B_wheel_speed = 0;
+  speed.front_left_A_wheel_speed = 0;
+  speed.front_left_B_wheel_speed = 0;
 
   input.speed = &speed;
 }
@@ -131,22 +133,30 @@ void handle_interrupt(LPC_TIMER_T* timer, Speed_Input_T *speed, Wheel_T wheel) {
   Input_handle_interrupt(msTicks, curr_tick, wheel);
 }
 
-// Interrupt handler for timer 0 capture pin. This function get called automatically on
+// Interrupt handlers. These function get called automatically on
 // a rising edge of the signal going into the timer capture pin
 void TIMER32_0_IRQHandler(void) {
-  handle_interrupt(LPC_TIMER32_0, input.speed, LEFT);
+  handle_interrupt(LPC_TIMER32_0, input.speed, LEFT_B);
 }
 
-// Interrupt handler for timer 1 capture pin. This function get called automatically on
-// a rising edge of the signal going into the timer capture pin
 void TIMER32_1_IRQHandler(void) {
-  handle_interrupt(LPC_TIMER32_1, input.speed, RIGHT);
+  handle_interrupt(LPC_TIMER32_1, input.speed, RIGHT_B);
+}
+
+void TIMER16_0_IRQHandler(void) {
+  handle_interrupt(LPC_TIMER16_0, input.speed, LEFT_A);
+}
+
+void TIMER16_1_IRQHandler(void) {
+  handle_interrupt(LPC_TIMER16_1, input.speed, RIGHT_A);
 }
 
 void Set_Interrupt_Priorities(void) {
   /* Give 32 bit timer capture interrupts the highest priority */
   NVIC_SetPriority(TIMER_32_0_IRQn, 0);
-  NVIC_SetPriority(TIMER_32_1_IRQn, 1);
+  NVIC_SetPriority(TIMER_16_0_IRQn, 1);
+  NVIC_SetPriority(TIMER_32_1_IRQn, 2);
+  NVIC_SetPriority(TIMER_16_1_IRQn, 3);
   /* Give the SysTick function a lower priority */
-  NVIC_SetPriority(SysTick_IRQn, 2);
+  NVIC_SetPriority(SysTick_IRQn, 4);
 }

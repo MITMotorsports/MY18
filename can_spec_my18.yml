@@ -103,16 +103,28 @@ buses:
         is_big_endian: true
         period: 1000s
         segments:
-          front_right_wheel_speed:
+          front_right_A_wheel_speed:
             position: 0
-            length: 32
-            c_type: uint32_t
+            length: 16
+            c_type: uint16_t
             signed: false
             unit: mRPM
-          front_left_wheel_speed:
+          front_right_B_wheel_speed:
+            position: 16
+            length: 16
+            c_type: uint16_t
+            signed: false
+            unit: mRPM
+          front_left_A_wheel_speed:
             position: 32
-            length: 32
-            c_type: uint32_t
+            length: 16
+            c_type: uint16_t
+            signed: false
+            unit: mRPM
+          front_left_B_wheel_speed:
+            position: 48
+            length: 16
+            c_type: uint16_t
             signed: false
             unit: mRPM
       CellTemperatures:

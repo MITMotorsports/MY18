@@ -62,7 +62,8 @@ void update_adc() {
   }
 }
 
-uint32_t click_time_to_mRPM(uint32_t us_per_click) {
+uint16_t click_time_to_mRPM(uint32_t us_per_click) {
+  // Convert milliseconds per click to milli rpm
   const float us_per_rev = us_per_click * 1.0 * NUM_TEETH;
 
   const float s_per_rev = us_per_rev / MICROSECONDS_PER_SECOND_F;
@@ -70,7 +71,7 @@ uint32_t click_time_to_mRPM(uint32_t us_per_click) {
   const float mrev_per_s = MILLIREVS_PER_REV_F / s_per_rev;
 
   const float mrev_per_min = mrev_per_s * SECONDS_PER_MINUTE;
-  return (uint32_t)mrev_per_min;
+  return (uint16_t)mrev_per_min;
 }
 
 void update_wheel_speed() {
@@ -102,16 +103,24 @@ void update_wheel_speed() {
       speed->disregard[wheel] = timeout;
 
       // Save value
-      uint32_t *ptr;
-      if (wheel == LEFT) {
-        ptr = &speed->front_left_wheel_speed;
-      } else if (wheel == RIGHT) {
-        ptr = &speed->front_right_wheel_speed;
-      } else continue;
-      if (speed->wheel_stopped[wheel]) {
-        *ptr = 0;
-        continue;
+      uint16_t *ptr;
+      switch (wheel) {
+        case LEFT_A:
+          ptr = &speed->front_left_A_wheel_speed;
+          break;
+        case LEFT_B:
+          ptr = &speed->front_left_B_wheel_speed;
+          break;
+        case RIGHT_A:
+          ptr = &speed->front_right_A_wheel_speed;
+          break;
+        case RIGHT_B:
+          ptr = &speed->front_right_B_wheel_speed;
+          break;
+        default:
+          continue;
       }
+
       if (count < NUM_TEETH) {
         *ptr = click_time_to_mRPM(speed->last_tick[wheel][idx]);
       } else {
