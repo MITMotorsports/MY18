@@ -56,7 +56,12 @@ void handle_fatal_fault(void) {
 }
 
 void handle_recoverable_fault(void) {
-  sendMotorOffCmdMsg();
+  if (recoverable_faults.gate) {
+    sendMotorOffCmdMsg();
+  }
+  else {
+    sendTorqueCmdMsg(0);
+  }
   resetDrivingValues();
 }
 
