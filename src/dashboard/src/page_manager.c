@@ -91,7 +91,7 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
 // looks like:
 
-// ERROR    [PRECHARGE]
+// R:HRTBEAT[PRECHARGE]
 // TRQ 150    PACK 300V
 // PWR 60kW   CELL 3.3V
 // RPM 3400   TEMP  30C
@@ -100,12 +100,29 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_clearline(oled, 0);
     oled_set_pos(oled, 0, 0);
 
-    if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
-        oled_print(oled, (pm->stats->estop_hit)? "RECOV:ESTOP": "RECOV");
-    } else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
-        oled_print(oled, "FATAL");
-    } else if (pm->stats->estop_hit) {
-        oled_print(oled, "ESTOP");
+    carstats_t *stats = pm->stats;
+    if (stats->vcu_errors.recoverable_conflict) {
+        oled_print(oled, "R:CONFLCT");
+    } else if (stats->vcu_errors.recoverable_gate) {
+        oled_print(oled, "R:GATE");
+    } else if (stats->vcu_errors.recoverable_heartbeat) {
+        oled_print(oled, "R:HRTBEAT");
+    } else if (stats->vcu_errors.recoverable_contactor) {
+        oled_print(oled, "R:CONTACT");
+    } else if (stats->vcu_errors.fatal_contactor) {
+        oled_print(oled, "F:CONTACT");
+    } else if (stats->vcu_errors.fatal_gate) {
+        oled_print(oled, "F:GATE");
+    } else if (stats->vcu_errors.fatal_precharge) {
+        oled_print(oled, "F:PRECHRG");
+    } else if (stats->vcu_errors.fatal_conflict) {
+        oled_print(oled, "F:CONFLCT");
+    } else {
+        if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
+            oled_print(oled, "RECOV");
+        } else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
+            oled_print(oled, "FATAL");
+        }
     }
 
     if (msTicks > pm->stats->last_vcu_heartbeat + 1000) {

@@ -107,15 +107,18 @@ void can_handle_current_sensor_current(carstats_t *cs) {
     cs->current = msg.current;
 }
 
-int can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request) {
+void can_handle_vcu_errors(carstats_t *cs) {
+    can0_VCUErrors_T msg;
+    unpack_can0_VCUErrors(&frame, &msg);
 
+    memcpy(&(cs->vcu_errors), &msg, sizeof(msg));
+}
+
+int can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request) {
     handle_can_error(Can_RawRead(&frame));
 
     can0_T msgType;
     msgType = identify_can0(&frame);
-    // Board_Print_BLOCKING("ID: ");
-    // Board_PrintNum(frame.id, 10);
-    // Board_Println_BLOCKING("");
 
     switch (msgType) {
         case can0_FrontCanNodeWheelSpeed:
@@ -155,8 +158,10 @@ int can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request) {
             return frame.data[0];
             //unpack_can0_ButtonRequest(&frame, button_request);
             break;
+        case can0_VCUErrors:
+            can_handle_vcu_errors(cs);
+            break;
         default:
-
             // do nothing
             break;
     }

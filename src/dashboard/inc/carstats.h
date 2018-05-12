@@ -34,6 +34,8 @@ typedef struct {
     uint32_t last_vcu_heartbeat;
 
     int16_t max_igbt_temp;
+
+    can0_VCUErrors_T vcu_errors;
 } carstats_t;
 
 int can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request);
