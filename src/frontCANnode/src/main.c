@@ -78,6 +78,11 @@ int main(void) {
 
   ADC_Init();
 
+  // Wheel speed timer
+  Timer_Init();
+  Set_Interrupt_Priorities();
+  Timer_Start();
+
   initialize_input();
   Serial_Println("Started up!");
   Serial_Println("Currently running "HASH);
@@ -155,8 +160,8 @@ void Set_Interrupt_Priorities(void) {
   /* Give 32 bit timer capture interrupts the highest priority */
   NVIC_SetPriority(TIMER_32_0_IRQn, 0);
   NVIC_SetPriority(TIMER_16_0_IRQn, 1);
-  NVIC_SetPriority(TIMER_32_1_IRQn, 2);
-  NVIC_SetPriority(TIMER_16_1_IRQn, 3);
+  NVIC_SetPriority(TIMER_32_1_IRQn, 0);
+  NVIC_SetPriority(TIMER_16_1_IRQn, 1);
   /* Give the SysTick function a lower priority */
-  NVIC_SetPriority(SysTick_IRQn, 4);
+  NVIC_SetPriority(SysTick_IRQn, 2);
 }

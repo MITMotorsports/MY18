@@ -101,7 +101,7 @@ buses:
       FrontCanNodeWheelSpeed:
         can_id: 0x0F0
         is_big_endian: true
-        period: 1000s
+        period: 10ms
         segments:
           front_right_A_wheel_speed:
             position: 0

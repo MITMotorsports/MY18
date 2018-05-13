@@ -63,6 +63,9 @@ void update_adc() {
 }
 
 uint16_t click_time_to_mRPM(uint32_t us_per_click) {
+  if (us_per_click == 0) {
+    return 0;
+  }
   // Convert milliseconds per click to milli rpm
   const float us_per_rev = us_per_click * 1.0 * NUM_TEETH;
 
@@ -126,6 +129,8 @@ void update_wheel_speed() {
       } else {
         *ptr = click_time_to_mRPM(moving_avg);
       }
+
+      *ptr = click_time_to_mRPM(speed->last_tick[wheel][idx]);
     }
   }
 }
