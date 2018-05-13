@@ -159,18 +159,18 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     }
     */
     oled_print(oled, "PWR ");
-    //if (pm->stats->power >= 0) {
+    if (pm->stats->power >= 0) {
         int power = pm->stats->power;
         oled_print_num(oled, power);
         oled_print(oled, "W");
-    //} else {
-    //    oled_print(oled, DATA_UNKNOWN);
-   // }
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
 
     oled_rprint_pad(oled, "BUS", 6);
-    if (pm->stats->voltage_2 >= 0) {
-        //int pack_V = pm->stats->battery_voltage/10;
-        int pack_V = pm->stats->voltage_2/1000;
+    if (pm->stats->battery_voltage >= 0) {
+        int pack_V = pm->stats->battery_voltage/10;
+        // int pack_V = pm->stats->voltage_2/1000;
         oled_rprint_num_pad(oled, pack_V, 1);
         oled_rprint(oled, "V");
     } else {
@@ -224,14 +224,14 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     }
     */
     oled_print(oled, "CUR ");
-    //if (pm->stats->current >= 0) {
-        //oled_print_num(oled, pm->stats->current / 1000);
-        //oled_print_num(oled, ".");
-        //oled_print_num(oled, (pm->stats->current / 100)%10);
+    if (pm->stats->current >= 0) {
+        oled_print_num(oled, pm->stats->current / 1000);
+        oled_print_num(oled, ".");
+        oled_print_num(oled, (pm->stats->current / 100)%10);
         oled_print(oled, "A");
-    //} else {
-        //oled_print(oled, DATA_UNKNOWN);
-    //}
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
 
     oled_rprint_pad(oled, "TEMP", 5);
     if (pm->stats->max_cell_temp >= 0) {
