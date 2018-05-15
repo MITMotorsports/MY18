@@ -130,6 +130,8 @@ void buzz(void) {
   SET_PIN(BUZZER, buzz);
 }
 
+
+// TODO: Figure out why August named the buttons backwards.
 void button_leds(void) {
   static uint32_t next_led_blink = 0;
 
@@ -148,8 +150,8 @@ void button_leds(void) {
     break;
 
   case VCU_STATE(PRECHARGING):
-    SET_PIN(DRIVER_RST_LED, LED_ON);
-    SET_PIN(RTD_LED, LED_OFF);
+    SET_PIN(DRIVER_RST_LED, LED_OFF);
+    SET_PIN(RTD_LED, LED_ON);
     break;
 
   case VCU_STATE(RTD):
