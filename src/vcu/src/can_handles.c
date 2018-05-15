@@ -138,17 +138,13 @@ void handleCellVoltagesMsg(Frame *msg) {
 }
 
 void handleButtonRequest(Frame *msg) {
-  // can0_ButtonRequest_T unpacked_msg;
-  //
-  // unpack_can0_ButtonRequest(msg, &unpacked_msg);
-  //
-  // buttons.RTD          = unpacked_msg.RTD;
-  // buttons.DriverReset  = unpacked_msg.DriverReset;
-  // buttons.ScrollSelect = unpacked_msg.ScrollSelect;
+  can0_ButtonRequest_T unpacked_msg;
 
-  // TODO/HACK: Fix CANlib and replace correct unpacker.
-  buttons.RTD         = (msg->data[0] & 2) != 0;
-  buttons.DriverReset = (msg->data[0] & 4) != 0;
+  unpack_can0_ButtonRequest(msg, &unpacked_msg);
+
+  buttons.RTD          = unpacked_msg.RTD;
+  buttons.DriverReset  = unpacked_msg.DriverReset;
+  buttons.ScrollSelect = unpacked_msg.ScrollSelect;
 }
 
 void send_VCUHeartbeat() {
