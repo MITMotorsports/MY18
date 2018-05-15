@@ -102,6 +102,6 @@ void button_leds(void);
 // CAN FUNCTIONS
 void can_error_handler(Can_ErrorID_T error);
 void can_read(void);
-bool send_buttonrequest(bool* button_state);
+bool send_buttonrequest(bool* bs);
 
 #endif // ifndef __MAIN_H

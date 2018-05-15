@@ -1,6 +1,8 @@
 #define _BUTTONBANK_V2_
 #include "main.h"
 
+#define DEBUG_MODE false
+
 #define OUT_STRINGIFY(val) ((val) ? "HIGH\n" : "LOW\n")
 #define SET_ZERO(name) memset(&name, 0, sizeof(name));
 
@@ -63,7 +65,9 @@ int main(void) {
     can_read();
     buzz();
     button_leds();
-    print_buttons(button_state);
+    #if DEBUG_MODE
+      print_buttons(button_state);
+    #endif
   }
 
   return 0;
@@ -130,7 +134,7 @@ void print_buttons(bool* bs) {
 
   #define BTN_STRINGIFY(val) ((val) ? "pressed\n" : "released\n")
   #define EZ_PRINT(name) if (bs[name] != last_bs[name]) { \
-    Board_Print("##name## is ");                          \
+    Board_Print(#name" is ");                             \
     Board_Println(BTN_STRINGIFY(bs[name]));               \
   }
 
@@ -146,17 +150,17 @@ void print_buttons(bool* bs) {
   #undef EZ_PRINT
 }
 
-bool send_buttonrequest(bool* button_state) {
-  static uint32_t last_time;
+bool send_buttonrequest(bool* bs) {
+  static uint32_t last_time = 0;
 
   if (msTicks - last_time > can0_ButtonRequest_period) {
     last_time = msTicks;
 
     can0_ButtonRequest_T msg;
 
-    msg.RTD          = button_state[rtd];
-    msg.DriverReset  = button_state[driver_reset];
-    msg.ScrollSelect = button_state[scroll_select];
+    msg.RTD          = bs[rtd];
+    msg.DriverReset  = bs[driver_reset];
+    msg.ScrollSelect = bs[scroll_select];
 
     can_error_handler(can0_ButtonRequest_Write(&msg));
 
