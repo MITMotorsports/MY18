@@ -503,7 +503,7 @@ buses:
               FAN_DISABLE: 0xA
       ButtonRequest:
         can_id: 0x0D8
-        period: 51ms
+        period: 73ms
         is_big_endian: true
         segments:
           RTD:

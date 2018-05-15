@@ -40,10 +40,10 @@ void can_handle_cell_voltages(carstats_t *cs) {
 }
 
 void can_handle_current_sensor_voltage(carstats_t *cs) {
-    can0_CurrentSensor_Voltage_T msg;
-    unpack_can0_CurrentSensor_Voltage(&frame, &msg);
+    can0_CurrentSensor_Voltage1_T msg;
+    unpack_can0_CurrentSensor_Voltage1(&frame, &msg);
 
-    //cs->battery_voltage = msg.dc_bus_voltage;
+    cs->voltage_2 = msg.result;
 }
 
 void can_handle_mc_voltage(carstats_t *cs) {
@@ -107,15 +107,18 @@ void can_handle_current_sensor_current(carstats_t *cs) {
     cs->current = msg.current;
 }
 
-void can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request) {
+void can_handle_vcu_errors(carstats_t *cs) {
+    can0_VCUErrors_T msg;
+    unpack_can0_VCUErrors(&frame, &msg);
 
+    memcpy(&(cs->vcu_errors), &msg, sizeof(msg));
+}
+
+int can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request) {
     handle_can_error(Can_RawRead(&frame));
 
     can0_T msgType;
     msgType = identify_can0(&frame);
-    // Board_Print_BLOCKING("ID: ");
-    // Board_PrintNum(frame.id, 10);
-    // Board_Println_BLOCKING("");
 
     switch (msgType) {
         case can0_FrontCanNodeWheelSpeed:
@@ -130,7 +133,7 @@ void can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request) {
         case can0_CellVoltages:
             can_handle_cell_voltages(cs);
             break;
-        case can0_CurrentSensor_Voltage:
+        case can0_CurrentSensor_Voltage1:
             can_handle_current_sensor_voltage(cs);
             break;
         case can0_CurrentSensor_Power:
@@ -152,11 +155,15 @@ void can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request) {
             can_handle_mc_temperature1(cs);
             break;
         case can0_ButtonRequest:
-            unpack_can0_ButtonRequest(&frame, button_request);
+            return frame.data[0];
+            //unpack_can0_ButtonRequest(&frame, button_request);
+            break;
+        case can0_VCUErrors:
+            can_handle_vcu_errors(cs);
             break;
         default:
-
             // do nothing
             break;
     }
+    return 0;
 }
