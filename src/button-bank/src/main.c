@@ -4,7 +4,7 @@
 #define DEBUG_MODE true
 
 #define OUT_STRINGIFY(val) ((val) ? "HIGH\n" : "LOW\n")
-#define SET_ZERO(name) memset(&name, 0, sizeof(name));
+#define VCU_STATE(name) can0_VCUHeartbeat_vcu_state_VCU_STATE_ ## name
 
 bool button_state[LEN_BUTTONS] = {};
 car_states_t car_state = {};
@@ -88,10 +88,29 @@ void poll_buttons(bool* button_state) {
   button_state[scroll_select] = (READ_PIN(BTN_SCROLL_SEL) == BTN_DOWN);
 }
 
+can0_VCUHeartbeat_vcu_state_T get_vcu_state(void) {
+  static can0_VCUHeartbeat_vcu_state_T last_state = VCU_STATE(ROOT);
+  static can0_VCUHeartbeat_vcu_state_T used_state = VCU_STATE(ROOT);
+  static uint32_t edge_time = 0;
+
+  if (car_state.vcu_state != last_state) {
+    edge_time = msTicks;
+    last_state = car_state.vcu_state;
+  }
+
+  if (car_state.vcu_state != used_state) {
+    if (msTicks - edge_time > VCU_INTRO_TIME) {
+      used_state = car_state.vcu_state;
+    }
+  }
+
+  return used_state;
+}
+
 void buzz(void) {
   static bool last = false;
   static uint32_t last_start = 0;
-  bool current = (car_state.vcu_state == can0_VCUHeartbeat_vcu_state_VCU_STATE_DRIVING);
+  bool current = (get_vcu_state() == VCU_STATE(DRIVING));
 
   bool buzz = false;
   if (current) {
@@ -114,8 +133,13 @@ void buzz(void) {
 void button_leds(void) {
   static uint32_t next_led_blink = 0;
 
-  switch (car_state.vcu_state) {
-  case can0_VCUHeartbeat_vcu_state_VCU_STATE_LV:
+  switch (get_vcu_state()) {
+  case VCU_STATE(ROOT):
+    SET_PIN(RTD_LED, LED_ON);
+    SET_PIN(DRIVER_RST_LED, LED_ON);
+    break;
+
+  case VCU_STATE(LV):
     SET_PIN(DRIVER_RST_LED, LED_OFF);
     if (msTicks > next_led_blink) {
       SET_PIN(RTD_LED, !READ_PIN(RTD_LED)); // toggle
@@ -123,7 +147,12 @@ void button_leds(void) {
     }
     break;
 
-  case can0_VCUHeartbeat_vcu_state_VCU_STATE_RTD:
+  case VCU_STATE(PRECHARGING):
+    SET_PIN(DRIVER_RST_LED, LED_ON);
+    SET_PIN(RTD_LED, LED_OFF);
+    break;
+
+  case VCU_STATE(RTD):
     SET_PIN(RTD_LED, LED_OFF);
     if (msTicks > next_led_blink) {
       SET_PIN(DRIVER_RST_LED, !READ_PIN(DRIVER_RST_LED)); // toggle
