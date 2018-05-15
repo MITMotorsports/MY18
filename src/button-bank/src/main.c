@@ -42,17 +42,30 @@ int main(void) {
 
     //   2. Debounce all buttons
     //   3. Remember all positive debounce results
+    static bool     debounce_state[LEN_BUTTONS] = {};
+    static uint32_t debounce_edge[LEN_BUTTONS]  = {};
+
     static bool button_hold[LEN_BUTTONS] = {};
-    static uint16_t debounce_state[LEN_BUTTONS] = {};
 
     for (BUTTONS i = 0; i < LEN_BUTTONS; ++i) {
-      debounce_state[i] <<= 1;
-      debounce_state[i] |= !button_state[i];
-      debounce_state[i] |= 0xe000;
+      if (button_state[i]) {
+        if (!debounce_state[i]) {
+          debounce_edge[i] = msTicks;
+        }
+        else if (msTicks - debounce_edge[i] > DEBOUNCE_SETUP) {
+          debounce_state[i] = true;
+        }
+      }
+      else {
+        if (debounce_state[i]) {
+          debounce_edge[i] = msTicks;
+        }
+        else if (msTicks - debounce_edge[i] > DEBOUNCE_HOLD) {
+          debounce_state[i] = false;
+        }
+      }
 
-      bool result = (debounce_state[i] == 0xf000);
-
-      button_hold[i] |= result;
+      button_hold[i] |= debounce_state[i];
     }
 
     //   4. Forget all positive debounce results after they get sent
@@ -66,7 +79,7 @@ int main(void) {
     buzz();
     button_leds();
     #if DEBUG_MODE
-      print_buttons(button_state);
+      print_buttons(debounce_state);
     #endif
   }
 

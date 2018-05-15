@@ -15,6 +15,9 @@ extern volatile uint32_t msTicks;
 #define LED_BLINK_PERIOD 500
 #define BUZZ_DURATION 2000
 
+#define DEBOUNCE_SETUP 50
+#define DEBOUNCE_HOLD  100
+
 /// GPIO CONFIGS
 
 // INPUTS
