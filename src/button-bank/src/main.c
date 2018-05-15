@@ -1,7 +1,7 @@
 #define _BUTTONBANK_V2_
 #include "main.h"
 
-#define DEBUG_MODE false
+#define DEBUG_MODE true
 
 #define OUT_STRINGIFY(val) ((val) ? "HIGH\n" : "LOW\n")
 #define SET_ZERO(name) memset(&name, 0, sizeof(name));
@@ -41,45 +41,41 @@ int main(void) {
     poll_buttons(button_state);
 
     //   2. Debounce all buttons
-    //   3. Remember all positive debounce results
     static bool     debounce_state[LEN_BUTTONS] = {};
     static uint32_t debounce_edge[LEN_BUTTONS]  = {};
 
-    static bool button_hold[LEN_BUTTONS] = {};
+    static bool button_debounced[LEN_BUTTONS] = {};
 
     for (BUTTONS i = 0; i < LEN_BUTTONS; ++i) {
       if (button_state[i]) {
         if (!debounce_state[i]) {
           debounce_edge[i] = msTicks;
+          debounce_state[i] = true;
         }
         else if (msTicks - debounce_edge[i] > DEBOUNCE_SETUP) {
-          debounce_state[i] = true;
+          button_debounced[i] = true;
         }
       }
       else {
         if (debounce_state[i]) {
           debounce_edge[i] = msTicks;
-        }
-        else if (msTicks - debounce_edge[i] > DEBOUNCE_HOLD) {
           debounce_state[i] = false;
         }
+        else if (msTicks - debounce_edge[i] > DEBOUNCE_HOLD) {
+          button_debounced[i] = false;
+        }
       }
-
-      button_hold[i] |= debounce_state[i];
     }
 
-    //   4. Forget all positive debounce results after they get sent
-    if (send_buttonrequest(button_hold)) {
-      memset(button_hold, 0, sizeof(button_hold));
-    }
-
+    //   3. Send it bruh.
+    send_buttonrequest(button_debounced);
 
     // All of the rest functionality
     can_read();
     buzz();
     button_leds();
     #if DEBUG_MODE
-      print_buttons(debounce_state);
+      print_buttons(button_debounced);
     #endif
   }
 
