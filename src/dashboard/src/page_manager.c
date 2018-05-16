@@ -101,15 +101,7 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_set_pos(oled, 0, 0);
 
     carstats_t *stats = pm->stats;
-    if (stats->vcu_errors.recoverable_conflict) {
-        oled_print(oled, "R:CONFLCT");
-    } else if (stats->vcu_errors.recoverable_gate) {
-        oled_print(oled, "R:GATE");
-    } else if (stats->vcu_errors.recoverable_heartbeat) {
-        oled_print(oled, "R:HRTBEAT");
-    } else if (stats->vcu_errors.recoverable_contactor) {
-        oled_print(oled, "R:CONTACT");
-    } else if (stats->vcu_errors.fatal_contactor) {
+    if (stats->vcu_errors.fatal_contactor) {
         oled_print(oled, "F:CONTACT");
     } else if (stats->vcu_errors.fatal_gate) {
         oled_print(oled, "F:GATE");
@@ -117,6 +109,14 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
         oled_print(oled, "F:PRECHRG");
     } else if (stats->vcu_errors.fatal_conflict) {
         oled_print(oled, "F:CONFLCT");
+    } else if (stats->vcu_errors.recoverable_conflict) {
+        oled_print(oled, "R:CONFLCT");
+    } else if (stats->vcu_errors.recoverable_gate) {
+        oled_print(oled, "R:GATE");
+    } else if (stats->vcu_errors.recoverable_heartbeat) {
+        oled_print(oled, "R:HRTBEAT");
+    } else if (stats->vcu_errors.recoverable_contactor) {
+        oled_print(oled, "R:ESTOP");
     } else {
         if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
             oled_print(oled, "RECOV");
@@ -224,7 +224,7 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     }
     */
     oled_print(oled, "CUR ");
-    if (pm->stats->current >= 0) {
+    if (false /*TODO: Remove this when it works*/ && pm->stats->current >= 0) {
         oled_print_num(oled, pm->stats->current / 1000);
         oled_print_num(oled, ".");
         oled_print_num(oled, (pm->stats->current / 100)%10);
