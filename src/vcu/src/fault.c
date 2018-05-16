@@ -47,12 +47,8 @@ void handle_fatal_fault(void) {
   openLowSideContactor();
   openHighSideContactor();
 
-  printf("[FAULT : HANDLER : FATAL] NEED POWER CYCLE.\r\n");
-
-  while (1) {
-    print_gate_faults(false);
-    send_VCU();
-  }
+  printf("[FAULT : HANDLER : FATAL] Graceful car shutdown done.");
+  printf("[FAULT : HANDLER : FATAL] NEED MANUAL RESTORATION.\r\n");
 }
 
 void handle_recoverable_fault(void) {

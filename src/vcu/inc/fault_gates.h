@@ -8,6 +8,10 @@
 #include "extern.h"
 #include "gpio.h"
 
+// CONSTANT DEFINITIONS
+// Ignore each fault gate for the first x milliseconds.
+#define FAULT_GATE_SETUP 2
+
 
 // CONTAINER DECLARATION
 typedef struct {
