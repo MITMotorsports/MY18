@@ -24,8 +24,13 @@ bool any_all_gate_fault(void) {
 bool any_recoverable_gate_fault(void) {
   update_gate_status();
 
-  return gates.sdn      ||
-         gates.sdn_gate;
+  return gates.sdn_gate;
+}
+
+bool any_recoverable_transient_gate_fault(void) {
+  update_gate_status();
+
+  return gates.sdn;
 }
 
 bool any_fatal_gate_faults(void) {

@@ -107,7 +107,9 @@ bool error_may_advance(void) {
                        recoverable_faults.gate &&
                        !recoverable_faults.heartbeat &&
                        !recoverable_faults.conflict &&
-                       !recoverable_faults.contactor;
+                       !recoverable_faults.contactor &&
+                       !any_recoverable_transient_gate_fault();
+  // If the error is recoverable, sdn is the only error, and the estop was hit but released.
 
   return (get_error_state() == NO_ERROR_STATE) || recov_is_gate;
 }

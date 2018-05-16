@@ -1,0 +1,25 @@
+static uint32_t lastt = 0;
+
+if (HAL_GetTick() - lastt > 1000) {
+  HAL_GPIO_TogglePin(GPIO(LED));
+
+  printf("error_pec: %d\r\n", bms_errors.error_pec);
+  printf("error_cvst: %d\r\n", bms_errors.error_cvst);
+  printf("error_owt: %d\r\n", bms_errors.error_owt);
+  printf("error_L_contactor_error: %d\r\n", bms_errors.error_L_contactor_error);
+  printf("error_H_contactor_error: %d\r\n", bms_errors.error_H_contactor_error);
+  printf("error_L_contactor_weld: %d\r\n", bms_errors.error_L_contactor_weld);
+  printf("error_H_contactor_weld: %d\r\n", bms_errors.error_H_contactor_weld);
+  printf("error_cell_under_voltage: %d\r\n", bms_errors.error_cell_under_voltage);
+  printf("error_cell_over_voltage: %d\r\n", bms_errors.error_cell_over_voltage);
+  printf("error_cell_under_temp: %d\r\n", bms_errors.error_cell_under_temp);
+  printf("error_cell_over_temp: %d\r\n", bms_errors.error_cell_over_temp);
+  printf("error_control_flow: %d\r\n", bms_errors.error_control_flow);
+  printf("error_blown_fuse: %d\r\n", bms_errors.error_blown_fuse);
+  printf("L_contactor_closed: %d\r\n", bms_errors.L_contactor_closed);
+  printf("H_contactor_closed: %d\r\n", bms_errors.H_contactor_closed);
+  printf("L_contactor_welded: %d\r\n", bms_errors.L_contactor_welded);
+  printf("H_contactor_welded: %d\r\n", bms_errors.H_contactor_welded);
+
+  lastt = HAL_GetTick();
+}
