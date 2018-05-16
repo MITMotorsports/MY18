@@ -1,12 +1,18 @@
+#ifndef __MAIN_H
+#define __MAIN_H
 #include <string.h>
 #include "chip.h"
 #include "board.h"
 #include "config.h"
 #include "pins.h"
 #include "uart.h"
+#include "CANlib.h"
 
 
 
 extern volatile uint32_t msTicks;
 
-static char str[10];
+#define CAN_INIT() Can_Init(500000);
+extern uint8_t can_data[8];
+
+#endif //ifndef __main_h

@@ -6,7 +6,7 @@
 #include "state_csb_root.h"
 #include "pins.h"
 #include <stdint.h> //For uint_32t
-#include "main.h"
+#include "main.h" //For can_data
 
 typedef enum{
 	CSB_STATE_ROOT=0,
