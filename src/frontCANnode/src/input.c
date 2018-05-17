@@ -62,7 +62,7 @@ void update_adc() {
   }
 }
 
-uint16_t click_time_to_mRPM(uint32_t us_per_click) {
+uint32_t click_time_to_mRPM(uint32_t us_per_click) {
   if (us_per_click == 0) {
     return 0;
   }
@@ -74,7 +74,7 @@ uint16_t click_time_to_mRPM(uint32_t us_per_click) {
   const float mrev_per_s = MILLIREVS_PER_REV_F / s_per_rev;
 
   const float mrev_per_min = mrev_per_s * SECONDS_PER_MINUTE;
-  return (uint16_t)mrev_per_min;
+  return mrev_per_min;
 }
 
 void update_wheel_speed() {
@@ -106,18 +106,18 @@ void update_wheel_speed() {
       speed->disregard[wheel] = timeout;
 
       // Save value
-      uint16_t *ptr;
+      uint32_t *ptr;
       switch (wheel) {
-        case LEFT_A:
+        case LEFT_16:
           ptr = &speed->front_left_A_wheel_speed;
           break;
-        case LEFT_B:
+        case LEFT_32:
           ptr = &speed->front_left_B_wheel_speed;
           break;
-        case RIGHT_A:
+        case RIGHT_16:
           ptr = &speed->front_right_A_wheel_speed;
           break;
-        case RIGHT_B:
+        case RIGHT_32:
           ptr = &speed->front_right_B_wheel_speed;
           break;
         default:
@@ -129,8 +129,6 @@ void update_wheel_speed() {
       } else {
         *ptr = click_time_to_mRPM(moving_avg);
       }
-
-      *ptr = click_time_to_mRPM(speed->last_tick[wheel][idx]);
     }
   }
 }

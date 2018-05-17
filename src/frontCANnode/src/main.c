@@ -103,37 +103,16 @@ int main(void) {
     input.msTicks = msTicks;
     Input_fill_input();
     Output_process_output();
-
-    static uint32_t last_print = 0;
-    if (false && msTicks - last_print > 10) {
-      Serial_Print("brake_1: ");
-      Serial_PrintlnNumber(adc.brake_1, 10);
-
-      Serial_Print("brake_2: ");
-      Serial_PrintlnNumber(adc.brake_2, 10);
-
-      Serial_Print("accel_1: ");
-      Serial_PrintlnNumber(adc.accel_1, 10);
-
-      Serial_Print("accel_2: ");
-      Serial_PrintlnNumber(adc.accel_2, 10);
-
-      Serial_Print("accel_1_raw: ");
-      Serial_PrintlnNumber(adc.accel_1_raws[ACCEL_LOG_LENGTH-1], 10);
-
-      Serial_Print("accel_2_raw: ");
-      Serial_PrintlnNumber(adc.accel_2_raws[ACCEL_LOG_LENGTH-1], 10);
-
-      last_print = msTicks;
-    }
   }
 }
 
 // Interrupt configs
 
 void handle_interrupt(LPC_TIMER_T* timer, Speed_Input_T *speed, Wheel_T wheel) {
-  Chip_TIMER_Reset(timer);            /* Reset the timer immediately */
-  Chip_TIMER_ClearCapture(timer, 0);      /* Clear the capture */
+  // Reset the timer immediately
+  Chip_TIMER_Reset(timer);
+  // Clear the capture
+  Chip_TIMER_ClearCapture(timer, 0);
   const uint32_t curr_tick = Chip_TIMER_ReadCapture(timer, 0) / CYCLES_PER_MICROSECOND;
   Input_handle_interrupt(msTicks, curr_tick, wheel);
 }
@@ -141,27 +120,27 @@ void handle_interrupt(LPC_TIMER_T* timer, Speed_Input_T *speed, Wheel_T wheel) {
 // Interrupt handlers. These function get called automatically on
 // a rising edge of the signal going into the timer capture pin
 void TIMER32_0_IRQHandler(void) {
-  handle_interrupt(LPC_TIMER32_0, input.speed, LEFT_B);
+  handle_interrupt(LPC_TIMER32_0, input.speed, LEFT_32);
 }
 
 void TIMER32_1_IRQHandler(void) {
-  handle_interrupt(LPC_TIMER32_1, input.speed, RIGHT_B);
+  handle_interrupt(LPC_TIMER32_1, input.speed, RIGHT_32);
 }
 
 void TIMER16_0_IRQHandler(void) {
-  handle_interrupt(LPC_TIMER16_0, input.speed, LEFT_A);
+  handle_interrupt(LPC_TIMER16_0, input.speed, LEFT_16);
 }
 
 void TIMER16_1_IRQHandler(void) {
-  handle_interrupt(LPC_TIMER16_1, input.speed, RIGHT_A);
+  handle_interrupt(LPC_TIMER16_1, input.speed, RIGHT_16);
 }
 
 void Set_Interrupt_Priorities(void) {
-  /* Give 32 bit timer capture interrupts the highest priority */
+  // Give 32 bit interrupts the higher priority
   NVIC_SetPriority(TIMER_32_0_IRQn, 0);
   NVIC_SetPriority(TIMER_16_0_IRQn, 1);
   NVIC_SetPriority(TIMER_32_1_IRQn, 0);
   NVIC_SetPriority(TIMER_16_1_IRQn, 1);
-  /* Give the SysTick function a lower priority */
+  // Give the SysTick function a lower priority
   NVIC_SetPriority(SysTick_IRQn, 2);
 }

@@ -33,10 +33,10 @@ typedef struct {
 } ADC_Input_T;
 
 typedef enum {
-  LEFT_A,
-  RIGHT_A,
-  LEFT_B,
-  RIGHT_B,
+  LEFT_32,
+  RIGHT_32,
+  LEFT_16,
+  RIGHT_16,
   NUM_WHEELS
 } Wheel_T;
 
@@ -62,10 +62,10 @@ typedef struct {
 
   // Actual values
   // Right is WHEEL2, left is WHEEL1
-  uint16_t front_right_A_wheel_speed;
-  uint16_t front_right_B_wheel_speed;
-  uint16_t front_left_A_wheel_speed;
-  uint16_t front_left_B_wheel_speed;
+  uint32_t front_right_A_wheel_speed;
+  uint32_t front_right_B_wheel_speed;
+  uint32_t front_left_A_wheel_speed;
+  uint32_t front_left_B_wheel_speed;
 } Speed_Input_T;
 
 typedef struct {
