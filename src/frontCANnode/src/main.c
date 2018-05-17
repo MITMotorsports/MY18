@@ -61,10 +61,10 @@ void initialize_input() {
   }
 
   speed.last_speed_read_ms = 0;
-  speed.front_right_A_wheel_speed = 0;
-  speed.front_right_B_wheel_speed = 0;
-  speed.front_left_A_wheel_speed = 0;
-  speed.front_left_B_wheel_speed = 0;
+  speed.rear_right_32b_wheel_speed = 0;
+  speed.rear_right_16b_wheel_speed = 0;
+  speed.rear_left_32b_wheel_speed = 0;
+  speed.rear_left_16b_wheel_speed = 0;
 
   input.speed = &speed;
 }
@@ -87,8 +87,6 @@ int main(void) {
   Serial_Println("Started up!");
   Serial_Println("Currently running "HASH);
   Serial_Println("Flashed by: "AUTHOR);
-
-
 
   if (SysTick_Config (SystemCoreClock / 1000)) {
     // Error

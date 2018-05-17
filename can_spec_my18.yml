@@ -13,7 +13,8 @@ boards:
     publish:
       can0:
         - FrontCanNodeBrakeThrottle
-        - FrontCanNodeWheelSpeed
+        - FrontCanNodeRightWheelSpeed
+        - FrontCanNodeLeftWheelSpeed
     subscribe:
       can0:
         - VCUHeartbeat
@@ -98,33 +99,42 @@ buses:
             length: 16
             c_type: uint16_t
             signed: false
-      FrontCanNodeWheelSpeed:
-        can_id: 0x0F0
+      FrontCanNodeLeftWheelSpeed:
+        can_id: 0x0E0
         is_big_endian: true
         period: 10ms
         segments:
-          front_right_A_wheel_speed:
+          # Wheel speed from 32-bit timer (accurate at most speeds)
+          rear_left_32b_wheel_speed:
             position: 0
-            length: 16
-            c_type: uint16_t
+            length: 32
+            c_type: uint32_t
             signed: false
             unit: mRPM
-          front_right_B_wheel_speed:
-            position: 16
-            length: 16
-            c_type: uint16_t
-            signed: false
-            unit: mRPM
-          front_left_A_wheel_speed:
+          # Wheel speed from 16-bit timer (accurate only at high speeds)
+          rear_left_16b_wheel_speed:
             position: 32
-            length: 16
-            c_type: uint16_t
+            length: 32
+            c_type: uint32_t
             signed: false
             unit: mRPM
-          front_left_B_wheel_speed:
-            position: 48
-            length: 16
-            c_type: uint16_t
+      FrontCanNodeRightWheelSpeed:
+        can_id: 0x0E1
+        is_big_endian: true
+        period: 10ms
+        segments:
+          # Wheel speed from 32-bit timer (accurate at most speeds)
+          rear_right_32b_wheel_speed:
+            position: 0
+            length: 32
+            c_type: uint32_t
+            signed: false
+            unit: mRPM
+          # Wheel speed from 16-bit timer (accurate only at high speeds)
+          rear_right_16b_wheel_speed:
+            position: 32
+            length: 32
+            c_type: uint32_t
             signed: false
             unit: mRPM
       CellTemperatures:

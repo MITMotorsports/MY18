@@ -109,16 +109,16 @@ void update_wheel_speed() {
       uint32_t *ptr;
       switch (wheel) {
         case LEFT_16:
-          ptr = &speed->front_left_A_wheel_speed;
+          ptr = &speed->rear_left_16b_wheel_speed;
           break;
         case LEFT_32:
-          ptr = &speed->front_left_B_wheel_speed;
+          ptr = &speed->rear_left_32b_wheel_speed;
           break;
         case RIGHT_16:
-          ptr = &speed->front_right_A_wheel_speed;
+          ptr = &speed->rear_right_16b_wheel_speed;
           break;
         case RIGHT_32:
-          ptr = &speed->front_right_B_wheel_speed;
+          ptr = &speed->rear_right_32b_wheel_speed;
           break;
         default:
           continue;

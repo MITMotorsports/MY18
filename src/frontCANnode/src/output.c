@@ -12,13 +12,15 @@ extern Input_T input;
 extern volatile uint32_t msTicks;
 
 Can_ErrorID_T write_can_brakethrottle_msg(void);
-Can_ErrorID_T write_can_wheel_speed_msg(void);
+Can_ErrorID_T write_can_left_wheel_speed_msg(void);
+Can_ErrorID_T write_can_right_wheel_speed_msg(void);
 void handle_can_error(Can_ErrorID_T error);
 bool period_reached(uint32_t start, uint32_t period, uint32_t msTicks);
 
 void Output_process_output() {
   handle_can_error(write_can_brakethrottle_msg());
-  handle_can_error(write_can_wheel_speed_msg());
+  handle_can_error(write_can_left_wheel_speed_msg());
+  handle_can_error(write_can_right_wheel_speed_msg());
 }
 
 
@@ -35,17 +37,26 @@ Can_ErrorID_T write_can_brakethrottle_msg() {
   return can0_FrontCanNodeBrakeThrottle_Write(&msg);
 }
 
-Can_ErrorID_T write_can_wheel_speed_msg() {
-  LIMIT(can0_FrontCanNodeWheelSpeed_period)
+Can_ErrorID_T write_can_left_wheel_speed_msg() {
+  LIMIT(can0_FrontCanNodeLeftWheelSpeed_period)
 
-  can0_FrontCanNodeWheelSpeed_T msg;
+  can0_FrontCanNodeLeftWheelSpeed_T msg;
 
-  msg.front_right_A_wheel_speed = input.speed->front_right_A_wheel_speed;
-  msg.front_right_B_wheel_speed = input.speed->front_right_B_wheel_speed;
-  msg.front_left_A_wheel_speed = input.speed->front_left_A_wheel_speed;
-  msg.front_left_B_wheel_speed = input.speed->front_left_B_wheel_speed;
+  msg.rear_left_32b_wheel_speed = input.speed->rear_left_32b_wheel_speed;
+  msg.rear_left_16b_wheel_speed = input.speed->rear_left_16b_wheel_speed;
 
-  return can0_FrontCanNodeWheelSpeed_Write(&msg);
+  return can0_FrontCanNodeLeftWheelSpeed_Write(&msg);
+}
+
+Can_ErrorID_T write_can_right_wheel_speed_msg() {
+  LIMIT(can0_FrontCanNodeRightWheelSpeed_period)
+
+  can0_FrontCanNodeRightWheelSpeed_T msg;
+
+  msg.rear_right_32b_wheel_speed = input.speed->rear_right_32b_wheel_speed;
+  msg.rear_right_16b_wheel_speed = input.speed->rear_right_16b_wheel_speed;
+
+  return can0_FrontCanNodeRightWheelSpeed_Write(&msg);
 }
 
 void handle_can_error(Can_ErrorID_T error) {
