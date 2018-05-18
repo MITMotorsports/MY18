@@ -14,8 +14,12 @@ void update_csb_state_precharge(void){
 		set_csb_state(CSB_STATE_CHARGE);
 	}	
 
-	if(!Board_Pin_Read(PIN_BMS_FAULT)||!Board_Pin_Read(PIN_IMD_IN)||!Board_Pin_Read(PIN_INTERLOCK)){
+	bool any_fault = !Board_Pin_Read(PIN_BMS_FAULT) ||
+			 !Board_Pin_Read(PIN_IMD_IN)    ||
+			 !Board_Pin_Read(PIN_INTERLOCK);
+	if(any_fault){
 		set_csb_state(CSB_STATE_ROOT);
 		Board_Print("Fault tripped, entering root state");
 	}
+	
 }

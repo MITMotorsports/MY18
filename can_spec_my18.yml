@@ -67,6 +67,11 @@ boards:
     subscribe:
       can0:
         - Current_Sensor_Config
+  csb:
+    arch: arm
+    publish:
+      can0:
+        - ChargerCommand
 
 buses:
   can0:
@@ -653,3 +658,27 @@ buses:
             unit: decidegC
             signed: true
             c_type: int16_t
+      ChargerCommand:
+        can_id: 0x2FF
+        is_big_endian: false
+        segments:
+          enable:
+            position: 0
+            length: 8
+            c_type: bool
+          powerReference:
+            length: 16
+            position: 8
+            c_type: uint16_t
+            signed: false
+          VoltageLimit:
+            position: 24
+            length: 16
+            c_type: uint16_t
+            signed: false
+          CurrentLimit:
+            position: 40
+            length: 16
+            c_type: uint16_t
+            signed: false 
+

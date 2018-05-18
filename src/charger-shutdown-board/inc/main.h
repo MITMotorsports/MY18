@@ -12,7 +12,7 @@
 
 extern volatile uint32_t msTicks;
 
-#define CAN_INIT() Can_Init(500000);
+#define CAN_INIT() init_can0_csb()
 extern uint8_t can_data[8];
 
 #endif //ifndef __main_h
