@@ -24,7 +24,12 @@ int main(void) {
   	CAN_INIT();
   	Board_Print("CAN Initialized\n");
 
-	// LPC_SYSCTL->SYSAHBCLKCTRL |= 0x20; 	// Enable clock and power to I2C block
+	if(SysTick_Config(SystemCoreClock/1000))
+		while(1);
+	//DON'T FORGET THIS A N G E R 	
+		
+//	// LPC_SYSCTL->SYSAHBCLKCTRL |= 0x20; 	// Enable clock and power to I2C block
+
 	Chip_SYSCTL_DeassertPeriphReset(RESET_I2C0);
 	Chip_I2C_Init(I2C0);
 	Chip_I2C_SetClockRate(I2C0, 100000);
@@ -38,6 +43,7 @@ int main(void) {
 
 
 	Board_Print("I2C Initialized\n");
+
 	//no more init
 	while(1){
 //		advance_csb_state();

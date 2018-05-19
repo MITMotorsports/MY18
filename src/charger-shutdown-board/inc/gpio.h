@@ -2,7 +2,7 @@
 #define _GPIO_H_
 
 #include <stdint.h>
-
+#include <stdbool.h>
 #include "pins.h"
 
 // GPIO digital representation
