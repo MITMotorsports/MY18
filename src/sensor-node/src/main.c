@@ -124,7 +124,7 @@ int main(void)
 	Chip_SSP_SetBitRate(LPC_SSP, 30000);
 	ssp_format.frameFormat = SSP_FRAMEFORMAT_SPI;
 	ssp_format.bits = SSP_DATA_BITS;
-	ssp_format.clockMode = SSP_CLOCK_MODE2;
+	ssp_format.clockMode = SSP_CLOCK_MODE0;
 	Chip_SSP_SetFormat(LPC_SSP, ssp_format.bits, ssp_format.frameFormat, ssp_format.clockMode);
 	Chip_SSP_SetMaster(LPC_SSP, SSP_MODE_TEST);
 	Chip_SSP_Enable(LPC_SSP);
