@@ -1,7 +1,7 @@
 #include "main.h"
 
 volatile uint32_t msTicks;
-const uint32_t OscRateIn = 12000000;
+const uint32_t OscRateIn = 24000000;
 
 #define SCL 0, 4
 #define SDA 0, 5
@@ -45,9 +45,9 @@ int main(void) {
 	Board_Print("I2C Initialized\n");
 
 	//no more init
+
 	while(1){
-//		advance_csb_state();
-		Board_PrintNum(msTicks,10);
+		advance_csb_state();
  	}
 	return 0;
 }

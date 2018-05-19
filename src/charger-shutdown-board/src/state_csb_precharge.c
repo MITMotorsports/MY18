@@ -10,7 +10,6 @@ void enter_csb_state_precharge(void){
 
 void update_csb_state_precharge(void){
 	if(msTicks-prechargeTimeout>DEAD_RECKON_TIME){
-//	if(true){
 		Board_Pin_Set(PIN_PRECHARGE, 1); //After a succificent amount of time has been spent in precharge, proceed to close high side contactor and prepare to turn on charger
 		set_csb_state(CSB_STATE_CHARGE);
 	}	

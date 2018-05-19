@@ -23,7 +23,7 @@ void update_csb_state_charge(void){
 		set_csb_state(CSB_STATE_ROOT);
 		Board_Print("Fault tripped, entering root state\n");
 	}
-	if((msTicks-can_wait)>750){
+	if(msTicks-can_wait>750){
 		can0_ChargerCommand_Write(&msg);
 		can_wait=msTicks;
 	}

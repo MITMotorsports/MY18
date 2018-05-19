@@ -681,4 +681,8 @@ buses:
             length: 16
             c_type: uint16_t
             signed: false 
-
+          Reserved:
+            position: 56
+            length: 8
+            signed: false
+            c_type: uint16_t
