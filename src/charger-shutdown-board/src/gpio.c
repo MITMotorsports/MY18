@@ -38,6 +38,14 @@ void Board_GPIO_Init(void) {
   Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_PRECHARGE);
   Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_PRECHARGE, IOCON_FUNC0);
   Chip_GPIO_SetPinState(LPC_GPIO, PIN_PRECHARGE, false);
+  
+  //I2C Initialization
+	
+	Chip_SYSCTL_PeriphReset(RESET_I2C0); // Reset the I2C Peripheral
+	Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_4, IOCON_FUNC1); // SCL
+	Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_5, IOCON_FUNC1); // SDA
+
+	
 }
 
 // Set the value of a GPIO pin

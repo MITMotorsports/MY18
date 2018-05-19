@@ -28,12 +28,6 @@ int main(void) {
   	Board_Print("H e l l o\n");
   	CAN_INIT();
   	Board_Print("CAN Initialized\n");
-//TODO: Put with rest of GPIO stuff
-
-  	//I2C Initialization
-	Chip_SYSCTL_PeriphReset(RESET_I2C0); // Reset the I2C Peripheral
-	Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_4, IOCON_FUNC1); // SCL
-	Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_5, IOCON_FUNC1); // SDA
 
 	// LPC_SYSCTL->SYSAHBCLKCTRL |= 0x20; 	// Enable clock and power to I2C block
 	Chip_SYSCTL_DeassertPeriphReset(RESET_I2C0);
