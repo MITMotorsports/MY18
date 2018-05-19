@@ -77,11 +77,6 @@ void CellTemperatures_UpdateMaxMinAvgCellTemperatures(
   } else {
     Error_Clear(ERROR_CELL_OVER_TEMP);
   }
-  if(pack_status->min_cell_temp_dC < MIN_CELL_TEMP_dC) {
-    Error_Present(ERROR_CELL_UNDER_TEMP);
-  } else {
-    Error_Clear(ERROR_CELL_UNDER_TEMP);
-  }
 
 }
 

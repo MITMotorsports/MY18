@@ -89,7 +89,6 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
   msg.error_H_contactor_weld = Check_Error(ERROR_H_CONTACTOR_WELD, false);
   msg.error_cell_under_voltage = Check_Error(ERROR_CELL_UNDER_VOLTAGE, false);
   msg.error_cell_over_voltage = Check_Error(ERROR_CELL_OVER_VOLTAGE, false);
-  msg.error_cell_under_temp = Check_Error(ERROR_CELL_UNDER_TEMP, false);
   msg.error_cell_over_temp = Check_Error(ERROR_CELL_OVER_TEMP, false);
   msg.error_control_flow = Check_Error(ERROR_CONTROL_FLOW, false);
   msg.error_blown_fuse = 0;
