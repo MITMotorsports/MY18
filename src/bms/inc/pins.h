@@ -28,6 +28,9 @@
 #define PIN_IOCON_LED1                IOCON_PIO1_10
 #define PIN_IOCON_LED2                IOCON_PIO2_11
 #define PIN_IOCON_LED3                IOCON_PIO1_5
+#define PIN_IOCON_SDA                 IOCON_PIO0_5
+#define PIN_IOCON_SCL                 IOCON_PIO0_4
+#define PIN_IOCON_TEMP_CHECK          IOCON_PIO0_3
 
 #define IOCON_LED1_FUNC IOCON_FUNC0
 #define IOCON_LED2_FUNC IOCON_FUNC0
