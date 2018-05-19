@@ -47,7 +47,7 @@ void handle_fatal_fault(void) {
   openLowSideContactor();
   openHighSideContactor();
 
-  printf("[FAULT : HANDLER : FATAL] Graceful car shutdown done.");
+  printf("[FAULT : HANDLER : FATAL] Graceful car shutdown done.\r\n");
   printf("[FAULT : HANDLER : FATAL] NEED MANUAL RESTORATION.\r\n");
 }
 

@@ -18,7 +18,7 @@ void Board_CAN_Receive(BMS_INPUT_T *bms_input) {
     can_receive_current(bms_input);
     break;
 
-  case can0_CurrentSensor_Voltage:
+  case can0_CurrentSensor_Voltage1:
     can_receive_voltage(bms_input);
     break;
 
@@ -48,10 +48,10 @@ void can_receive_current(BMS_INPUT_T *bms_input) {
 }
 
 void can_receive_voltage(BMS_INPUT_T *bms_input) {
-  can0_CurrentSensor_Voltage_T msg;
+  can0_CurrentSensor_Voltage1_T msg;
 
-  unpack_can0_CurrentSensor_Voltage(&can_input, &msg);
-  bms_input->pack_status->pack_voltage_mV = msg.voltage;
+  unpack_can0_CurrentSensor_Voltage1(&can_input, &msg);
+  bms_input->pack_status->pack_voltage_mV = msg.result;
 }
 
 void can_receive_energy(BMS_INPUT_T *bms_input) {
