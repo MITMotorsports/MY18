@@ -16,7 +16,7 @@ bool update_fatal_faults(void) {
   return VS_NEQ(ROOT) && fatal_faults.gate ||
          fatal_faults.precharge            ||
          fatal_faults.contactor            ||
-         VS_NEQ(ROOT) && fatal_faults.conflict;
+         fatal_faults.conflict;
 }
 
 bool update_recoverable_faults(void) {

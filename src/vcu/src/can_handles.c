@@ -12,6 +12,8 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *hcan) {
     printf("[CAN RX] ERROR: HAL_CAN_StateTypeDef is %d\r\n", hcan->State);
     printf("[CAN RX] ERROR: ErrorCode is %d\r\n",            hcan->ErrorCode);
 
+    CANx_FORCE_RESET();
+    CANx_RELEASE_RESET();
     // handle_fatal_fault();
   }
 }
