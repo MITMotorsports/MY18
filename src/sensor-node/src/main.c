@@ -1,4 +1,5 @@
 #include "chip.h"
+#include "sensor-node.h"
 
 const uint32_t OscRateIn = 12000000;
 volatile uint32_t msTicks;
@@ -59,7 +60,7 @@ static void Buffer_Init(void)
 	uint16_t i;
 	uint8_t ch = 0;
 	for (i = 0; i < BUFFER_SIZE; i++) {
-		Tx_Buf[i] = 0x1;
+		Tx_Buf[i] = CH6;
 		Rx_Buf[i] = 0x0;
 	}
 }
