@@ -73,6 +73,10 @@
 #define HVDCDC_PORT                   GPIOB
 
 
+#define BFAN_PIN                      GPIO_PIN_12
+#define BFAN_PORT                     GPIOB
+
+
 #define L_CONTACTOR_PIN               GPIO_PIN_7
 #define L_CONTACTOR_PORT              GPIOC
 

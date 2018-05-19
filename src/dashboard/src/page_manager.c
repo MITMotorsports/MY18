@@ -13,6 +13,7 @@ void page_manager_init(page_manager_t *pm, carstats_t *stats) {
 void page_manager_next_page(page_manager_t *pm) {
     // wrap around
     pm->page = (pm->page + 1) % DASH_PAGE_COUNT;
+
 }
 
 void page_manager_prev_page(page_manager_t *pm) {
@@ -27,6 +28,7 @@ void page_manager_set_page(page_manager_t *pm, dash_page_type page) {
     pm->page = page;
 }
 
+/*
 const char *page_type_repr(dash_page_type page) {
     switch (page) {
         case DASH_PAGE_CRITICAL:
@@ -40,7 +42,7 @@ const char *page_type_repr(dash_page_type page) {
         default:
             return "";
     }
-}
+}*/
 
 void draw_nav_line(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_clearline(oled, 3);
@@ -70,15 +72,18 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
         case DASH_PAGE_CRITICAL:
             draw_critical_page(pm, oled);
             break;
-        case DASH_PAGE_TAKEOVER:
-            draw_takeover_page(pm, oled);
+        case DASH_PAGE_CHARGE:
+            draw_charging_page(pm, oled);
             break;
-        case DASH_PAGE_TRACTION:
-            draw_traction_page(pm, oled);
-            break;
-        case DASH_PAGE_WHEEL_SPEED:
-            draw_wheel_speed_page(pm, oled);
-            break;
+        //case DASH_PAGE_TAKEOVER:
+        //    draw_takeover_page(pm, oled);
+        //    break;
+        //case DASH_PAGE_TRACTION:
+        //    draw_traction_page(pm, oled);
+        //    break;
+        //case DASH_PAGE_WHEEL_SPEED:
+        //    draw_wheel_speed_page(pm, oled);
+        //    break;
         default:
             break;
     }
@@ -86,7 +91,7 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
 // looks like:
 
-// ERROR    [PRECHARGE]
+// R:HRTBEAT[PRECHARGE]
 // TRQ 150    PACK 300V
 // PWR 60kW   CELL 3.3V
 // RPM 3400   TEMP  30C
@@ -95,12 +100,29 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_clearline(oled, 0);
     oled_set_pos(oled, 0, 0);
 
-    if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
-        oled_print(oled, (pm->stats->estop_hit)? "RECOV:ESTOP": "RECOV");
-    } else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
-        oled_print(oled, "FATAL");
-    } else if (pm->stats->estop_hit) {
-        oled_print(oled, "ESTOP");
+    carstats_t *stats = pm->stats;
+    if (stats->vcu_errors.fatal_contactor) {
+        oled_print(oled, "F:CONTACT");
+    } else if (stats->vcu_errors.fatal_gate) {
+        oled_print(oled, "F:GATE");
+    } else if (stats->vcu_errors.fatal_precharge) {
+        oled_print(oled, "F:PRECHRG");
+    } else if (stats->vcu_errors.fatal_conflict) {
+        oled_print(oled, "F:CONFLCT");
+    } else if (stats->vcu_errors.recoverable_conflict) {
+        oled_print(oled, "R:CONFLCT");
+    } else if (stats->vcu_errors.recoverable_gate) {
+        oled_print(oled, "R:GATE");
+    } else if (stats->vcu_errors.recoverable_heartbeat) {
+        oled_print(oled, "R:HRTBEAT");
+    } else if (stats->vcu_errors.recoverable_contactor) {
+        oled_print(oled, "R:ESTOP");
+    } else {
+        if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
+            oled_print(oled, "RECOV");
+        } else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
+            oled_print(oled, "FATAL");
+        }
     }
 
     if (msTicks > pm->stats->last_vcu_heartbeat + 1000) {
@@ -127,6 +149,7 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     oled_set_pos(oled, 1, 0);
     oled_clearline(oled, 1);
+    /*
     oled_print(oled, "TRQ ");
     if (pm->stats->torque_mc >= 0) {
         int torque_Nm = pm->stats->torque_mc / 10;
@@ -134,10 +157,20 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     } else {
         oled_print(oled, DATA_UNKNOWN);
     }
+    */
+    oled_print(oled, "PWR ");
+    if (pm->stats->power >= 0) {
+        int power = pm->stats->power;
+        oled_print_num(oled, power);
+        oled_print(oled, "W");
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
 
     oled_rprint_pad(oled, "BUS", 6);
     if (pm->stats->battery_voltage >= 0) {
         int pack_V = pm->stats->battery_voltage/10;
+        // int pack_V = pm->stats->voltage_2/1000;
         oled_rprint_num_pad(oled, pack_V, 1);
         oled_rprint(oled, "V");
     } else {
@@ -170,10 +203,11 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
         int cell_mV = pm->stats->min_cell_voltage;
         int cell_V = cell_mV / 1000;
         int cell_dV = (cell_mV / 100) % 10;
+        int cell_cV = (cell_mV / 10) % 10;
         oled_rprint_num_pad(oled, cell_V, 3);
         oled_rprint_pad(oled, ".", 2);
         oled_rprint_num_pad(oled, cell_dV, 1);
-        oled_rprint(oled, "V");
+        oled_rprint_num(oled, cell_cV);
     } else {
         oled_rprint(oled, DATA_UNKNOWN);
     }
@@ -181,9 +215,20 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     oled_clearline(oled, 3);
     oled_set_pos(oled, 3, 0);
+    /*
     oled_print(oled, "RPM ");
     if (pm->stats->motor_rpm >= 0) {
         oled_print_num(oled, pm->stats->motor_rpm);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+    */
+    oled_print(oled, "CUR ");
+    if (false /*TODO: Remove this when it works*/ && pm->stats->current >= 0) {
+        oled_print_num(oled, pm->stats->current / 1000);
+        oled_print_num(oled, ".");
+        oled_print_num(oled, (pm->stats->current / 100)%10);
+        oled_print(oled, "A");
     } else {
         oled_print(oled, DATA_UNKNOWN);
     }
