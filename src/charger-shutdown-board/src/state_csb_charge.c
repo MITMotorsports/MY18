@@ -21,7 +21,7 @@ void update_csb_state_charge(void){
 			 !Board_Pin_Read(PIN_INTERLOCK);
 	if(any_fault){
 		set_csb_state(CSB_STATE_ROOT);
-		Board_Print("Fault tripped, entering root state");
+		Board_Print("Fault tripped, entering root state\n");
 	}
 	if((msTicks-can_wait)>750){
 		can0_ChargerCommand_Write(&msg);

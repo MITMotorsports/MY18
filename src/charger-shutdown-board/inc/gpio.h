@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-#include "chip.h"
 #include "pins.h"
 
 // GPIO digital representation

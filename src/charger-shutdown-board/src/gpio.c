@@ -39,6 +39,10 @@ void Board_GPIO_Init(void) {
   Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_PRECHARGE, IOCON_FUNC0);
   Chip_GPIO_SetPinState(LPC_GPIO, PIN_PRECHARGE, false);
   
+  //Contactors Closed
+  Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_CONTACTORS_CLOSED);
+  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTORS_CLOSED, (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
+
   //I2C Initialization
 	
 	Chip_SYSCTL_PeriphReset(RESET_I2C0); // Reset the I2C Peripheral

@@ -6,6 +6,7 @@
 #define PIN_IMD_IN 		2, 6
 #define PIN_INTERLOCK		0, 2
 #define PIN_PRECHARGE 		2, 1
+#define PIN_CONTACTORS_CLOSED   0, 3
 
 #define PIN_LED1                2, 3
 #define PIN_LED2                1, 11
@@ -15,6 +16,7 @@
 #define PIN_IOCON_IMD_IN	      IOCON_PIO2_6
 #define PIN_IOCON_INTERLOCK	      IOCON_PIO0_2
 #define PIN_IOCON_PRECHARGE	      IOCON_PIO2_1
+#define PIN_IOCON_CONTACTORS_CLOSED   IOCON_PIO0_3
 #define PIN_IOCON_LED1                IOCON_PIO2_3
 #define PIN_IOCON_LED2                IOCON_PIO1_11
 
