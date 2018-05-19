@@ -10,7 +10,7 @@
 
 // CONSTANT DEFINITIONS
 // Ignore each fault gate for the first x milliseconds.
-#define FAULT_GATE_SETUP 2
+#define FAULT_GATE_SETUP 5
 
 
 // CONTAINER DECLARATION

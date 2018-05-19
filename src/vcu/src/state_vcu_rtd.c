@@ -26,7 +26,7 @@ void update_vcu_state_rtd() {
   if (buttons.RTD) {
     if (rtd_started) {
       if (HAL_GetTick() - rtd_last > RTD_HOLD) {
-        if (brk_pressed) {
+        if (true || brk_pressed) {
           set_vcu_state(VCU_STATE_DRIVING);
           return;
         }

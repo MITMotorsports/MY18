@@ -12,8 +12,8 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *hcan) {
     printf("[CAN RX] ERROR: HAL_CAN_StateTypeDef is %d\r\n", hcan->State);
     printf("[CAN RX] ERROR: ErrorCode is %d\r\n",            hcan->ErrorCode);
 
-    CANx_FORCE_RESET();
-    CANx_RELEASE_RESET();
+    // CANx_FORCE_RESET();
+    // CANx_RELEASE_RESET();
     // handle_fatal_fault();
   }
 }
@@ -22,9 +22,11 @@ void HAL_CAN_TxCpltCallback(CAN_HandleTypeDef *hcan) {
   // printf("TX CB CALLED\r\n");
 }
 
-// void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan) {
-//   printf("[CAN ERR] %d\r\n", (int)hcan->State);
-// }
+void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan) {
+  CANx_FORCE_RESET();
+  CANx_RELEASE_RESET();
+  printf("[CAN ERR] %d\r\n", (int)hcan->State);
+}
 
 void handleCAN(CAN_HandleTypeDef *hcan) {
   Frame frame;
