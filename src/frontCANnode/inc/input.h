@@ -16,7 +16,6 @@
 #define ACCEL_2_LOWER_BOUND 256
 #define ACCEL_2_UPPER_BOUND 881
 
-// Some wheel speed stuff (copied from MY17)
 #define WHEEL_SPEED_TIMEOUT_MS 100
 #define WHEEL_SPEED_READ_PERIOD_MS 10
 
@@ -25,6 +24,10 @@
 // 1000 millirevs = 1 rev
 #define MILLIREVS_PER_REV_F 1000.0
 #define SECONDS_PER_MINUTE 60
+
+#define MAX_UINT16 65535
+// Maximum time per tick measureable by the 16 bit timer, in microseconds
+#define MAX_16_TIME MAX_UINT16 / CYCLES_PER_MICROSECOND
 
 void Input_fill_input(void);
 void Input_handle_interrupt(uint32_t msTicks, uint32_t curr_tick, Wheel_T wheel);

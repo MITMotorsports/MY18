@@ -67,7 +67,7 @@ uint32_t click_time_to_mRPM(uint32_t us_per_click) {
     return 0;
   }
   // Convert milliseconds per click to milli rpm
-  const float us_per_rev = us_per_click * 1.0 * NUM_TEETH;
+  const float us_per_rev = us_per_click * 1.0 * NUM_TEETH * 2;
 
   const float s_per_rev = us_per_rev / MICROSECONDS_PER_SECOND_F;
 
@@ -106,29 +106,41 @@ void update_wheel_speed() {
       speed->disregard[wheel] = timeout;
 
       // Save value
-      uint32_t *ptr;
+      uint32_t calculated_speed;
+      if (count < NUM_TEETH) {
+        calculated_speed = click_time_to_mRPM(speed->last_tick[wheel][idx]);
+      } else {
+        calculated_speed = click_time_to_mRPM(moving_avg);
+      }
+      // 32 bit timer speeds are first in the enum, so it's safe to look back at
+      // their values
       switch (wheel) {
         case LEFT_16:
-          ptr = &speed->rear_left_16b_wheel_speed;
+          if (speed->rear_left_32b_wheel_speed < click_time_to_mRPM(MAX_16_TIME)) {
+            speed->rear_left_16b_wheel_speed = 0;
+          } else {
+            speed->rear_left_16b_wheel_speed = calculated_speed;
+          }
           break;
         case LEFT_32:
-          ptr = &speed->rear_left_32b_wheel_speed;
+          speed->rear_left_32b_wheel_speed = calculated_speed;
           break;
         case RIGHT_16:
-          ptr = &speed->rear_right_16b_wheel_speed;
+          if (speed->rear_right_32b_wheel_speed < click_time_to_mRPM(MAX_16_TIME)) {
+            speed->rear_left_16b_wheel_speed = 0;
+          } else {
+            speed->rear_left_16b_wheel_speed = calculated_speed;
+          }
           break;
         case RIGHT_32:
-          ptr = &speed->rear_right_32b_wheel_speed;
+          speed->rear_right_32b_wheel_speed = calculated_speed;
           break;
         default:
           continue;
       }
 
-      if (count < NUM_TEETH) {
-        *ptr = click_time_to_mRPM(speed->last_tick[wheel][idx]);
-      } else {
-        *ptr = click_time_to_mRPM(moving_avg);
-      }
+
+
     }
   }
 }

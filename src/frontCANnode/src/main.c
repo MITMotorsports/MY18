@@ -116,7 +116,7 @@ void handle_interrupt(LPC_TIMER_T* timer, Speed_Input_T *speed, Wheel_T wheel) {
 }
 
 // Interrupt handlers. These function get called automatically on
-// a rising edge of the signal going into the timer capture pin
+// a rising edge or falling edge of the signal going into the timer capture pin
 void TIMER32_0_IRQHandler(void) {
   handle_interrupt(LPC_TIMER32_0, input.speed, LEFT_32);
 }
