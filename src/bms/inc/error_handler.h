@@ -30,7 +30,6 @@ typedef enum {
   ERROR_H_CONTACTOR_WELD,
   ERROR_CELL_UNDER_VOLTAGE,
   ERROR_CELL_OVER_VOLTAGE,
-  ERROR_CELL_UNDER_TEMP,
   ERROR_CELL_OVER_TEMP,
   ERROR_CONTROL_FLOW,
   ERROR_NUM_ERRORS
@@ -46,7 +45,6 @@ static const char *const ERROR_NAMES[ERROR_NUM_ERRORS] = {
   "ERROR_H_CONTACTOR_WELD",
   "ERROR_CELL_UNDER_VOLTAGE",
   "ERROR_CELL_OVER_VOLTAGE",
-  "ERROR_CELL_UNDER_TEMP",
   "ERROR_CELL_OVER_TEMP",
   "ERROR_CONTROL_FLOW"
 };
@@ -75,5 +73,7 @@ void Error_Assert(ERROR_T error);
 bool Error_Should_Fault(void);
 
 bool Check_Error(ERROR_T er_t, bool Force_Check);
+
+bool Error_Care(ERROR_T er_t);
 
 #endif // ifndef _ERROR_HANDLER_H

@@ -6,7 +6,6 @@ extern volatile uint32_t msTicks;
 void update_adc(void);
 void update_wheel_speed(void);
 void update_can(void);
-uint32_t filter(uint32_t reading);
 
 uint16_t transform1(uint32_t accel_1_raw);
 uint16_t transform2(uint32_t accel_2_raw);

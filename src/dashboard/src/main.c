@@ -16,6 +16,9 @@ int main(void) {
     Board_UART_Init(UART_BAUD);
     CAN_Init();
 
+    Board_Println("Currently running: "HASH);
+    Board_Println("Flashed by: "AUTHOR);
+
     // need a delay after init or the display
     // will sometimes be messed up
     Delay(100);

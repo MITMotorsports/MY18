@@ -353,10 +353,10 @@ print_size :
 # create the desired output directory
 #-----------------------------------------------------------------------------#
 
-make_output_dir :
+make_output_dir:
 	$(shell mkdir $(OUT_DIR_F) 2>/dev/null)
 
-make_test_output_dir :
+make_test_output_dir:
 	$(shell mkdir $(OUT_DIR_TEST_F) 2>/dev/null)
 
 #-----------------------------------------------------------------------------#

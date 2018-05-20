@@ -18,7 +18,7 @@ void Board_CAN_Receive(BMS_INPUT_T *bms_input) {
     can_receive_current(bms_input);
     break;
 
-  case can0_CurrentSensor_Voltage:
+  case can0_CurrentSensor_Voltage1:
     can_receive_voltage(bms_input);
     break;
 
@@ -48,10 +48,10 @@ void can_receive_current(BMS_INPUT_T *bms_input) {
 }
 
 void can_receive_voltage(BMS_INPUT_T *bms_input) {
-  can0_CurrentSensor_Voltage_T msg;
+  can0_CurrentSensor_Voltage1_T msg;
 
-  unpack_can0_CurrentSensor_Voltage(&can_input, &msg);
-  bms_input->pack_status->pack_voltage_mV = msg.voltage;
+  unpack_can0_CurrentSensor_Voltage1(&can_input, &msg);
+  bms_input->pack_status->pack_voltage_mV = msg.result;
 }
 
 void can_receive_energy(BMS_INPUT_T *bms_input) {
@@ -89,7 +89,6 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
   msg.error_H_contactor_weld = Check_Error(ERROR_H_CONTACTOR_WELD, false);
   msg.error_cell_under_voltage = Check_Error(ERROR_CELL_UNDER_VOLTAGE, false);
   msg.error_cell_over_voltage = Check_Error(ERROR_CELL_OVER_VOLTAGE, false);
-  msg.error_cell_under_temp = Check_Error(ERROR_CELL_UNDER_TEMP, false);
   msg.error_cell_over_temp = Check_Error(ERROR_CELL_OVER_TEMP, false);
   msg.error_control_flow = Check_Error(ERROR_CONTROL_FLOW, false);
   msg.error_blown_fuse = 0;

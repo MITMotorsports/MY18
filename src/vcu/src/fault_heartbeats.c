@@ -4,8 +4,8 @@ volatile Heartbeats_T heartbeats = {};
 
 const Time_T BMS_HB_MAX_TIME = 1000;
 const Time_T FCN_HB_MAX_TIME = 10000;
-const Time_T MC_HB_MAX_TIME = 1000;
-const Time_T CS_HB_MAX_TIME = 1000;
+const Time_T MC_HB_MAX_TIME  = 1000;
+const Time_T CS_HB_MAX_TIME  = 1000;
 
 
 bool check_BMS_heartbeat_bad(void) {

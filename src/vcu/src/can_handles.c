@@ -8,9 +8,12 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *hcan) {
     handleCAN(hcan);
   }
   else {
-    printf("[CAN RX] ERROR: HAL_StatusTypeDef is %d\r\n", (int)CAN_RX_STATUS);
+    printf("[CAN RX] ERROR: HAL_StatusTypeDef is %d\r\n",    (int)CAN_RX_STATUS);
     printf("[CAN RX] ERROR: HAL_CAN_StateTypeDef is %d\r\n", hcan->State);
-    printf("[CAN RX] ERROR: ErrorCode is %d\r\n", hcan->ErrorCode);
+    printf("[CAN RX] ERROR: ErrorCode is %d\r\n",            hcan->ErrorCode);
+
+    // CANx_FORCE_RESET();
+    // CANx_RELEASE_RESET();
     // handle_fatal_fault();
   }
 }
@@ -19,9 +22,11 @@ void HAL_CAN_TxCpltCallback(CAN_HandleTypeDef *hcan) {
   // printf("TX CB CALLED\r\n");
 }
 
-// void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan) {
-//   printf("[CAN ERR] %d\r\n", (int)hcan->State);
-// }
+void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan) {
+  CANx_FORCE_RESET();
+  CANx_RELEASE_RESET();
+  printf("[CAN ERR] %d\r\n", (int)hcan->State);
+}
 
 void handleCAN(CAN_HandleTypeDef *hcan) {
   Frame frame;
@@ -46,7 +51,7 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleCellVoltagesMsg(&frame);
     break;
 
-  case can0_CurrentSensor_Voltage:
+  case can0_CurrentSensor_Voltage1:
     handleCurrentSensorVoltageMsg(&frame);
     break;
 
@@ -105,6 +110,7 @@ void handleBMSHeartbeatMsg(Frame *frame) {
   // msg.error_cell_under_temp;
   // msg.error_cell_over_temp;
   // msg.error_control_flow;
+  bms_errors = msg;
 
   contactors.L_contactor_closed = msg.L_contactor_closed;
   contactors.H_contactor_closed = msg.H_contactor_closed;
@@ -115,11 +121,11 @@ void handleBMSHeartbeatMsg(Frame *frame) {
 }
 
 void handleCurrentSensorVoltageMsg(Frame *msg) {
-  can0_CurrentSensor_Voltage_T unpacked_msg;
+  can0_CurrentSensor_Voltage1_T unpacked_msg;
 
-  unpack_can0_CurrentSensor_Voltage(msg, &unpacked_msg);
+  unpack_can0_CurrentSensor_Voltage1(msg, &unpacked_msg);
 
-  cs_readings.V_bus = unpacked_msg.voltage;
+  cs_readings.V_bus = unpacked_msg.result;
 
   heartbeats.current_sensor = HAL_GetTick();
 }
@@ -136,30 +142,49 @@ void handleCellVoltagesMsg(Frame *msg) {
 }
 
 void handleButtonRequest(Frame *msg) {
-  // can0_ButtonRequest_T unpacked_msg;
-  //
-  // unpack_can0_ButtonRequest(msg, &unpacked_msg);
-  //
-  // buttons.RTD          = unpacked_msg.RTD;
-  // buttons.DriverReset  = unpacked_msg.DriverReset;
-  // buttons.ScrollSelect = unpacked_msg.ScrollSelect;
+  can0_ButtonRequest_T unpacked_msg;
 
-  // TODO/HACK: Fix CANlib and replace correct unpacker.
-  buttons.RTD         = (msg->data[0] & 2) != 0;
-  buttons.DriverReset = (msg->data[0] & 4) != 0;
+  unpack_can0_ButtonRequest(msg, &unpacked_msg);
+
+  buttons.RTD          = unpacked_msg.RTD;
+  buttons.DriverReset  = unpacked_msg.DriverReset;
+  buttons.ScrollSelect = unpacked_msg.ScrollSelect;
 }
 
-void sendHeartbeatMsg() {
+void send_VCUHeartbeat() {
   LIMIT(can0_VCUHeartbeat);
 
   can0_VCUHeartbeat_T msg;
 
   msg.vcu_state   = get_vcu_state();
   msg.error_state = get_error_state();
+  msg.estop_hit   = gates.sdn;
 
   can0_VCUHeartbeat_Write(&msg);
 }
 
+void send_VCUErrors() {
+  LIMIT(can0_VCUErrors);
+
+  can0_VCUErrors_T msg;
+
+  msg.fatal_gate      = fatal_faults.gate;
+  msg.fatal_precharge = fatal_faults.precharge;
+  msg.fatal_contactor = fatal_faults.contactor;
+  msg.fatal_conflict  = fatal_faults.conflict;
+
+  msg.recoverable_gate      = recoverable_faults.gate;
+  msg.recoverable_heartbeat = recoverable_faults.heartbeat;
+  msg.recoverable_conflict  = recoverable_faults.conflict;
+  msg.recoverable_contactor = recoverable_faults.contactor;
+
+  can0_VCUErrors_Write(&msg);
+}
+
+void send_VCU() {
+  send_VCUHeartbeat();
+  send_VCUErrors();
+}
 
 void sendTorqueCmdMsg(int16_t torque) {
   LIMIT(can0_MCCommand);
@@ -168,7 +193,7 @@ void sendTorqueCmdMsg(int16_t torque) {
 
   msg.torque                        = torque;
   msg.angular_vel                   = 0;
-  msg.direction_is_counterclockwise = 1;
+  msg.direction_is_counterclockwise = false;
   msg.inverter_enabled              = true;
   msg.discharge_enabled             = false;
   msg.speed_mode                    = false;

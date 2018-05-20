@@ -40,27 +40,23 @@
 #define USARTx_RX_IRQHandler          USART1_IRQHandler
 
 // CAN ------------------------------------------------------------
-#define CANx                            CAN1
-#define CANx_CLK_ENABLE() __HAL_RCC_CAN1_CLK_ENABLE()
-#define CANx_GPIO_CLK_ENABLE() __HAL_RCC_GPIOB_CLK_ENABLE()
-
-#define CANx_FORCE_RESET() __HAL_RCC_CAN1_FORCE_RESET()
-#define CANx_RELEASE_RESET() __HAL_RCC_CAN1_RELEASE_RESET()
-
-#define CANx_TX_PIN                    GPIO_PIN_9
-#define CANx_TX_GPIO_PORT              GPIOB
-#define CANx_TX_AF                     GPIO_AF9_CAN1
-#define CANx_RX_PIN                    GPIO_PIN_8
-#define CANx_RX_GPIO_PORT              GPIOB
-#define CANx_RX_AF                     GPIO_AF9_CAN1
-
-#define CANx_RX_IRQn                   CAN1_RX0_IRQn
-#define CANx_RX_IRQHandler             CAN1_RX0_IRQHandler
+// MOVED TO can_handles.h
 
 void USART_Init(uint32_t baudrate);
 static void SystemClock_Config(void);
 
 USART_HandleTypeDef USARTHandle;
 CAN_HandleTypeDef   CanHandle;
+
+#define ASCII_ART "                              _.-='_-         _\r\n \
+                         _.-='   _-          | ||'''''''---._______     __..\r\n \
+             ___.===''''-.______-,,,,,,,,,,,,`-''----' '''''       '''''  __'\r\n \
+      __.--''     __        ,'                   o \\           __        [__|\r\n \
+ __-''=======.--''  ''--.=================================.--''  ''--.=======:\r\n \
+]       [w] : /        \\ : |========================|    : /        \\ :  [w] :\r\n \
+V___________:|          |: |========================|    :|          |:   _-'\r\n \
+ V__________: \\        / :_|=======================/_____: \\        / :__-'\r\n \
+ -----------'  '-____-'  `-------------------------------'  '-____-'\r\n"
+
 
 #endif // ifndef __MAIN_H

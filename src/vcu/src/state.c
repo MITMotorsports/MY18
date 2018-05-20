@@ -9,7 +9,7 @@ void advance_states(void) {
   advance_error_state();
 
   // If we have errored, pause VCU FSM execution.
-  if (get_error_state() == NO_ERROR_STATE) {
+  if (error_may_advance()) {
     advance_vcu_state();
   }
 }

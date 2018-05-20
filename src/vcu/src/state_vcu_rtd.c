@@ -14,6 +14,9 @@ void enter_vcu_state_rtd() {
   // Clear MC faults
   printf("[VCU FSM : RTD] Clearing MC faults...\r\n");
   send_mc_fault_clear();
+
+  // Turn on battery fans
+  HAL_GPIO_WritePin(GPIO(BFAN), GPIO_PIN_SET);
 }
 
 void update_vcu_state_rtd() {
@@ -23,7 +26,7 @@ void update_vcu_state_rtd() {
   if (buttons.RTD) {
     if (rtd_started) {
       if (HAL_GetTick() - rtd_last > RTD_HOLD) {
-        if (brk_pressed) {
+        if (true || brk_pressed) {
           set_vcu_state(VCU_STATE_DRIVING);
           return;
         }

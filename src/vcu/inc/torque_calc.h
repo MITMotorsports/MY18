@@ -7,7 +7,7 @@
 #include "fault_pedalbox.h"
 
 // TODO: Extract MAX_TORQUE from RMS EEPROM (over CAN?)
-#define MAX_TORQUE    1600 // unit: dNm
+#define MAX_TORQUE    2400 // unit: dNm
 #define MAX_ACCEL_VAL 1000
 #define MIN_ACCEL_VAL 0
 

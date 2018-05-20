@@ -8,6 +8,16 @@
 #=============================================================================#
 
 #=============================================================================#
+# hash based versioning
+#=============================================================================#
+
+GIT_HASH = $(shell git rev-parse --verify HEAD | cut -c 1-8)
+SRC_HASH = $(shell tar c src inc Makefile | sha1sum | cut -c 1-8)
+HASH = G$(GIT_HASH)S$(SRC_HASH)
+
+AUTHOR = $(shell git config user.name)
+
+#=============================================================================#
 # toolchain configuration
 #=============================================================================#
 
@@ -50,7 +60,7 @@ LD_SCRIPT = linker/STM32F217IGHx_FLASH.ld
 OUT_DIR = bin
 
 # C definitions
-C_DEFS = -D$(FAMILY) -DUSE_FULL_LL_DRIVER
+C_DEFS = -D$(FAMILY) -DUSE_FULL_LL_DRIVER -DHASH="\"$(HASH)\"" -DAUTHOR="\"$(AUTHOR)\""
 
 # ASM definitions
 AS_DEFS = -D__STARTUP_CLEAR_BSS
@@ -288,7 +298,7 @@ $(DIS) : $(ELF)
 # print the size of the objects and the .elf file
 #-----------------------------------------------------------------------------#
 
-print_size :
+print_size:
 	@echo 'Size of modules:'
 	$(SIZE) -B -t --common $(OBJS) $(USER_OBJS)
 	@echo ' '
@@ -300,7 +310,7 @@ print_size :
 # create the desired output directory
 #-----------------------------------------------------------------------------#
 
-make_output_dir :
+make_output_dir:
 	$(shell mkdir $(OUT_DIR_F) 2>/dev/null)
 
 #-----------------------------------------------------------------------------#

@@ -21,7 +21,7 @@ void update_conflicts() {
     // Clear conflict if accel was released.
     // printf("[FAULT : PEDALBOX : BRAKE_ACCEL] Conflict.\r\n");
     if ((pedalbox_min(accel) < PEDALBOX_ACCEL_RELEASE) &&
-        (pedalbox.brake_1 < PEDALBOX_BRAKE_BEGIN)) {
+        (pedalbox.brake_2 < PEDALBOX_BRAKE_BEGIN)) {
       printf("[FAULT : PEDALBOX : BRAKE_ACCEL] Potential release.\r\n");
       conflicts.brake_accel = false;
     }
@@ -31,7 +31,7 @@ void update_conflicts() {
     }
   }
 
-  bool brake_engaged = pedalbox.brake_1 > PEDALBOX_BRAKE_BEGIN;
+  bool brake_engaged = pedalbox.brake_2 > PEDALBOX_BRAKE_BEGIN;
   bool accel_engaged = pedalbox_min(accel) > PEDALBOX_ACCEL_BEGIN;
 
   conflicts.brake_accel = brake_engaged && accel_engaged;
