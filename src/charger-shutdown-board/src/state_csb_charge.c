@@ -1,7 +1,11 @@
 #include "state_csb_charge.h"
 
 can0_ChargerCommand_T msg;
+can0_ChargerStatus1_T status;
+
 uint32_t can_wait;
+
+Frame frame;
 
 void enter_csb_state_charge(void){
 	Board_Print("Entered Charge!\n");
@@ -23,8 +27,13 @@ void update_csb_state_charge(void){
 		set_csb_state(CSB_STATE_ROOT);
 		Board_Print("Fault tripped, entering root state\n");
 	}
-	if(msTicks-can_wait>750){
+	if(msTicks-can_wait>150){
 		can0_ChargerCommand_Write(&msg);
+		can_handle_charger_status();
 		can_wait=msTicks;
 	}
+}
+
+void can_handle_charger_status(void){
+	unpack_can0_ChargerStatus1(&frame, &status);
 }

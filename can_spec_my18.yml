@@ -681,8 +681,34 @@ buses:
             length: 16
             c_type: uint16_t
             signed: false 
-          Reserved:
+      ChargerStatus1:
+        can_id: 0x305
+        is_big_endian: false
+        segments:
+          status:
+            position: 0
+            length: 8
+            c_type: uint16_t
+            signed: false
+          MainsCurrent:
+            position: 8
+            length: 16
+            c_type: uint16_t
+            signed: false
+          DCCurrent:
+            position: 24
+            length: 16
+            c_type: uint16_t
+            signed: false
+          DCVoltage:
+            position: 40
+            length: 16
+            c_type: uint16_t
+            signed: false
+          MinsFreq:
             position: 56
             length: 8
-            signed: false
             c_type: uint16_t
+            signed: false
+          
+

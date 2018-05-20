@@ -46,8 +46,10 @@ int main(void) {
 
 	//no more init
 
+	enter_csb_state_charge();
 	while(1){
-		advance_csb_state();
+//		advance_csb_state();
+		update_csb_state_charge();
  	}
 	return 0;
 }
