@@ -3,9 +3,17 @@
 volatile uint32_t msTicks;
 const uint32_t OscRateIn = 24000000;
 
+
+can0_ChargerStatus1_T status;
+
 #define SCL 0, 4
 #define SDA 0, 5
-#define SLAVEADDR 0x64
+#define MCP23017_ADDRESS 0x20
+#define MCP23017_IODIRA 0x00
+#define MCP23017_IODIRB 0x01
+#define MCP23017_GPIOA 0x12
+#define MCP23017_GPIOB 0x13
+
 
 static I2C_XFER_T xfer;
 static uint8_t i2c_rx_buf[20];
@@ -39,19 +47,76 @@ int main(void) {
 
 	xfer.txBuff = i2c_tx_buf;
 	xfer.rxBuff = i2c_rx_buf;
-	xfer.slaveAddr = 0x64;
+	xfer.slaveAddr = MCP23017_ADDRESS;
 
 
 	Board_Print("I2C Initialized\n");
 
 	//no more init
-
-	enter_csb_state_charge();
+	init_MCP2307();
+	MCP2307_writeGPIOAB(0xFFFF);
 	while(1){
 //		advance_csb_state();
-		update_csb_state_charge();
+//		can_receive();
  	}
 	return 0;
 }
 
 
+void init_MCP2307(void){
+	send_i2c_lcd_byte(0xFF,MCP23017_IODIRA); //all inputs on port A
+       	send_i2c_lcd_byte(0xFF,MCP23017_IODIRB); //all inputs on port B
+}
+
+/*
+uint16_t MCP2307_readGPIOAB() {
+  uint16_t ba = 0;
+  uint8_t a;
+
+  // read the current GPIO output latches
+  WIRE.beginTransmission(MCP23017_ADDRESS | i2caddr);
+  wiresend(MCP23017_GPIOA);	
+  WIRE.endTransmission();
+  
+  WIRE.requestFrom(MCP23017_ADDRESS | i2caddr, 2);
+  a = wirerecv();
+  ba = wirerecv();
+  ba <<= 8;
+  ba |= a;
+
+  return ba;
+}
+*/
+
+void MCP2307_writeGPIOAB(uint16_t ba) {
+	send_i2c_lcd_byte(ba&0xFF,MCP23017_GPIOA); 
+	send_i2c_lcd_byte(ba >> 8,MCP23017_GPIOB); 
+}
+void poll_lcd(uint8_t slave_register){
+	Chip_I2C_MasterCmdRead(I2C0, xfer.slaveAddr, slave_register, i2c_rx_buf, 1);
+}
+
+void send_i2c_lcd_byte(uint8_t slave_data, uint8_t slave_register){
+	i2c_tx_buf[0] = slave_register;
+	i2c_tx_buf[1] = slave_data;
+	xfer.txSz = 2;
+
+	Chip_I2C_MasterSend(I2C0, xfer.slaveAddr, xfer.txBuff, xfer.txSz);
+}
+
+
+void can_receive(void){
+	Can_RawRead(&can_input);
+	can0_T msgForm = identify_can0(&can_input);
+	switch(msgForm){
+	case can0_ChargerStatus1:
+		can_receive_status_1();
+		break;
+	default:
+		break;
+	}
+}
+
+void can_receive_status_1(void){
+	unpack_can0_ChargerStatus1(&can_input, &status);
+}

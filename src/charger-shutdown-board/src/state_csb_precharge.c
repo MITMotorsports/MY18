@@ -1,7 +1,7 @@
 #include "state_csb_precharge.h"
 
 static uint32_t prechargeTimeout;
-static uint32_t DEAD_RECKON_TIME=300;
+static uint32_t DEAD_RECKON_TIME=5000;
 
 void enter_csb_state_precharge(void){
 	Board_Print("Entered Precharge!\n");
