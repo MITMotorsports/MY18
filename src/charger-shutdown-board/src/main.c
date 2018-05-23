@@ -9,11 +9,12 @@ can0_ChargerStatus1_T status;
 #define SCL 0, 4
 #define SDA 0, 5
 #define MCP23017_ADDRESS 0x20
-#define MCP23017_IODIRA 0x00
-#define MCP23017_IODIRB 0x01
-#define MCP23017_GPIOA 0x12
-#define MCP23017_GPIOB 0x13
-
+#define MCP23017_IODIR 0x00
+#define MCP23017_GPIO 0x12
+#define MCP23017_IOCON 0x0A
+#define MCP23017_GPINTEN 0x04
+#define MCP23017_PORTA 0x00
+#define MCP23017_PORTB 0x01
 
 static I2C_XFER_T xfer;
 static uint8_t i2c_rx_buf[20];
@@ -23,6 +24,15 @@ void SysTick_Handler(void) {
   msTicks++;
 }
 
+void I2C_IRQHandler(void)
+{
+	if (Chip_I2C_IsMasterActive(I2C0)) {
+		Chip_I2C_MasterStateHandler(I2C0);
+	}
+	else {
+		Chip_I2C_SlaveStateHandler(I2C0);
+	}
+}
 
 int main(void) {
   	SystemCoreClockUpdate();
@@ -48,25 +58,52 @@ int main(void) {
 	xfer.txBuff = i2c_tx_buf;
 	xfer.rxBuff = i2c_rx_buf;
 	xfer.slaveAddr = MCP23017_ADDRESS;
-
-
+	bool b=1;
 	Board_Print("I2C Initialized\n");
-
+	uint32_t wait=msTicks;
 	//no more init
 	init_MCP2307();
-	MCP2307_writeGPIOAB(0xFFFF);
-	while(1){
+//	MCP2307_writeGPIOAB(0xFFFF);
+	send_i2c(0xFF, MCP23017_GPIO );	
+       	while(1){
 //		advance_csb_state();
 //		can_receive();
- 	}
+
+			if(msTicks-wait>500){
+				send_i2c(0xFF, MCP23017_GPIO);
+				/*
+
+				b=!b;
+				if(b){
+					Board_Print("Low\r\n");
+					MCP2307_writeGPIOAB(0);
+				}
+				else{
+					MCP2307_writeGPIOAB(0xFFFF);
+					Board_Print("High\r\n");
+				}
+			*/	
+	
+				wait=msTicks;
+			}
+	}
+
+
+ 	
 	return 0;
 }
 
 
 void init_MCP2307(void){
-	send_i2c_lcd_byte(0xFF,MCP23017_IODIRA); //all inputs on port A
-       	send_i2c_lcd_byte(0xFF,MCP23017_IODIRB); //all inputs on port B
+	send_i2c(0, MCP23017_IOCON);
+	send_i2c_2(0,0, MCP23017_GPIO);
+	send_i2c_2(0,0,MCP23017_IODIR);
+//	send_i2c(0, MCP23017_IODIRB)
+	send_i2c_2(0,0,MCP23017_GPINTEN);
+	read_i2c(MCP23017_PORTA );
+	read_i2c(MCP23017_PORTB );
 }
+
 
 /*
 uint16_t MCP2307_readGPIOAB() {
@@ -89,14 +126,21 @@ uint16_t MCP2307_readGPIOAB() {
 */
 
 void MCP2307_writeGPIOAB(uint16_t ba) {
-	send_i2c_lcd_byte(ba&0xFF,MCP23017_GPIOA); 
-	send_i2c_lcd_byte(ba >> 8,MCP23017_GPIOB); 
+	send_i2c_2(ba&0xFF,ba>>8,MCP23017_GPIO); 
 }
-void poll_lcd(uint8_t slave_register){
+void read_i2c(uint8_t slave_register){
 	Chip_I2C_MasterCmdRead(I2C0, xfer.slaveAddr, slave_register, i2c_rx_buf, 1);
 }
+void send_i2c_2(uint8_t slave_data1, uint8_t slave_data2, uint8_t slave_register){
+	i2c_tx_buf[0] = slave_register;
+	i2c_tx_buf[1] = slave_data1;
+	i2c_tx_buf[2] = slave_data2;
 
-void send_i2c_lcd_byte(uint8_t slave_data, uint8_t slave_register){
+	xfer.txSz = 3;
+
+	Chip_I2C_MasterSend(I2C0, xfer.slaveAddr, xfer.txBuff, xfer.txSz);
+}
+void send_i2c(uint8_t slave_data, uint8_t slave_register){
 	i2c_tx_buf[0] = slave_register;
 	i2c_tx_buf[1] = slave_data;
 	xfer.txSz = 2;
