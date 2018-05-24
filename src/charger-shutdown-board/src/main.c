@@ -125,12 +125,11 @@ uint16_t MCP2307_readGPIOAB() {
 }
 */
 
-void MCP2307_writeGPIOAB(uint16_t ba) {
-	send_i2c_2(ba&0xFF,ba>>8,MCP23017_GPIO); 
-}
+
 void read_i2c(uint8_t slave_register){
 	Chip_I2C_MasterCmdRead(I2C0, xfer.slaveAddr, slave_register, i2c_rx_buf, 1);
 }
+
 void send_i2c_2(uint8_t slave_data1, uint8_t slave_data2, uint8_t slave_register){
 	i2c_tx_buf[0] = slave_register;
 	i2c_tx_buf[1] = slave_data1;
