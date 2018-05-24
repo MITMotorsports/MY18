@@ -69,21 +69,10 @@ int main(void) {
 //		advance_csb_state();
 //		can_receive();
 
-			if(msTicks-wait>500){
-				send_i2c(0xFF, MCP23017_GPIO);
-				/*
-
-				b=!b;
-				if(b){
-					Board_Print("Low\r\n");
-					MCP2307_writeGPIOAB(0);
-				}
-				else{
-					MCP2307_writeGPIOAB(0xFFFF);
-					Board_Print("High\r\n");
-				}
-			*/	
-	
+			if(msTicks-wait>2){
+				send_i2c(0, MCP23017_GPIO);
+				send_i2c(0, MCP23017_GPIO+1); //write to port b
+					
 				wait=msTicks;
 			}
 	}
