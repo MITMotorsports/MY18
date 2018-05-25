@@ -1,4 +1,3 @@
-
 #include "state_csb_charge.h"
 
 can0_ChargerCommand_T msg;
@@ -44,10 +43,14 @@ void update_csb_state_charge(void){
 		Board_Print("\r\n Current: ");
 		Board_PrintNum(current, 10);
 
-		command(LCD_SETDDRAMADDR |  9);
-		write_str(voltage, 3);
+		char buff[4];
+		itoa(voltage,buff,10);
+	       	command(LCD_SETDDRAMADDR |  9);
+		lcd_write_str(buff, 4);
+
 		command(LCD_SETDDRAMADDR | 9 + 0x40);
-		write_str(current, 3);
+		itoa(current,buff,10);
+	       	lcd_write_str(buff, 3);
 
 	}
 }

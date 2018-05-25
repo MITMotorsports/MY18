@@ -118,7 +118,7 @@ void write(uint8_t value){
 	send(value, 0xFF);
 }
 
-void write_str(char* str, int len){
+void lcd_write_str(char* str, int len){
 	for(int i = 0; i<len ;i++){
 		write(str[i]);
 	}
@@ -170,14 +170,14 @@ void init_lcd(){
 	command(LCD_ENTRYMODESET|displaymode );
 	command(0x32);
 	command(0x32);//turn off white bars
-	write_str("voltage:",8);
+	lcd_write_str("voltage:",8);
 	command(LCD_SETDDRAMADDR | 0x40 ); //move the cursor to 2nd row
-	write_str("current:",8);
+	lcd_write_str("current:",8);
 //Update voltage and current values
 	command(LCD_SETDDRAMADDR |  9);
-	write_str("READY", 5);
+	lcd_write_str("READY", 5);
 	command(LCD_SETDDRAMADDR | 9 + 0x40);
-	write_str("READY", 5);
+	lcd_write_str("READY", 5);
 
 }
 
