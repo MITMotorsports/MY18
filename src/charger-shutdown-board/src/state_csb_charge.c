@@ -43,6 +43,12 @@ void update_csb_state_charge(void){
 		Board_PrintNum(voltage, 10);
 		Board_Print("\r\n Current: ");
 		Board_PrintNum(current, 10);
+
+		command(LCD_SETDDRAMADDR |  9);
+		write_str(voltage, 3);
+		command(LCD_SETDDRAMADDR | 9 + 0x40);
+		write_str(current, 3);
+
 	}
 }
 

@@ -3,6 +3,15 @@ static I2C_XFER_T xfer;
 static uint8_t i2c_rx_buf[20];
 static uint8_t i2c_tx_buf[20];
 
+void I2C_IRQHandler(void)
+{
+	if (Chip_I2C_IsMasterActive(I2C0)) {
+		Chip_I2C_MasterStateHandler(I2C0);
+	}
+	else {
+		Chip_I2C_SlaveStateHandler(I2C0);
+	}
+}
 
 void init_MCP2307(void){
 	Chip_SYSCTL_DeassertPeriphReset(RESET_I2C0);
@@ -13,6 +22,10 @@ void init_MCP2307(void){
 	NVIC_EnableIRQ(I2C0_IRQn);
 
 	Board_Print("I2C Initialized\n");
+
+	xfer.txBuff = i2c_tx_buf;
+	xfer.rxBuff = i2c_rx_buf;
+	xfer.slaveAddr = MCP23017_ADDRESS;
 
 	send_i2c(0, MCP23017_IOCON);
 	send_i2c_2(0,0, MCP23017_GPIO); 
@@ -162,9 +175,9 @@ void init_lcd(){
 	write_str("current:",8);
 //Update voltage and current values
 	command(LCD_SETDDRAMADDR |  9);
-	write_str("270", 3);
+	write_str("READY", 5);
 	command(LCD_SETDDRAMADDR | 9 + 0x40);
-	write_str("008", 3);
+	write_str("READY", 5);
 
 }
 

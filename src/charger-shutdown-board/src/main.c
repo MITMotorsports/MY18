@@ -12,15 +12,7 @@ void SysTick_Handler(void) {
   msTicks++;
 }
 
-void I2C_IRQHandler(void)
-{
-	if (Chip_I2C_IsMasterActive(I2C0)) {
-		Chip_I2C_MasterStateHandler(I2C0);
-	}
-	else {
-		Chip_I2C_SlaveStateHandler(I2C0);
-	}
-}
+
 
 int main(void) {
   	SystemCoreClockUpdate();
@@ -41,8 +33,8 @@ int main(void) {
 	init_lcd();
 	
        	while(1){
-//		advance_csb_state();
-//		can_receive();
+		advance_csb_state();
+		can_receive();
 
 	}
 
