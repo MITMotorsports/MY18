@@ -2,7 +2,7 @@
 
 static CSB_STATE_T currentState;
 
-
+/*
 void init_csb_state(void){
 	set_csb_state(CSB_STATE_ROOT);
 }
@@ -24,9 +24,9 @@ void set_csb_state(CSB_STATE_T newState){
 	}
 	currentState=newState;
 }
+*/
 
-
-
+/*
 void advance_csb_state(void){
 	switch(get_csb_state()){
 	case CSB_STATE_ROOT:
@@ -43,7 +43,7 @@ void advance_csb_state(void){
 	
 	}
 }
-
+*/
 
 CSB_STATE_T get_csb_state(void){
 	return currentState;

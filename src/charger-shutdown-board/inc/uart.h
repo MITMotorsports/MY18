@@ -1,5 +1,5 @@
+#ifndef _UART_H_
 #define _UART_H_
-#ifdef _UART_H_
 
 #include "chip.h"
 

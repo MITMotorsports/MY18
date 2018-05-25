@@ -7,7 +7,6 @@
 #include "lcd.h"
 
 
-
 extern volatile uint32_t msTicks;
 
 void can_receive(void);

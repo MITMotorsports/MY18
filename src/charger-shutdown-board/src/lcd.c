@@ -1,4 +1,53 @@
-#include "lcd.h"
+/*
+static I2C_XFER_T xfer;
+static uint8_t i2c_rx_buf[20];
+static uint8_t i2c_tx_buf[20];
+
+
+void init_MCP2307(void){
+	Chip_SYSCTL_DeassertPeriphReset(RESET_I2C0);
+	Chip_I2C_Init(I2C0);
+	Chip_I2C_SetClockRate(I2C0, 100000);
+
+	Chip_I2C_SetMasterEventHandler(I2C0, Chip_I2C_EventHandler);
+	NVIC_EnableIRQ(I2C0_IRQn);
+
+	Board_Print("I2C Initialized\n");
+
+	send_i2c(0, MCP23017_IOCON);
+	send_i2c_2(0,0, MCP23017_GPIO); 
+	send_i2c_2(0x1F,0,MCP23017_IODIR); //lower 5 bits button input
+	send_i2c(0x1F, MCP23017_GPPU); //pullup lower 5 bits
+	send_i2c_2(0,0,MCP23017_GPINTEN);
+	read_i2c(MCP23017_PORTA );
+	read_i2c(MCP23017_PORTB );
+}
+
+//To read GPIO call read_i2c(MCP23017_GPIO) for port a and read_i2c(MCP23017_GPIO+1) for port B
+//
+
+void read_i2c(uint8_t slave_register){
+	Chip_I2C_MasterCmdRead(I2C0, xfer.slaveAddr, slave_register, i2c_rx_buf, 1);
+}
+
+void send_i2c_2(uint8_t slave_data1, uint8_t slave_data2, uint8_t slave_register){
+	i2c_tx_buf[0] = slave_register;
+	i2c_tx_buf[1] = slave_data1;
+	i2c_tx_buf[2] = slave_data2;
+
+	xfer.txSz = 3;
+
+	Chip_I2C_MasterSend(I2C0, xfer.slaveAddr, xfer.txBuff, xfer.txSz);
+}
+
+void send_i2c(uint8_t slave_data, uint8_t slave_register){
+	i2c_tx_buf[0] = slave_register;
+	i2c_tx_buf[1] = slave_data;
+	xfer.txSz = 2;
+
+	Chip_I2C_MasterSend(I2C0, xfer.slaveAddr, xfer.txBuff, xfer.txSz);
+}
+
 
 void digital_write(uint8_t pin, uint8_t data){
 	uint8_t reg = MCP23017_GPIO;
@@ -26,7 +75,6 @@ void pulseEnable(void) {
 void write4bits(uint8_t data){
 	uint8_t out;
 	uint8_t reg = MCP23017_GPIO+1;
-	uint32_t wait;
 
 	read_i2c(reg);
 	out=i2c_rx_buf[0]; //read port b
@@ -105,6 +153,16 @@ void init_lcd(){
   //_displaymode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
   // set the entry mode
   command(LCD_ENTRYMODESET|displaymode );
+	command(0x32);
+	command(0x32);//turn off white bars
+	write_str("voltage:",8);
+	command(LCD_SETDDRAMADDR | 0x40 ); //move the cursor to 2nd row
+	write_str("current:",8);
+//Update voltage and current values
+	command(LCD_SETDDRAMADDR |  9);
+	write_str("270", 3);
+	command(LCD_SETDDRAMADDR | 9 + 0x40);
+	write_str("008", 3);
 
 }
 
@@ -115,3 +173,9 @@ void send(uint8_t value, uint8_t mode) {
     write4bits(value>>4);
     write4bits(value);
 }
+
+inline void delay (uint32_t time){
+	uint32_t wait=msTicks;
+	while(msTicks-wait <time){}
+}
+*/

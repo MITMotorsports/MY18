@@ -1,4 +1,19 @@
-#include "MCP_23017.h"
+#ifndef _LCD_H_
+#define _LCD_H_
+#include "chip.h"
+#include <stdint.h>
+
+#define SCL 0, 4
+#define SDA 0, 5
+#define MCP23017_ADDRESS 0x20
+#define MCP23017_IODIR 0x00
+#define MCP23017_GPIO 0x12
+#define MCP23017_IOCON 0x0A
+#define MCP23017_GPINTEN 0x04
+#define MCP23017_PORTA 0x00
+#define MCP23017_PORTB 0x01
+#define MCP23017_GPPU 0x0C
+
 
 // commands
 #define LCD_CLEARDISPLAY 0x01
@@ -45,12 +60,35 @@
 #define BUTTON_SELECT 0x01
 
 
-const uint8_t _rs_pin=15;
+extern volatile uint32_t msTicks;
+
+
+ const uint8_t _rs_pin=15;
+
+/*
 const uint8_t _rw_pin=14;
 const uint8_t _enable_pin=13;
 const uint8_t _data_pins[4]={12,11,10,9};
 const uint8_t _button_pins[5]={0,1,2,3,4};
 
+
 const uint8_t displayfn=  LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
 const uint8_t displaycontrol = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF;  
 const uint8_t displaymode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
+*/
+
+
+void init_MCP2307(void);
+void read_i2c(uint8_t);
+void send_i2c_2(uint8_t slave_data1, uint8_t slve_data2, uint8_t slave_register);
+void send_i2c(uint8_t slave_data, uint8_t slave_register);
+void digital_write(uint8_t pin, uint8_t data);
+void pulseEnable(void);
+void write4bits(uint8_t data);
+void command(uint8_t value);
+void write(uint8_t value);
+void write_str(char* str, int len);
+void clear(void);
+void display(void);
+
+#endif //ifndef lcd.h
