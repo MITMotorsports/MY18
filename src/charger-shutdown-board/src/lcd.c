@@ -1,4 +1,4 @@
-/*
+#include "lcd.h"
 static I2C_XFER_T xfer;
 static uint8_t i2c_rx_buf[20];
 static uint8_t i2c_tx_buf[20];
@@ -21,6 +21,7 @@ void init_MCP2307(void){
 	send_i2c_2(0,0,MCP23017_GPINTEN);
 	read_i2c(MCP23017_PORTA );
 	read_i2c(MCP23017_PORTB );
+	send_i2c(0, MCP23017_GPIO +1);
 }
 
 //To read GPIO call read_i2c(MCP23017_GPIO) for port a and read_i2c(MCP23017_GPIO+1) for port B
@@ -152,7 +153,7 @@ void init_lcd(){
   // Initialize to default text direction (for romance languages)
   //_displaymode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
   // set the entry mode
-  command(LCD_ENTRYMODESET|displaymode );
+	command(LCD_ENTRYMODESET|displaymode );
 	command(0x32);
 	command(0x32);//turn off white bars
 	write_str("voltage:",8);
@@ -178,4 +179,4 @@ inline void delay (uint32_t time){
 	uint32_t wait=msTicks;
 	while(msTicks-wait <time){}
 }
-*/
+

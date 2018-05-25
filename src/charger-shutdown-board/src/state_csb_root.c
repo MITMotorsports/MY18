@@ -1,3 +1,4 @@
+
 #include "state_csb_root.h"
 
 void enter_csb_state_root(void){
@@ -9,3 +10,4 @@ void update_csb_state_root(void){
 	if(no_fault) //if the top 3 fets are open low side contactors are open and precharge has been entered
 		set_csb_state(CSB_STATE_PRECHARGE);
 }
+

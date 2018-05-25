@@ -63,19 +63,17 @@
 extern volatile uint32_t msTicks;
 
 
- const uint8_t _rs_pin=15;
-
-/*
-const uint8_t _rw_pin=14;
-const uint8_t _enable_pin=13;
-const uint8_t _data_pins[4]={12,11,10,9};
-const uint8_t _button_pins[5]={0,1,2,3,4};
+static const uint8_t _rs_pin=15;
 
 
-const uint8_t displayfn=  LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
-const uint8_t displaycontrol = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF;  
-const uint8_t displaymode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
-*/
+static const uint8_t _rw_pin=14;
+static const uint8_t _enable_pin=13;
+static const uint8_t _data_pins[4]={12,11,10,9};
+static const uint8_t _button_pins[5]={0,1,2,3,4};
+static const uint8_t displayfn=  LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
+static const uint8_t displaycontrol = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF;  
+static const uint8_t displaymode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
+
 
 
 void init_MCP2307(void);

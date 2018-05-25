@@ -1,5 +1,4 @@
 #include "main.h"
-#include "lcd.h"
 
 volatile uint32_t msTicks;
 const uint32_t OscRateIn = 24000000;
@@ -38,8 +37,8 @@ int main(void) {
 //	// LPC_SYSCTL->SYSAHBCLKCTRL |= 0x20; 	// Enable clock and power to I2C block
 
 	//no more init
-//	init_MCP2307();
-//	init_lcd();
+	init_MCP2307();
+	init_lcd();
 	
        	while(1){
 		advance_csb_state();
