@@ -41,8 +41,8 @@ int main(void) {
 	init_lcd();
 	
        	while(1){
-		advance_csb_state();
-		can_receive();
+//		advance_csb_state();
+//		can_receive();
 
 	}
 

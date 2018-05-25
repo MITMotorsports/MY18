@@ -22,6 +22,7 @@ void init_MCP2307(void){
 	read_i2c(MCP23017_PORTA );
 	read_i2c(MCP23017_PORTB );
 	send_i2c(0, MCP23017_GPIO +1);
+	Board_Print("Done MCP Init\n");
 }
 
 //To read GPIO call read_i2c(MCP23017_GPIO) for port a and read_i2c(MCP23017_GPIO+1) for port B
