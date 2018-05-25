@@ -4,6 +4,7 @@
 #include "pins.h"
 #include "uart.h"
 #include "CANlib.h"
+#include "lcd.h"
 
 
 
