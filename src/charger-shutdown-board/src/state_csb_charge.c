@@ -43,15 +43,11 @@ void update_csb_state_charge(void){
 		Board_Print("\r\n Current: ");
 		Board_PrintNum(current, 10);
 
-		char buff[4];
-		itoa(voltage,buff,10);
-	       	command(LCD_SETDDRAMADDR |  9);
-		lcd_write_str(buff, 4);
-
-		command(LCD_SETDDRAMADDR | 9 + 0x40);
-		itoa(current,buff,10);
-	       	lcd_write_str(buff, 3);
-
+	       	lcd_command(LCD_SETDDRAMADDR |  9); //move cursor
+		lcd_print_num(voltage);
+		
+		lcd_command(LCD_SETDDRAMADDR | 9 + 0x40); //cursor again
+		lcd_print_num(current);
 	}
 }
 
