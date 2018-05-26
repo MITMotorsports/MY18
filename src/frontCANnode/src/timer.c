@@ -1,6 +1,3 @@
-// Copied from MY17
-// Pin numbers match, so nothing changed
-
 #include "timer.h"
 
 void Timer_Init(void) {

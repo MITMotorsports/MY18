@@ -112,11 +112,17 @@ void update_wheel_speed() {
       } else {
         calculated_speed = click_time_to_mRPM(moving_avg);
       }
+
       // 32 bit timer speeds are first in the enum, so it's safe to look back at
       // their values
       switch (wheel) {
         case LEFT_16:
-          if (speed->rear_left_32b_wheel_speed < click_time_to_mRPM(MAX_16_TIME)) {
+          // If the 32 bit timer says the speed is too slow for the 16 bit timer
+          // to read, ignor the 16 bit timer.
+          // Increase the cutoff by 10% because near the actual minimum speed,
+          // some 16 bit times will overflow and some will not, so the spded
+          // will still be wrong
+          if (speed->rear_left_32b_wheel_speed < click_time_to_mRPM(MAX_16_TIME) * 11 / 10) {
             speed->rear_left_16b_wheel_speed = 0;
           } else {
             speed->rear_left_16b_wheel_speed = calculated_speed;
@@ -126,10 +132,11 @@ void update_wheel_speed() {
           speed->rear_left_32b_wheel_speed = calculated_speed;
           break;
         case RIGHT_16:
-          if (speed->rear_right_32b_wheel_speed < click_time_to_mRPM(MAX_16_TIME)) {
-            speed->rear_left_16b_wheel_speed = 0;
+          // See explanatino for LEFT_16
+          if (speed->rear_right_32b_wheel_speed < click_time_to_mRPM(MAX_16_TIME) * 11 / 10) {
+            speed->rear_right_16b_wheel_speed = 0;
           } else {
-            speed->rear_left_16b_wheel_speed = calculated_speed;
+            speed->rear_right_16b_wheel_speed = calculated_speed;
           }
           break;
         case RIGHT_32:
@@ -138,9 +145,6 @@ void update_wheel_speed() {
         default:
           continue;
       }
-
-
-
     }
   }
 }
