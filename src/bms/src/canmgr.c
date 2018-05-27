@@ -3,6 +3,13 @@
 // CAN Initialization
 void Board_CAN_Init() {
   init_can0_bms();
+
+  // Only accept current sensor energy for SoC calculation
+  // HACK: Infrequent messages such as CellTemperatures get cleared out of the
+  //       TX buffer due to Can_Error_RX_BUFFER_FULL occurring before transmission
+  //       thus reinitializing CAN and emptying the TX buffer.
+  Can_SetFilter(2047, can0_CurrentSensor_Energy_can_id);
+  // Can_SetFilter(0, 1);  // Disable ALL incoming messages
 }
 
 void Board_CAN_Receive(BMS_INPUT_T *bms_input) {
@@ -77,7 +84,7 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
 
   LIMIT(can0_BMSHeartbeat_period);
 
-  can0_BMSHeartbeat_T msg;
+  can0_BMSHeartbeat_T msg = {};
 
   msg.error_pec = Check_Error(ERROR_LTC_PEC, false);
 
@@ -110,7 +117,7 @@ void can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
   const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
   // TODO: Get info about argmin/argmax.
-  can0_CellVoltages_T msg;
+  can0_CellVoltages_T msg = {};
 
   msg.min = ps->pack_cell_min_mV;
   msg.max = ps->pack_cell_max_mV;

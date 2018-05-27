@@ -472,8 +472,6 @@ buses:
             c_type: int32_t
             signed: true
             unit: W
-
-
       CurrentSensor_Energy:
         can_id: 0x528
         period: 50ms
@@ -615,7 +613,7 @@ buses:
             length: 16
             signed: true
             c_type: int16_t
-            unit: ddeg
+            unit: decideg
           motor_speed:
             position: 16
             length: 16
@@ -633,7 +631,7 @@ buses:
             length: 16
             signed: true
             c_type: int16_t
-            unit: ddeg
+            unit: decideg
       MCFlux_Info:
         can_id: 0x0A8
         period: 0.01s
