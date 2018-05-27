@@ -175,6 +175,22 @@ void oled_rprint_num(NHD_US2066_OLED *oled, int num) {
     oled_rprint_num_pad(oled, num, 0);    
 }
 
+// print `num` divided by `div` to `decimals` decimal points
+void oled_print_num_dec(NHD_US2066_OLED *oled, int num, int div, int decimals) {
+    if (div < 0) return;
+    oled_print_num(oled, num/div);
+    if (div > 1) {
+        oled_print(oled, ".");
+        int d = 1;
+        for (int i = 0; i < num; i++) {
+            div /= 10;
+            int dec = (num / div) % 10;
+            char c =  (char) dec + '0';
+            oled_print_char(oled, c);
+        }
+    }
+}
+
 void oled_rprint_num_pad(NHD_US2066_OLED *oled, int num, int pad) {
     char str[30] = {'\0'};
     itoa(num, str, 10);
