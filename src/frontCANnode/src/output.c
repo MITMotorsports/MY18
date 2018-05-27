@@ -8,41 +8,40 @@
 
 static bool resettingPeripheral = false;
 
-Can_ErrorID_T write_can_brakethrottle_msg(Input_T *input);
-Can_ErrorID_T write_can_wheel_speed_msg(Input_T *input);
+extern Input_T input;
+extern volatile uint32_t msTicks;
+
+Can_ErrorID_T write_can_brakethrottle_msg(void);
+Can_ErrorID_T write_can_wheel_speed_msg(void);
 void handle_can_error(Can_ErrorID_T error);
 bool period_reached(uint32_t start, uint32_t period, uint32_t msTicks);
 
-void Output_initialize(Output_T *output) {
-  output->can_brakethrottle_ms = 0;
-  output->can_wheel_speed_ms = 0;
-  output->send_brakethrottle_msg = false;
-  output->send_wheel_speed_msg = false;
+void Output_process_output() {
+  handle_can_error(write_can_brakethrottle_msg());
+  handle_can_error(write_can_wheel_speed_msg());
 }
 
-void Output_process_output(Input_T *input, Output_T *output) {
-  handle_can_error(write_can_brakethrottle_msg(input));
-}
 
-Can_ErrorID_T write_can_brakethrottle_msg(Input_T *input) {
+Can_ErrorID_T write_can_brakethrottle_msg() {
   LIMIT(can0_FrontCanNodeBrakeThrottle_period);
 
   can0_FrontCanNodeBrakeThrottle_T msg;
 
-  msg.brake_1 = input->adc->brake_1;
-  msg.brake_2 = input->adc->brake_2;
-  msg.accel_1 = input->adc->accel_1;
-  msg.accel_2 = input->adc->accel_2;
+  msg.brake_1 = input.adc->brake_1;
+  msg.brake_2 = input.adc->brake_2;
+  msg.accel_1 = input.adc->accel_1;
+  msg.accel_2 = input.adc->accel_2;
 
   return can0_FrontCanNodeBrakeThrottle_Write(&msg);
 }
 
-Can_ErrorID_T write_can_wheel_speed_msg(Input_T *input) {
+Can_ErrorID_T write_can_wheel_speed_msg() {
+  LIMIT(can0_FrontCanNodeWheelSpeed_period)
 
   can0_FrontCanNodeWheelSpeed_T msg;
 
-  msg.front_right_wheel_speed = input->speed->front_right_wheel_speed;
-  msg.front_left_wheel_speed = input->speed->front_left_wheel_speed;
+  msg.front_right_wheel_speed = input.speed->front_right_wheel_speed;
+  msg.front_left_wheel_speed = input.speed->front_left_wheel_speed;
 
   return can0_FrontCanNodeWheelSpeed_Write(&msg);
 }
@@ -117,9 +116,4 @@ void handle_can_error(Can_ErrorID_T error) {
       break;
     }
   }
-}
-
-bool period_reached(uint32_t start, uint32_t period, uint32_t msTicks) {
-  const uint32_t next_time = start + period;
-  return next_time < msTicks;
 }

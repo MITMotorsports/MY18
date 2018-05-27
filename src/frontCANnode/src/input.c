@@ -1,65 +1,63 @@
 #include "input.h"
-#include "adc.h"
 
-#define ACCEL_SCALE_MAX 1000
+extern Input_T input;
+extern volatile uint32_t msTicks;
 
-#define ADC_UPDATE_PERIOD_MS 10
-
-#define ACCEL_1_LOWER_BOUND 135
-#define ACCEL_1_UPPER_BOUND 504
-
-#define ACCEL_2_LOWER_BOUND 245
-#define ACCEL_2_UPPER_BOUND 894
-
-// Some wheel speed stuff (copied from MY17)
-#define WHEEL_SPEED_TIMEOUT_MS 100
-#define WHEEL_SPEED_READ_PERIOD_MS 10
-
-// Microsecond = 1 millionth of a second
-#define MICROSECONDS_PER_SECOND_F 1000000.0
-// 1000 millirevs = 1 rev
-#define MILLIREVS_PER_REV_F 1000.0
-#define SECONDS_PER_MINUTE 60
-
-void update_adc(Input_T *input);
-void update_wheel_speed(Speed_Input_T *speed, uint32_t msTicks);
-void update_can(Input_T *input);
+void update_adc(void);
+void update_wheel_speed(void);
+void update_can(void);
 
 uint16_t transform1(uint32_t accel_1_raw);
 uint16_t transform2(uint32_t accel_2_raw);
 
+uint16_t adc_log[10];
 
-void Input_initialize(Input_T *input) {
-  input->adc->accel_1 = 0;
-  input->adc->accel_2 = 0;
-  input->adc->accel_1_raw = 0;
-  input->adc->accel_2_raw = 0;
-  input->adc->brake_1 = 0;
-  input->adc->brake_2 = 0;
-  input->adc->steering_pot = 0;
+void Input_fill_input() {
+  update_adc();
+  update_wheel_speed();
 }
 
-void Input_fill_input(Input_T *input) {
-  update_adc(input);
-  update_wheel_speed(input->speed, input->msTicks);
-}
-
-void update_adc(Input_T *input) {
-  ADC_Input_T *adc = input->adc;
+void update_adc() {
+  ADC_Input_T *adc = input.adc;
   uint32_t next_updated = adc->last_updated + ADC_UPDATE_PERIOD_MS;
 
-  if (next_updated < input->msTicks) {
-    adc->accel_1_raw = ADC_Read(ACCEL_1_CHANNEL);
-    adc->accel_2_raw = ADC_Read(ACCEL_2_CHANNEL);
-    adc->brake_1 = ADC_Read(BRAKE_1_CHANNEL);
-    adc->brake_2 = ADC_Read(BRAKE_2_CHANNEL);
-    adc->steering_pot = ADC_Read(STEERING_CHANNEL);
-    adc->last_updated = input->msTicks;
 
-    adc->accel_1 = transform1(adc->accel_1_raw);
-    adc->accel_2 = transform2(adc->accel_2_raw);
-    // adc->accel_1 = adc->accel_1_raw;
-    // adc->accel_2 = adc->accel_2_raw;
+  if (next_updated < input.msTicks) {
+    // Update accels
+    for (int i = 0; i < ACCEL_LOG_LENGTH - 1; i++) {
+      adc->accel_1_raws[i] = adc->accel_1_raws[i+1];
+      adc->accel_2_raws[i] = adc->accel_2_raws[i+1];
+    }
+    adc->accel_1_raws[ACCEL_LOG_LENGTH-1] = ADC_Read(ACCEL_1_CHANNEL);
+    adc->accel_2_raws[ACCEL_LOG_LENGTH-1] = ADC_Read(ACCEL_2_CHANNEL);
+    uint32_t accel_1_sum = 0;
+    uint32_t accel_2_sum = 0;
+    for (int i = 0; i < ACCEL_LOG_LENGTH; i ++) {
+      accel_1_sum += adc->accel_1_raws[i];
+      accel_2_sum += adc->accel_2_raws[i];
+    }
+    adc->accel_1 = transform1(accel_1_sum / ACCEL_LOG_LENGTH);
+    adc->accel_2 = transform2(accel_2_sum / ACCEL_LOG_LENGTH);
+
+    // Update brakes
+    for (int i = 0; i < BRAKE_LOG_LENGTH - 1; i++) {
+      adc->brake_1_raws[i] = adc->brake_1_raws[i+1];
+      adc->brake_2_raws[i] = adc->brake_2_raws[i+1];
+    }
+    adc->brake_1_raws[BRAKE_LOG_LENGTH-1] = ADC_Read(BRAKE_1_CHANNEL);
+    adc->brake_2_raws[BRAKE_LOG_LENGTH-1] = ADC_Read(BRAKE_2_CHANNEL);
+    uint32_t brake_1_sum = 0;
+    uint32_t brake_2_sum = 0;
+    for (int i = 0; i < BRAKE_LOG_LENGTH; i ++) {
+      brake_1_sum += adc->brake_1_raws[i];
+      brake_2_sum += adc->brake_2_raws[i];
+    }
+    adc->brake_1 = brake_1_sum / BRAKE_LOG_LENGTH;
+    adc->brake_2 = brake_2_sum / BRAKE_LOG_LENGTH;
+
+    // Update other sensors
+    adc->steering_pot = ADC_Read(STEERING_CHANNEL);
+    adc->last_updated = input.msTicks;
   }
 }
 
@@ -74,7 +72,8 @@ uint32_t click_time_to_mRPM(uint32_t us_per_click) {
   return (uint32_t)mrev_per_min;
 }
 
-void update_wheel_speed(Speed_Input_T *speed, uint32_t msTicks) {
+void update_wheel_speed() {
+  Speed_Input_T* speed = input.speed;
   if (speed->last_speed_read_ms + WHEEL_SPEED_READ_PERIOD_MS < msTicks) {
     // Capture values
     speed->last_speed_read_ms = msTicks;
@@ -152,7 +151,8 @@ uint16_t transform2(uint32_t accel_2_raw) {
   return linear_transfer_fn(accel_2_raw, ACCEL_SCALE_MAX, ACCEL_2_LOWER_BOUND, ACCEL_2_UPPER_BOUND);
 }
 
-void Input_handle_interrupt(Speed_Input_T *speed, uint32_t msTicks, uint32_t curr_tick, Wheel_T wheel) {
+void Input_handle_interrupt(uint32_t msTicks, uint32_t curr_tick, Wheel_T wheel) {
+  Speed_Input_T *speed = input.speed;
   if (speed->disregard[wheel]) {
     speed->num_ticks[wheel] = 0;
     speed->big_sum[wheel] = 0;
@@ -180,4 +180,8 @@ void Input_handle_interrupt(Speed_Input_T *speed, uint32_t msTicks, uint32_t cur
 
   // Update timestamp
   speed->last_updated[wheel] = msTicks;
+}
+
+uint32_t filter(uint32_t reading) {
+  return reading;
 }
