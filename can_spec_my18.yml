@@ -472,8 +472,6 @@ buses:
             c_type: int32_t
             signed: true
             unit: W
-
-
       CurrentSensor_Energy:
         can_id: 0x528
         period: 50ms
@@ -503,7 +501,7 @@ buses:
               FAN_DISABLE: 0xA
       ButtonRequest:
         can_id: 0x0D8
-        period: 51ms
+        period: 73ms
         is_big_endian: true
         segments:
           RTD:
@@ -520,7 +518,7 @@ buses:
             c_type: bool
       MCCommand:
         can_id: 0x0C0 # From manual
-        period: 19ms  # MC needs a message at 2 Hz or higher
+        period: 29ms  # MC needs a message at 2 Hz or higher
         is_big_endian: false
         segments:
           torque:
@@ -615,7 +613,7 @@ buses:
             length: 16
             signed: true
             c_type: int16_t
-            unit: ddeg
+            unit: decideg
           motor_speed:
             position: 16
             length: 16
@@ -633,7 +631,7 @@ buses:
             length: 16
             signed: true
             c_type: int16_t
-            unit: ddeg
+            unit: decideg
       MCFlux_Info:
         can_id: 0x0A8
         period: 0.01s
