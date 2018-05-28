@@ -8,6 +8,9 @@ int main(void) {
   Board_ADC_Init();
   Board_CAN_Init();
   EEPROM_Init(LPC_SSP1, EEPROM_BAUD, EEPROM_CS_PIN);
+  I2C_Init();
+  Thermostat_Init();
+
   SOC_Init(&pack_status);
 
   Error_Init();

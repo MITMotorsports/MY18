@@ -9,8 +9,8 @@ void Thermostat_Init(void) {
 	//TODO: hyst and os limits for thermostat
 }
 
-float Thermostat_Read(void) { //first few bits are for decimal values
-	return I2C_Read(THERMO_ADDR | READ, 1);
+float Thermostat_Read(void) {
+	return I2C_Read(THERMO_ADDR | READ, 1); //may include the thermo decimal vals
 }
 
 void Thermostat_Shutdown(void) {

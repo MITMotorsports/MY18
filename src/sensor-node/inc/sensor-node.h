@@ -6,7 +6,7 @@
 #define CH0 0x0
 #define CH1 0x8
 #define CH2 0x10
-#define CH3 0x18 //starts measuring at 2517 for some reason
+#define CH3 0x18
 #define CH4 0x20
 #define CH5 0x28
 #define CH6 0x30
