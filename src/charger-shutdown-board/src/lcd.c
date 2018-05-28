@@ -28,7 +28,7 @@ void init_MCP2307(void){
 	xfer.slaveAddr = MCP23017_ADDRESS;
 
 	send_i2c(0, MCP23017_IOCON);
-	send_i2c_2(0,0, MCP23017_GPIO); 
+	send_i2c_2(0,0, MCP23017_GPIO);
 	send_i2c_2(0x1F,0,MCP23017_IODIR); //lower 5 bits button input
 	send_i2c(0x1F, MCP23017_GPPU); //pullup lower 5 bits
 	send_i2c_2(0,0,MCP23017_GPINTEN);
@@ -98,7 +98,7 @@ void write4bits(uint8_t data){
 	      out &= ~(1 << (_data_pins[i]-8));
 	      out |= ((data >> i) & 0x1) << (_data_pins[i]-8);
     	}
-	
+
 	out &= ~(1 << (_enable_pin-8));
 	send_i2c(out,reg); //Make sure to Ground enable
 
@@ -107,34 +107,14 @@ void write4bits(uint8_t data){
 	send_i2c(out,reg);
 	out &= ~(1 << (_enable_pin-8));
 	send_i2c(out,reg);
-
 }
 
 void command(uint8_t value){
 	send(value,0);
 }
 
-void write(uint8_t value){
-	send(value, 0xFF);
-}
-
-void lcd_write_str(char* str, int len){
-	for(int i = 0; i<len ;i++){
-		write(str[i]);
-	}
-}
-
-void clear(){
-  command(LCD_CLEARDISPLAY);  // clear display, set cursor position to zero
-  delay(3);
-}
-
-void display(){
-  command(LCD_DISPLAYCONTROL  | displaycontrol);
-}
-
 void init_lcd(){
-	
+
 	uint32_t lcd_wait=msTicks;
 	while(msTicks-lcd_wait<50)
 	digital_write(_rs_pin,0);
@@ -146,19 +126,19 @@ void init_lcd(){
     // second try
 	write4bits(0x03);
 	delay(5);
-    
+
     // third go!
-	write4bits(0x03); 
+	write4bits(0x03);
 
 	delay(1);
     // finally, set to 8-bit interface
-	write4bits(0x02); 
+	write4bits(0x02);
 
 
 
-	command(LCD_FUNCTIONSET |displayfn);  
+	command(LCD_FUNCTIONSET |displayfn);
   // turn the display on with no cursor or blinking default
-//  _displaycontrol = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF;  
+//  _displaycontrol = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF;
   display();
 
   // clear it off
@@ -189,8 +169,35 @@ void send(uint8_t value, uint8_t mode) {
     write4bits(value);
 }
 
-inline void delay (uint32_t time){
+void lcd_write(uint8_t value){
+	send(value, 0xFF);
+}
+
+void lcd_print(char* str) {
+  while (*str != '\0') lcd_write(*(str++));
+}
+
+void clear(){
+  lcd_command(LCD_CLEARDISPLAY);  // clear display, set cursor position to zero
+  delay(3);
+}
+
+void display(){
+  lcd_command(LCD_DISPLAYCONTROL  | displaycontrol);
+}
+
+void lcd_set_cursor(uint8_t col, uint8_t row){
+	int row_offsets[] = { 0x00, 0x40, 0x14, 0x54 };
+	lcd_command(LCD_SETDDRAMADDR | (col + row_offsets[row]));
+}
+
+void lcd_print_num(int32_t num, unsigned base) {
+	char buff[10];
+	itoa(num, buff, base);
+	lcd_print(buff);
+}
+
+inline void delay(uint32_t time){
 	uint32_t wait=msTicks;
 	while(msTicks-wait <time){}
 }
-

@@ -71,7 +71,7 @@ static const uint8_t _enable_pin=13;
 static const uint8_t _data_pins[4]={12,11,10,9};
 static const uint8_t _button_pins[5]={0,1,2,3,4};
 static const uint8_t displayfn=  LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
-static const uint8_t displaycontrol = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF;  
+static const uint8_t displaycontrol = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF;
 static const uint8_t displaymode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
 
 
@@ -84,8 +84,9 @@ void digital_write(uint8_t pin, uint8_t data);
 void pulseEnable(void);
 void write4bits(uint8_t data);
 void command(uint8_t value);
-void write(uint8_t value);
-void write_str(char* str, int len);
+void lcd_write(uint8_t value);
+void lcd_print(char* str);
+void lcd_print_num(int32_t num, unsigned base);
 void clear(void);
 void display(void);
 
