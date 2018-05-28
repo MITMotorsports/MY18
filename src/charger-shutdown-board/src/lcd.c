@@ -107,30 +107,10 @@ void write4bits(uint8_t data){
 	send_i2c(out,reg);
 	out &= ~(1 << (_enable_pin-8));
 	send_i2c(out,reg);
-
 }
 
 void lcd_command(uint8_t value){
 	send(value,0);
-}
-
-void write(uint8_t value){
-	send(value, 0xFF);
-}
-
-void lcd_write_str(char* str, int len){
-	for(int i = 0; i<len ;i++){
-		write(str[i]);
-	}
-}
-
-void clear(){
-  lcd_command(LCD_CLEARDISPLAY);  // clear display, set cursor position to zero
-  delay(3);
-}
-
-void display(){
-  lcd_command(LCD_DISPLAYCONTROL  | displaycontrol);
 }
 
 void init_lcd(){
@@ -189,20 +169,35 @@ void send(uint8_t value, uint8_t mode) {
     write4bits(value);
 }
 
+void lcd_write(uint8_t value){
+	send(value, 0xFF);
+}
+
+void lcd_print(char* str) {
+  while (*str != '\0') lcd_write(*(str++));
+}
+
+void clear(){
+  lcd_command(LCD_CLEARDISPLAY);  // clear display, set cursor position to zero
+  delay(3);
+}
+
+void display(){
+  lcd_command(LCD_DISPLAYCONTROL  | displaycontrol);
+}
+
 void lcd_set_cursor(uint8_t col, uint8_t row){
 	int row_offsets[] = { 0x00, 0x40, 0x14, 0x54 };
 	lcd_command(LCD_SETDDRAMADDR | (col + row_offsets[row]));
-
 }
 
-void lcd_print_num (uint8_t num){
-	char buff[4];
-	itoa(num,buff,10);
-	lcd_write_str(buff, 4);
-
+void lcd_print_num(int32_t num, unsigned base) {
+	char buff[10];
+	itoa(num, buff, base);
+	lcd_print(buff);
 }
 
-inline void delay (uint32_t time){
+inline void delay(uint32_t time){
 	uint32_t wait=msTicks;
 	while(msTicks-wait <time){}
 }
