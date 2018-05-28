@@ -5,11 +5,11 @@
 
 #define ADC_UPDATE_PERIOD_MS 10
 
-#define ACCEL_1_LOWER_BOUND 138
-#define ACCEL_1_UPPER_BOUND 488
+#define ACCEL_1_LOWER_BOUND 135
+#define ACCEL_1_UPPER_BOUND 504
 
-#define ACCEL_2_LOWER_BOUND 256
-#define ACCEL_2_UPPER_BOUND 881
+#define ACCEL_2_LOWER_BOUND 245
+#define ACCEL_2_UPPER_BOUND 894
 
 // Some wheel speed stuff (copied from MY17)
 #define WHEEL_SPEED_TIMEOUT_MS 100
@@ -58,6 +58,8 @@ void update_adc(Input_T *input) {
 
     adc->accel_1 = transform1(adc->accel_1_raw);
     adc->accel_2 = transform2(adc->accel_2_raw);
+    // adc->accel_1 = adc->accel_1_raw;
+    // adc->accel_2 = adc->accel_2_raw;
   }
 }
 

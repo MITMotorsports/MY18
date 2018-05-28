@@ -19,6 +19,9 @@ static uint32_t nextOLEDUpdate;
 
 static bool active_aero_enabled = false;
 
+static can0_ButtonRequest_T button_request;
+static int previous_scroll_select;
+
 #define BUTTON_DOWN false
 #define OLED_UPDATE_INTERVAL_MS 50
 
@@ -65,9 +68,14 @@ void dispatch_init() {
 
     nextOLEDUpdate = 0;
 
+    memset(&button_request, 0, sizeof(button_request));
+    previous_scroll_select = 0;
+
     // init carstats fields
     carstats.battery_voltage         = -1;
-    carstats.lowest_cell_voltage     = -1;
+    carstats.min_cell_voltage        = -1;
+    carstats.max_cell_voltage        = -1;
+    carstats.min_cell_temp           = -1;
     carstats.max_cell_temp           = -1;
     carstats.power                   = -1;
     carstats.soc                     = -1;
@@ -78,6 +86,8 @@ void dispatch_init() {
     carstats.rear_left_wheel_speed   = -1;
     carstats.rear_right_wheel_speed  = -1;
     carstats.max_igbt_temp           = -1;
+    carstats.current                 = -1;
+    carstats.voltage_2               = -1;
     carstats.vcu_state               = can0_VCUHeartbeat_vcu_state_VCU_STATE_ROOT;
     carstats.last_vcu_heartbeat      = msTicks;
     carstats.last_bms_heartbeat      = msTicks;
@@ -102,7 +112,13 @@ void dispatch_update() {
         page_manager_prev_page(&page_manager);
     }
 
-    can_update_carstats(&carstats);
+    int res = can_update_carstats(&carstats, &button_request);
+    if (previous_scroll_select != 8 && res == 8) {
+        page_manager_next_page(&page_manager); 
+        oled_clear(&oled);
+    }
+    previous_scroll_select = res;
+
     update_lights();
 
     if (msTicks > nextOLEDUpdate) {

@@ -47,7 +47,7 @@ LINT = oclint
 #=============================================================================#
 
 # project name
-PROJECT = dashboard
+PROJECT = ltc_battery_controller
 
 # core type
 CORE = cortex-m0

@@ -7,10 +7,12 @@
 
 typedef struct {
     int battery_voltage;
+    int voltage_2;
     int battery_current;
     int max_cell_voltage, min_cell_voltage;
     int max_cell_temp, min_cell_temp;
     int power;
+    int current;
 
     bool brake_pressed;
     bool accel_pressed;
@@ -28,11 +30,14 @@ typedef struct {
 
     can0_VCUHeartbeat_vcu_state_T vcu_state;
     can0_VCUHeartbeat_error_state_T error_state;
+    bool estop_hit;
     uint32_t last_vcu_heartbeat;
 
     int16_t max_igbt_temp;
+
+    can0_VCUErrors_T vcu_errors;
 } carstats_t;
 
-void can_update_carstats(carstats_t *cs);
+int can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request);
 
 #endif

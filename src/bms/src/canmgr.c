@@ -3,6 +3,13 @@
 // CAN Initialization
 void Board_CAN_Init() {
   init_can0_bms();
+
+  // Only accept current sensor energy for SoC calculation
+  // HACK: Infrequent messages such as CellTemperatures get cleared out of the
+  //       TX buffer due to Can_Error_RX_BUFFER_FULL occurring before transmission
+  //       thus reinitializing CAN and emptying the TX buffer.
+  Can_SetFilter(2047, can0_CurrentSensor_Energy_can_id);
+  // Can_SetFilter(0, 1);  // Disable ALL incoming messages
 }
 
 void Board_CAN_Receive(BMS_INPUT_T *bms_input) {
@@ -18,7 +25,7 @@ void Board_CAN_Receive(BMS_INPUT_T *bms_input) {
     can_receive_current(bms_input);
     break;
 
-  case can0_CurrentSensor_Voltage:
+  case can0_CurrentSensor_Voltage1:
     can_receive_voltage(bms_input);
     break;
 
@@ -48,10 +55,10 @@ void can_receive_current(BMS_INPUT_T *bms_input) {
 }
 
 void can_receive_voltage(BMS_INPUT_T *bms_input) {
-  can0_CurrentSensor_Voltage_T msg;
+  can0_CurrentSensor_Voltage1_T msg;
 
-  unpack_can0_CurrentSensor_Voltage(&can_input, &msg);
-  bms_input->pack_status->pack_voltage_mV = msg.voltage;
+  unpack_can0_CurrentSensor_Voltage1(&can_input, &msg);
+  bms_input->pack_status->pack_voltage_mV = msg.result;
 }
 
 void can_receive_energy(BMS_INPUT_T *bms_input) {
@@ -77,7 +84,7 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
 
   LIMIT(can0_BMSHeartbeat_period);
 
-  can0_BMSHeartbeat_T msg;
+  can0_BMSHeartbeat_T msg = {};
 
   msg.error_pec = Check_Error(ERROR_LTC_PEC, false);
 
@@ -89,7 +96,6 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
   msg.error_H_contactor_weld = Check_Error(ERROR_H_CONTACTOR_WELD, false);
   msg.error_cell_under_voltage = Check_Error(ERROR_CELL_UNDER_VOLTAGE, false);
   msg.error_cell_over_voltage = Check_Error(ERROR_CELL_OVER_VOLTAGE, false);
-  msg.error_cell_under_temp = Check_Error(ERROR_CELL_UNDER_TEMP, false);
   msg.error_cell_over_temp = Check_Error(ERROR_CELL_OVER_TEMP, false);
   msg.error_control_flow = Check_Error(ERROR_CONTROL_FLOW, false);
   msg.error_blown_fuse = 0;
@@ -111,7 +117,7 @@ void can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
   const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
   // TODO: Get info about argmin/argmax.
-  can0_CellVoltages_T msg;
+  can0_CellVoltages_T msg = {};
 
   msg.min = ps->pack_cell_min_mV;
   msg.max = ps->pack_cell_max_mV;

@@ -63,9 +63,11 @@ void Error_Init(void) {
     error_vector[i].time_stamp = 0;
     error_vector[i].count      = 0;
 
-    errors_to_check[i] = true;
-
+    Error_Recognize(i);
   }
+
+  Error_Ignore(ERROR_H_CONTACTOR_WELD);
+  Error_Ignore(ERROR_H_CONTACTOR_ERROR);
 }
 
 void Error_Present(ERROR_T er_t) {
@@ -116,22 +118,21 @@ static ERROR_HANDLER_STATUS_T _Error_Handle_Count_and_Timeout(
 //to be called in loop in main
 bool Error_Should_Fault(void) {
   for (ERROR_T i = 0; i < ERROR_NUM_ERRORS; ++i) {
-
-    //if error is present and we care
-    if((error_vector[i].error || error_vector[i].handling ) && errors_to_check[i]) {
-      if (Check_Error(i, false)) {
-        return true;
-      }
+    // if error is present and we care
+    if (Check_Error(i, false)) {
+      return true;
     }
   }
+
   return false;
 }
 
 //called when checking which errors to send over CAN
 bool Check_Error(ERROR_T er_t, bool Force_Check) {
-  if (errors_to_check[er_t] || Force_Check) {
+  if (Error_Care(er_t) || Force_Check) {
     return error_handler_vector[er_t].handler(&error_vector[er_t], error_handler_vector[er_t].timeout) == FAULT;
-  } else {
+  }
+  else {
     return false;
   }
 }
@@ -144,10 +145,14 @@ ERROR_STATUS_T* Get_Errors(void) {
   return error_vector;
 }
 
-void Error_Ignore(ERROR_T er_t) {
+inline bool Error_Care(ERROR_T er_t) {
+  return errors_to_check[er_t];
+}
+
+inline void Error_Ignore(ERROR_T er_t) {
   errors_to_check[er_t] = false;
 }
 
-void Error_Recognize(ERROR_T er_t) {
+inline void Error_Recognize(ERROR_T er_t) {
   errors_to_check[er_t] = true;
 }

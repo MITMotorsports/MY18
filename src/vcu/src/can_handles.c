@@ -12,6 +12,8 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *hcan) {
     printf("[CAN RX] ERROR: HAL_CAN_StateTypeDef is %d\r\n", hcan->State);
     printf("[CAN RX] ERROR: ErrorCode is %d\r\n",            hcan->ErrorCode);
 
+    // CANx_FORCE_RESET();
+    // CANx_RELEASE_RESET();
     // handle_fatal_fault();
   }
 }
@@ -20,9 +22,11 @@ void HAL_CAN_TxCpltCallback(CAN_HandleTypeDef *hcan) {
   // printf("TX CB CALLED\r\n");
 }
 
-// void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan) {
-//   printf("[CAN ERR] %d\r\n", (int)hcan->State);
-// }
+void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan) {
+  CANx_FORCE_RESET();
+  CANx_RELEASE_RESET();
+  printf("[CAN ERR] %d\r\n", (int)hcan->State);
+}
 
 void handleCAN(CAN_HandleTypeDef *hcan) {
   Frame frame;
@@ -47,7 +51,7 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleCellVoltagesMsg(&frame);
     break;
 
-  case can0_CurrentSensor_Voltage:
+  case can0_CurrentSensor_Voltage1:
     handleCurrentSensorVoltageMsg(&frame);
     break;
 
@@ -117,11 +121,11 @@ void handleBMSHeartbeatMsg(Frame *frame) {
 }
 
 void handleCurrentSensorVoltageMsg(Frame *msg) {
-  can0_CurrentSensor_Voltage_T unpacked_msg;
+  can0_CurrentSensor_Voltage1_T unpacked_msg;
 
-  unpack_can0_CurrentSensor_Voltage(msg, &unpacked_msg);
+  unpack_can0_CurrentSensor_Voltage1(msg, &unpacked_msg);
 
-  cs_readings.V_bus = unpacked_msg.voltage;
+  cs_readings.V_bus = unpacked_msg.result;
 
   heartbeats.current_sensor = HAL_GetTick();
 }
@@ -138,17 +142,13 @@ void handleCellVoltagesMsg(Frame *msg) {
 }
 
 void handleButtonRequest(Frame *msg) {
-  // can0_ButtonRequest_T unpacked_msg;
-  //
-  // unpack_can0_ButtonRequest(msg, &unpacked_msg);
-  //
-  // buttons.RTD          = unpacked_msg.RTD;
-  // buttons.DriverReset  = unpacked_msg.DriverReset;
-  // buttons.ScrollSelect = unpacked_msg.ScrollSelect;
+  can0_ButtonRequest_T unpacked_msg;
 
-  // TODO/HACK: Fix CANlib and replace correct unpacker.
-  buttons.RTD         = (msg->data[0] & 2) != 0;
-  buttons.DriverReset = (msg->data[0] & 4) != 0;
+  unpack_can0_ButtonRequest(msg, &unpacked_msg);
+
+  buttons.RTD          = unpacked_msg.RTD;
+  buttons.DriverReset  = unpacked_msg.DriverReset;
+  buttons.ScrollSelect = unpacked_msg.ScrollSelect;
 }
 
 void send_VCUHeartbeat() {
@@ -158,6 +158,7 @@ void send_VCUHeartbeat() {
 
   msg.vcu_state   = get_vcu_state();
   msg.error_state = get_error_state();
+  msg.estop_hit   = gates.sdn;
 
   can0_VCUHeartbeat_Write(&msg);
 }
