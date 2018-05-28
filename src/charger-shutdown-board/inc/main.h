@@ -5,6 +5,7 @@
 #include "uart.h"
 #include "CANlib.h"
 #include "lcd.h"
+#include "state_csb.h"
 
 
 extern volatile uint32_t msTicks;

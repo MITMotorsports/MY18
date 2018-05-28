@@ -1,5 +1,14 @@
 #include "gpio.h"
-#include "uart.h"
+
+bool any_gate_fault() {
+  return !Board_Pin_Read(PIN_BMS_FAULT) ||
+         !Board_Pin_Read(PIN_IMD_IN)    ||
+         !Board_Pin_Read(PIN_INTERLOCK);
+}
+
+void openLowSideContactor() {
+
+}
 
 // Digital GPIO Initialization
 void Board_GPIO_Init(void) {
@@ -16,40 +25,41 @@ void Board_GPIO_Init(void) {
   Chip_GPIO_SetPinState(LPC_GPIO, PIN_LED2, false);
 
 
-
   // Charge Enable Pin
   Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_CHARGER_ENABLE);
-  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CHARGER_ENABLE, (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
-                       
-  //BMS Fault Pin
+  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CHARGER_ENABLE,
+                       (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
+
+  // BMS Fault Pin
   Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_BMS_FAULT);
-  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_BMS_FAULT, (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
+  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_BMS_FAULT,
+                       (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
 
-//IMD Fault Pin
+  // IMD Fault Pin
   Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_IMD_IN);
-  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_IMD_IN, (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
- 
-//Interlock Fault Pin
+  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_IMD_IN,
+                       (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
+
+  // Interlock Fault Pin
   Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_INTERLOCK);
-  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_INTERLOCK, (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
+  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_INTERLOCK,
+                       (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
 
-//Precharge Pin
-
+  // Precharge Pin
   Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_PRECHARGE);
   Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_PRECHARGE, IOCON_FUNC0);
   Chip_GPIO_SetPinState(LPC_GPIO, PIN_PRECHARGE, false);
-  
-  //Contactors Closed
+
+  // Contactors Closed
   Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_CONTACTORS_CLOSED);
-  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTORS_CLOSED, (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
+  Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTORS_CLOSED,
+                       (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
 
-  //I2C Initialization
-	
-	Chip_SYSCTL_PeriphReset(RESET_I2C0); // Reset the I2C Peripheral
-	Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_4, IOCON_FUNC1); // SCL
-	Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_5, IOCON_FUNC1); // SDA
+  // I2C Initialization
 
-	
+  Chip_SYSCTL_PeriphReset(RESET_I2C0); // Reset the I2C Peripheral
+  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_4, IOCON_FUNC1); // SCL
+  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_5, IOCON_FUNC1); // SDA
 }
 
 // Set the value of a GPIO pin
@@ -66,7 +76,3 @@ inline bool Board_Pin_Read(uint8_t port, uint8_t pin) {
 inline void Board_Pin_Toggle(uint8_t port, uint8_t pin) {
   Chip_GPIO_SetPinState(LPC_GPIO, port, pin, !Board_Pin_Read(port, pin));
 }
-
-
-
-

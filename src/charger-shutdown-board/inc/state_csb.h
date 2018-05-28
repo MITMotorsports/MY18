@@ -19,7 +19,6 @@ typedef enum{
 
 
 void init_csb_state(void);
-//
 void set_csb_state(CSB_STATE_T newState);
 void advance_csb_state(void);
 CSB_STATE_T get_csb_state(void);

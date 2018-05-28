@@ -110,7 +110,7 @@ void write4bits(uint8_t data){
 
 }
 
-void lcd_command(uint8_t value){
+void command(uint8_t value){
 	send(value,0);
 }
 
@@ -125,12 +125,12 @@ void lcd_write_str(char* str, int len){
 }
 
 void clear(){
-  lcd_command(LCD_CLEARDISPLAY);  // clear display, set cursor position to zero
+  command(LCD_CLEARDISPLAY);  // clear display, set cursor position to zero
   delay(3);
 }
 
 void display(){
-  lcd_command(LCD_DISPLAYCONTROL  | displaycontrol);
+  command(LCD_DISPLAYCONTROL  | displaycontrol);
 }
 
 void init_lcd(){
@@ -156,7 +156,7 @@ void init_lcd(){
 
 
 
-	lcd_command(LCD_FUNCTIONSET |displayfn);  
+	command(LCD_FUNCTIONSET |displayfn);  
   // turn the display on with no cursor or blinking default
 //  _displaycontrol = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF;  
   display();
@@ -167,16 +167,16 @@ void init_lcd(){
   // Initialize to default text direction (for romance languages)
   //_displaymode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
   // set the entry mode
-	lcd_command(LCD_ENTRYMODESET|displaymode );
-	lcd_command(0x32);
-	lcd_command(0x32);//turn off white bars
+	command(LCD_ENTRYMODESET|displaymode );
+	command(0x32);
+	command(0x32);//turn off white bars
 	lcd_write_str("voltage:",8);
-	lcd_command(LCD_SETDDRAMADDR | 0x40 ); //move the cursor to 2nd row
+	command(LCD_SETDDRAMADDR | 0x40 ); //move the cursor to 2nd row
 	lcd_write_str("current:",8);
 //Update voltage and current values
-	lcd_command(LCD_SETDDRAMADDR |  9);
+	command(LCD_SETDDRAMADDR |  9);
 	lcd_write_str("READY", 5);
-	lcd_command(LCD_SETDDRAMADDR | 9 + 0x40);
+	command(LCD_SETDDRAMADDR | 9 + 0x40);
 	lcd_write_str("READY", 5);
 
 }
@@ -187,19 +187,6 @@ void send(uint8_t value, uint8_t mode) {
     digital_write(_rw_pin, 0);
     write4bits(value>>4);
     write4bits(value);
-}
-
-void lcd_set_cursor(uint8_t col, uint8_t row){
-	int row_offsets[] = { 0x00, 0x40, 0x14, 0x54 };
-	lcd_command(LCD_SETDDRAMADDR | (col + row_offsets[row]));
-
-}
-
-void lcd_print_num (uint8_t num){
-	char buff[4];
-	itoa(num,buff,10);
-	lcd_write_str(buff, 4);
-
 }
 
 inline void delay (uint32_t time){
