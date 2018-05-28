@@ -42,8 +42,8 @@ void write_can_left_wheel_speed_msg() {
 
   can0_FrontCanNodeLeftWheelSpeed_T msg;
 
-  msg.rear_left_32b_wheel_speed = input.speed->rear_left_32b_wheel_speed;
-  msg.rear_left_16b_wheel_speed = input.speed->rear_left_16b_wheel_speed;
+  msg.can_node_left_32b_wheel_speed = input.speed->can_node_left_32b_wheel_speed;
+  msg.can_node_left_16b_wheel_speed = input.speed->can_node_left_16b_wheel_speed;
 
   handle_can_error(can0_FrontCanNodeLeftWheelSpeed_Write(&msg));
 }
@@ -53,8 +53,8 @@ void write_can_right_wheel_speed_msg() {
 
   can0_FrontCanNodeRightWheelSpeed_T msg;
 
-  msg.rear_right_32b_wheel_speed = input.speed->rear_right_32b_wheel_speed;
-  msg.rear_right_16b_wheel_speed = input.speed->rear_right_16b_wheel_speed;
+  msg.can_node_right_32b_wheel_speed = input.speed->can_node_right_32b_wheel_speed;
+  msg.can_node_right_16b_wheel_speed = input.speed->can_node_right_16b_wheel_speed;
 
   handle_can_error(can0_FrontCanNodeRightWheelSpeed_Write(&msg));
 }

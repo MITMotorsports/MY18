@@ -122,25 +122,25 @@ void update_wheel_speed() {
           // Increase the cutoff by 10% because near the actual minimum speed,
           // some 16 bit times will overflow and some will not, so the spded
           // will still be wrong
-          if (speed->rear_left_32b_wheel_speed < click_time_to_mRPM(MAX_16_TIME) * 11 / 10) {
-            speed->rear_left_16b_wheel_speed = 0;
+          if (speed->can_node_left_32b_wheel_speed < click_time_to_mRPM(MAX_16_TIME) * 11 / 10) {
+            speed->can_node_left_16b_wheel_speed = 0;
           } else {
-            speed->rear_left_16b_wheel_speed = calculated_speed;
+            speed->can_node_left_16b_wheel_speed = calculated_speed;
           }
           break;
         case LEFT_32:
-          speed->rear_left_32b_wheel_speed = calculated_speed;
+          speed->can_node_left_32b_wheel_speed = calculated_speed;
           break;
         case RIGHT_16:
           // See explanatino for LEFT_16
-          if (speed->rear_right_32b_wheel_speed < click_time_to_mRPM(MAX_16_TIME) * 11 / 10) {
-            speed->rear_right_16b_wheel_speed = 0;
+          if (speed->can_node_right_32b_wheel_speed < click_time_to_mRPM(MAX_16_TIME) * 11 / 10) {
+            speed->can_node_right_16b_wheel_speed = 0;
           } else {
-            speed->rear_right_16b_wheel_speed = calculated_speed;
+            speed->can_node_right_16b_wheel_speed = calculated_speed;
           }
           break;
         case RIGHT_32:
-          speed->rear_right_32b_wheel_speed = calculated_speed;
+          speed->can_node_right_32b_wheel_speed = calculated_speed;
           break;
         default:
           continue;

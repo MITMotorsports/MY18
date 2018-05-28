@@ -62,10 +62,10 @@ typedef struct {
 
   // Actual values
   // Right is WHEEL2, left is WHEEL1
-  uint32_t rear_right_32b_wheel_speed;
-  uint32_t rear_right_16b_wheel_speed;
-  uint32_t rear_left_32b_wheel_speed;
-  uint32_t rear_left_16b_wheel_speed;
+  uint32_t can_node_left_32b_wheel_speed;
+  uint32_t can_node_left_16b_wheel_speed;
+  uint32_t can_node_right_32b_wheel_speed;
+  uint32_t can_node_right_16b_wheel_speed;
 } Speed_Input_T;
 
 typedef struct {

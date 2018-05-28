@@ -105,14 +105,14 @@ buses:
         period: 10ms
         segments:
           # Wheel speed from 32-bit timer (accurate at most speeds)
-          rear_left_32b_wheel_speed:
+          can_node_left_32b_wheel_speed:
             position: 0
             length: 32
             c_type: uint32_t
             signed: false
             unit: mRPM
           # Wheel speed from 16-bit timer (accurate only at high speeds)
-          rear_left_16b_wheel_speed:
+          can_node_left_16b_wheel_speed:
             position: 32
             length: 32
             c_type: uint32_t
@@ -124,14 +124,14 @@ buses:
         period: 10ms
         segments:
           # Wheel speed from 32-bit timer (accurate at most speeds)
-          rear_right_32b_wheel_speed:
+          can_node_right_32b_wheel_speed:
             position: 0
             length: 32
             c_type: uint32_t
             signed: false
             unit: mRPM
           # Wheel speed from 16-bit timer (accurate only at high speeds)
-          rear_right_16b_wheel_speed:
+          can_node_right_16b_wheel_speed:
             position: 32
             length: 32
             c_type: uint32_t

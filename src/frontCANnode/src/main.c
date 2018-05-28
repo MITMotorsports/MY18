@@ -61,10 +61,10 @@ void initialize_input() {
   }
 
   speed.last_speed_read_ms = 0;
-  speed.rear_right_32b_wheel_speed = 0;
-  speed.rear_right_16b_wheel_speed = 0;
-  speed.rear_left_32b_wheel_speed = 0;
-  speed.rear_left_16b_wheel_speed = 0;
+  speed.can_node_right_32b_wheel_speed = 0;
+  speed.can_node_right_16b_wheel_speed = 0;
+  speed.can_node_left_32b_wheel_speed = 0;
+  speed.can_node_left_16b_wheel_speed = 0;
 
   input.speed = &speed;
 }
