@@ -26,6 +26,8 @@ ERROR_STATE_T set_error_state(ERROR_STATE_T newState);
 
 ERROR_STATE_T get_error_state(void);
 
+bool error_may_advance(void);
+
 // PRIVATE FUNCTIONS
 
 
