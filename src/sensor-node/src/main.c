@@ -73,17 +73,17 @@ int main(void)
 		// println("looping");
 
 		SPI_Read_ADC(ext_adc_data);
-		// for (int i = 0; i < 8; i++) {
-		// 	print("EXT ADC DATA : ");
-		// 	printNum(ext_adc_data[i],10);
-		// 	println("");
-		// }
+		for (int i = 0; i < 2; i++) {
+			print("EXT ADC DATA : ");
+			printNum(ext_adc_data[i],10);
+			println("");
+		}
 		Internal_Read_ADC(int_adc_data);
-		// for (int i = 0; i < 4; i++) {
-		// 	print("INT ADC DATA : ");
-		// 	printNum(int_adc_data[i],10);
-		// 	println("");
-		// }
+		for (int i = 0; i < 4; i++) {
+			print("INT ADC DATA : ");
+			printNum(int_adc_data[i],10);
+			println("");
+		}
 
 		can_transmit(ext_adc_data, int_adc_data);
 
