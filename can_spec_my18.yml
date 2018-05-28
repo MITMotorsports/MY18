@@ -50,6 +50,13 @@ boards:
     publish:
       can0:
         - ButtonRequest
+  sensor_node:
+    arch: arm
+    publish:
+      can0:
+        - ADC_Data1
+        - ADC_Data2
+        - ADC_Data3
   mc:
     subscribe:
       can0:
@@ -518,6 +525,81 @@ buses:
             position: 2
             length: 1
             c_type: bool
+      ADC_Data1:
+        can_id: 0xD9
+        period: 10ms
+        is_big_endian: true
+        segments:
+          shockpot:
+            position: 0
+            length: 16
+            signed: false
+            c_type: uint16_t
+          load_cell:
+            position: 16
+            length: 16
+            signed: false
+            c_type: uint16_t
+          ext_adc_ch2:
+            position: 32
+            length: 16
+            signed: false
+            c_type: uint16_t
+          ext_adc_ch3:
+            position: 48
+            length: 16
+            signed: false
+            c_type: uint16_t
+      ADC_Data2:
+        can_id: 0xDB
+        period: 10ms
+        is_big_endian: true
+        segments:
+          ext_adc_ch4:
+            position: 0
+            length: 16
+            signed: false
+            c_type: uint16_t
+          ext_adc_ch5:
+            position: 16
+            length: 16
+            signed: false
+            c_type: uint16_t
+          ext_adc_ch6:
+            position: 32
+            length: 16
+            signed: false
+            c_type: uint16_t
+          ext_adc_ch7:
+            position: 48
+            length: 16
+            signed: false
+            c_type: uint16_t
+      ADC_Data3:
+        can_id: 0xDD
+        period: 10ms
+        is_big_endian: true
+        segments:
+          int_adc_ch2:
+            position: 0
+            length: 16
+            signed: false
+            c_type: uint16_t
+          int_adc_ch3:
+            position: 16
+            length: 16
+            signed: false
+            c_type: uint16_t
+          int_adc_ch4:
+            position: 32
+            length: 16
+            signed: false
+            c_type: uint16_t
+          int_adc_ch5:
+            position: 48
+            length: 16
+            signed: false
+            c_type: uint16_t
       MCCommand:
         can_id: 0x0C0 # From manual
         period: 19ms  # MC needs a message at 2 Hz or higher
