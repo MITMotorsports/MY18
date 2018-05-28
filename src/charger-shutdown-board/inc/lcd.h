@@ -76,17 +76,25 @@ static const uint8_t displaymode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
 
 
 
+
 void init_MCP2307(void);
+
 void read_i2c(uint8_t slave_register);
 void send_i2c_2(uint8_t slave_data1, uint8_t slve_data2, uint8_t slave_register);
 void send_i2c(uint8_t slave_data, uint8_t slave_register);
+
 void digital_write(uint8_t pin, uint8_t data);
 void pulseEnable(void);
 void write4bits(uint8_t data);
+
 void command(uint8_t value);
 void write(uint8_t value);
-void write_str(char* str, int len);
+void lcd_write_str(char* str, int len);
+void lcd_print_num(uint8_t num);
+
 void clear(void);
 void display(void);
+
+
 
 #endif //ifndef lcd.h

@@ -114,15 +114,6 @@ void lcd_command(uint8_t value){
 	send(value,0);
 }
 
-void write(uint8_t value){
-	send(value, 0xFF);
-}
-
-void lcd_write_str(char* str, int len){
-	for(int i = 0; i<len ;i++){
-		write(str[i]);
-	}
-}
 
 void clear(){
   lcd_command(LCD_CLEARDISPLAY);  // clear display, set cursor position to zero
@@ -201,6 +192,17 @@ void lcd_print_num (uint8_t num){
 	lcd_write_str(buff, 4);
 
 }
+
+void write(uint8_t value){
+	send(value, 0xFF);
+}
+
+void lcd_write_str(char* str, int len){
+	for(int i = 0; i<len ;i++){
+		write(str[i]);
+	}
+}
+
 
 inline void delay (uint32_t time){
 	uint32_t wait=msTicks;
