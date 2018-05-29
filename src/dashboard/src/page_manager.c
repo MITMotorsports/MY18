@@ -188,17 +188,10 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
         oled_print(oled, DATA_UNKNOWN);
     }
 
-    oled_rprint_pad(oled, "CELL", 5);
+    oled_rprint_pad(oled, "CELL ", 4);
     if (pm->stats->min_cell_voltage >= 0) {
         int cell_mV = pm->stats->min_cell_voltage;
-        int cell_V = cell_mV / 1000;
-        int cell_dV = (cell_mV / 100) % 10;
-        int cell_cV = (cell_mV / 10) % 10;
-        oled_rprint_num_pad(oled, cell_V, 3);
-        oled_rprint_pad(oled, ".", 2);
-        oled_rprint_num_pad(oled, cell_dV, 1);
-        oled_rprint_num(oled, cell_cV);
-        //oled_print_num_dec(oled, pm->stats->min_cell_voltage, 1000, 2);
+        oled_print_num_dec(oled, pm->stats->min_cell_voltage, 1000, 2);
     } else {
         oled_rprint(oled, DATA_UNKNOWN);
     }
@@ -222,11 +215,9 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
         oled_print(oled, DATA_UNKNOWN);
     }
 
-    oled_rprint_pad(oled, "TEMP", 5);
+    oled_rprint_pad(oled, "TEMP ", 4);
     if (pm->stats->max_cell_temp >= 0) {
-        int temp_C = pm->stats->max_cell_temp / 10;
-        oled_rprint_num_pad(oled, temp_C, 1);
-        oled_rprint(oled, "C");
+        oled_print_num_dec(oled, pm->stats->max_cell_temp, 10, 1);
     } else {
         oled_rprint(oled, DATA_UNKNOWN);
     }
