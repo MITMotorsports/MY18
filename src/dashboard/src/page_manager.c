@@ -161,7 +161,6 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_rprint_pad(oled, "BUS", 6);
     if (pm->stats->DESIRED_VOLTAGE != -10) {
         int voltage = pm->stats->DESIRED_VOLTAGE / 10;
-        Board_PrintNum(pm->stats->DESIRED_VOLTAGE);
         oled_rprint_num_pad(oled, voltage, 1);
         oled_rprint(oled, "V");
     } else {
@@ -217,8 +216,7 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     */
     oled_print(oled, "CUR ");
     if (pm->stats->cs_current >= -10) {
-        oled_print_num(oled, pm->stats->cs_current / 1000);
-        // oled_print_num_dec(oled, pm->stats->cs_current, 1000, 2);
+        oled_print_num_dec(oled, pm->stats->cs_current, 1000, 2);
         oled_print(oled, "A");
     } else {
         oled_print(oled, DATA_UNKNOWN);
@@ -250,7 +248,7 @@ void draw_charging_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_print_num(oled, stats->cs_voltage / 10);
     oled_print(oled, "V");
     oled_set_pos(oled, 1, 8);
-    oled_print_num_dec(oled, pm->stats->cs_current, 1000, 3);
+    oled_print_num_dec(oled, pm->stats->cs_current, 1000, 2);
     oled_print(oled, "A");
 
     oled_clearline(oled, 2);
