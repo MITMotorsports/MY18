@@ -43,14 +43,21 @@ void can_handle_current_sensor_voltage(carstats_t *cs) {
     can0_CurrentSensor_Voltage1_T msg;
     unpack_can0_CurrentSensor_Voltage1(&frame, &msg);
 
-    cs->voltage_2 = msg.result;
+    cs->cs_voltage = msg.result / 100;  // convert from mV to dV
+}
+
+void can_handle_current_sensor_current(carstats_t *cs) {
+    can0_CurrentSensor_Current_T msg;
+    unpack_can0_CurrentSensor_Current(&frame, &msg);
+
+    cs->cs_current = msg.result;  // convert from mA to mA
 }
 
 void can_handle_mc_voltage(carstats_t *cs) {
     can0_MCVoltage_T msg;
     unpack_can0_MCVoltage(&frame, &msg);
 
-    cs->battery_voltage = msg.bus;
+    cs->mc_voltage = msg.bus;  // convert from dV to dV
 }
 
 void can_handle_current_sensor_power(carstats_t *cs) {
@@ -98,13 +105,6 @@ void can_handle_mc_temperature1(carstats_t *cs) {
         max = msg.module_c_temp;
 
     cs->max_igbt_temp = max;
-}
-
-void can_handle_current_sensor_current(carstats_t *cs) {
-    can0_CurrentSensor_Current_T msg;
-    unpack_can0_CurrentSensor_Current(&frame, &msg);
-
-    cs->current = msg.current;
 }
 
 void can_handle_vcu_errors(carstats_t *cs) {

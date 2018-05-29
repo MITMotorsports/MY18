@@ -3,6 +3,7 @@
 #include "board.h"
 #include "NHD_US2066_charset.h"
 
+#define DESIRED_VOLTAGE cs_voltage
 #define DATA_UNKNOWN "?"
 
 void page_manager_init(page_manager_t *pm, carstats_t *stats) {
@@ -158,10 +159,10 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     }
 
     oled_rprint_pad(oled, "BUS", 6);
-    if (pm->stats->voltage_2 >= 0) {
-        int pack_V = pm->stats->battery_voltage/10;
-        //int pack_V = pm->stats->voltage_2/1000;
-        oled_rprint_num_pad(oled, pack_V, 1);
+    if (pm->stats->DESIRED_VOLTAGE != -10) {
+        int voltage = pm->stats->DESIRED_VOLTAGE / 10;
+        Board_PrintNum(pm->stats->DESIRED_VOLTAGE);
+        oled_rprint_num_pad(oled, voltage, 1);
         oled_rprint(oled, "V");
     } else {
         oled_rprint(oled, DATA_UNKNOWN);
@@ -215,10 +216,9 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     }
     */
     oled_print(oled, "CUR ");
-    if (false /*TODO: Remove this when it works*/ && pm->stats->current >= 0) {
-        oled_print_num(oled, pm->stats->current / 1000);
-        oled_print_num(oled, ".");
-        oled_print_num(oled, (pm->stats->current / 100)%10);
+    if (pm->stats->cs_current >= -10) {
+        oled_print_num(oled, pm->stats->cs_current / 1000);
+        // oled_print_num_dec(oled, pm->stats->cs_current, 1000, 2);
         oled_print(oled, "A");
     } else {
         oled_print(oled, DATA_UNKNOWN);
@@ -247,11 +247,11 @@ void draw_charging_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_clearline(oled, 1);
     oled_set_pos(oled, 1, 0);
     oled_print(oled, "BUS ");
-    oled_print_num(oled, stats->battery_voltage/10);
+    oled_print_num(oled, stats->cs_voltage / 10);
     oled_print(oled, "V");
     oled_set_pos(oled, 1, 8);
-    oled_print_num(oled, stats->battery_current);
-    oled_print(oled, "mA");
+    oled_print_num_dec(oled, pm->stats->cs_current, 1000, 3);
+    oled_print(oled, "A");
 
     oled_clearline(oled, 2);
     oled_set_pos(oled, 2, 0);

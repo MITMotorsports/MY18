@@ -6,9 +6,9 @@
 #include <stdbool.h>
 
 typedef struct {
-    int battery_voltage;
-    int voltage_2;
-    int battery_current;
+    int cs_voltage;  // in dV
+    int mc_voltage;  // in dV
+    int cs_current;  // in mA
     int max_cell_voltage, min_cell_voltage;
     int max_cell_temp, min_cell_temp;
     int power;

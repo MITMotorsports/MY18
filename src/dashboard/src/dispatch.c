@@ -72,7 +72,9 @@ void dispatch_init() {
     previous_scroll_select = 0;
 
     // init carstats fields
-    carstats.battery_voltage         = -1;
+    carstats.mc_voltage              = -10;  // TODO: Make less sketchy for unknown values.
+    carstats.cs_voltage              = -10;
+    carstats.cs_current              = -10;
     carstats.min_cell_voltage        = -1;
     carstats.max_cell_voltage        = -1;
     carstats.min_cell_temp           = -1;
@@ -86,8 +88,6 @@ void dispatch_init() {
     carstats.rear_left_wheel_speed   = -1;
     carstats.rear_right_wheel_speed  = -1;
     carstats.max_igbt_temp           = -1;
-    carstats.current                 = -1;
-    carstats.voltage_2               = -1;
     carstats.vcu_state               = can0_VCUHeartbeat_vcu_state_VCU_STATE_ROOT;
     carstats.last_vcu_heartbeat      = msTicks;
     carstats.last_bms_heartbeat      = msTicks;
@@ -114,7 +114,7 @@ void dispatch_update() {
 
     int res = can_update_carstats(&carstats, &button_request);
     if (previous_scroll_select != 8 && res == 8) {
-        page_manager_next_page(&page_manager); 
+        page_manager_next_page(&page_manager);
         oled_clear(&oled);
     }
     previous_scroll_select = res;
@@ -136,7 +136,7 @@ void update_lights(void) {
     else
         LED_RTD_off();
 
-    if (carstats.battery_voltage / 10 > 60)
+    if (carstats.cs_voltage / 10 > 60)
         LED_HV_on();
     else
         LED_HV_off();
@@ -156,6 +156,6 @@ void update_lights(void) {
 void send_dash_request(can0_DashRequest_type_T type) {
     can0_DashRequest_T msg;
     msg.type = type;
-    
+
     handle_can_error(can0_DashRequest_Write(&msg));
 }
