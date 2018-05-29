@@ -215,7 +215,7 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     }
     */
     oled_print(oled, "CUR ");
-    if (pm->stats->cs_current >= -10) {
+    if (pm->stats->cs_current != -10) {
         oled_print_num_dec(oled, pm->stats->cs_current, 1000, 2);
         oled_print(oled, "A");
     } else {
