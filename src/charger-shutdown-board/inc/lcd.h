@@ -1,5 +1,6 @@
 #ifndef _LCD_H_
 #define _LCD_H_
+
 #include "chip.h"
 #include <stdint.h>
 
@@ -89,5 +90,8 @@ void lcd_print(char* str);
 void lcd_print_num(int32_t num, unsigned base);
 void clear(void);
 void display(void);
+void lcd_command(uint8_t value);
+void lcd_write(uint8_t value);
+void lcd_write_str(char* str, int len);
 
 #endif //ifndef lcd.h

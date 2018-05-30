@@ -1,12 +1,14 @@
 #ifndef _PINS_H_
 #define _PINS_H_
 
+#include "chip.h"
+
 #define PIN_BMS_FAULT           2, 8
 #define PIN_CHARGER_ENABLE      1, 8
 #define PIN_IMD_IN 		2, 6
 #define PIN_INTERLOCK		0, 2
 #define PIN_PRECHARGE 		2, 1
-#define PIN_CONTACTORS_CLOSED   0, 3
+#define PIN_HIGH_SIDE_CONTACTOR   0, 3
 
 #define PIN_LED1                2, 3
 #define PIN_LED2                1, 11

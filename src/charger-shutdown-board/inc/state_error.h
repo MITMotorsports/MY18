@@ -1,40 +1,17 @@
+#ifndef __STATE_ERROR_H
+#define __STATE_ERROR_H
+
 #include <stdbool.h>
-
-#include "state.h"
 #include "gpio.h"
+#include "state.h"
 
-static bool currentState = false;
+// INTERACTION FUNCTIONS
+void init_error_state(void);
+void advance_error_state(void);
+void set_error_state(bool newState);
 
-void init_error_state(void) {
-  set_error_state(false);
-}
+bool get_error_state(void);
 
-void set_error_state(bool newState) {
-  if (newState) {
-    // ERROR PRESENT
-  }
-  else {
-    // NO ERRORS
-  }
+bool error_may_advance(void);
 
-  currentState = newState;
-}
-
-void advance_error_state(void) {
-  if (currentState) {
-    // ERROR PRESENT
-    Board_Println("[ERROR FSM : ERROR] ENTERED!");
-  }
-  else {
-    // NO ERRORS
-    Board_Println("[ERROR FSM : NONE] ENTERED!");
-  }
-}
-
-inline bool get_error_state(void){
-	return currentState;
-}
-
-bool error_may_advance(void) {
-
-}
+#endif // ifndef __STATE_ERROR_H

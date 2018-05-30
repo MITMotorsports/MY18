@@ -792,6 +792,7 @@ buses:
       ChargerCommand:
         can_id: 0x2FF
         is_big_endian: false
+        period: 750ms
         segments:
           enable:
             position: 0
@@ -811,7 +812,7 @@ buses:
             position: 40
             length: 16
             c_type: uint16_t
-            signed: false 
+            signed: false
       ChargerStatus1:
         can_id: 0x305
         is_big_endian: false
@@ -841,5 +842,3 @@ buses:
             length: 8
             c_type: uint16_t
             signed: false
-          
-

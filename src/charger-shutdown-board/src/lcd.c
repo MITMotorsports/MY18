@@ -1,4 +1,5 @@
 #include "lcd.h"
+
 static I2C_XFER_T xfer;
 static uint8_t i2c_rx_buf[20];
 static uint8_t i2c_tx_buf[20];
@@ -169,12 +170,8 @@ void send(uint8_t value, uint8_t mode) {
     write4bits(value);
 }
 
-void lcd_write(uint8_t value){
-	send(value, 0xFF);
-}
-
 void lcd_print(char* str) {
-  while (*str != '\0') lcd_write(*(str++));
+  while (*str != '\0') send(*(str++), 0xFF);
 }
 
 void clear(){
@@ -200,4 +197,14 @@ void lcd_print_num(int32_t num, unsigned base) {
 inline void delay(uint32_t time){
 	uint32_t wait=msTicks;
 	while(msTicks-wait <time){}
+}
+
+void lcd_command(uint8_t value) {
+	send(value,0);
+}
+
+void lcd_write_str(char* str, int len) {
+	for(int i = 0; i<len ;i++){
+		write(str[i]);
+	}
 }

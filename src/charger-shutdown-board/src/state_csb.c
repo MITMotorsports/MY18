@@ -28,7 +28,6 @@ void set_csb_state(CSB_STATE_T newState){
 }
 
 
-
 void advance_csb_state(void){
 	switch(get_csb_state()){
 	case CSB_STATE_ROOT:
@@ -38,11 +37,11 @@ void advance_csb_state(void){
 	case CSB_STATE_PRECHARGE:
 		update_csb_state_precharge();
 		break;
-	
+
 	case CSB_STATE_CHARGE:
 		update_csb_state_charge();
 		break;
-	
+
 	}
 }
 
@@ -50,4 +49,3 @@ void advance_csb_state(void){
 CSB_STATE_T get_csb_state(void){
 	return currentState;
 }
-

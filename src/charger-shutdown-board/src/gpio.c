@@ -6,12 +6,9 @@ bool any_gate_fault() {
          !Board_Pin_Read(PIN_INTERLOCK);
 }
 
-void openLowSideContactor() {
 
-}
-
-// Digital GPIO Initialization
 void Board_GPIO_Init(void) {
+  // Digital GPIO Initialization
   Chip_GPIO_Init(LPC_GPIO);
 
   // LED1
@@ -23,7 +20,6 @@ void Board_GPIO_Init(void) {
   Chip_GPIO_SetPinDIROutput(LPC_GPIO, PIN_LED2);
   Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_LED2, IOCON_LED2_FUNC);
   Chip_GPIO_SetPinState(LPC_GPIO, PIN_LED2, false);
-
 
   // Charge Enable Pin
   Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_CHARGER_ENABLE);
@@ -51,7 +47,7 @@ void Board_GPIO_Init(void) {
   Chip_GPIO_SetPinState(LPC_GPIO, PIN_PRECHARGE, false);
 
   // Contactors Closed
-  Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_CONTACTORS_CLOSED);
+  Chip_GPIO_SetPinDIRInput(LPC_GPIO, PIN_HIGH_SIDE_CONTACTOR);
   Chip_IOCON_PinMuxSet(LPC_IOCON, PIN_IOCON_CONTACTORS_CLOSED,
                        (IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_INACT));
 
@@ -62,17 +58,20 @@ void Board_GPIO_Init(void) {
   Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_5, IOCON_FUNC1); // SDA
 }
 
-// Set the value of a GPIO pin
+
 inline void Board_Pin_Set(uint8_t led_gpio, uint8_t led_pin, bool state) {
+  // Set the value of a GPIO pin
   Chip_GPIO_SetPinState(LPC_GPIO, led_gpio, led_pin, state);
 }
 
-// Read the value of a GPIO pin
+
 inline bool Board_Pin_Read(uint8_t port, uint8_t pin) {
+  // Read the value of a GPIO pin
   return Chip_GPIO_GetPinState(LPC_GPIO, port, pin);
 }
 
-// Toggle a GPIO pin
+
 inline void Board_Pin_Toggle(uint8_t port, uint8_t pin) {
+  // Toggle a GPIO pin
   Chip_GPIO_SetPinState(LPC_GPIO, port, pin, !Board_Pin_Read(port, pin));
 }

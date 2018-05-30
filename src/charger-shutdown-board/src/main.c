@@ -3,13 +3,12 @@
 volatile uint32_t msTicks;
 const uint32_t    OscRateIn = 24000000;
 
-
-can0_ChargerStatus1_T status;
-
+Frame can_input;
 
 void SysTick_Handler(void) {
   msTicks++;
 }
+
 
 int main(void) {
   SystemCoreClockUpdate();
@@ -18,48 +17,23 @@ int main(void) {
 
   Board_GPIO_Init();
   Board_UART_Init(57600);
-  Board_Print("H e l l o\n");
-  CAN_INIT();
-  Board_Print("CAN Initialized\n");
+  Board_Println("Currently running "HASH);
+  Board_Println("Flashed by: "AUTHOR);
 
+  init_can0_csb();
+  Board_Print("CAN initialized\n");
 
-  // no more init
+  //init_lcd();
+  //Board_Print("LCD initialized\n");
+
   init_MCP2307();
-  init_lcd();
+  Board_Print("MCP2307 initialized\n");
 
-  set_csb_state(CSB_STATE_ROOT);
+  init_states();
+  Board_Print("States initialized\n");
 
   while (1) {
-    if(any_gate_fault()){
-      openLowSideContactor();
-      openHighSideContactor();
-
-  		if (get_csb_state() != CSB_STATE_ROOT) {
-        set_csb_state(CSB_STATE_ROOT);
-  		  Board_Print("[FAULT] Going to ROOT.\n");
-      }
-  	}
-
-    advance_csb_state();
-    can_receive();
+    can_receive(&can_input);
+    advance_states();
   }
-}
-
-
-void can_receive(void) {
-  Can_RawRead(&can_input);
-  can0_T msgForm = identify_can0(&can_input);
-
-  switch (msgForm) {
-  case can0_ChargerStatus1:
-    can_receive_status_1();
-    break;
-
-  default:
-    break;
-  }
-}
-
-void can_receive_status_1(void) {
-  unpack_can0_ChargerStatus1(&can_input, &status);
 }

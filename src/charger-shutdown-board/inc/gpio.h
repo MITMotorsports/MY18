@@ -9,16 +9,11 @@
 #define GPIO_HIGH true
 #define GPIO_LOW false
 
-// Variables
-
-// Functions
-// - Initialize
 void Board_GPIO_Init(void);
 
+bool any_gate_fault(void);
 
-// - Peripherals
-
-// -- Digital Pins
+// Digital Pins
 void Board_Pin_Set(uint8_t led_gpio, uint8_t led_pin, bool state);
 bool Board_Pin_Read(uint8_t gpio, uint8_t pin);
 void Board_Pin_Toggle(uint8_t gpio, uint8_t pin);
