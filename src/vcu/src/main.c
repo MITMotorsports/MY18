@@ -54,6 +54,7 @@ int main(void) {
   printf("\r\n\r\n");
 
   init_states();
+  printf("PL thresh: %d\r\n", PL_THRESHOLD);
 
   while (1) {
     advance_states();
@@ -62,7 +63,7 @@ int main(void) {
     // TODO: Find a better location for this.
     // Update brake light all the time.
     HAL_GPIO_WritePin(GPIO(BRAKE_LIGHT),
-                      pedalbox.brake_1 > PEDALBOX_BRAKE_BEGIN);
+                      pedalbox.brake_2 > PEDALBOX_BRAKE_BEGIN);
 
     static uint32_t lastt = 0;
 

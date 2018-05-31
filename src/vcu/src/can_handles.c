@@ -1,6 +1,5 @@
 #include "can_handles.h"
 
-
 void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *hcan) {
   HAL_StatusTypeDef CAN_RX_STATUS = HAL_CAN_Receive_IT(hcan, CAN_FIFO0);
 
@@ -8,7 +7,7 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *hcan) {
     handleCAN(hcan);
   }
   else {
-    printf("[CAN RX] ERROR: HAL_StatusTypeDef is %d\r\n",    (int)CAN_RX_STATUS);
+    printf("[CAN RX] ERROR: HAL_StatusTypeDef s %d\r\n",    (int)CAN_RX_STATUS);
     printf("[CAN RX] ERROR: HAL_CAN_StateTypeDef is %d\r\n", hcan->State);
     printf("[CAN RX] ERROR: ErrorCode is %d\r\n",            hcan->ErrorCode);
 
@@ -57,6 +56,14 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
 
   case can0_ButtonRequest:
     handleButtonRequest(&frame);
+    break;
+
+  case can0_CurrentSensor_Power:
+    handleCurrentSensor_Power(&frame);
+    break;
+
+  case can0_MCMotor_Position_Info:
+    handleMCMotor_Position_Info(&frame);
     break;
 
   default:
@@ -147,6 +154,22 @@ void handleButtonRequest(Frame *msg) {
   buttons.ScrollSelect = unpacked_msg.ScrollSelect;
 }
 
+void handleCurrentSensor_Power(Frame *msg) {
+  can0_CurrentSensor_Power_T unpacked_msg;
+
+  unpack_can0_CurrentSensor_Power(msg, &unpacked_msg);
+
+  cs_readings.power = unpacked_msg.result;
+}
+
+void handleMCMotor_Position_Info(Frame *msg) {
+  can0_MCMotor_Position_Info_T unpacked_msg;
+
+  unpack_can0_MCMotor_Position_Info(msg, &unpacked_msg);
+
+  mc_readings.speed = unpacked_msg.motor_speed;
+}
+
 void send_VCUHeartbeat() {
   LIMIT(can0_VCUHeartbeat);
 
@@ -224,4 +247,15 @@ void send_mc_fault_clear() {
   msg.data    = 0;
 
   can0_MCParameterRequest_Write(&msg);
+}
+
+void send_PL_monitoring() {
+  LIMIT(can0_PLMonitoring);
+
+  can0_PLMonitoring_T msg;
+
+  msg.raw_torque = pl.raw_torque;
+  msg.power_limited_torque = pl.power_limited_torque;
+
+  can0_PLMonitoring_Write(&msg);
 }

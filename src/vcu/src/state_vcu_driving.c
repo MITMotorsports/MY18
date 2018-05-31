@@ -43,7 +43,7 @@ void update_vcu_state_driving() {
 
   static Time_T last_print = 0;
 
-  if (HAL_GetTick() - last_print > print_period) {
+  /*if (HAL_GetTick() - last_print > print_period) {
     printf("A1:%d A2:%d B1:%d B2:%d T:%d\r\n",
            pedalbox.accel_1,
            pedalbox.accel_2,
@@ -52,7 +52,7 @@ void update_vcu_state_driving() {
            torque_command);
 
     last_print = HAL_GetTick();
-  }
+  }*/
 
   if (buttons.RTD) {
     if (rtd_started) {
