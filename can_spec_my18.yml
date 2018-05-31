@@ -638,3 +638,18 @@ buses:
             unit: decidegC
             signed: true
             c_type: int16_t
+      PLMonitoring:
+        can_id: 0x600
+        period: 20ms
+        is_big_endian: true
+        segments:
+          raw_torque:
+            position: 0
+            length: 32
+            signed: false
+            c_type: uint32_t
+          power_limited_torque:
+            position: 32
+            length: 32
+            signed: false
+            c_type: uint32_t
