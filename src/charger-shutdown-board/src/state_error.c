@@ -21,17 +21,19 @@ void set_error_state(bool newState) {
 
 
 void advance_error_state() {
-  if (any_gate_fault() || (get_csb_state != CSB_STATE_ROOT && !bms_state.L_contactor_closed)) {
+  if (any_gate_fault() || (get_csb_state() != CSB_STATE_ROOT && !bms_state.L_contactor_closed)) {
       if (!currentState) {
         set_error_state(true);
         Board_Pin_Set(PIN_PRECHARGE, 0);
         send_ChargerCommand(0);
-        if (get_csb_state != CSB_STATE_ROOT) {
+        if (get_csb_state() != CSB_STATE_ROOT) {
           set_csb_state(CSB_STATE_ROOT);
         }
       }
   } else {
-    set_error_state(false);
+    if (currentState) {
+      set_error_state(false);
+    }
   }
 }
 
