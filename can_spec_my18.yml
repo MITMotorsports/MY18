@@ -786,8 +786,8 @@ buses:
             unit: decidegC
             signed: true
             c_type: int16_t
-      PLMonitoring:
-        can_id: 0x600
+      PLMonitoring1:
+        can_id: 0x601
         period: 20ms
         is_big_endian: true
         segments:
@@ -798,6 +798,61 @@ buses:
             c_type: uint32_t
           power_limited_torque:
             position: 32
+            length: 32
+            signed: false
+            c_type: uint32_t
+      PLMonitoring2:
+        can_id: 0x602
+        period: 19ms
+        is_big_endian: true
+        segments:
+          omega:
+            position: 0
+            length: 32
+            signed: false
+            c_type: uint32_t
+          error:
+            position: 32
+            length: 32
+            signed: false
+            c_type: int32_t
+      PLMonitoring3:
+        can_id: 0x603
+        period: 20ms
+        is_big_endian: true
+        segments:
+          PI_torque:
+            position: 0
+            length: 32
+            signed: false
+            c_type: uint32_t
+          torque_offset:
+            position: 32
+            length: 32
+            signed: false
+            c_type: uint32_t
+      PLMonitoring4:
+        can_id: 0x604
+        period: 20ms
+        is_big_endian: true
+        segments:
+          I_sum:
+            position: 0
+            length: 32
+            signed: false
+            c_type: int32_t
+          P_torque:
+            position: 32
+            length: 32
+            signed: false
+            c_type: uint32_t
+      PLMonitoring5:
+        can_id: 0x605
+        period: 20ms
+        is_big_endian: true
+        segments:
+          I_torque:
+            position: 0
             length: 32
             signed: false
             c_type: uint32_t

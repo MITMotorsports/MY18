@@ -33,8 +33,9 @@ void send_VCUErrors();
 void send_VCU();
 
 void sendTorqueCmdMsg(int16_t torque);
-void sendMotorOffCmdMsg();
-void send_mc_fault_clear();
-void send_PL_monitoring(void);
+void sendMotorOffCmdMsg(void);
+void send_mc_fault_clear(void);
+void send_PL1_monitoring(void);
+void send_PL2_monitoring(void);
 
 #endif // ifndef __CAN_HANDLES_H

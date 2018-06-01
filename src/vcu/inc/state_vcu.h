@@ -51,6 +51,13 @@ typedef struct {
 typedef struct {
   uint32_t raw_torque;
   uint32_t power_limited_torque;
+  uint32_t omega;
+  int32_t error;
+  uint32_t PI_torque;
+  uint32_t torque_offset;
+  int32_t I_sum;
+  uint32_t P_torque;
+  uint32_t I_torque;
 } PL_T;
 
 // GLOBAL CONTAINER DEFINITIONS

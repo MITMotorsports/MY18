@@ -37,8 +37,8 @@ uint16_t calcTorque(uint16_t accel) {
   PL_I_sum += error * can0_MCCommand_period;
 
   // Limit PL_I_sum
-  if (PL_I_sum/1000 < 0) PL_I_sum = 0;
-  if (PL_I_sum/1000 > PL_I_CAP) PL_I_sum = PL_I_CAP * 1000;
+  if (PL_I_sum < 0) PL_I_sum = 0;
+  if (PL_I_sum > PL_I_CAP) PL_I_sum = PL_I_CAP;
 
   if (error < 0) error = 0;
 
@@ -46,20 +46,29 @@ uint16_t calcTorque(uint16_t accel) {
   int32_t mc_speed = mc_readings.speed * -1;
 
   uint32_t omega = mc_speed * (2 * 314)/ (60*100);
+
   // Multiplying by ten to improve accuracy and convert units
+  uint32_t P_torque = 10 * error  * PL_KP;
+  uint32_t I_torque = PL_KI * PL_I_sum;
+
   // PL_I sum is integrated with respect to ms
-  uint32_t torque_offset = 10 * error  * PL_KP / omega;// + PL_KI * PL_I_sum / 1000;
+  // Both need to be divided by omega, but only PI needs to be dvided by 1000,
+  // so multiply the P portion by 1000
+  uint32_t torque_offset = (P_torque + I_torque) / (1000 * omega);
+  uint32_t PI_torque;
   if (torque_offset > raw_torque) {
-    power_limited_torque = 0;
+    PI_torque = 0;
   } else {
-    power_limited_torque = raw_torque - torque_offset;
+    PI_torque = raw_torque - torque_offset;
   }
 
+  // Mechanical limit
+  if (false) {//(PI_torque > PL_THRESHOLD / omega) {
+    power_limited_torque = PL_THRESHOLD / omega;
+  } else {
+    power_limited_torque = PI_torque;
+  }
 
-  /*printf("power,%d,%d\r\n", cs_readings.power, HAL_GetTick());
-  printf("raw_torque,%d,%d\r\n", raw_torque, HAL_GetTick());
-  printf("power_limited_torque,%d,%d\r\n", power_limited_torque, HAL_GetTick());
-  printf("torque_offset,%d,%d\r\n", torque_offset, HAL_GetTick());*/
   if (HUMAN_READABLE) {
     printf("POWER: %d, RAW TORQUE: %d, TORQUE OFFSET: %d, COMMANDED TORQUE: %d, omega: %d, motor speed: %d, error: %d\r\n", cs_readings.power, raw_torque, torque_offset, power_limited_torque, omega, mc_speed, error);
   } else {
@@ -74,6 +83,13 @@ uint16_t calcTorque(uint16_t accel) {
 
   pl.raw_torque = raw_torque;
   pl.power_limited_torque = power_limited_torque;
+  pl.omega = omega;
+  pl.error = error;
+  pl.PI_torque = PI_torque;
+  pl.torque_offset = torque_offset;
+  pl.I_sum = PL_I_sum;
+  pl.P_torque = P_torque;
+  pl.I_torque = I_torque;
 
   return power_limited_torque;
 }

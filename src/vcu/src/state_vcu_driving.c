@@ -37,22 +37,12 @@ void update_vcu_state_driving() {
 
   // Send torque commands
   torque_command = calcTorque(pedalbox_avg(accel));
-  // torque_command = 0;
 
   sendTorqueCmdMsg(torque_command);
+  send_PL1_monitoring();
+  send_PL2_monitoring();
 
   static Time_T last_print = 0;
-
-  /*if (HAL_GetTick() - last_print > print_period) {
-    printf("A1:%d A2:%d B1:%d B2:%d T:%d\r\n",
-           pedalbox.accel_1,
-           pedalbox.accel_2,
-           pedalbox.brake_1,
-           pedalbox.brake_2,
-           torque_command);
-
-    last_print = HAL_GetTick();
-  }*/
 
   if (buttons.RTD) {
     if (rtd_started) {

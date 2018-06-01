@@ -46,7 +46,7 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleCellVoltagesMsg(&frame);
     break;
 
-  case can0_CurrentSensor_Voltage1:
+  case can0_CurrentSensor_Voltage3:
     handleCurrentSensorVoltageMsg(&frame);
     break;
 
@@ -249,13 +249,45 @@ void send_mc_fault_clear() {
   can0_MCParameterRequest_Write(&msg);
 }
 
-void send_PL_monitoring() {
-  LIMIT(can0_PLMonitoring);
+void send_PL1_monitoring() {
+  LIMIT(can0_PLMonitoring1);
+  //printf("Sending PL monitoring 1!\r\n");
 
-  can0_PLMonitoring_T msg;
+  can0_PLMonitoring1_T msg1;
 
-  msg.raw_torque = pl.raw_torque;
-  msg.power_limited_torque = pl.power_limited_torque;
+  msg1.raw_torque = pl.raw_torque;
+  msg1.power_limited_torque = pl.power_limited_torque;
 
-  can0_PLMonitoring_Write(&msg);
+  can0_PLMonitoring1_Write(&msg1);
+
+  can0_PLMonitoring2_T msg2;
+
+  msg2.omega = pl.omega;
+  msg2.error = pl.error;
+
+  can0_PLMonitoring2_Write(&msg2);
+
+  can0_PLMonitoring3_T msg3;
+
+  msg3.PI_torque = pl.PI_torque;
+  msg3.torque_offset = pl.torque_offset;
+
+  can0_PLMonitoring3_Write(&msg3);
+}
+
+void send_PL2_monitoring() {
+  LIMIT(can0_PLMonitoring2);
+  //printf("Sending PL monitoring 2!\r\n");
+  can0_PLMonitoring4_T msg4;
+
+  msg4.I_sum = pl.I_sum;
+  msg4.P_torque = pl.P_torque;
+
+  can0_PLMonitoring4_Write(&msg4);
+
+  can0_PLMonitoring5_T msg5;
+
+  msg5.I_torque = pl.I_torque;
+
+  can0_PLMonitoring5_Write(&msg5);
 }
