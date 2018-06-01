@@ -1,5 +1,5 @@
 #include "torque_calc.h"
-#define HUMAN_READABLE false
+#define HUMAN_READABLE true
 
 uint16_t calcTorque(uint16_t accel) {
   static uint16_t last_torque = 0;
@@ -63,7 +63,7 @@ uint16_t calcTorque(uint16_t accel) {
   }
 
   // Mechanical limit
-  if (false) {//(PI_torque > PL_THRESHOLD / omega) {
+  if (false) {//(omega != 0 && PI_torque > PL_THRESHOLD / omega) {
     power_limited_torque = PL_THRESHOLD / omega;
   } else {
     power_limited_torque = PI_torque;
