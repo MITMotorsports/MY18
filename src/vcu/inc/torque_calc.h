@@ -14,10 +14,10 @@
 
 // Power limit constants. All in W
 // Threshold at which we start to adjust torque commands to limit power
-#define PL_THRESHOLD 2000
+#define PL_THRESHOLD 400
 #define PL_KP 1
-#define PL_KI 0
-#define PL_I_CAP 2000
+#define PL_KI 100
+#define PL_I_CAP 1000000
 
 // Launch control contants
 #define GEAR_RATIO 3
