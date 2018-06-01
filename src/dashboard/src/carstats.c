@@ -128,7 +128,7 @@ void can_handle_brake_throttle(carstats_t *cs) {
     cs->brake_2 = msg.brake_2;
 }
 
-int can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request) {
+void can_update_carstats(carstats_t *cs) {
     handle_can_error(Can_RawRead(&frame));
 
     can0_T msgType;
@@ -178,5 +178,4 @@ int can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request) {
             // do nothing
             break;
     }
-    return 0;
 }

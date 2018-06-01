@@ -43,6 +43,6 @@ typedef struct {
     can0_VCUErrors_T vcu_errors;
 } carstats_t;
 
-int can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request);
+void can_update_carstats(carstats_t *cs);
 
 #endif

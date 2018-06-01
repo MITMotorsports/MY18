@@ -115,6 +115,7 @@ void dispatch_update() {
     //     page_manager_prev_page(&page_manager);
     // }
 
+    can_update_carstats(&carstats);
     bool res = carstats.buttons.ScrollSelect;
     if (!previous_scroll_select && res) {
         page_manager_next_page(&page_manager);
