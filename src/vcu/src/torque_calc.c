@@ -32,42 +32,48 @@ uint16_t calcTorque(uint16_t accel) {
 
 
   // Power limit
-  uint32_t power_limited_torque;
-  int32_t error = cs_readings.power - PL_THRESHOLD;
-  printf("i DELTA: %d", error * can0_MCCommand_period);
-  PL_I_sum += error * can0_MCCommand_period;
+  // I keep making unit mistakes so I've added a bunch of comments with untis
+  uint32_t power_limited_torque; // Units: 10 * Nm
+  int32_t error = cs_readings.power - PL_THRESHOLD; // Units: W
+  PL_I_sum += error * can0_MCCommand_period; // Units: mJ += W * ms
 
   // Limit PL_I_sum
-  if (PL_I_sum < 0) PL_I_sum = 0;
-  if (PL_I_sum > PL_I_CAP) PL_I_sum = PL_I_CAP;
+  if (PL_I_sum < 0) PL_I_sum = 0; // Units: mJ
+  if (PL_I_sum > PL_I_CAP) PL_I_sum = PL_I_CAP; // Units: mJ
 
-  if (error < 0) error = 0;
+  if (error < 0) error = 0; // Units: W
 
   // Speed starts negative becuase of direction
-  int32_t mc_speed = mc_readings.speed * -1;
+  int32_t mc_speed = mc_readings.speed * -1; // Units: RPM
 
-  uint32_t omega = mc_speed * (2 * 314)/ (60*100);
+  // Units: rad/s = (rotations / minute) * (2pi rad / rotation) * (1 minute / 60 secs)
+  uint32_t omega = mc_speed * (2 * 314)/ (60*100)
 
   // Multiplying by ten to improve accuracy and convert units
+  // Units: dNm  = (10 dNM / Nm) * Nm
   uint32_t P_torque = 10 * error  * PL_KP;
-  uint32_t I_torque = PL_KI * PL_I_sum;
+  // Units:  1000 dNM = (10 dNM / Nm) * (mNm)
+  uint32_t I_torque = 10 * PL_KI * PL_I_sum;
 
   // PL_I sum is integrated with respect to ms
   // Both need to be divided by omega, but only PI needs to be dvided by 1000,
   // so multiply the P portion by 1000
+  // dNm = (dNm * 1000 + 1000 dNM) / (1000 * rad/s)
   uint32_t torque_offset = (P_torque * 1000 + I_torque) / (1000 * omega);
-  uint32_t PI_torque;
+  uint32_t PI_torque;  // Units: dNm
   if (torque_offset > raw_torque) {
-    PI_torque = 0;
+    PI_torque = 0;  // Units: dNm
   } else {
-    PI_torque = raw_torque - torque_offset;
+    PI_torque = raw_torque - torque_offset; // Units: dNm = dNm - dNm
   }
 
   // Mechanical limit
-  if (omega != 0 && PI_torque > PL_THRESHOLD / omega) {
-    power_limited_torque = PL_THRESHOLD / omega;
+  // Units: dNm = (10 dNM / Nm) * (Nm/s) / (rad/s)
+  uin32_t target_torque = 10 * PL_THRESHOLD / omega;
+  if (omega != 0 && PI_torque > target_torque) { // Units: rad/s && dNm
+    power_limited_torque = target_torque; // dNm
   } else {
-    power_limited_torque = PI_torque;
+    power_limited_torque = PI_torque; // Units: dNm
   }
 
   if (HUMAN_READABLE) {
