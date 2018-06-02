@@ -26,7 +26,7 @@ void update_csb_state_charge(void) {
   lcd_print_num(sensor_readings.voltage, 10);
   lcd_write('V');
 
-  lcd_set_cursor(4, 1, 3);
+  lcd_set_cursor_clearahead(4, 1, 3);
   lcd_print_num(sensor_readings.current, 10);
   lcd_write('A');
 }

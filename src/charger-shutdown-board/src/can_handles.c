@@ -70,7 +70,7 @@ void handle_CellVoltages(Frame *input) {
   bms_state.max_cell_voltage = unpacked_msg.max;
 }
 
-Can_ErrorID_T send_ChargerCommand(can0_ChargerCommand_T *params) {
+void send_ChargerCommand(can0_ChargerCommand_T *params) {
   LIMIT(can0_ChargerCommand_period);
 
   handle_can_error(can0_ChargerCommand_Write(params));

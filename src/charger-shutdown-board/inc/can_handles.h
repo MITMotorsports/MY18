@@ -14,8 +14,7 @@ void handle_CurrentSensor_Voltage1(Frame *input);
 void handle_ChargerStatus1(Frame *input);
 void handle_BMS_Heartbeat(Frame *input);
 void handle_CellVoltages(Frame *input);
-
-Can_ErrorID_T send_ChargerCommand(bool enabled);
+void send_ChargerCommand(can0_ChargerCommand_T *params);
 
 #define LIMIT(period)                                       \
   static uint32_t last_sent = 0;                            \
