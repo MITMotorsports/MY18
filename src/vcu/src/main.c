@@ -10,8 +10,6 @@ int main(void) {
   Can_Init(500000);
   USART_Init(115200);
 
-  PWM_Output_Init(); // Fan and other PWMs
-
   GPIO_BEGIN_INIT();
 
   PWM_Output_Init(); // FAN PWM AND TIMERS
