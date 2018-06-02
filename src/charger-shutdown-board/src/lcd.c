@@ -176,6 +176,23 @@ void lcd_print_num(int32_t num, unsigned base) {
   lcd_print(buff);
 }
 
+// print `num` divided by `div` to `decimals` decimal points
+void lcd_print_num_dec(int num, int div, int decimals) {
+  if (div <= 0) return;  // TODO: Find a way to notify of attempt to zerodiv.
+  if (div % 10 != 0) return;  // TODO: Notifiy that div was not base 10.
+  lcd_print_num(num / div, 10);
+  if (div > 1) {
+    lcd_write('.');
+    for (int i = 0; i < decimals && div > 0; i++) {
+      // TODO: Optimize with itoa and buff[decimals] = '\0'.
+      div /= 10;
+      int dec = (num / div) % 10;
+      char c = dec + '0';
+      lcd_write(c);
+    }
+  }
+}
+
 void lcd_clear() {
   lcd_command(LCD_CLEARDISPLAY); // clear display, set cursor position to zero
   // delay(3);
@@ -191,6 +208,7 @@ void lcd_set_cursor(uint8_t col, uint8_t row) {
   lcd_command(LCD_SETDDRAMADDR | (col + row_offsets[row]));
 }
 
+// Set the cursor and clear `len` characters ahead.
 void lcd_set_cursor_clearahead(uint8_t col, uint8_t row, uint8_t len) {
   lcd_set_cursor(col, row);
   while (len--) lcd_write(' ');
