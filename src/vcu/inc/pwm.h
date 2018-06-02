@@ -16,10 +16,11 @@
 #define TIMx_GPIO_PORT_CHANNEL3        GPIOA
 #define TIMx_GPIO_PIN_CHANNEL3         GPIO_PIN_2
 #define TIMx_GPIO_AF_CHANNEL3          GPIO_AF1_TIM2
+#define TIMx_CHANNEL                   TIM_CHANNEL_3
 
 // PWM Settings
 #define  PERIOD_VALUE       (uint32_t)(366 - 1)  // Period Value: Experimentally got about 25.5 kHZ with this
-#define  PULSE_VALUE       (uint32_t)(PERIOD_VALUE*50/100) // Duty cycle: 50%
+#define  PULSE_VALUE       (uint32_t)(PERIOD_VALUE*50/100) // Duty cycle: 50% (to start off with)
 
 TIM_HandleTypeDef TimHandle; // Timer handler typdef
 TIM_OC_InitTypeDef sConfig; // timer output compare configuration structure decl

@@ -3,7 +3,10 @@
 
 void Set_Fan_PWM_Duty_Cycle(uint8_t frac) {
 	// the duty cycle for the fan is frac / 100 (should be an integer between 1 and 100)
-	// TODO
+	// Ideally we would know exactly how to set this, but for now we have a linear fit from data
+	// y = (370*frac-140) / 100
+	// Need this because we have to set register for compare not the duty cycle exactly
+	__HAL_TIM_SET_COMPARE(&TimHandle, TIMx_CHANNEL, (370*frac-140)/100);
 }
 
 void PWM_Output_Init() {
@@ -77,7 +80,7 @@ void PWM_Output_Init() {
 
   /* Set the pulse value for channel 3 */
   sConfig.Pulse = PULSE_VALUE;
-  if (HAL_TIM_PWM_ConfigChannel(&TimHandle, &sConfig, TIM_CHANNEL_3) != HAL_OK)
+  if (HAL_TIM_PWM_ConfigChannel(&TimHandle, &sConfig, TIMx_CHANNEL) != HAL_OK)
   {
     /* Configuration Error */
     while(1) {}
@@ -85,7 +88,7 @@ void PWM_Output_Init() {
 
   /*##-3- Start PWM signals generation #######################################*/
   /* Start channel 3 */
-  if (HAL_TIM_PWM_Start(&TimHandle, TIM_CHANNEL_3) != HAL_OK)
+  if (HAL_TIM_PWM_Start(&TimHandle, TIMx_CHANNEL) != HAL_OK)
   {
     /* PWM generation Error */
     while(1) {}
