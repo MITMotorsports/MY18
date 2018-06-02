@@ -11,6 +11,8 @@
 
 #define BUILTIN_LED 13
 
+#define DEBUG_UART false
+
 // Macro for converting and padding (to len 2) a number to a String.
 #define zfc2(num) ((num < 10)? "0" + String(num) : String(num))
 
@@ -57,26 +59,30 @@ void CommonListener::printFrame(Stream& out, CAN_message_t& frame, int mailbox) 
 }
 
 void CommonListener::gotFrame(CAN_message_t& frame, int mailbox) {
-  // printFrame(Serial, frame, mailbox);
+  #if DEBUG_UART
+    printFrame(Serial, frame, mailbox);
+  #else
+    File log_file = SD.open(log_name.c_str(), FILE_WRITE);
 
-  File log_file = SD.open(log_name.c_str(), FILE_WRITE);
-
-  if (log_file) {
-    printFrame(log_file, frame, mailbox);
-    log_file.close();
-  }
-  else {
-    Serial.println("[ERROR] Can't open log_file.");
-  }
+    if (log_file) {
+      printFrame(log_file, frame, mailbox);
+      log_file.close();
+    }
+    else {
+      Serial.println("[ERROR] Can't open log_file.");
+    }
+  #endif
 }
 
 CommonListener CANListener0(0);
 CommonListener CANListener1(1);
 
 void setup(void) {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
-  // while (!Serial);
+  #if DEBUG_UART
+    while (!Serial);
+  #endif
 
   Serial.println(F("DAQBOI v0.1"));
 
@@ -155,6 +161,8 @@ void setup(void) {
 
   Can1.attachObj(&CANListener1);
   CANListener1.attachGeneralHandler();
+
+  Serial.println(F("listeners initialized"));
 }
 
 time_t getTeensy3Time() {
