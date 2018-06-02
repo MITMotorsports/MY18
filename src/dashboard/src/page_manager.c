@@ -3,7 +3,7 @@
 #include "board.h"
 #include "NHD_US2066_charset.h"
 
-#define DESIRED_VOLTAGE cs_voltage
+#define DESIRED_VOLTAGE mc_voltage
 #define DATA_UNKNOWN "?"
 
 void page_manager_init(page_manager_t *pm, carstats_t *stats) {
