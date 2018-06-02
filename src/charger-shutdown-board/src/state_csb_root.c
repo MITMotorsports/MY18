@@ -3,6 +3,10 @@
 
 void enter_csb_state_root(void) {
   Board_Print("[CSB FSM : ROOT] ENTERED!\n");
+
+  lcd_clear();
+  lcd_set_cursor(0, 0);
+  lcd_print("ROOT");
 }
 
 void update_csb_state_root(void) {

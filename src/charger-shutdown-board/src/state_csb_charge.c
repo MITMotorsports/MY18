@@ -12,6 +12,7 @@ void enter_csb_state_charge(void) {
   charge.CurrentLimit   = 100;  // 10 * A
 
   // Configure initial printouts
+  lcd_clear();
   lcd_set_cursor(0, 0);
   lcd_print("VOL ");
   lcd_set_cursor(0, 1);

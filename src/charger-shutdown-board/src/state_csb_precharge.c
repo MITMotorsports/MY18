@@ -7,6 +7,10 @@ static const uint32_t DEAD_RECKON_TIME = 10000;
 void enter_csb_state_precharge(void) {
   Board_Print("[CSB FSM : PRECHARGE] ENTERED!\n");
   prechargeTimeout = msTicks;
+
+  lcd_clear();
+  lcd_set_cursor(0, 0);
+  lcd_print("PRECHARGE");
 }
 
 void update_csb_state_precharge(void) {
