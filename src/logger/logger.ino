@@ -57,7 +57,7 @@ void CommonListener::printFrame(Stream& out, CAN_message_t& frame, int mailbox) 
 }
 
 void CommonListener::gotFrame(CAN_message_t& frame, int mailbox) {
-  printFrame(Serial, frame, mailbox);
+  // printFrame(Serial, frame, mailbox);
 
   File log_file = SD.open(log_name.c_str(), FILE_WRITE);
 
@@ -75,6 +75,8 @@ CommonListener CANListener1(1);
 
 void setup(void) {
   Serial.begin(9600);
+
+  // while (!Serial);
 
   Serial.println(F("DAQBOI v0.1"));
 
@@ -141,11 +143,11 @@ void setup(void) {
     log_file.write('\t');
 
     log_file.println(time_string());
-    log_file.close();
   }
   else {
     Serial.println("[ERROR] Can't open log_file.");
   }
+  log_file.close();
 
   // Attach interrupted listeners
   Can0.attachObj(&CANListener0);
