@@ -4,9 +4,9 @@
 void Set_Fan_PWM_Duty_Cycle(uint8_t frac) {
 	// the duty cycle for the fan is frac / 100 (should be an integer between 1 and 100)
 	// Ideally we would know exactly how to set this, but for now we have a linear fit from data
-	// y = (370*frac-140) / 100
 	// Need this because we have to set register for compare not the duty cycle exactly
-	__HAL_TIM_SET_COMPARE(&TimHandle, TIMx_CHANNEL, (370*frac-140)/100);
+  // y = 4*frac
+	__HAL_TIM_SET_COMPARE(&TimHandle, TIMx_CHANNEL, 4*frac);
 }
 
 void PWM_Output_Init() {
@@ -56,6 +56,10 @@ void PWM_Output_Init() {
        + ClockDivision = 0
        + Counter direction = Up
   */
+
+  // DO NOT DELETE THIS LINE VERY IMPORTANT
+  uhPrescalerValue = (uint32_t)(SystemCoreClock / 2 / 10000000) - 1;
+
   TimHandle.Instance               = TIMx;
   TimHandle.Init.Prescaler         = uhPrescalerValue;
   TimHandle.Init.Period            = PERIOD_VALUE;
