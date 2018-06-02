@@ -92,7 +92,11 @@ static void lcd_command(uint8_t value);
 void lcd_write(uint8_t value);
 void lcd_print(char* str);
 void lcd_print_num(int32_t num, unsigned base);
+
 void lcd_clear(void);
 void lcd_display(void);
+
+void lcd_set_cursor(uint8_t col, uint8_t row);
+void lcd_set_cursor_clearahead(uint8_t col, uint8_t row, uint8_t len);
 
 #endif //ifndef lcd.h

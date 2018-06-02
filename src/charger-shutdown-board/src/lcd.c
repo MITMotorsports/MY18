@@ -169,13 +169,20 @@ void lcd_print(char *str) {
   while (*str != '\0') lcd_write(*(str++));
 }
 
+void lcd_print_num(int32_t num, unsigned base) {
+  char buff[11];  // Max length of 32 bit num including minus sign.
+
+  itoa(num, buff, base);
+  lcd_print(buff);
+}
+
 void lcd_clear() {
   lcd_command(LCD_CLEARDISPLAY); // clear display, set cursor position to zero
   // delay(3);
 }
 
 void lcd_display() {
-  lcd_command(LCD_DISPLAYCONTROL  | displaycontrol);
+  lcd_command(LCD_DISPLAYCONTROL | displaycontrol);
 }
 
 void lcd_set_cursor(uint8_t col, uint8_t row) {
@@ -184,11 +191,10 @@ void lcd_set_cursor(uint8_t col, uint8_t row) {
   lcd_command(LCD_SETDDRAMADDR | (col + row_offsets[row]));
 }
 
-void lcd_print_num(int32_t num, unsigned base) {
-  char buff[10];
-
-  itoa(num, buff, base);
-  lcd_print(buff);
+void lcd_set_cursor_clearahead(uint8_t col, uint8_t row, uint8_t len) {
+  lcd_set_cursor(col, row);
+  while (len--) lcd_write(' ');
+  lcd_set_cursor(col, row);
 }
 
 inline void delay(uint32_t time) {
