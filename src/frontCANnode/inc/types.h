@@ -14,6 +14,17 @@
 #define CYCLES_PER_MICROSECOND 48
 
 typedef struct {
+  bool accel_1_under;
+  bool accel_1_over;
+  bool accel_2_under;
+  bool accel_2_over;
+  bool brake_1_under;
+  bool brake_1_over;
+  bool brake_2_under;
+  bool brake_2_over;
+} ADC_Errors_T;
+
+typedef struct {
   // Raw accel values are read straight off of the adc
   uint16_t accel_1_raws[ACCEL_LOG_LENGTH];
   uint16_t accel_2_raws[ACCEL_LOG_LENGTH];
@@ -30,6 +41,8 @@ typedef struct {
   uint16_t steering_pot;
 
   uint32_t last_updated;
+
+  ADC_Errors_T *errors;
 } ADC_Input_T;
 
 typedef enum {

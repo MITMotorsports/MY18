@@ -17,6 +17,7 @@
 const uint32_t OscRateIn = 12000000;
 volatile uint32_t msTicks;
 
+static ADC_Errors_T errors;
 static ADC_Input_T adc;
 static Speed_Input_T speed;
 
@@ -27,6 +28,17 @@ void SysTick_Handler(void) {
 }
 
 void initialize_input() {
+  errors.accel_1_under = false;
+  errors.accel_1_over = false;
+  errors.accel_2_under = false;
+  errors.accel_2_over = false;
+  errors.brake_1_under = false;
+  errors.brake_1_over = false;
+  errors.brake_2_under = false;
+  errors.brake_2_over = false;
+
+  adc.errors = &errors;
+
   // Initialize adc
   adc.accel_1 = 0;
   adc.accel_2 = 0;
@@ -67,6 +79,7 @@ void initialize_input() {
   speed.can_node_left_16b_wheel_speed = 0;
 
   input.speed = &speed;
+  input.msTicks = 0;
 }
 
 int main(void) {

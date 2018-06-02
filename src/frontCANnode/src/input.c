@@ -11,8 +11,6 @@ void update_can(void);
 uint16_t transform1(uint32_t accel_1_raw);
 uint16_t transform2(uint32_t accel_2_raw);
 
-uint16_t adc_log[10];
-
 void Input_fill_input() {
   update_adc();
   update_wheel_speed();
@@ -24,13 +22,27 @@ void update_adc() {
 
 
   if (next_updated < input.msTicks) {
+    uint16_t lastest_accel_1 = ADC_Read(ACCEL_1_CHANNEL);
+    uint16_t lastest_accel_2 = ADC_Read(ACCEL_2_CHANNEL);
+    uint16_t lastest_brake_1 = ADC_Read(BRAKE_1_CHANNEL);
+    uint16_t lastest_brake_2 = ADC_Read(BRAKE_2_CHANNEL);
+
+    adc->errors->accel_1_under = lastest_accel_1 < ACCEL_1_ERROR_LOWER_BOUND;
+    adc->errors->accel_1_over = lastest_accel_1 > ACCEL_1_ERROR_UPPER_BOUND;
+    adc->errors->accel_2_under = lastest_accel_2 < ACCEL_2_ERROR_LOWER_BOUND;
+    adc->errors->accel_2_over = lastest_accel_2 > ACCEL_2_ERROR_UPPER_BOUND;
+    adc->errors->brake_1_under = lastest_brake_1 < BRAKE_1_ERROR_LOWER_BOUND;
+    adc->errors->brake_1_over = lastest_brake_1 > BRAKE_1_ERROR_UPPER_BOUND;
+    adc->errors->brake_2_under = lastest_brake_2 < BRAKE_2_ERROR_LOWER_BOUND;
+    adc->errors->brake_2_over = lastest_brake_2 > BRAKE_2_ERROR_UPPER_BOUND;
+
     // Update accels
     for (int i = 0; i < ACCEL_LOG_LENGTH - 1; i++) {
       adc->accel_1_raws[i] = adc->accel_1_raws[i+1];
       adc->accel_2_raws[i] = adc->accel_2_raws[i+1];
     }
-    adc->accel_1_raws[ACCEL_LOG_LENGTH-1] = ADC_Read(ACCEL_1_CHANNEL);
-    adc->accel_2_raws[ACCEL_LOG_LENGTH-1] = ADC_Read(ACCEL_2_CHANNEL);
+    adc->accel_1_raws[ACCEL_LOG_LENGTH-1] = lastest_accel_1;
+    adc->accel_2_raws[ACCEL_LOG_LENGTH-1] = lastest_accel_2;
     uint32_t accel_1_sum = 0;
     uint32_t accel_2_sum = 0;
     for (int i = 0; i < ACCEL_LOG_LENGTH; i ++) {
@@ -45,8 +57,8 @@ void update_adc() {
       adc->brake_1_raws[i] = adc->brake_1_raws[i+1];
       adc->brake_2_raws[i] = adc->brake_2_raws[i+1];
     }
-    adc->brake_1_raws[BRAKE_LOG_LENGTH-1] = ADC_Read(BRAKE_1_CHANNEL);
-    adc->brake_2_raws[BRAKE_LOG_LENGTH-1] = ADC_Read(BRAKE_2_CHANNEL);
+    adc->brake_1_raws[BRAKE_LOG_LENGTH-1] = lastest_brake_1;
+    adc->brake_2_raws[BRAKE_LOG_LENGTH-1] = lastest_brake_2;
     uint32_t brake_1_sum = 0;
     uint32_t brake_2_sum = 0;
     for (int i = 0; i < BRAKE_LOG_LENGTH; i ++) {
