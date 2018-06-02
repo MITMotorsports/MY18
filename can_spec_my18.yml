@@ -798,17 +798,17 @@ buses:
             position: 0
             length: 8
             c_type: bool
-          powerReference:
+          powerReference:       # in units of percent of maximum times 10 i.e. 1000=100% power
             length: 16
             position: 8
             c_type: uint16_t
             signed: false
-          VoltageLimit:
+          VoltageLimit:         # in units of volts x 10 i.e. 3000=300 volts
             position: 24
             length: 16
             c_type: uint16_t
             signed: false
-          CurrentLimit:
+          CurrentLimit:         # in units of amps # 10 i.e. 100=10 amps
             position: 40
             length: 16
             c_type: uint16_t
