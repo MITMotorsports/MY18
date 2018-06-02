@@ -88,32 +88,36 @@ void dispatch_init() {
     carstats.rear_left_wheel_speed   = -1;
     carstats.rear_right_wheel_speed  = -1;
     carstats.max_igbt_temp           = -1;
+    carstats.brake_1                 = -1;
+    carstats.brake_2                 = -1;
     carstats.vcu_state               = can0_VCUHeartbeat_vcu_state_VCU_STATE_ROOT;
     carstats.last_vcu_heartbeat      = msTicks;
     carstats.last_bms_heartbeat      = msTicks;
 }
 
 void dispatch_update() {
-    bool left_button_down  = (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN);
-    bool right_button_down = (Pin_Read(PIN_BUTTON2) == BUTTON_DOWN);
-    update_button_state(&left_button, left_button_down);
-    update_button_state(&right_button, right_button_down);
+    //// TODO: Reenable once internal buttons are wired.
+    // bool left_button_down  = (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN);
+    // bool right_button_down = (Pin_Read(PIN_BUTTON2) == BUTTON_DOWN);
+    // update_button_state(&left_button, left_button_down);
+    // update_button_state(&right_button, right_button_down);
 
-    if (right_button.action == BUTTON_ACTION_TAP) {
-        page_manager_next_page(&page_manager);
+    // if (right_button.action == BUTTON_ACTION_TAP) {
+    //     page_manager_next_page(&page_manager);
+    //
+    //     active_aero_enabled = !active_aero_enabled;
+    //     if (active_aero_enabled) {
+    //         send_dash_request(can0_DashRequest_type_ACTIVE_AERO_ENABLE);
+    //     } else {
+    //         send_dash_request(can0_DashRequest_type_ACTIVE_AERO_DISABLE);
+    //     }
+    // } else if (right_button.action == BUTTON_ACTION_HOLD) {
+    //     page_manager_prev_page(&page_manager);
+    // }
 
-        active_aero_enabled = !active_aero_enabled;
-        if (active_aero_enabled) {
-            send_dash_request(can0_DashRequest_type_ACTIVE_AERO_ENABLE);
-        } else {
-            send_dash_request(can0_DashRequest_type_ACTIVE_AERO_DISABLE);
-        }
-    } else if (right_button.action == BUTTON_ACTION_HOLD) {
-        page_manager_prev_page(&page_manager);
-    }
-
-    int res = can_update_carstats(&carstats, &button_request);
-    if (previous_scroll_select != 8 && res == 8) {
+    can_update_carstats(&carstats);
+    bool res = carstats.buttons.ScrollSelect;
+    if (!previous_scroll_select && res) {
         page_manager_next_page(&page_manager);
         oled_clear(&oled);
     }
@@ -125,7 +129,6 @@ void dispatch_update() {
         nextOLEDUpdate = msTicks + OLED_UPDATE_INTERVAL_MS;
         page_manager_update(&page_manager, &oled);
         oled_update(&oled);
-
     }
 }
 
