@@ -6,7 +6,6 @@ bool any_gate_fault() {
          !Board_Pin_Read(PIN_INTERLOCK);
 }
 
-
 void Board_GPIO_Init(void) {
   // Digital GPIO Initialization
   Chip_GPIO_Init(LPC_GPIO);
@@ -53,23 +52,21 @@ void Board_GPIO_Init(void) {
 
   // I2C Initialization
 
-  Chip_SYSCTL_PeriphReset(RESET_I2C0); // Reset the I2C Peripheral
+  Chip_SYSCTL_PeriphReset(RESET_I2C0);                        // Reset the I2C
+                                                              // Peripheral
   Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_4, IOCON_FUNC1); // SCL
   Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_5, IOCON_FUNC1); // SDA
 }
-
 
 inline void Board_Pin_Set(uint8_t led_gpio, uint8_t led_pin, bool state) {
   // Set the value of a GPIO pin
   Chip_GPIO_SetPinState(LPC_GPIO, led_gpio, led_pin, state);
 }
 
-
 inline bool Board_Pin_Read(uint8_t port, uint8_t pin) {
   // Read the value of a GPIO pin
   return Chip_GPIO_GetPinState(LPC_GPIO, port, pin);
 }
-
 
 inline void Board_Pin_Toggle(uint8_t port, uint8_t pin) {
   // Toggle a GPIO pin

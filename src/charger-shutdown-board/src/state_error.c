@@ -15,7 +15,6 @@ void set_error_state(bool newState) {
   currentState = newState;
 }
 
-
 void advance_error_state(void) {
   bool contactor_mismatch = get_csb_state() != CSB_STATE_ROOT &&
                             !bms_state.L_contactor_closed;
@@ -35,21 +34,17 @@ void advance_error_state(void) {
   if (currentState == ERROR_STATE_ERROR) handle_error();
 }
 
-
 void enter_error_state(void) {
   Board_Println("[ERROR FSM : ERROR STATE] ENTERED!");
 }
-
 
 void enter_no_error_state(void) {
   Board_Println("[ERROR FSM : NO ERROR STATE] ENTERED!");
 }
 
-
 inline bool get_error_state(void) {
   return currentState;
 }
-
 
 void handle_error(void) {
   Board_Pin_Set(PIN_PRECHARGE, false);

@@ -5,26 +5,30 @@ void can_receive(Frame *input) {
   can0_T msgForm = identify_can0(&input);
 
   switch (msgForm) {
-    case can0_ChargerStatus1:
-      handle_ChargerStatus1(&input);
-      break;
-    case can0_CurrentSensor_Current:
-      handle_CurrentSensor_Current(&input);
-      break;
-    case can0_CurrentSensor_Voltage1:
-      handle_CurrentSensor_Voltage1(&input);
-      break;
-    case can0_BMSHeartbeat:
-      handle_BMSHeartbeat(&input);
-      break;
-    case can0_CellVoltages:
-      handle_CellVoltages(&input);
-      break;
-    default:
-      break;
+  case can0_ChargerStatus1:
+    handle_ChargerStatus1(&input);
+    break;
+
+  case can0_CurrentSensor_Current:
+    handle_CurrentSensor_Current(&input);
+    break;
+
+  case can0_CurrentSensor_Voltage1:
+    handle_CurrentSensor_Voltage1(&input);
+    break;
+
+  case can0_BMSHeartbeat:
+    handle_BMSHeartbeat(&input);
+    break;
+
+  case can0_CellVoltages:
+    handle_CellVoltages(&input);
+    break;
+
+  default:
+    break;
   }
 }
-
 
 void handle_CurrentSensor_Current(Frame *input) {
   if (USING_CURRENT_SENSOR) {
@@ -34,7 +38,6 @@ void handle_CurrentSensor_Current(Frame *input) {
   }
 }
 
-
 void handle_CurrentSensor_Voltage1(Frame *input) {
   if (USING_CURRENT_SENSOR) {
     can0_CurrentSensor_Voltage1_T unpacked_msg;
@@ -42,7 +45,6 @@ void handle_CurrentSensor_Voltage1(Frame *input) {
     sensor_readings.voltage = unpacked_msg.result;
   }
 }
-
 
 void handle_ChargerStatus1(Frame *input) {
   if (!USING_CURRENT_SENSOR) {
@@ -53,16 +55,16 @@ void handle_ChargerStatus1(Frame *input) {
   }
 }
 
-
 void handle_BMSHeartbeat(Frame *input) {
   can0_BMSHeartbeat_T unpacked_msg;
+
   unpack_can0_BMSHeartbeat(input, &unpacked_msg);
   bms_state.L_contactor_closed = unpacked_msg.L_contactor_closed;
 }
 
-
 void handle_CellVoltages(Frame *input) {
   can0_CellVoltages_T unpacked_msg;
+
   unpack_can0_CellVoltages(input, &unpacked_msg);
   bms_state.min_cell_voltage = unpacked_msg.min;
   bms_state.max_cell_voltage = unpacked_msg.max;
@@ -73,14 +75,13 @@ Can_ErrorID_T send_ChargerCommand(bool enabled) {
 
   can0_ChargerCommand_T msg;
 
-  msg.enable = enabled;
+  msg.enable         = enabled;
   msg.powerReference = 1000; // 10 * percentage
-  msg.VoltageLimit = 3000; // 10 * V
-  msg.CurrentLimit = 100; // 10 * A
+  msg.VoltageLimit   = 3000; // 10 * V
+  msg.CurrentLimit   = 100;  // 10 * A
 
   handle_can_error(can0_ChargerCommand_Write(&msg));
 }
-
 
 void handle_can_error(Can_ErrorID_T error) {
   if ((error != Can_Error_NONE) && (error != Can_Error_NO_RX)) {
