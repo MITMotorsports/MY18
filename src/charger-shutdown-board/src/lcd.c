@@ -1,5 +1,4 @@
 #include "lcd.h"
-
 static I2C_XFER_T xfer;
 static uint8_t i2c_rx_buf[20];
 static uint8_t i2c_tx_buf[20];
@@ -65,7 +64,7 @@ void send_i2c(uint8_t slave_data, uint8_t slave_register){
 }
 
 
-void digital_write(uint8_t pin, uint8_t data){
+static void digital_write(uint8_t pin, uint8_t data){
 	uint8_t reg = MCP23017_GPIO;
 	uint8_t output;
 	if(pin>8){ //want to write to port b
@@ -82,13 +81,13 @@ void digital_write(uint8_t pin, uint8_t data){
 
 }
 
-void pulseEnable(void) {
+static void pulseEnable(void) {
   digital_write(_enable_pin, 0);
   digital_write(_enable_pin, 1);
   _digital_write(_enable_pin, 0);
 }
 
-void write4bits(uint8_t data){
+static void write4bits(uint8_t data){
 	uint8_t out;
 	uint8_t reg = MCP23017_GPIO+1;
 
@@ -110,11 +109,11 @@ void write4bits(uint8_t data){
 	send_i2c(out,reg);
 }
 
-void command(uint8_t value){
-	send(value,0);
+static void lcd_command(uint8_t value){
+	send(value, 0);
 }
 
-void init_lcd(){
+void init_lcd(void) {
 
 	uint32_t lcd_wait=msTicks;
 	while(msTicks-lcd_wait<50)
@@ -151,18 +150,9 @@ void init_lcd(){
 	command(LCD_ENTRYMODESET|displaymode );
 	command(0x32);
 	command(0x32);//turn off white bars
-	lcd_write_str("voltage:",8);
-	command(LCD_SETDDRAMADDR | 0x40 ); //move the cursor to 2nd row
-	lcd_write_str("current:",8);
-//Update voltage and current values
-	command(LCD_SETDDRAMADDR |  9);
-	lcd_write_str("READY", 5);
-	command(LCD_SETDDRAMADDR | 9 + 0x40);
-	lcd_write_str("READY", 5);
-
 }
 
-void send(uint8_t value, uint8_t mode) {
+static void lcd_send(uint8_t value, uint8_t mode) {
   digital_write(_rs_pin, mode);
   // if there is a RW pin indicated, set it low to Write
     digital_write(_rw_pin, 0);
@@ -170,16 +160,20 @@ void send(uint8_t value, uint8_t mode) {
     write4bits(value);
 }
 
+inline void lcd_write(uint8_t value){
+	lcd_send(value, 0xFF);
+}
+
 void lcd_print(char* str) {
-  while (*str != '\0') send(*(str++), 0xFF);
+  while (*str != '\0') lcd_write(*(str++));
 }
 
-void clear(){
+void lcd_clear(){
   lcd_command(LCD_CLEARDISPLAY);  // clear display, set cursor position to zero
-  delay(3);
+  // delay(3);
 }
 
-void display(){
+void lcd_display(){
   lcd_command(LCD_DISPLAYCONTROL  | displaycontrol);
 }
 
@@ -197,14 +191,4 @@ void lcd_print_num(int32_t num, unsigned base) {
 inline void delay(uint32_t time){
 	uint32_t wait=msTicks;
 	while(msTicks-wait <time){}
-}
-
-void lcd_command(uint8_t value) {
-	send(value,0);
-}
-
-void lcd_write_str(char* str, int len) {
-	for(int i = 0; i<len ;i++){
-		write(str[i]);
-	}
 }

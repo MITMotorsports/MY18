@@ -1,6 +1,5 @@
 #ifndef _LCD_H_
 #define _LCD_H_
-
 #include "chip.h"
 #include <stdint.h>
 
@@ -76,22 +75,24 @@ static const uint8_t displaycontrol = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKO
 static const uint8_t displaymode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
 
 
-
 void init_MCP2307(void);
+void init_lcd(void);
+
 void read_i2c(uint8_t slave_register);
-void send_i2c_2(uint8_t slave_data1, uint8_t slve_data2, uint8_t slave_register);
-void send_i2c(uint8_t slave_data, uint8_t slave_register);
-void digital_write(uint8_t pin, uint8_t data);
-void pulseEnable(void);
-void write4bits(uint8_t data);
-void command(uint8_t value);
+static void send_i2c_2(uint8_t slave_data1, uint8_t slve_data2, uint8_t slave_register);
+static void send_i2c(uint8_t slave_data, uint8_t slave_register);
+
+static void digital_write(uint8_t pin, uint8_t data);
+static void pulseEnable(void);
+static void write4bits(uint8_t data);
+
+static void lcd_send(uint8_t value, uint8_t mode);
+static void lcd_command(uint8_t value);
+
 void lcd_write(uint8_t value);
 void lcd_print(char* str);
 void lcd_print_num(int32_t num, unsigned base);
-void clear(void);
-void display(void);
-void lcd_command(uint8_t value);
-void lcd_write(uint8_t value);
-void lcd_write_str(char* str, int len);
+void lcd_clear(void);
+void lcd_display(void);
 
 #endif //ifndef lcd.h
