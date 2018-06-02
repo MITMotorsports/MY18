@@ -4,8 +4,6 @@ can0_ChargerCommand_T msg;
 
 uint32_t can_wait;
 
-Frame frame;
-
 uint16_t voltage;
 uint16_t current;
 

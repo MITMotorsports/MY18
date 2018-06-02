@@ -1,17 +1,13 @@
 #include "state_error.h"
 
-void enter_error_state(void);
-void enter_no_error_state(void);
-
 static bool currentState = false;
 
 void init_error_state(void) {
   set_error_state(false);
 }
 
-
 void set_error_state(bool newState) {
-  if (newState) {
+  if (newState == ERROR_STATE_ERROR) {
     enter_error_state();
   } else {
     enter_no_error_state();
@@ -20,21 +16,23 @@ void set_error_state(bool newState) {
 }
 
 
-void advance_error_state() {
-  if (any_gate_fault() || (get_csb_state() != CSB_STATE_ROOT && !bms_state.L_contactor_closed)) {
-      if (!currentState) {
-        set_error_state(true);
-        Board_Pin_Set(PIN_PRECHARGE, 0);
-        send_ChargerCommand(0);
-        if (get_csb_state() != CSB_STATE_ROOT) {
-          set_csb_state(CSB_STATE_ROOT);
-        }
-      }
-  } else {
-    if (currentState) {
-      set_error_state(false);
-    }
+void advance_error_state(void) {
+  bool contactor_mismatch = get_csb_state() != CSB_STATE_ROOT &&
+                            !bms_state.L_contactor_closed;
+
+  if (any_gate_fault() || contactor_mismatch) {
+    if (currentState != ERROR_STATE_ERROR) set_error_state(ERROR_STATE_ERROR);
+
+    if (get_csb_state() != CSB_STATE_ROOT) set_csb_state(CSB_STATE_ROOT);
   }
+  else {
+    if (currentState == ERROR_STATE_ERROR) set_error_state(ERROR_STATE_NONE);
+  }
+
+  // TODO: Add an error on a persistent low side not closing
+  // any_gate_fault() && !bms_state.L_contactor_closed
+
+  if (currentState == ERROR_STATE_ERROR) handle_error();
 }
 
 
@@ -48,6 +46,12 @@ void enter_no_error_state(void) {
 }
 
 
-bool get_error_state(void) {
+inline bool get_error_state(void) {
   return currentState;
+}
+
+
+void handle_error(void) {
+  Board_Pin_Set(PIN_PRECHARGE, false);
+  send_ChargerCommand(0);
 }

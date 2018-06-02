@@ -23,11 +23,11 @@ int main(void) {
   init_can0_csb();
   Board_Print("CAN initialized\n");
 
-  //init_lcd();
-  //Board_Print("LCD initialized\n");
-
   init_MCP2307();
   Board_Print("MCP2307 initialized\n");
+
+  init_lcd();
+  Board_Print("LCD initialized\n");
 
   init_states();
   Board_Print("States initialized\n");

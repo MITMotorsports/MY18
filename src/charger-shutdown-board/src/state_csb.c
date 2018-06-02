@@ -16,7 +16,7 @@ void set_csb_state(CSB_STATE_T newState){
 		enter_csb_state_root();
 		break;
 
-	case  CSB_STATE_PRECHARGE:
+	case CSB_STATE_PRECHARGE:
 		enter_csb_state_precharge();
 		break;
 

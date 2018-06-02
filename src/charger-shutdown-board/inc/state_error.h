@@ -5,6 +5,14 @@
 #include "gpio.h"
 #include "state.h"
 
+#define ERROR_STATE_ERROR true
+#define ERROR_STATE_NONE false
+
+// PRIVATE FUNCTIONS
+static void enter_error_state(void);
+static void enter_no_error_state(void);
+static void handle_error(void);
+
 // INTERACTION FUNCTIONS
 void init_error_state(void);
 void advance_error_state(void);
