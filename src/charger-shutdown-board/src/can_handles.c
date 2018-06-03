@@ -34,7 +34,7 @@ void handle_CurrentSensor_Current(Frame *input) {
   if (USING_CURRENT_SENSOR) {
     can0_CurrentSensor_Current_T unpacked_msg;
     unpack_can0_CurrentSensor_Current(input, &unpacked_msg);
-    sensor_readings.current = unpacked_msg.current;
+    sensor_readings.current = unpacked_msg.result;
   }
 }
 
