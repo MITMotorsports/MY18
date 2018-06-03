@@ -1,15 +1,38 @@
 #include "torque_calc.h"
 #define HUMAN_READABLE true
 
-uint16_t calcTorque(uint16_t accel) {
-  static uint16_t last_torque = 0;
-  static uint32_t LC_error_sum = 0;
-  static int32_t PL_I_sum = 0;
+int16_t get_regen_torque(void);
+int16_t get_launch_control_torque(void);
+int16_t get_pwr_limited_torque(int16_t raw_torque);
 
+int16_t calcTorque(uint16_t accel, bool use_launch_control, bool use_regen) {
   if (accel < PEDALBOX_ACCEL_RELEASE) return 0;
 
-  uint16_t raw_torque = MAX_TORQUE * (accel - PEDALBOX_ACCEL_RELEASE) / (MAX_ACCEL_VAL - PEDALBOX_ACCEL_RELEASE);
+  int16_t raw_torque = MAX_TORQUE * (accel - PEDALBOX_ACCEL_RELEASE) / (MAX_ACCEL_VAL - PEDALBOX_ACCEL_RELEASE);
+  int16_t power_limited_torque = get_pwr_limited_torque(raw_torque);
 
+  if (power_limited_torque > raw_torque) power_limited_torque = raw_torque;
+
+  return power_limited_torque;
+}
+
+
+int16_t get_regen_torque() {
+  int16_t regen_torque = 0;
+  if (mc_readings.speed > RG_MOTOR_SPEED_THRESH &&
+      cs_readings.V_bus < RG_BATTERY_VOLTAGE_MAX_THRESH &&
+      get_pascals(pedalbox.brake_1) < RG_FRONT_BRAKE_THRESH &&
+      // check car speed
+      true) { // Front brake ...? TODO: check this
+        regen_torque = RG_K * get_pascals(pedalbox.brake_1) * (1 - BB_ef) / BB_ef;
+        if (regen_torque > RG_TORQUE_COMMAND_MAX) regen_torque = RG_TORQUE_COMMAND_MAX;
+    }
+  return -1 * regen_torque;
+}
+
+int16_t get_launch_control_torque() {
+  static uint16_t last_torque = 0;
+  static uint32_t LC_error_sum = 0;
   // Launch control
   /*uint16_t launch_control_torque;
   if (true) {
@@ -28,10 +51,12 @@ uint16_t calcTorque(uint16_t accel) {
   } else {
     launch_control_torque = raw_torque;
   }*/
+  return 0;
+}
 
+int16_t get_pwr_limited_torque(int16_t raw_torque) {
+  static int32_t PL_I_sum = 0;
 
-
-  // Power limit
   // I keep making unit mistakes so I've added a bunch of comments with untis
   uint32_t power_limited_torque; // Units: 10 * Nm
   int32_t error = cs_readings.power - PL_THRESHOLD; // Units: W
@@ -47,7 +72,7 @@ uint16_t calcTorque(uint16_t accel) {
   int32_t mc_speed = mc_readings.speed * -1; // Units: RPM
 
   // Units: rad/s = (rotations / minute) * (2pi rad / rotation) * (1 minute / 60 secs)
-  uint32_t omega = mc_speed * (2 * 314)/ (60*100)
+  uint32_t omega = mc_speed * (2 * 314)/ (60*100);
 
   // Multiplying by ten to improve accuracy and convert units
   // Units: dNm  = (10 dNM / Nm) * Nm
@@ -69,14 +94,14 @@ uint16_t calcTorque(uint16_t accel) {
 
   // Mechanical limit
   // Units: dNm = (10 dNM / Nm) * (Nm/s) / (rad/s)
-  uin32_t target_torque = 10 * PL_THRESHOLD / omega;
+  uint32_t target_torque = 10 * PL_THRESHOLD / omega;
   if (omega != 0 && PI_torque > target_torque) { // Units: rad/s && dNm
     power_limited_torque = target_torque; // dNm
   } else {
     power_limited_torque = PI_torque; // Units: dNm
   }
 
-  if (HUMAN_READABLE) {
+  /*if (HUMAN_READABLE) {
     printf("POWER: %d, RAW TORQUE: %d, TORQUE OFFSET: %d, COMMANDED TORQUE: %d, omega: %d, motor speed: %d, error: %d, I_torque: %d, I-sum:%d\r\n", cs_readings.power, raw_torque, torque_offset, power_limited_torque, omega, mc_speed, error, I_torque, PL_I_sum);
   } else {
     printf("power,%d,%d\r\n", cs_readings.power, HAL_GetTick());
@@ -96,7 +121,6 @@ uint16_t calcTorque(uint16_t accel) {
   pl.torque_offset = torque_offset;
   pl.I_sum = PL_I_sum;
   pl.P_torque = P_torque;
-  pl.I_torque = I_torque;
-
+  pl.I_torque = I_torque;*/
   return power_limited_torque;
 }

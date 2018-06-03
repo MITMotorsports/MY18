@@ -36,11 +36,20 @@ void update_vcu_state_driving() {
   }
 
   // Send torque commands
-  torque_command = calcTorque(pedalbox_avg(accel));
+  torque_command = calcTorque(pedalbox_avg(accel), false, false);
 
   sendTorqueCmdMsg(torque_command);
   send_PL1_monitoring();
   send_PL2_monitoring();
+
+  // Control regen brake valve:
+  if (REGEN) {
+    if (get_pascals(pedalbox.brake_1) < RG_REAR_BRAKE_THRESH) { // rear brake
+      set_brake_shutoff_valve(true);
+    } else {
+      set_brake_shutoff_valve(false);
+    }
+  }
 
   static Time_T last_print = 0;
 

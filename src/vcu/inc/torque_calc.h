@@ -27,6 +27,20 @@
 #define LC_KP 1000
 #define LC_KI 1
 
-uint16_t calcTorque(uint16_t accel);
+// RG = regen
+#define RG_MOTOR_SPEED_THRESH 250 // RPM
+#define RG_CAR_SPEED_THRESH 5 // kph
+#define RG_REAR_BRAKE_THRESH 827370 // Pa
+#define RG_FRONT_BRAKE_THRESH 827370 // Pa
+#define RG_BATTERY_VOLTAGE_MAX_THRESH 299000 // mV
+#define RG_ACCEL_MAX_THRESH 5 // %
+#define RG_TORQUE_COMMAND_MAX 100 // Nm
+#define RG_K 1
+
+// Need to eventually be set by dash
+#define REGEN true
+#define BB_ef 1
+
+int16_t calcTorque(uint16_t accel, bool use_launch_control, bool use_regen);
 
 #endif // ifndef __TORQUE_CALC
