@@ -10,7 +10,7 @@ void enter_csb_state_root(void) {
 }
 
 void update_csb_state_root(void) {
-  if (!any_gate_fault() && bms_state.L_contactor_closed) {
+  if (!any_gate_fault()) {
     set_csb_state(CSB_STATE_PRECHARGE);
   }
 }

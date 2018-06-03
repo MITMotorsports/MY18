@@ -9,71 +9,16 @@ void can_receive(Frame *input) {
     handle_ChargerStatus1(&input);
     break;
 
-  case can0_CurrentSensor_Current:
-    handle_CurrentSensor_Current(&input);
-    break;
-
-  case can0_CurrentSensor_Voltage1:
-    handle_CurrentSensor_Voltage1(&input);
-    break;
-
-  case can0_BMSHeartbeat:
-    handle_BMSHeartbeat(&input);
-    break;
-
-  case can0_CellVoltages:
-    handle_CellVoltages(&input);
-    break;
-
   default:
     break;
   }
 }
 
-void handle_CurrentSensor_Current(Frame *input) {
-  if (USING_CURRENT_SENSOR) {
-    can0_CurrentSensor_Current_T unpacked_msg;
-    unpack_can0_CurrentSensor_Current(input, &unpacked_msg);
-    sensor_readings.current = unpacked_msg.result;
-  }
-}
-
-void handle_CurrentSensor_Voltage1(Frame *input) {
-  if (USING_CURRENT_SENSOR) {
-    can0_CurrentSensor_Voltage1_T unpacked_msg;
-    unpack_can0_CurrentSensor_Voltage1(input, &unpacked_msg);
-    sensor_readings.voltage = unpacked_msg.result;
-  }
-}
-
 void handle_ChargerStatus1(Frame *input) {
-  if (!USING_CURRENT_SENSOR) {
-    can0_ChargerStatus1_T unpacked_msg;
-    unpack_can0_ChargerStatus1(input, &unpacked_msg);
-    sensor_readings.current = unpacked_msg.DCCurrent;
-    sensor_readings.voltage = unpacked_msg.DCVoltage;
-  }
-}
-
-void handle_BMSHeartbeat(Frame *input) {
-  can0_BMSHeartbeat_T unpacked_msg;
-
-  unpack_can0_BMSHeartbeat(input, &unpacked_msg);
-  bms_state.L_contactor_closed = unpacked_msg.L_contactor_closed;
-}
-
-void handle_CellVoltages(Frame *input) {
-  can0_CellVoltages_T unpacked_msg;
-
-  unpack_can0_CellVoltages(input, &unpacked_msg);
-  bms_state.min_cell_voltage = unpacked_msg.min;
-  bms_state.max_cell_voltage = unpacked_msg.max;
-}
-
-void send_ChargerCommand(can0_ChargerCommand_T *params) {
-  LIMIT(can0_ChargerCommand_period);
-
-  handle_can_error(can0_ChargerCommand_Write(params));
+  can0_ChargerStatus1_T unpacked_msg;
+  unpack_can0_ChargerStatus1(input, &unpacked_msg);
+  sensor_readings.current = unpacked_msg.DCCurrent;
+  sensor_readings.voltage = unpacked_msg.DCVoltage;
 }
 
 void handle_can_error(Can_ErrorID_T error) {

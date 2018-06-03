@@ -20,13 +20,16 @@ void enter_csb_state_charge(void) {
 }
 
 void update_csb_state_charge(void) {
-  send_ChargerCommand(&charge);
-
-  lcd_set_cursor_clearahead(4, 0, 3);
-  lcd_print_num(sensor_readings.voltage, 10);
+  // Print voltage and current w/ decimal place
+  lcd_set_cursor_clearahead(4, 0, 6);
+  lcd_print_num(sensor_readings.voltage/10, 10);
+  lcd_write('.');
+  lcd_print_num(sensor_readings.voltage % 10, 10);
   lcd_write('V');
 
-  lcd_set_cursor_clearahead(4, 1, 3);
-  lcd_print_num(sensor_readings.current, 10);
+  lcd_set_cursor_clearahead(4, 1, 5);
+  lcd_print_num(sensor_readings.current / 10, 10);
+  lcd_write('.');
+  lcd_print_num(sensor_readings.current % 10, 10);
   lcd_write('A');
 }
