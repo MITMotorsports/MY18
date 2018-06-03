@@ -17,6 +17,8 @@
 const uint32_t OscRateIn = 12000000;
 volatile uint32_t msTicks;
 
+void Set_Interrupt_Priorities(void);
+
 static ADC_Errors_T errors;
 static ADC_Input_T adc;
 static Speed_Input_T speed;
@@ -27,7 +29,7 @@ void SysTick_Handler(void) {
   msTicks++;
 }
 
-void initialize_input() {
+void initialize_input(void) {
   errors.accel_1_under = false;
   errors.accel_1_over = false;
   errors.accel_2_under = false;
@@ -119,7 +121,7 @@ int main(void) {
 
 // Interrupt configs
 
-void handle_interrupt(LPC_TIMER_T* timer, Speed_Input_T *speed, Wheel_T wheel) {
+void handle_interrupt(LPC_TIMER_T* timer, Wheel_T wheel) {
   // Reset the timer immediately
   Chip_TIMER_Reset(timer);
   // Clear the capture
@@ -131,19 +133,19 @@ void handle_interrupt(LPC_TIMER_T* timer, Speed_Input_T *speed, Wheel_T wheel) {
 // Interrupt handlers. These function get called automatically on
 // a rising edge or falling edge of the signal going into the timer capture pin
 void TIMER32_0_IRQHandler(void) {
-  handle_interrupt(LPC_TIMER32_0, input.speed, LEFT_32);
+  handle_interrupt(LPC_TIMER32_0, LEFT_32);
 }
 
 void TIMER32_1_IRQHandler(void) {
-  handle_interrupt(LPC_TIMER32_1, input.speed, RIGHT_32);
+  handle_interrupt(LPC_TIMER32_1, RIGHT_32);
 }
 
 void TIMER16_0_IRQHandler(void) {
-  handle_interrupt(LPC_TIMER16_0, input.speed, LEFT_16);
+  handle_interrupt(LPC_TIMER16_0, LEFT_16);
 }
 
 void TIMER16_1_IRQHandler(void) {
-  handle_interrupt(LPC_TIMER16_1, input.speed, RIGHT_16);
+  handle_interrupt(LPC_TIMER16_1, RIGHT_16);
 }
 
 void Set_Interrupt_Priorities(void) {

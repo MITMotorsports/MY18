@@ -6,8 +6,6 @@
 
 #include <CANlib.h>
 
-static bool resettingPeripheral = false;
-
 extern Input_T input;
 extern volatile uint32_t msTicks;
 
