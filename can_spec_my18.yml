@@ -798,19 +798,19 @@ buses:
             position: 0
             length: 8
             c_type: bool
-          powerReference:       # in units of percent of maximum times 10 i.e. 1000=100% power
+          powerReference:
             length: 16
             position: 8
             c_type: uint16_t
             signed: false
-            unit: decipercent
-          VoltageLimit:         # in units of volts x 10 i.e. 3000=300 volts
+            unit: 3.6 / 1000 kW  # thousandth of maximum power value (3.6 kW)
+          VoltageLimit:
             position: 24
             length: 16
             c_type: uint16_t
             signed: false
             unit: dV
-          CurrentLimit:         # in units of amps # 10 i.e. 100=10 amps
+          CurrentLimit:
             position: 40
             length: 16
             c_type: uint16_t
