@@ -91,14 +91,46 @@ buses:
             signed: false
           brake_1:
             position: 32
-            length: 16
+            length: 10
             c_type: uint16_t
             signed: false
           brake_2:
-            position: 48
-            length: 16
+            position: 42
+            length: 10
             c_type: uint16_t
             signed: false
+          accel_1_under:
+            position: 52
+            length: 1
+            c_type: bool
+          accel_1_over:
+            position: 53
+            length: 1
+            c_type: bool
+          accel_2_under:
+            position: 54
+            length: 1
+            c_type: bool
+          accel_2_over:
+            position: 55
+            length: 1
+            c_type: bool
+          brake_1_under:
+            position: 56
+            length: 1
+            c_type: bool
+          brake_1_over:
+            position: 57
+            length: 1
+            c_type: bool
+          brake_2_under:
+            position: 58
+            length: 1
+            c_type: bool
+          brake_2_over:
+            position: 59
+            length: 1
+            c_type: bool
       FrontCanNodeWheelSpeed:
         can_id: 0x0F0
         is_big_endian: true
