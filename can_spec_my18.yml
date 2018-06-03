@@ -803,16 +803,19 @@ buses:
             position: 8
             c_type: uint16_t
             signed: false
+            unit: decipercent
           VoltageLimit:         # in units of volts x 10 i.e. 3000=300 volts
             position: 24
             length: 16
             c_type: uint16_t
             signed: false
+            unit: dV
           CurrentLimit:         # in units of amps # 10 i.e. 100=10 amps
             position: 40
             length: 16
             c_type: uint16_t
             signed: false
+            unit: dA
       ChargerStatus1:
         can_id: 0x305
         is_big_endian: false
