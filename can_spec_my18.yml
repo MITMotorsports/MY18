@@ -15,7 +15,6 @@ boards:
         - FrontCanNodeBrakeThrottle
         - FrontCanNodeRightWheelSpeed
         - FrontCanNodeLeftWheelSpeed
-        - FrontCanNodeErrors
     subscribe:
       can0:
         - VCUHeartbeat
@@ -92,49 +91,44 @@ buses:
             signed: false
           brake_1:
             position: 32
-            length: 16
+            length: 10
             c_type: uint16_t
             signed: false
           brake_2:
-            position: 48
-            length: 16
+            position: 42
+            length: 10
             c_type: uint16_t
             signed: false
-      FrontCanNodeErrors:
-        can_id: 0x091
-        is_big_endian: true
-        period: 19ms
-        segments:
           accel_1_under:
-            position: 0
+            position: 52
             length: 1
             c_type: bool
           accel_1_over:
-            position: 1
+            position: 53
             length: 1
             c_type: bool
           accel_2_under:
-            position: 2
+            position: 54
             length: 1
             c_type: bool
           accel_2_over:
-            position: 3
+            position: 55
             length: 1
             c_type: bool
           brake_1_under:
-            position: 4
+            position: 56
             length: 1
             c_type: bool
           brake_1_over:
-            position: 5
+            position: 57
             length: 1
             c_type: bool
           brake_2_under:
-            position: 6
+            position: 58
             length: 1
             c_type: bool
           brake_2_over:
-            position: 7
+            position: 59
             length: 1
             c_type: bool
       FrontCanNodeLeftWheelSpeed:

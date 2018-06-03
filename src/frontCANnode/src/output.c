@@ -32,6 +32,14 @@ void write_can_brakethrottle_msg() {
   msg.brake_2 = input.adc->brake_2;
   msg.accel_1 = input.adc->accel_1;
   msg.accel_2 = input.adc->accel_2;
+  msg.accel_1_under = input.adc->errors->accel_1_under;
+  msg.accel_1_over = input.adc->errors->accel_1_over;
+  msg.accel_2_under = input.adc->errors->accel_2_under;
+  msg.accel_2_over = input.adc->errors->accel_2_over;
+  msg.brake_1_under = input.adc->errors->brake_1_under;
+  msg.brake_1_over = input.adc->errors->brake_1_over;
+  msg.brake_2_under = input.adc->errors->brake_2_under;
+  msg.brake_2_over = input.adc->errors->brake_2_over;
 
   handle_can_error(can0_FrontCanNodeBrakeThrottle_Write(&msg));
 }
@@ -57,24 +65,6 @@ void write_can_right_wheel_speed_msg() {
 
   handle_can_error(can0_FrontCanNodeRightWheelSpeed_Write(&msg));
 }
-
-void write_can_node_errors_msg() {
-  LIMIT(can0_FrontCanNodeErrors_period)
-
-  can0_FrontCanNodeErrors_T msg;
-
-  msg.accel_1_under = input.adc->errors->accel_1_under;
-  msg.accel_1_over = input.adc->errors->accel_1_over;
-  msg.accel_2_under = input.adc->errors->accel_2_under;
-  msg.accel_2_over = input.adc->errors->accel_2_over;
-  msg.brake_1_under = input.adc->errors->brake_1_under;
-  msg.brake_1_over = input.adc->errors->brake_1_over;
-  msg.brake_2_under = input.adc->errors->brake_2_under;
-  msg.brake_2_over = input.adc->errors->brake_2_over;
-
-  handle_can_error(can0_FrontCanNodeErrors_Write(&msg));
-}
-
 void handle_can_error(Can_ErrorID_T error) {
   if ((error != Can_Error_NONE) && (error != Can_Error_NO_RX)) {
     switch (error) {
