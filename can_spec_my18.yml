@@ -12,7 +12,8 @@ boards:
     publish:
       can0:
         - FrontCanNodeBrakeThrottle
-        - FrontCanNodeWheelSpeed
+        - FrontCanNodeRightWheelSpeed
+        - FrontCanNodeLeftWheelSpeed
     subscribe:
       can0:
         - VCUHeartbeat
@@ -131,18 +132,39 @@ buses:
             position: 59
             length: 1
             c_type: bool
-      FrontCanNodeWheelSpeed:
-        can_id: 0x0F0
+      FrontCanNodeLeftWheelSpeed:
+        can_id: 0x0E0
         is_big_endian: true
-        period: 1000s
+        period: 10ms
         segments:
-          front_right_wheel_speed:
+          # Wheel speed from 32-bit timer (accurate at most speeds)
+          can_node_left_32b_wheel_speed:
             position: 0
             length: 32
             c_type: uint32_t
             signed: false
             unit: mRPM
-          front_left_wheel_speed:
+          # Wheel speed from 16-bit timer (accurate only at high speeds)
+          can_node_left_16b_wheel_speed:
+            position: 32
+            length: 32
+            c_type: uint32_t
+            signed: false
+            unit: mRPM
+      FrontCanNodeRightWheelSpeed:
+        can_id: 0x0E1
+        is_big_endian: true
+        period: 10ms
+        segments:
+          # Wheel speed from 32-bit timer (accurate at most speeds)
+          can_node_right_32b_wheel_speed:
+            position: 0
+            length: 32
+            c_type: uint32_t
+            signed: false
+            unit: mRPM
+          # Wheel speed from 16-bit timer (accurate only at high speeds)
+          can_node_right_16b_wheel_speed:
             position: 32
             length: 32
             c_type: uint32_t
@@ -818,3 +840,18 @@ buses:
             unit: decidegC
             signed: true
             c_type: int16_t
+      PLMonitoring:
+        can_id: 0x600
+        period: 20ms
+        is_big_endian: true
+        segments:
+          raw_torque:
+            position: 0
+            length: 32
+            signed: false
+            c_type: uint32_t
+          power_limited_torque:
+            position: 32
+            length: 32
+            signed: false
+            c_type: uint32_t
