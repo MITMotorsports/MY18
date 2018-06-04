@@ -114,15 +114,17 @@ void update_wheel_speed() {
       }
       const bool timeout =
         speed->last_updated[wheel] + WHEEL_SPEED_TIMEOUT_MS < msTicks;
-      speed->wheel_stopped[wheel] = timeout || count == 0;
-      speed->disregard[wheel] = timeout;
 
-      // Save value
       uint32_t calculated_speed;
-      if (count < NUM_TEETH) {
-        calculated_speed = click_time_to_mRPM(speed->last_tick[wheel][idx]);
+      speed->wheel_stopped[wheel] = timeout;
+      if (speed->wheel_stopped[wheel]) {
+        calculated_speed = 0;
       } else {
-        calculated_speed = click_time_to_mRPM(moving_avg);
+        if (count < NUM_TEETH) {
+          calculated_speed = click_time_to_mRPM(speed->last_tick[wheel][idx]);
+        } else {
+          calculated_speed = click_time_to_mRPM(moving_avg);
+        }
       }
 
       // 32 bit timer speeds are first in the enum, so it's safe to look back at
@@ -194,7 +196,7 @@ uint16_t transform2(uint32_t accel_2_raw) {
 
 void Input_handle_interrupt(uint32_t msTicks, uint32_t curr_tick, Wheel_T wheel) {
   Speed_Input_T *speed = input.speed;
-  if (speed->disregard[wheel]) {
+  if (speed->wheel_stopped[wheel]) {
     speed->num_ticks[wheel] = 0;
     speed->big_sum[wheel] = 0;
     speed->little_sum[wheel] = 0;

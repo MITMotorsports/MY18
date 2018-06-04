@@ -66,7 +66,6 @@ void initialize_input(void) {
     speed.big_sum[i] = 0;
     speed.little_sum[i] = 0;
     speed.last_updated[i] = 0;
-    speed.disregard[i] = false;
     speed.wheel_stopped[i] = true;
 
     for (int j = 0; j < NUM_TEETH; j++) {
