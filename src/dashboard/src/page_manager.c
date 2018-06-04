@@ -18,18 +18,9 @@ void page_manager_next_page(page_manager_t *pm) {
         case DASH_PAGE_CRITICAL:
             pm->page = DASH_PAGE_TRACTION;
             break;
-        // case DASH_PAGE_CHARGE:
-            // draw_charging_page(pm, oled);
-            // break;
-        //case DASH_PAGE_TAKEOVER:
-        //    draw_takeover_page(pm, oled);
-        //    break;
         case DASH_PAGE_TRACTION:
-            pm->page = DASH_PAGE_CRITICAL;
+            pm->page = DASH_PAGE_FAULT;
             break;
-        //case DASH_PAGE_WHEEL_SPEED:
-        //    draw_wheel_speed_page(pm, oled);
-        //    break;
         default:
             pm->page = DASH_PAGE_CRITICAL;
             break;
@@ -86,24 +77,28 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 void draw_takeover_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 void draw_traction_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 void draw_wheel_speed_page(page_manager_t *pm, NHD_US2066_OLED *oled);
+void draw_fault_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 
 void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
     switch (pm->page) {
         case DASH_PAGE_CRITICAL:
             draw_critical_page(pm, oled);
             break;
-        case DASH_PAGE_CHARGE:
-            draw_charging_page(pm, oled);
-            break;
+        // case DASH_PAGE_CHARGE:
+            // draw_charging_page(pm, oled);
+            // break;
         //case DASH_PAGE_TAKEOVER:
         //    draw_takeover_page(pm, oled);
         //    break;
         case DASH_PAGE_TRACTION:
-           draw_traction_page(pm, oled);
-           break;
+            draw_traction_page(pm, oled);
+            break;
         //case DASH_PAGE_WHEEL_SPEED:
         //    draw_wheel_speed_page(pm, oled);
         //    break;
+        case DASH_PAGE_FAULT:
+            draw_fault_page(pm, oled);
+            break;
         default:
             break;
     }
@@ -121,26 +116,35 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_set_pos(oled, 0, 0);
 
     carstats_t *stats = pm->stats;
-    if (stats->vcu_errors.fatal_contactor) {
-        oled_print(oled, "F:CONTACT");
-    } else if (stats->vcu_errors.fatal_gate) {
+    if (stats->vcu_errors.fatal_gate) {
         oled_print(oled, "F:GATE");
-    } else if (stats->vcu_errors.fatal_precharge) {
+    }
+    else if (stats->vcu_errors.fatal_contactor) {
+      oled_print(oled, "F:CONTACT");
+    }
+    else if (stats->vcu_errors.fatal_precharge) {
         oled_print(oled, "F:PRECHRG");
-    } else if (stats->vcu_errors.fatal_conflict) {
-        oled_print(oled, "F:CONFLCT");
-    } else if (stats->vcu_errors.recoverable_conflict) {
-        oled_print(oled, "R:CONFLCT");
-    } else if (stats->vcu_errors.recoverable_gate) {
-        oled_print(oled, "R:GATE");
-    } else if (stats->vcu_errors.recoverable_heartbeat) {
-        oled_print(oled, "R:HRTBEAT");
-    } else if (stats->vcu_errors.recoverable_contactor) {
+    }
+    else if (stats->vcu_errors.fatal_conflict) {
+        oled_print(oled, "F:ACC_IMP");
+    }
+    else if (stats->vcu_errors.recoverable_conflict) {
+        oled_print(oled, "R:BRK_ACC");
+    }
+    else if (stats->vcu_errors.recoverable_gate) {
         oled_print(oled, "R:ESTOP");
-    } else {
+    }
+    else if (stats->vcu_errors.recoverable_heartbeat) {
+        oled_print(oled, "R:HRTBEAT");
+    }
+    else if (stats->vcu_errors.recoverable_contactor) {
+        oled_print(oled, "R:ESTOP");
+    }
+    else {
         if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
             oled_print(oled, "RECOV");
-        } else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
+        }
+        else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
             oled_print(oled, "FATAL");
         }
     }
@@ -240,6 +244,23 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     } else {
         oled_rprint(oled, DATA_UNKNOWN);
     }
+}
+
+void draw_fault_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+  carstats_t *stats = pm->stats;
+
+  oled_clearline(oled, 0);
+  oled_set_pos(oled, 0, 0);
+  if (stats->vcu_errors.gate_sdn) oled_print(oled, "G:SDN");
+  oled_clearline(oled, 1);
+  oled_set_pos(oled, 1, 0);
+  if (stats->vcu_errors.gate_bms) oled_print(oled, "G:BMS");
+  oled_clearline(oled, 2);
+  oled_set_pos(oled, 2, 0);
+  if (stats->vcu_errors.gate_imd) oled_print(oled, "G:IMD");
+  oled_clearline(oled, 3);
+  oled_set_pos(oled, 3, 0);
+  if (stats->vcu_errors.gate_bpd) oled_print(oled, "G:BPD");
 }
 
 void draw_charging_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
