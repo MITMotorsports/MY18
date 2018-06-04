@@ -568,7 +568,7 @@ buses:
             c_type: bool
       MCCommand:
         can_id: 0x0C0 # From manual
-        period: 19ms  # MC needs a message at 2 Hz or higher
+        period: 9ms  # MC needs a message at 2 Hz or higher
         is_big_endian: false
         segments:
           torque:

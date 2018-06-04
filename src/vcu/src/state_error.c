@@ -7,11 +7,6 @@ void init_error_state(void) {
 }
 
 ERROR_STATE_T set_error_state(ERROR_STATE_T newState) {
-  if (currentState == FATAL_ERROR_STATE) {
-    printf("[ERROR FSM] Attempted to exit from FATAL_ERROR_STATE! Ignoring...\r\n");
-    return currentState;
-  }
-
   switch (newState) {
   case NO_ERROR_STATE:
     enter_no_error_state();
