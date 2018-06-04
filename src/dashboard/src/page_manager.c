@@ -7,14 +7,33 @@
 #define DATA_UNKNOWN "?"
 
 void page_manager_init(page_manager_t *pm, carstats_t *stats) {
-    pm->page = 0;
+    pm->page  = DASH_PAGE_CRITICAL;
     pm->stats = stats;
 }
 
 void page_manager_next_page(page_manager_t *pm) {
     // wrap around
-    pm->page = (pm->page + 1) % DASH_PAGE_COUNT;
-
+    // pm->page = (pm->page + 1) % DASH_PAGE_COUNT;
+    switch (pm->page) {
+        case DASH_PAGE_CRITICAL:
+            pm->page = DASH_PAGE_TRACTION;
+            break;
+        // case DASH_PAGE_CHARGE:
+            // draw_charging_page(pm, oled);
+            // break;
+        //case DASH_PAGE_TAKEOVER:
+        //    draw_takeover_page(pm, oled);
+        //    break;
+        case DASH_PAGE_TRACTION:
+            pm->page = DASH_PAGE_CRITICAL;
+            break;
+        //case DASH_PAGE_WHEEL_SPEED:
+        //    draw_wheel_speed_page(pm, oled);
+        //    break;
+        default:
+            pm->page = DASH_PAGE_CRITICAL;
+            break;
+    }
 }
 
 void page_manager_prev_page(page_manager_t *pm) {
@@ -79,9 +98,9 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
         //case DASH_PAGE_TAKEOVER:
         //    draw_takeover_page(pm, oled);
         //    break;
-        //case DASH_PAGE_TRACTION:
-        //    draw_traction_page(pm, oled);
-        //    break;
+        case DASH_PAGE_TRACTION:
+           draw_traction_page(pm, oled);
+           break;
         //case DASH_PAGE_WHEEL_SPEED:
         //    draw_wheel_speed_page(pm, oled);
         //    break;
@@ -263,11 +282,43 @@ void draw_takeover_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     //oled_clearline(oled, 0);
 }
 
+inline uint16_t convert_adc_to_psi(uint16_t adc) {
+  return (2019 * adc) / 1000 - 188;
+}
+
 void draw_traction_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+    int brake_1 = convert_adc_to_psi(pm->stats->brake_1);
+    int brake_2 = convert_adc_to_psi(pm->stats->brake_2);
+
+    oled_set_pos(oled, 1, 0);
+    oled_clearline(oled, 1);
+    oled_print(oled, "RA ");
+    if (pm->stats->brake_1 >= 0) {
+        uint16_t rat = (100 * brake_1) / (brake_1 + brake_2);
+        oled_print_num_dec(oled, rat, 100, 2);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+
     oled_clearline(oled, 2);
     oled_set_pos(oled, 2, 0);
-    oled_print(oled, "TORQUE ");
-    oled_print_num(oled, pm->stats->torque_mc);
+
+    oled_print(oled, "B1 ");
+    if (pm->stats->brake_1 >= 0) {
+        oled_print_num(oled, brake_1);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+
+    oled_clearline(oled, 3);
+    oled_set_pos(oled, 3, 0);
+
+    oled_print(oled, "B2 ");
+    if (pm->stats->brake_2 >= 0) {
+        oled_print_num(oled, brake_2);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
 }
 
 // looks like:
