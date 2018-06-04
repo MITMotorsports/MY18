@@ -43,14 +43,21 @@ void can_handle_current_sensor_voltage(carstats_t *cs) {
     can0_CurrentSensor_Voltage1_T msg;
     unpack_can0_CurrentSensor_Voltage1(&frame, &msg);
 
-    cs->voltage_2 = msg.result;
+    cs->cs_voltage = msg.result / 100;  // convert from mV to dV
+}
+
+void can_handle_current_sensor_current(carstats_t *cs) {
+    can0_CurrentSensor_Current_T msg;
+    unpack_can0_CurrentSensor_Current(&frame, &msg);
+
+    cs->cs_current = msg.result;  // convert from mA to mA
 }
 
 void can_handle_mc_voltage(carstats_t *cs) {
     can0_MCVoltage_T msg;
     unpack_can0_MCVoltage(&frame, &msg);
 
-    cs->battery_voltage = msg.bus;
+    cs->mc_voltage = msg.bus;  // convert from dV to dV
 }
 
 void can_handle_current_sensor_power(carstats_t *cs) {
@@ -100,13 +107,6 @@ void can_handle_mc_temperature1(carstats_t *cs) {
     cs->max_igbt_temp = max;
 }
 
-void can_handle_current_sensor_current(carstats_t *cs) {
-    can0_CurrentSensor_Current_T msg;
-    unpack_can0_CurrentSensor_Current(&frame, &msg);
-
-    cs->current = msg.current;
-}
-
 void can_handle_vcu_errors(carstats_t *cs) {
     can0_VCUErrors_T msg;
     unpack_can0_VCUErrors(&frame, &msg);
@@ -114,19 +114,33 @@ void can_handle_vcu_errors(carstats_t *cs) {
     memcpy(&(cs->vcu_errors), &msg, sizeof(msg));
 }
 
-int can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request) {
+void can_handle_button_request(carstats_t *cs) {
+    can0_ButtonRequest_T msg;
+    unpack_can0_ButtonRequest(&frame, &msg);
+    memcpy(&(cs->buttons), &msg, sizeof(msg));
+}
+
+void can_handle_brake_throttle(carstats_t *cs) {
+    can0_FrontCanNodeBrakeThrottle_T msg;
+    unpack_can0_FrontCanNodeBrakeThrottle(&frame, &msg);
+
+    cs->brake_1 = msg.brake_1;
+    cs->brake_2 = msg.brake_2;
+}
+
+void can_update_carstats(carstats_t *cs) {
     handle_can_error(Can_RawRead(&frame));
 
     can0_T msgType;
     msgType = identify_can0(&frame);
 
     switch (msgType) {
+        case can0_FrontCanNodeBrakeThrottle:
+            can_handle_brake_throttle(cs);
+            break;
         case can0_FrontCanNodeWheelSpeed:
             can_handle_front_wheel_speed(cs);
             break;
-        //case can0_RearCanNodeWheelSpeed:
-        //    can_handle_rear_wheel_speed(cs);
-        //    break;
         case can0_CellTemperatures:
             can_handle_cell_temps(cs);
             break;
@@ -155,8 +169,7 @@ int can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request) {
             can_handle_mc_temperature1(cs);
             break;
         case can0_ButtonRequest:
-            return frame.data[0];
-            //unpack_can0_ButtonRequest(&frame, button_request);
+            can_handle_button_request(cs);
             break;
         case can0_VCUErrors:
             can_handle_vcu_errors(cs);
@@ -165,5 +178,4 @@ int can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request) {
             // do nothing
             break;
     }
-    return 0;
 }

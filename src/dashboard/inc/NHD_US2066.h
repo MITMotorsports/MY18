@@ -51,6 +51,9 @@ void oled_print_num(NHD_US2066_OLED *oled, int num);
 void oled_rprint_num(NHD_US2066_OLED *oled, int num);
 // Print a right justified number with `pad` padding to the right
 void oled_rprint_num_pad(NHD_US2066_OLED *oled, int num, int pad);
+//
+// print `num` divided by `div` to `decimals` decimal points
+void oled_print_num_dec(NHD_US2066_OLED *oled, int num, int div, int decimals);
 
 // Print a single character at the current position.
 // Useful for printing special symbols defined in NHD_US2066_charset.h
