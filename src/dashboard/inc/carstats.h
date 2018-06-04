@@ -4,17 +4,20 @@
 #include "CANlib.h"
 
 #include <stdbool.h>
+#include <stdint.h>
 
 typedef struct {
-    int battery_voltage;
-    int voltage_2;
-    int battery_current;
+    int cs_voltage;  // in dV
+    int mc_voltage;  // in dV
+    int cs_current;  // in mA
     int max_cell_voltage, min_cell_voltage;
     int max_cell_temp, min_cell_temp;
     int power;
     int current;
 
     bool brake_pressed;
+    int brake_1;
+    int brake_2;
     bool accel_pressed;
 
     uint32_t last_bms_heartbeat;
@@ -28,6 +31,8 @@ typedef struct {
     int rear_left_wheel_speed;
     int rear_right_wheel_speed;
 
+    can0_ButtonRequest_T buttons;
+
     can0_VCUHeartbeat_vcu_state_T vcu_state;
     can0_VCUHeartbeat_error_state_T error_state;
     bool estop_hit;
@@ -38,6 +43,6 @@ typedef struct {
     can0_VCUErrors_T vcu_errors;
 } carstats_t;
 
-int can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request);
+void can_update_carstats(carstats_t *cs);
 
 #endif
