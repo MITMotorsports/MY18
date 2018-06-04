@@ -150,7 +150,7 @@ void handleButtonRequest(Frame *msg) {
 void send_VCUHeartbeat() {
   LIMIT(can0_VCUHeartbeat);
 
-  can0_VCUHeartbeat_T msg;
+  can0_VCUHeartbeat_T msg = {};
 
   msg.vcu_state   = get_vcu_state();
   msg.error_state = get_error_state();
@@ -162,7 +162,7 @@ void send_VCUHeartbeat() {
 void send_VCUErrors() {
   LIMIT(can0_VCUErrors);
 
-  can0_VCUErrors_T msg;
+  can0_VCUErrors_T msg = {};
 
   msg.fatal_gate      = fatal_faults.gate;
   msg.fatal_precharge = fatal_faults.precharge;
@@ -173,6 +173,11 @@ void send_VCUErrors() {
   msg.recoverable_heartbeat = recoverable_faults.heartbeat;
   msg.recoverable_conflict  = recoverable_faults.conflict;
   msg.recoverable_contactor = recoverable_faults.contactor;
+
+  msg.gate_sdn = gates.sdn_gate;
+  msg.gate_bms = gates.bms_gate;
+  msg.gate_imd = gates.imd_gate;
+  msg.gate_bpd = gates.bpd_gate;
 
   can0_VCUErrors_Write(&msg);
 }
