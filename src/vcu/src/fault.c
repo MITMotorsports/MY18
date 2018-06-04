@@ -42,17 +42,10 @@ void handle_fatal_fault(void) {
 
   resetDrivingValues(); // from the driving file
 
-  HAL_Delay(200);
-
   openLowSideContactor();
   openHighSideContactor();
 
-  printf("[FAULT : HANDLER : FATAL] NEED POWER CYCLE.\r\n");
-
-  while (1) {
-    print_gate_faults(false);
-    send_VCU();
-  }
+  printf("[FAULT : HANDLER : FATAL] Need external recovery.\r\n");
 }
 
 void handle_recoverable_fault(void) {
