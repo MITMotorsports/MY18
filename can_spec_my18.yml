@@ -870,7 +870,7 @@ buses:
             c_type: uint32_t
             signed: false
             unit: mRPM
-      SBG_EKF_EKFVelocityAcceleration:
+      SBG_EKF_VelocityAcceleration:
         can_id: 312
         is_big_endian: false
         segments:
@@ -886,7 +886,7 @@ buses:
             position: 32
             length: 16
             c_type: int16_t
-      SBG_EKF_EKFVelocity:
+      SBG_EKF_Velocity:
         can_id: 311
         is_big_endian: false
         segments:
