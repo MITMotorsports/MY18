@@ -42,13 +42,10 @@ void handle_fatal_fault(void) {
 
   resetDrivingValues(); // from the driving file
 
-  HAL_Delay(200);
-
   openLowSideContactor();
   openHighSideContactor();
 
-  printf("[FAULT : HANDLER : FATAL] Graceful car shutdown done.\r\n");
-  printf("[FAULT : HANDLER : FATAL] NEED MANUAL RESTORATION.\r\n");
+  printf("[FAULT : HANDLER : FATAL] Need external recovery.\r\n");
 }
 
 void handle_recoverable_fault(void) {
