@@ -18,6 +18,8 @@ extern volatile uint32_t msTicks;
 #define DEBOUNCE_SETUP 50
 #define DEBOUNCE_HOLD  100
 
+#define VCU_INTRO_TIME 100
+
 /// GPIO CONFIGS
 
 // INPUTS
