@@ -33,10 +33,12 @@ typedef struct {
   int16_t V_out;
   int16_t V_VAB_Vd;
   int16_t V_VBC_Vq;
+  int16_t speed;
 } MCReadings_T;
 
 typedef struct {
   int16_t V_bus;
+  int32_t power;
 } CSReadings_T;
 
 typedef struct {
@@ -46,6 +48,17 @@ typedef struct {
   bool ScrollSelect;
 } Buttons_T;
 
+typedef struct {
+  uint32_t raw_torque;
+  uint32_t power_limited_torque;
+  uint32_t omega;
+  int32_t error;
+  uint32_t PI_torque;
+  uint32_t torque_offset;
+  int32_t I_sum;
+  uint32_t P_torque;
+  uint32_t I_torque;
+} PL_T;
 
 // GLOBAL CONTAINER DEFINITIONS
 extern volatile Voltages_T  voltages;
@@ -53,7 +66,7 @@ extern volatile Buttons_T   buttons;
 
 extern volatile MCReadings_T mc_readings;
 extern volatile CSReadings_T cs_readings;
-
+extern volatile PL_T pl;
 
 // INTERACTION FUNCTIONS
 void        init_vcu_state(void);

@@ -61,3 +61,16 @@ void update_implausibility() {
 
   conflicts.observed_implausibility = implausibility;
 }
+
+int16_t get_pascals(brake_reading) {
+  // Real conversion: lpc_voltage = (3.6 * brake_reading / 1024)
+  int16_t lpc_voltage = 36 * brake_reading; // Needs to be divided by 10240
+
+  // Real convesrion: sensor_voltage = 1.53  * lpc_voltage
+  int16_t sensor_voltage = 153 * lpc_voltage; // Needs to be divded by 100
+
+  // Divide out factors from earl
+  int16_t pressure = 1500 * (sensor_voltage - 1) / (8 * 1024 * 100);
+
+  return pressure * 689476 / 100; // Convert to pascals
+}
