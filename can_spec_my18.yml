@@ -345,6 +345,22 @@ buses:
             position: 7
             length: 1
             c_type: bool
+          gate_sdn:
+            position: 8
+            length: 1
+            c_type: bool
+          gate_bpd:
+            position: 9
+            length: 1
+            c_type: bool
+          gate_bms:
+            position: 10
+            length: 1
+            c_type: bool
+          gate_imd:
+            position: 11
+            length: 1
+            c_type: bool
       CurrentSensor_Current:
         can_id: 0x521
         period: 0.05s
@@ -550,7 +566,7 @@ buses:
             c_type: bool
       MCCommand:
         can_id: 0x0C0 # From manual
-        period: 29ms  # MC needs a message at 2 Hz or higher
+        period: 9ms  # MC needs a message at 2 Hz or higher
         is_big_endian: false
         segments:
           torque:

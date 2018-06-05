@@ -144,12 +144,12 @@ void update_lights(void) {
     else
         LED_HV_off();
 
-    if (false)
+    if (carstats.vcu_errors.gate_imd)
         LED_IMD_on();
     else
         LED_IMD_off();
 
-    if (msTicks < carstats.last_bms_heartbeat + BMS_HEARTBEAT_EXPIRE)
+    if (carstats.vcu_errors.gate_bms)
         LED_AMS_on();
     else
         LED_AMS_off();
