@@ -7,28 +7,6 @@ void update_adc(void);
 void update_wheel_speed(void);
 void update_can(void);
 
-<<<<<<< HEAD
-#define ACCEL_1_LOWER_BOUND 135
-#define ACCEL_1_UPPER_BOUND 504
-
-#define ACCEL_2_LOWER_BOUND 245
-#define ACCEL_2_UPPER_BOUND 894
-
-// Some wheel speed stuff (copied from MY17)
-#define WHEEL_SPEED_TIMEOUT_MS 100
-#define WHEEL_SPEED_READ_PERIOD_MS 10
-
-// Microsecond = 1 millionth of a second
-#define MICROSECONDS_PER_SECOND_F 1000000.0
-// 1000 millirevs = 1 rev
-#define MILLIREVS_PER_REV_F 1000.0
-#define SECONDS_PER_MINUTE 60
-
-void update_adc(Input_T *input);
-void update_wheel_speed(Speed_Input_T *speed, uint32_t msTicks);
-void update_can(Input_T *input);
-=======
->>>>>>> front-can-node
 
 uint16_t transform1(uint32_t accel_1_raw);
 uint16_t transform2(uint32_t accel_2_raw);
@@ -43,12 +21,6 @@ void update_adc() {
   uint32_t next_updated = adc->last_updated + ADC_UPDATE_PERIOD_MS;
 
 
-<<<<<<< HEAD
-    adc->accel_1 = transform1(adc->accel_1_raw);
-    adc->accel_2 = transform2(adc->accel_2_raw);
-    // adc->accel_1 = adc->accel_1_raw;
-    // adc->accel_2 = adc->accel_2_raw;
-=======
   if (next_updated < input.msTicks) {
     uint16_t lastest_accel_1 = ADC_Read(ACCEL_1_CHANNEL);
     uint16_t lastest_accel_2 = ADC_Read(ACCEL_2_CHANNEL);
@@ -99,7 +71,6 @@ void update_adc() {
     // Update other sensors
     adc->steering_pot = ADC_Read(STEERING_CHANNEL);
     adc->last_updated = input.msTicks;
->>>>>>> front-can-node
   }
 }
 
