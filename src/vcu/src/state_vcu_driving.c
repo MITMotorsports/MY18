@@ -2,6 +2,11 @@
 
 const Time_T print_period = 20;
 
+static const Time_T RTD_HOLD = 200;
+
+static bool   rtd_started;
+static Time_T rtd_last;
+
 static uint16_t torque_command   = 0;
 static bool     stall_until_safe = true;
 
@@ -15,6 +20,9 @@ void enter_vcu_state_driving() {
 
   stall_until_safe = true;
   printf("[VCU FSM : DRIVING] Release accelerator and RTD.\r\n");
+
+  rtd_started = false;
+  rtd_last    = 0;
 }
 
 void update_vcu_state_driving() {
@@ -47,8 +55,17 @@ void update_vcu_state_driving() {
   }
 
   if (buttons.RTD) {
-    printf("[VCU FSM : DRIVING] RTD pressed. Going to RTD mode. Makes sense amirite?\r\n");
-    set_vcu_state(VCU_STATE_RTD);
-    return;
+    if (rtd_started) {
+      if (HAL_GetTick() - rtd_last > RTD_HOLD) {
+        set_vcu_state(VCU_STATE_RTD);
+        return;
+      }
+    }
+    else {
+      printf("[VCU : DRIVING] RTD pressed. Hold to disable.'.\r\n");
+      rtd_last = HAL_GetTick();
+    }
   }
+
+  rtd_started = buttons.RTD;
 }

@@ -47,7 +47,7 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleCellVoltagesMsg(&frame);
     break;
 
-  case can0_CurrentSensor_Voltage:
+  case can0_CurrentSensor_Voltage1:
     handleCurrentSensorVoltageMsg(&frame);
     break;
 
@@ -90,25 +90,38 @@ void handleMCVoltageMsg(Frame *msg) {
   heartbeats.mc = HAL_GetTick();
 }
 
-void handleBMSHeartbeatMsg(Frame *msg) {
-  // can0_BMSHeartbeat_T unpacked_msg;
-  // unpack_can0_BMSHeartbeat(msg, &unpacked_msg);
+void handleBMSHeartbeatMsg(Frame *frame) {
+  can0_BMSHeartbeat_T msg;
+  unpack_can0_BMSHeartbeat(frame, &msg);
 
-  // TODO: Make not manual.
-  contactors.L_contactor_closed = (msg->data[0] & 2) != 0;
-  contactors.H_contactor_closed = (msg->data[0] & 4) != 0;
-  contactors.L_contactor_welded = (msg->data[0] & 8) != 0;
-  contactors.H_contactor_welded = (msg->data[0] & 16) != 0;
+  // msg.error_pec;
+  // msg.error_cvst;
+  // msg.error_owt;
+  // msg.error_L_contactor_error;
+  // msg.error_H_contactor_error;
+  // msg.error_L_contactor_weld;
+  // msg.error_H_contactor_weld;
+  // msg.error_cell_under_voltage;
+  // msg.error_cell_over_voltage;
+  // msg.error_cell_under_temp;
+  // msg.error_cell_over_temp;
+  // msg.error_control_flow;
+  bms_errors = msg;
+
+  contactors.L_contactor_closed = msg.L_contactor_closed;
+  contactors.H_contactor_closed = msg.H_contactor_closed;
+  contactors.L_contactor_welded = msg.L_contactor_welded;
+  contactors.H_contactor_welded = msg.H_contactor_welded;
 
   heartbeats.bms = HAL_GetTick();
 }
 
 void handleCurrentSensorVoltageMsg(Frame *msg) {
-  can0_CurrentSensor_Voltage_T unpacked_msg;
+  can0_CurrentSensor_Voltage1_T unpacked_msg;
 
-  unpack_can0_CurrentSensor_Voltage(msg, &unpacked_msg);
+  unpack_can0_CurrentSensor_Voltage1(msg, &unpacked_msg);
 
-  cs_readings.V_bus = unpacked_msg.voltage;
+  cs_readings.V_bus = unpacked_msg.result;
 
   heartbeats.current_sensor = HAL_GetTick();
 }
@@ -125,26 +138,23 @@ void handleCellVoltagesMsg(Frame *msg) {
 }
 
 void handleButtonRequest(Frame *msg) {
-  // can0_ButtonRequest_T unpacked_msg;
-  //
-  // unpack_can0_ButtonRequest(msg, &unpacked_msg);
-  //
-  // buttons.RTD          = unpacked_msg.RTD;
-  // buttons.DriverReset  = unpacked_msg.DriverReset;
-  // buttons.ScrollSelect = unpacked_msg.ScrollSelect;
+  can0_ButtonRequest_T unpacked_msg;
 
-  // TODO/HACK: Fix CANlib and replace correct unpacker.
-  buttons.RTD         = (msg->data[0] & 2) != 0;
-  buttons.DriverReset = (msg->data[0] & 4) != 0;
+  unpack_can0_ButtonRequest(msg, &unpacked_msg);
+
+  buttons.RTD          = unpacked_msg.RTD;
+  buttons.DriverReset  = unpacked_msg.DriverReset;
+  buttons.ScrollSelect = unpacked_msg.ScrollSelect;
 }
 
 void send_VCUHeartbeat() {
   LIMIT(can0_VCUHeartbeat);
 
-  can0_VCUHeartbeat_T msg;
+  can0_VCUHeartbeat_T msg = {};
 
   msg.vcu_state   = get_vcu_state();
   msg.error_state = get_error_state();
+  msg.estop_hit   = gates.sdn;
 
   can0_VCUHeartbeat_Write(&msg);
 }
@@ -152,7 +162,7 @@ void send_VCUHeartbeat() {
 void send_VCUErrors() {
   LIMIT(can0_VCUErrors);
 
-  can0_VCUErrors_T msg;
+  can0_VCUErrors_T msg = {};
 
   msg.fatal_gate      = fatal_faults.gate;
   msg.fatal_precharge = fatal_faults.precharge;
@@ -163,6 +173,11 @@ void send_VCUErrors() {
   msg.recoverable_heartbeat = recoverable_faults.heartbeat;
   msg.recoverable_conflict  = recoverable_faults.conflict;
   msg.recoverable_contactor = recoverable_faults.contactor;
+
+  msg.gate_sdn = gates.sdn_gate;
+  msg.gate_bms = gates.bms_gate;
+  msg.gate_imd = gates.imd_gate;
+  msg.gate_bpd = gates.bpd_gate;
 
   can0_VCUErrors_Write(&msg);
 }

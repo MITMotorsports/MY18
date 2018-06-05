@@ -19,6 +19,9 @@ static uint32_t nextOLEDUpdate;
 
 static bool active_aero_enabled = false;
 
+static can0_ButtonRequest_T button_request;
+static int previous_scroll_select;
+
 #define BUTTON_DOWN false
 #define OLED_UPDATE_INTERVAL_MS 50
 
@@ -35,17 +38,46 @@ void dispatch_init() {
     page_manager_init(&page_manager, &carstats);
 
     oled_init(&oled);
-    Delay(100);
+    Delay(50);
     oled_init_commands(&oled);
-    Delay(100);
+    Delay(50);
     oled_clear(&oled);
-    Delay(100);
+    Delay(50);
+
+    // necessary
+    oled_set_double_height_mode(&oled, NHD_US2066_DOUBLE_HEIGHT_MIDDLE);
+    oled_set_pos(&oled, 0, 0);
+    oled_print_char(&oled, CHAR_DIAMOND);
+    for (int i = 1; i < 19; i++) oled_print(&oled, "-");
+    oled_print_char(&oled, CHAR_DIAMOND);
+    oled_set_pos(&oled, 1, 0);
+    oled_print_char(&oled, CHAR_PIPE);
+    oled_set_pos(&oled, 1, 8);
+    oled_print(&oled, "MY18");
+    oled_set_pos(&oled, 1, 19);
+    oled_print_char(&oled, CHAR_PIPE);
+    oled_set_pos(&oled, 2, 0);
+    oled_print_char(&oled, CHAR_DIAMOND);
+    for (int i = 1; i < 19; i++) oled_print(&oled, "-");
+    oled_print_char(&oled, CHAR_DIAMOND);
+    oled_update(&oled);
+    Delay(600);
+    oled_set_double_height_mode(&oled, NHD_US2066_DOUBLE_HEIGHT_NONE);
+    oled_clear(&oled);
+
 
     nextOLEDUpdate = 0;
 
+    memset(&button_request, 0, sizeof(button_request));
+    previous_scroll_select = 0;
+
     // init carstats fields
-    carstats.battery_voltage         = -1;
-    carstats.lowest_cell_voltage     = -1;
+    carstats.mc_voltage              = -10;  // TODO: Make less sketchy for unknown values.
+    carstats.cs_voltage              = -10;
+    carstats.cs_current              = -10;
+    carstats.min_cell_voltage        = -1;
+    carstats.max_cell_voltage        = -1;
+    carstats.min_cell_temp           = -1;
     carstats.max_cell_temp           = -1;
     carstats.power                   = -1;
     carstats.soc                     = -1;
@@ -56,38 +88,47 @@ void dispatch_init() {
     carstats.rear_left_wheel_speed   = -1;
     carstats.rear_right_wheel_speed  = -1;
     carstats.max_igbt_temp           = -1;
+    carstats.brake_1                 = -1;
+    carstats.brake_2                 = -1;
     carstats.vcu_state               = can0_VCUHeartbeat_vcu_state_VCU_STATE_ROOT;
     carstats.last_vcu_heartbeat      = msTicks;
     carstats.last_bms_heartbeat      = msTicks;
 }
 
 void dispatch_update() {
-    bool left_button_down  = (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN);
-    bool right_button_down = (Pin_Read(PIN_BUTTON2) == BUTTON_DOWN);
-    update_button_state(&left_button, left_button_down);
-    update_button_state(&right_button, right_button_down);
+    //// TODO: Reenable once internal buttons are wired.
+    // bool left_button_down  = (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN);
+    // bool right_button_down = (Pin_Read(PIN_BUTTON2) == BUTTON_DOWN);
+    // update_button_state(&left_button, left_button_down);
+    // update_button_state(&right_button, right_button_down);
 
-    if (right_button.action == BUTTON_ACTION_TAP) {
-        page_manager_next_page(&page_manager);
-
-        active_aero_enabled = !active_aero_enabled;
-        if (active_aero_enabled) {
-            send_dash_request(can0_DashRequest_type_ACTIVE_AERO_ENABLE);
-        } else {
-            send_dash_request(can0_DashRequest_type_ACTIVE_AERO_DISABLE);
-        }
-    } else if (right_button.action == BUTTON_ACTION_HOLD) {
-        page_manager_prev_page(&page_manager);
-    }
+    // if (right_button.action == BUTTON_ACTION_TAP) {
+    //     page_manager_next_page(&page_manager);
+    //
+    //     active_aero_enabled = !active_aero_enabled;
+    //     if (active_aero_enabled) {
+    //         send_dash_request(can0_DashRequest_type_ACTIVE_AERO_ENABLE);
+    //     } else {
+    //         send_dash_request(can0_DashRequest_type_ACTIVE_AERO_DISABLE);
+    //     }
+    // } else if (right_button.action == BUTTON_ACTION_HOLD) {
+    //     page_manager_prev_page(&page_manager);
+    // }
 
     can_update_carstats(&carstats);
+    bool res = carstats.buttons.ScrollSelect;
+    if (!previous_scroll_select && res) {
+        page_manager_next_page(&page_manager);
+        oled_clear(&oled);
+    }
+    previous_scroll_select = res;
+
     update_lights();
 
     if (msTicks > nextOLEDUpdate) {
         nextOLEDUpdate = msTicks + OLED_UPDATE_INTERVAL_MS;
         page_manager_update(&page_manager, &oled);
         oled_update(&oled);
-
     }
 }
 
@@ -98,17 +139,17 @@ void update_lights(void) {
     else
         LED_RTD_off();
 
-    if (carstats.battery_voltage / 10 > 60)
+    if (carstats.cs_voltage / 10 > 60)
         LED_HV_on();
     else
         LED_HV_off();
 
-    if (false)
+    if (carstats.vcu_errors.gate_imd)
         LED_IMD_on();
     else
         LED_IMD_off();
 
-    if (msTicks < carstats.last_bms_heartbeat + BMS_HEARTBEAT_EXPIRE)
+    if (carstats.vcu_errors.gate_bms)
         LED_AMS_on();
     else
         LED_AMS_off();
@@ -118,6 +159,6 @@ void update_lights(void) {
 void send_dash_request(can0_DashRequest_type_T type) {
     can0_DashRequest_T msg;
     msg.type = type;
-    
+
     handle_can_error(can0_DashRequest_Write(&msg));
 }

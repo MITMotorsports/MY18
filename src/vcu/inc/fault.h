@@ -4,6 +4,7 @@
 #include "fault_contactors.h"
 #include "fault_gates.h"
 #include "fault_heartbeats.h"
+#include "fault_boards.h"
 
 #include "state.h"
 

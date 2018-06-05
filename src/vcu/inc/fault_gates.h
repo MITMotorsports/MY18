@@ -29,6 +29,7 @@ extern GateFaults_T gates;
 bool any_all_gate_fault(void);
 bool any_fatal_gate_fault(void);
 bool any_recoverable_gate_fault(void);
+bool any_recoverable_transient_gate_fault(void);
 
 void print_gate_faults(bool force);
 

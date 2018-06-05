@@ -41,7 +41,7 @@ void _OLED_send_serial(unsigned char c, unsigned char temp) {
         c = c >> 1;
         Pin_Write(PIN_OLED_SCLK, 1);
     }
-        
+
     for (i = 0; i < 4; i++) {
         Pin_Write(PIN_OLED_SCLK, 0);
         Pin_Write(PIN_OLED_SDI, 0);
@@ -55,6 +55,20 @@ void OLED_command(unsigned char c) {
 
 void OLED_data(unsigned char c) {
     _OLED_send_serial(c, 0xFA);
+}
+
+uint32_t _compute_line_hash(NHD_US2066_OLED *oled, int line) {
+    if (line < 0 || line > OLED_NLINES) return 0;
+
+    // according to some dude
+    // https://stackoverflow.com/a/7666577
+    uint32_t hash = 5381;
+    for (int i = 0; i < OLED_NCOLS; i++) {
+        int chr = (int) oled->buf[__pos2idx(oled, line, i)];
+        hash = ((hash<<5) + hash) + chr;
+    }
+
+    return hash;
 }
 
 void oled_init(NHD_US2066_OLED *oled) {
@@ -74,6 +88,10 @@ void oled_init(NHD_US2066_OLED *oled) {
     // blank display
     for (i = 0; i < oled->nlines * oled->ncols; i++) {
         oled->buf[i] = ' ';
+    }
+
+    for (i = 0; i < oled->nlines; i++) {
+        oled->line_hashes[i] = _compute_line_hash(oled, i);
     }
 }
 
@@ -154,7 +172,23 @@ void oled_rprint_pad(NHD_US2066_OLED *oled, char *str, int pad) {
 }
 
 void oled_rprint_num(NHD_US2066_OLED *oled, int num) {
-    oled_rprint_num_pad(oled, num, 0);    
+    oled_rprint_num_pad(oled, num, 0);
+}
+
+// print `num` divided by `div` to `decimals` decimal points
+void oled_print_num_dec(NHD_US2066_OLED *oled, int num, int div, int decimals) {
+    if (div <= 0) return;  // TODO: Find a way to notify of attempt to zerodiv.
+    if (div % 10 != 0) return;  // TODO: Notifiy that div was not base 10.
+    oled_print_num(oled, num / div);
+    if (div > 1) {
+        oled_print(oled, ".");
+        for (int i = 0; i < decimals && div > 0; i++) {
+            div /= 10;
+            int dec = (num / div) % 10;
+            char c = dec + '0';
+            oled_print_char(oled, c);
+        }
+    }
 }
 
 void oled_rprint_num_pad(NHD_US2066_OLED *oled, int num, int pad) {
@@ -171,7 +205,7 @@ void _oled_writeline(NHD_US2066_OLED *oled, int line) {
     for (i = 0; i < oled->ncols; i++) {
         int idx = __pos2idx(oled, line, i);
         unsigned char c = oled->buf[idx];
-        OLED_data(c); 
+        OLED_data(c);
     }
 }
 
@@ -186,7 +220,7 @@ void oled_clear(NHD_US2066_OLED *oled) {
 
 void oled_clearline(NHD_US2066_OLED *oled, int line) {
     oled->lineupdates[line] = true;
-    
+
     int i;
     for (i = 0; i < oled->ncols; i++) {
         int idx = __pos2idx(oled, line, i);
@@ -200,9 +234,13 @@ void oled_update(NHD_US2066_OLED *oled) {
         unsigned char cmdarray[NHD_0420CW_NLINES] = {0x02, 0xA0, 0xC0, 0xE0};
         for (i = 0; i < NHD_0420CW_NLINES; i++) {
             if (oled->lineupdates[i]) {
-                OLED_command(cmdarray[i]);
-                _oled_writeline(oled, i);
-                oled->lineupdates[i] = false;
+                uint32_t hash = _compute_line_hash(oled, i);
+                if (hash != oled->line_hashes[i]) {
+                    oled->line_hashes[i] = hash;
+                    OLED_command(cmdarray[i]);
+                    _oled_writeline(oled, i);
+                    oled->lineupdates[i] = false;
+                }
             }
         }
     }
@@ -262,4 +300,13 @@ void oled_set_double_height_mode(NHD_US2066_OLED *oled,
     OLED_command(0b00101110);
     OLED_command(cmd);
     OLED_command(0b00101100);
+}
+
+void oled_set_clk_div(NHD_US2066_OLED *oled, uint8_t div, uint8_t freq) {
+    if (div > 0xF) div = 0xF;
+    if (freq > 0xF) freq = 0xF;
+
+    unsigned char cmd = div | (freq << 4);
+    OLED_command(0xD5);
+    OLED_command(cmd);
 }

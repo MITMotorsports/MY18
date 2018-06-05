@@ -39,17 +39,17 @@ bool Board_LTC6804_CVST() {
   switch (res) {
   case LTC6804_FAIL:
     Board_Println("CVST FAIL");
-    Error_Assert(ERROR_LTC6804_CVST);
+    Error_Present(ERROR_LTC_CVST);
     return false;
 
   case LTC6804_PEC_ERROR:
     Board_Println("CVST PEC_ERROR");
-    Error_Assert(ERROR_LTC6804_PEC);
+    Error_Present(ERROR_LTC_PEC);
     return false;
 
   case LTC6804_PASS:
     Board_Println("CVST PASS");
-    Error_Pass(ERROR_LTC6804_CVST);
+    Error_Clear(ERROR_LTC_CVST);
     return true;
 
   case LTC6804_WAITING:
@@ -107,19 +107,19 @@ bool Board_LTC6804_OpenWireTest(void) {
     Board_Print(" wire=");
     itoa(ltc6804_owt_res.failed_wire, str, 10);
     Board_Println(str);
-    Error_Assert(ERROR_LTC6804_OWT);
+    Error_Present(ERROR_LTC_OWT);
     return false;
 
   case LTC6804_PEC_ERROR:
     Board_Println("OWT PEC_ERROR");
-    Error_Assert(ERROR_LTC6804_PEC);
+    Error_Present(ERROR_LTC_PEC);
     return false;
 
   case LTC6804_PASS:
     Board_Println("OWT PASS");
     _ltc6804_owt      = false;
     _ltc6804_last_owt = msTicks;
-    Error_Pass(ERROR_LTC6804_OWT);
+    Error_Clear(ERROR_LTC_OWT);
     return true;
 
   case LTC6804_WAITING:
@@ -210,6 +210,12 @@ bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config,
     // Board_Println("ltc init done");
     _ltc6804_initialized = true;
     _ltc6804_init_state  = 0;
+
+    //no longer ignore these errors
+    Error_Recognize(ERROR_LTC_PEC);
+    Error_Recognize(ERROR_LTC_CVST);
+    Error_Recognize(ERROR_LTC_OWT);
+
     return true;
   }
   return false;
@@ -259,18 +265,39 @@ void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status) {
 
   case LTC6804_PEC_ERROR:
     Board_Println("Get Vol PEC_ERROR");
-    Error_Assert(ERROR_LTC6804_PEC);
+    Error_Present(ERROR_LTC_PEC);
     break;
 
   case LTC6804_PASS:
     pack_status->pack_cell_min_mV = ltc6804_adc_res.pack_cell_min_mV;
     pack_status->pack_cell_max_mV = ltc6804_adc_res.pack_cell_max_mV;
 
+    //Error checks for under/over voltage
+    if (pack_status->pack_cell_min_mV < CELL_MIN_mV) {
+      Error_Present(ERROR_CELL_UNDER_VOLTAGE);
+    } else {
+      Error_Clear(ERROR_CELL_UNDER_VOLTAGE);
+    }
+    if (pack_status->pack_cell_max_mV > CELL_MAX_mV) {
+      Error_Present(ERROR_CELL_OVER_VOLTAGE);
+    } else {
+      Error_Clear(ERROR_CELL_OVER_VOLTAGE);
+    }
+
+    //sum voltages of every cell
+    int i;
+    pack_status->pack_voltage_sum_mV = 0.0;
+    for(i = 0; i<MAX_NUM_MODULES * MAX_CELLS_PER_MODULE; i++) {
+      pack_status->pack_voltage_sum_mV += pack_status->cell_voltages_mV[i];
+    }
+
 #if false
     Board_Print_BLOCKING("MIN voltage: ");
     Board_PrintNum(pack_status->pack_cell_min_mV, 10);
     Board_Print_BLOCKING("MAX voltage: ");
     Board_PrintNum(pack_status->pack_cell_max_mV, 10);
+    Board_Print_BLOCKING("AVG Voltage: ");
+    Board_PrintNum(pack_status->pack_voltage_sum_mV, 10);
 #endif
 
     // TODO: Use this to your advantage.
@@ -278,7 +305,7 @@ void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status) {
 
     _ltc6804_gcv      = false;
     _ltc6804_last_gcv = msTicks;
-    Error_Pass(ERROR_LTC6804_PEC);
+    Error_Clear(ERROR_LTC_PEC);
 
   case LTC6804_WAITING:
   case LTC6804_WAITING_REFUP:
@@ -343,7 +370,7 @@ void Board_LTC6804_GetCellTemperatures(BMS_PACK_STATUS_T *pack_status,
     } else {
       Board_Println(
         "Invalid value of currentThermistor Board_LTC6804_GetCellTemperatures");
-      Error_Assert(ERROR_CONTROL_FLOW);
+      Error_Present(ERROR_CONTROL_FLOW);
     }
 
     // shift bits into shift resgister
@@ -427,7 +454,7 @@ void Board_HandleLtc6804Status(LTC6804_STATUS_T status) {
     break;
 
   case LTC6804_PASS:
-    Error_Pass(ERROR_LTC6804_PEC);
+    Error_Clear(ERROR_LTC_PEC);
     break;
 
   case LTC6804_FAIL:
@@ -436,7 +463,7 @@ void Board_HandleLtc6804Status(LTC6804_STATUS_T status) {
 
   case LTC6804_PEC_ERROR:
     Board_Println("LTC6804 PEC_ERROR");
-    Error_Assert(ERROR_LTC6804_PEC);
+    Error_Present(ERROR_LTC_PEC);
     break;
 
   case LTC6804_WAITING_REFUP:
@@ -444,7 +471,7 @@ void Board_HandleLtc6804Status(LTC6804_STATUS_T status) {
 
   default:
     Board_Println("Unhandled case in Board_HandleLtc6804Status.");
-    Error_Assert(ERROR_CONTROL_FLOW);
+    // Error_Present(ERROR_CONTROL_FLOW);
   }
 }
 

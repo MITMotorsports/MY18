@@ -76,6 +76,8 @@ typedef struct BMS_PACK_STATUS {
                                    // range:
                                    // 0-MAX_NUM_MODULES*MAX_THERMISTORS_PER_MODULE
   uint8_t state_of_charge;         // range 0 - 100, percentage of charge
+
+  uint32_t pack_voltage_sum_mV;    //sum of all the voltages of every cell
 } BMS_PACK_STATUS_T;
 
 
