@@ -7,22 +7,6 @@
 
 Frame frame;
 
-// void can_handle_front_wheel_speed(carstats_t *cs) {
-    // can0_FrontCanNodeWheelSpeed_T msg;
-    // unpack_can0_FrontCanNodeWheelSpeed(&frame, &msg);
-//
-    // cs->front_left_wheel_speed  = msg.front_left_wheel_speed;
-    // cs->front_right_wheel_speed = msg.front_right_wheel_speed;
-// }
-
-//void can_handle_rear_wheel_speed(carstats_t *cs) {
-//    can0_RearCanNodeWheelSpeed_T msg;
-//    unpack_can0_RearCanNodeWheelSpeed(&frame, &msg);
-//
-//    cs->rear_left_wheel_speed  = msg.rear_left_wheel_speed;
-//    cs->rear_right_wheel_speed = msg.rear_right_wheel_speed;
-//}
-
 void can_handle_cell_temps(carstats_t *cs) {
     can0_CellTemperatures_T msg;
     unpack_can0_CellTemperatures(&frame, &msg);
@@ -47,10 +31,10 @@ void can_handle_current_sensor_voltage(carstats_t *cs) {
 }
 
 void can_handle_current_sensor_current(carstats_t *cs) {
-    // can0_CurrentSensor_Current_T msg;
-    // unpack_can0_CurrentSensor_Current(&frame, &msg);
+    can0_CurrentSensor_Current_T msg;
+    unpack_can0_CurrentSensor_Current(&frame, &msg);
 
-    // cs->cs_current = msg.result;  // convert from mA to mA
+    cs->cs_current = msg.result;  // convert from mA to mA
 }
 
 void can_handle_mc_voltage(carstats_t *cs) {
@@ -137,17 +121,7 @@ void can_update_carstats(carstats_t *cs) {
     switch (msgType) {
         case can0_FrontCanNodeBrakeThrottle:
             can_handle_brake_throttle(cs);
-<<<<<<< HEAD
             break;
-        case can0_FrontCanNodeWheelSpeed:
-            can_handle_front_wheel_speed(cs);
-            break;
-=======
-            break;
-        // case can0_FrontCanNodeWheelSpeed:
-            // can_handle_front_wheel_speed(cs);
-            // break;
->>>>>>> vcu-survive
         case can0_CellTemperatures:
             can_handle_cell_temps(cs);
             break;
