@@ -60,3 +60,4 @@ Module.symvers
 Mkfile.old
 dkms.conf
 **/bin
+.DS_Store
