@@ -1,4 +1,5 @@
-#include "torque_calc.h"
+#include "controls.h"
+
 #define HUMAN_READABLE true
 
 int16_t get_regen_torque(void);
