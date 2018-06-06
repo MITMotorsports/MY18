@@ -709,6 +709,226 @@ buses:
             signed: true
             c_type: int16_t
             unit: dA
+      MCFaultCodes
+        can_id: 0x0AB
+        is_big_endian: false
+        segments:
+          post_hw_gate_desaturation_fault:
+            position: 0
+            length: 1
+            c_type: bool
+          hw_over_current_fualt:
+            position: 1
+            length: 1
+            c_type: bool
+          accel_shorted:
+            position: 2
+            length: 1
+            c_type: bool
+          accel_open:
+            position: 3
+            length: 1
+            c_type: bool
+          current_sensor_lo:
+            position: 4
+            length: 1
+            c_type: bool
+          current_sensor_hi:
+            position: 5
+            length: 1
+            c_type: bool
+          module_temp_lo:
+            position: 6
+            length: 1
+            c_type: bool
+          module_temp_hi:
+            position: 7
+            length: 1
+            c_type: bool
+          control_pcb_temp_lo:
+            position: 8
+            length: 1
+            c_type: bool
+          control_pcb_temp_hi:
+            position: 9
+            length: 1
+            c_type: bool
+          gate_drive_pcb_temp_lo:
+            position: 10
+            length: 1
+            c_type: bool
+          gate_drive_pcb_temp_hi:
+            position: 11
+            length: 1
+            c_type: bool
+          sense_5v_lo:
+            position: 12
+            length: 1
+            c_type: bool
+          sense_5v_hi:
+            position: 13
+            length: 1
+            c_type: bool
+          sense_12v_lo:
+            position: 14
+            length: 1
+            c_type: bool
+          sense_12v_hi:
+            position: 15
+            length: 1
+            c_type: bool
+          sense_2_5v_lo:
+            position: 16
+            length: 1
+            c_type: bool
+          sense_2_5v_hi:
+            position: 17
+            length: 1
+            c_type: bool
+          sense_1_5v_lo:
+            position: 18
+            length: 1
+            c_type: bool
+          sense_1_5v_hi:
+            position: 19
+            length: 1
+            c_type: bool
+          dc_bus_voltage_hi:
+            position: 20
+            length: 1
+            c_type: bool
+          dc_bus_voltage_lo:
+            position: 21
+            length: 1
+            c_type: bool
+          pre_charge_timeout:
+            position: 22
+            length: 1
+            c_type: bool
+          pre_charge_failure:
+            position: 23
+            length: 1
+            c_type: bool
+          eeprom_checksum_invalid:
+            position: 24
+            length: 1
+            c_type: bool
+          eeprom_checksum_data_out_of_range:
+            position: 25
+            length: 1
+            c_type: bool
+          eeprom_checksum_update_required:
+            position: 26
+            length: 1
+            c_type: bool
+          post_brake_shorted:
+            position: 30
+            length: 1
+            c_type: bool
+          post_brake_open:
+            position: 31
+            length: 1
+            c_type: bool
+          motor_over_speed_fault:
+            position: 32
+            length: 1
+            c_type: bool
+          over_current_fault:
+            position: 33
+            length: 1
+            c_type: bool
+          over_voltage_fault:
+            position: 34
+            length: 1
+            c_type: bool
+          inverter_over_temp_fault:
+            position: 35
+            length: 1
+            c_type: bool
+          accel_input_shorted_fault:
+            position: 36
+            length: 1
+            c_type: bool
+          accel_input_open_fault:
+            position: 37
+            length: 1
+            c_type: bool
+          direction_command_fault:
+            position: 38
+            length: 1
+            c_type: bool
+          inverter_resp_timeout_fault:
+            position: 39
+            length: 1
+            c_type: bool
+          run_hw_gate_desaturation_fault:
+            position: 40
+            length: 1
+            c_type: bool
+          run_hw_over_current_fualt:
+            position: 41
+            length: 1
+            c_type: bool
+          under_voltage_fault:
+            position: 42
+            length: 1
+            c_type: bool
+          can_command_msg_lost_fault:
+            position: 43
+            length: 1
+            c_type: bool
+          motor_over_temp_fault:
+            position: 44
+            length: 1
+            c_type: bool
+          run_brake_shorted:
+            position: 48
+            length: 1
+            c_type: bool
+          run_brake_open:
+            position: 49
+            length: 1
+            c_type: bool
+          module_A_over_temp_fault:
+            position: 50
+            length: 1
+            c_type: bool
+          module_B_over_temp_fault:
+            position: 51
+            length: 1
+            c_type: bool
+          module_C_over_temp_fault:
+            position: 52
+            length: 1
+            c_type: bool
+          pcb_over_temp_fault:
+            position: 53
+            length: 1
+            c_type: bool
+          gate_drive_board_1_over_temp:
+            position: 54
+            length: 1
+            c_type: bool
+          gate_drive_board_2_over_temp:
+            position: 55
+            length: 1
+            c_type: bool
+          gate_drive_board_3_over_temp:
+            position: 56
+            length: 1
+            c_type: bool
+          current_sensor_fault:
+            position: 57
+            length: 1
+            c_type: bool
+          resolver_not_connected:
+            position: 62
+            length: 1
+            c_type: bool
+          inverter_discharge_active:
+            position: 63
+            length: 1
+            c_type: bool
       MCTorque_Timer_Info:
         can_id: 0x0AC
         period: 0.01s
