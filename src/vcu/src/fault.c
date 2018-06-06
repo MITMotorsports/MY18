@@ -40,9 +40,9 @@ void handle_fatal_fault(void) {
   sendMotorOffCmdMsg();
   sendMotorOffCmdMsg();
 
+  // Make sure the driver can avoid death.
   set_brake_valve(false);
-  printf("Brake valve false\r\n");
-
+  lock_brake_valve();
   disable_controls();
 
   openLowSideContactor();
@@ -59,6 +59,9 @@ void handle_recoverable_fault(void) {
     sendTorqueCmdMsg(0);
   }
 
+  // Make sure the driver can avoid death.
+  set_brake_valve(false);
+  lock_brake_valve();
   disable_controls();
 }
 
