@@ -52,6 +52,6 @@ extern volatile Pedalbox_T pedalbox;
 
 bool any_fatal_conflict_faults(void);
 bool any_recoverable_conflict_faults(void);
-int16_t get_pascals(brake_reading);
+int32_t get_pascals(brake_reading);
 
 #endif // ifndef __FAULT_CONFLICTS_H

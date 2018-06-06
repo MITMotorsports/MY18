@@ -21,6 +21,8 @@ void enter_vcu_state_rtd() {
 
 void update_vcu_state_rtd() {
   sendMotorOffCmdMsg();
+  set_brake_valve(false);
+  printf("Brake valve false\r\n");
   bool brk_pressed = pedalbox_max(brake) > PEDALBOX_BRAKE_RTD;
 
   if (buttons.RTD) {

@@ -38,6 +38,8 @@ void update_vcu_state_driving() {
     if (rtd_started) {
       if (HAL_GetTick() - rtd_last > RTD_HOLD) {
         set_vcu_state(VCU_STATE_RTD);
+        set_brake_valve(false);
+        printf("Brake valve false\r\n");
         return;
       }
     }

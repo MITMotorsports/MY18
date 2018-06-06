@@ -40,6 +40,9 @@ void handle_fatal_fault(void) {
   sendMotorOffCmdMsg();
   sendMotorOffCmdMsg();
 
+  set_brake_valve(false);
+  printf("Brake valve false\r\n");
+
   disable_controls();
 
   openLowSideContactor();

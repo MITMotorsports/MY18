@@ -28,15 +28,20 @@ void execute_controls(void) {
 
   torque_command = get_torque();
   sendTorqueCmdMsg(torque_command);
-  send_PL1_monitoring();
-  send_PL2_monitoring();
+
+  int16_t regen_torque = get_regen_torque();
+  // printf("REGEN: %d, Regen torque: %d\r\n", REGEN, regen_torque);
 
   // Control regen brake valve:
   if (REGEN) {
-    if (get_pascals(pedalbox.brake_1) < RG_REAR_BRAKE_THRESH) { // rear brake
-      // set_brake_shutoff_valve(true);
+    printf("REGEN is true ");
+    if (get_pascals(pedalbox.REAR_BRAKE) < RG_REAR_BRAKE_THRESH) { // rear brake
+      printf("BRAKE is less than threshold (brake: %d, thresh: %d)", get_pascals(pedalbox.REAR_BRAKE), RG_REAR_BRAKE_THRESH);
+      set_brake_valve(true);
+      printf("Brake valve true\r\n");
     } else {
-      // set_brake_shutoff_valve(false);
+      set_brake_valve(false);
+      printf("Brake valve false\r\n");
     }
   }
 }
@@ -58,17 +63,19 @@ static int16_t get_torque(void) {
 static int16_t get_regen_torque() {
   int16_t regen_torque = 0;
 
-  if ((mc_readings.speed > RG_MOTOR_SPEED_THRESH) &&
+  /*if ((mc_readings.speed > RG_MOTOR_SPEED_THRESH) &&
       (cs_readings.V_bus < RG_BATTERY_VOLTAGE_MAX_THRESH) &&
-      (get_pascals(pedalbox.brake_1) < RG_FRONT_BRAKE_THRESH) &&
-
+      (get_pascals(pedalbox.FRONT_BRAKE) < RG_FRONT_BRAKE_THRESH) &&
       // check car speed
-      true) { // Front brake ...? TODO: check this
-    regen_torque = RG_K * get_pascals(pedalbox.brake_1) * (1 - BB_ef) / BB_ef;
-
+      false) { // Front brake ...? TODO: check this
+    regen_torque = RG_K * get_pascals(pedalbox.FRONT_BRAKE) * (1 - BB_ef) / BB_ef;
+    printf("Conditions satisfied!\r\n");
     if (regen_torque >
         RG_TORQUE_COMMAND_MAX) regen_torque = RG_TORQUE_COMMAND_MAX;
+  } else {
+    printf("Conditions not satisfied.\r\n");
   }
+  printf("Conditional exited.");*/
   return -1 * regen_torque;
 }
 

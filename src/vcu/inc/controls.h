@@ -41,6 +41,8 @@
 // Need to eventually be set by dash
 #define REGEN true
 #define BB_ef 1
+#define FRONT_BRAKE brake_1
+#define REAR_BRAKE brake_2
 
 
 // PRIVATE FUNCTIONS
