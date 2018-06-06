@@ -116,40 +116,16 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_set_pos(oled, 0, 0);
 
     carstats_t *stats = pm->stats;
-    if (stats->vcu_errors.fatal_gate) {
-        oled_print(oled, "F:GATE");
-    }
-    else if (stats->vcu_errors.fatal_contactor) {
-      oled_print(oled, "F:CONTACT");
-    }
-    else if (stats->vcu_errors.fatal_precharge) {
-        oled_print(oled, "F:PRECHRG");
-    }
-    else if (stats->vcu_errors.fatal_conflict) {
-        oled_print(oled, "F:ACC_IMP");
-    }
-    else if (stats->vcu_errors.recoverable_conflict) {
-        oled_print(oled, "R:BRK_ACC");
-    }
-    else if (stats->vcu_errors.recoverable_gate) {
-        oled_print(oled, "R:ESTOP");
-    }
-    else if (stats->vcu_errors.recoverable_heartbeat) {
-        oled_print(oled, "R:HRTBEAT");
-    }
-    else if (stats->vcu_errors.recoverable_contactor) {
-        oled_print(oled, "R:ESTOP");
-    }
-    else {
-        if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
-            oled_print(oled, "RECOV");
-        }
-        else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
-            oled_print(oled, "FATAL");
-        }
+
+    if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
+        oled_print(oled, "R");
+    } else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
+        oled_print(oled, "F");
     }
 
-    if (msTicks > pm->stats->last_vcu_heartbeat + 1000) {
+#define VCU_HEARTBEAT_TIMEOUT 1000 // ms
+
+    if (msTicks > pm->stats->last_vcu_heartbeat + VCU_HEARTBEAT_TIMEOUT) {
         oled_rprint(oled, "\xFAVCU DEAD\xFC");
     } else {
         switch (pm->stats->vcu_state) {
