@@ -7,16 +7,11 @@ static const Time_T RTD_HOLD = 200;
 static bool   rtd_started;
 static Time_T rtd_last;
 
-static uint16_t torque_command   = 0;
-static bool     stall_until_safe = true;
-
-void resetDrivingValues() {
-  torque_command = 0;
-}
+static bool stall_until_safe = true;
 
 void enter_vcu_state_driving() {
   printf("[VCU FSM : DRIVING] ENTERED!\r\n");
-  resetDrivingValues();
+  enable_controls();
 
   stall_until_safe = true;
   printf("[VCU FSM : DRIVING] Release accelerator and RTD.\r\n");
@@ -28,30 +23,16 @@ void enter_vcu_state_driving() {
 void update_vcu_state_driving() {
   if (stall_until_safe) {
     sendMotorOffCmdMsg();
+
     // Do not drive yet unless everything has been let go.
-    if (buttons.RTD || pedalbox_min(accel) > PEDALBOX_ACCEL_RELEASE) return;
+    if (buttons.RTD || (pedalbox_min(accel) > PEDALBOX_ACCEL_RELEASE)) return;
 
     printf("[VCU FSM : DRIVING] You may drive, heathen. GLHF\r\n");
     stall_until_safe = false;
   }
 
-  // Send torque commands
-  torque_command = calcTorque(pedalbox_avg(accel), false, false);
-
-  sendTorqueCmdMsg(torque_command);
-  send_PL1_monitoring();
-  send_PL2_monitoring();
-
-  // Control regen brake valve:
-  if (REGEN) {
-    if (get_pascals(pedalbox.brake_1) < RG_REAR_BRAKE_THRESH) { // rear brake
-      set_brake_shutoff_valve(true);
-    } else {
-      set_brake_shutoff_valve(false);
-    }
-  }
-
-  static Time_T last_print = 0;
+  // Calculate and send motor controller commands.
+  execute_controls();
 
   if (buttons.RTD) {
     if (rtd_started) {

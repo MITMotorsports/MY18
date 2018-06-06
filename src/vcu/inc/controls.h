@@ -4,6 +4,7 @@
 #include "stdio.h"
 #include "stm32f2xx_hal.h"
 
+#include "can_handles.h"
 #include "fault_pedalbox.h"
 #include "state_vcu.h"
 
@@ -41,6 +42,16 @@
 #define REGEN true
 #define BB_ef 1
 
-int16_t calcTorque(uint16_t accel, bool use_launch_control, bool use_regen);
+
+// PRIVATE FUNCTIONS
+static int16_t get_torque(void);
+static int16_t get_regen_torque(void);
+static int16_t get_launch_control_torque(void);
+static int16_t get_pwr_limited_torque(int16_t raw_torque);
+
+// INTERACTION FUNCTIONS
+void enable_controls(void);
+void disable_controls(void);
+void execute_controls(void);
 
 #endif // ifndef __TORQUE_CALC

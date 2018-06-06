@@ -40,7 +40,7 @@ void handle_fatal_fault(void) {
   sendMotorOffCmdMsg();
   sendMotorOffCmdMsg();
 
-  resetDrivingValues(); // from the driving file
+  disable_controls();
 
   openLowSideContactor();
   openHighSideContactor();
@@ -55,7 +55,8 @@ void handle_recoverable_fault(void) {
   else {
     sendTorqueCmdMsg(0);
   }
-  resetDrivingValues();
+
+  disable_controls();
 }
 
 void handle_test_fault(void) {

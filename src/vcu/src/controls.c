@@ -2,11 +2,35 @@
 
 #define HUMAN_READABLE true
 
-int16_t get_regen_torque(void);
-int16_t get_launch_control_torque(void);
-int16_t get_pwr_limited_torque(int16_t raw_torque);
+static uint16_t torque_command = 0;
 
-int16_t calcTorque(uint16_t accel, bool use_launch_control, bool use_regen) {
+void enable_controls(void) {
+  torque_command = 0;
+}
+
+void disable_controls(void) {
+  torque_command = 0;
+}
+
+void execute_controls(void) {
+  torque_command = get_torque();
+  sendTorqueCmdMsg(torque_command);
+  send_PL1_monitoring();
+  send_PL2_monitoring();
+
+  // Control regen brake valve:
+  if (REGEN) {
+    if (get_pascals(pedalbox.brake_1) < RG_REAR_BRAKE_THRESH) { // rear brake
+      // set_brake_shutoff_valve(true);
+    } else {
+      // set_brake_shutoff_valve(false);
+    }
+  }
+}
+
+static int16_t get_torque(void) {
+  auto accel = pedalbox_avg(accel);
+
   if (accel < PEDALBOX_ACCEL_RELEASE) return 0;
 
   int16_t raw_torque = MAX_TORQUE * (accel - PEDALBOX_ACCEL_RELEASE) / (MAX_ACCEL_VAL - PEDALBOX_ACCEL_RELEASE);
@@ -18,7 +42,7 @@ int16_t calcTorque(uint16_t accel, bool use_launch_control, bool use_regen) {
 }
 
 
-int16_t get_regen_torque() {
+static int16_t get_regen_torque() {
   int16_t regen_torque = 0;
   if (mc_readings.speed > RG_MOTOR_SPEED_THRESH &&
       cs_readings.V_bus < RG_BATTERY_VOLTAGE_MAX_THRESH &&
@@ -31,7 +55,7 @@ int16_t get_regen_torque() {
   return -1 * regen_torque;
 }
 
-int16_t get_launch_control_torque() {
+static int16_t get_launch_control_torque() {
   static uint16_t last_torque = 0;
   static uint32_t LC_error_sum = 0;
   // Launch control
@@ -55,7 +79,7 @@ int16_t get_launch_control_torque() {
   return 0;
 }
 
-int16_t get_pwr_limited_torque(int16_t raw_torque) {
+static int16_t get_pwr_limited_torque(int16_t raw_torque) {
   static int32_t PL_I_sum = 0;
 
   // I keep making unit mistakes so I've added a bunch of comments with untis
