@@ -274,7 +274,7 @@ void draw_fault_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     if (errs->recoverable_conflict)
         recov_faults[n_recov_faults++] = "BRK_IMP";
     if (errs->recoverable_gate || errs->recoverable_contactor)
-        recov_faults[n_recov_faults++] = "ESTOP";
+        recov_faults[n_recov_faults++] = "TSMS";
     if (errs->recoverable_heartbeat)
         recov_faults[n_recov_faults++] = "HRTBEAT";
 
