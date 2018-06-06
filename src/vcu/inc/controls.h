@@ -29,13 +29,13 @@
 #define LC_KI 1
 
 // RG = regen
-#define RG_MOTOR_SPEED_THRESH 250 // RPM
-#define RG_CAR_SPEED_THRESH 5 // kph
-#define RG_REAR_BRAKE_THRESH 827370 // Pa
-#define RG_FRONT_BRAKE_THRESH 827370 // Pa
+#define RG_MOTOR_SPEED_THRESH 250            // RPM
+#define RG_CAR_SPEED_THRESH 5                // kph
+#define RG_REAR_BRAKE_THRESH 827370          // Pa
+#define RG_FRONT_BRAKE_THRESH 827370         // Pa
 #define RG_BATTERY_VOLTAGE_MAX_THRESH 299000 // mV
-#define RG_ACCEL_MAX_THRESH 5 // %
-#define RG_TORQUE_COMMAND_MAX 100 // Nm
+#define RG_ACCEL_MAX_THRESH 5                // %
+#define RG_TORQUE_COMMAND_MAX 100            // Nm
 #define RG_K 1
 
 // Need to eventually be set by dash
@@ -50,8 +50,8 @@ static int16_t get_launch_control_torque(void);
 static int16_t get_pwr_limited_torque(int16_t raw_torque);
 
 // INTERACTION FUNCTIONS
-void enable_controls(void);
-void disable_controls(void);
-void execute_controls(void);
+void           enable_controls(void);
+void           disable_controls(void);
+void           execute_controls(void);
 
 #endif // ifndef __TORQUE_CALC
