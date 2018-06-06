@@ -25,8 +25,6 @@ int main(void) {
   DGPIO_INIT_IN(L_CONTACTOR_STATUS, GPIO_NOPULL);
 
   /// OUTPUTS
-  DGPIO_INIT_OUT( DRIVER_RST, GPIO_PIN_SET);
-
   // HVDCDC Disable Pin:
   //   - When it is HIGH HVDCDC is disabled
   //   - Normally LOW, except during precharge

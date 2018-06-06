@@ -54,6 +54,8 @@ static int16_t get_pwr_limited_torque(int16_t raw_torque);
 // INTERACTION FUNCTIONS
 void           enable_controls(void);
 void           disable_controls(void);
+bool           get_controls_enabled(void);
+
 void           execute_controls(void);
 
 #endif // ifndef __TORQUE_CALC

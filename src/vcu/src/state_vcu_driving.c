@@ -11,13 +11,14 @@ static bool stall_until_safe = true;
 
 void enter_vcu_state_driving() {
   printf("[VCU FSM : DRIVING] ENTERED!\r\n");
-  enable_controls();
 
   stall_until_safe = true;
   printf("[VCU FSM : DRIVING] Release accelerator and RTD.\r\n");
 
   rtd_started = false;
   rtd_last    = 0;
+
+  enable_controls();
 }
 
 void update_vcu_state_driving() {
@@ -38,8 +39,6 @@ void update_vcu_state_driving() {
     if (rtd_started) {
       if (HAL_GetTick() - rtd_last > RTD_HOLD) {
         set_vcu_state(VCU_STATE_RTD);
-        set_brake_valve(false);
-        printf("Brake valve false\r\n");
         return;
       }
     }

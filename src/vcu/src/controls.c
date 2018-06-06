@@ -5,22 +5,22 @@
 static bool enabled = false;
 static uint16_t torque_command = 0;
 
-// HACK: Very temporary location for educational purposes.
-#include "gpio.h"
-void set_brake_valve(bool state) {
-  HAL_GPIO_WritePin(GPIO(BRAKE_VALVE), state? GPIO_PIN_SET : GPIO_PIN_RESET);
-}
-
 void enable_controls(void) {
   enabled = true;
   torque_command = 0;
-  // unlock_brake_valve();
+  unlock_brake_valve();
 }
 
 void disable_controls(void) {
   enabled = false;
   torque_command = 0;
+
   set_brake_valve(false);
+  lock_brake_valve();
+}
+
+bool get_controls_enabled(void) {
+  return enabled;
 }
 
 void execute_controls(void) {

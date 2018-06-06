@@ -15,14 +15,16 @@ void enter_vcu_state_rtd() {
   printf("[VCU FSM : RTD] Clearing MC faults...\r\n");
   send_mc_fault_clear();
 
+  disable_controls();
+
   // Turn on battery fans
   HAL_GPIO_WritePin(GPIO(BFAN), GPIO_PIN_SET);
 }
 
 void update_vcu_state_rtd() {
+  // Keep the motor clear of faults
   sendMotorOffCmdMsg();
-  set_brake_valve(false);
-  printf("Brake valve false\r\n");
+
   bool brk_pressed = pedalbox_max(brake) > PEDALBOX_BRAKE_RTD;
 
   if (buttons.RTD) {
