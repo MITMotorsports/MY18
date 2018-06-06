@@ -26,8 +26,8 @@ bool update_recoverable_faults(void) {
   recoverable_faults.contactor = any_recoverable_contactor_faults();
 
   return VS_NEQ(ROOT) && recoverable_faults.gate ||
-         recoverable_faults.heartbeat                          ||
-         recoverable_faults.conflict                           ||
+         recoverable_faults.heartbeat            ||
+         recoverable_faults.conflict             ||
          recoverable_faults.contactor;
 }
 

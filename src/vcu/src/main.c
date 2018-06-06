@@ -21,6 +21,9 @@ int main(void) {
 
   DGPIO_INIT_IN(MASTER_RST, GPIO_PULLUP);
 
+  // Low Side Contactor closed signal from BMS
+  DGPIO_INIT_IN(L_CONTACTOR_STATUS, GPIO_NOPULL);
+
   /// OUTPUTS
   DGPIO_INIT_OUT( DRIVER_RST, GPIO_PIN_SET);
 
@@ -38,6 +41,9 @@ int main(void) {
 
   // Brake Light
   DGPIO_INIT_OUT(BRAKE_LIGHT, GPIO_PIN_RESET);
+
+  // Brake Valve
+  DGPIO_INIT_OUT(BRAKE_VALVE, GPIO_PIN_RESET);
 
   // Driver Reset GPIO output for when Driver Reset is pressed
   DGPIO_INIT_OUT( DRIVER_RST, GPIO_PIN_SET);

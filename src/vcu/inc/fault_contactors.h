@@ -20,7 +20,7 @@ extern volatile Contactors_T contactors;
 bool any_fatal_contactor_faults(void);
 bool any_recoverable_contactor_faults(void);
 
-bool any_fatal_contactor_weld_faults(void);
+bool any_fatal_contactor_mismatch_faults(void);
 
 void print_contactor_state(bool force);
 
