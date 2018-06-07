@@ -46,7 +46,7 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleCellVoltagesMsg(&frame);
     break;
 
-  case can0_CurrentSensor_Voltage3:
+  case can0_CurrentSensor_Voltage1:
     handleCurrentSensorVoltageMsg(&frame);
     break;
 
