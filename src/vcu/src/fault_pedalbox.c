@@ -62,18 +62,12 @@ void update_implausibility() {
   conflicts.observed_implausibility = implausibility;
 }
 
-int32_t get_pascals(brake_reading) {
-  // Real conversion: lpc_voltage = (3.6 * brake_reading / 1024)
-  int32_t lpc_voltage = 36 * brake_reading; // Needs to be divided by 10240
+int32_t get_pascals(int16_t brake_reading) {
+  // Same conversion as the dash
+  int32_t psi = (2019 * brake_reading) / 1000 - 188;
 
-  // Real convesrion: sensor_voltage = 1.53  * lpc_voltage
-  int32_t sensor_voltage = 153 * lpc_voltage; // Needs to be divded by 100
+  // Convert to pascals
+  int32_t pascals = 689476 * psi / 100;
 
-  // Divide out factors from earlier
-  // Real conversion: 1500 / 4 * (sensor_voltage - 0.5)
-  int32_t pressure = 1500 * (2 * sensor_voltage - 1) / (2 * 4 * 10240 * 100);
-
-  printf("LPC voltage: %d, sensor voltage: %d, pressure: %d", lpc_voltage, sensor_voltage, pressure);
-
-  return pressure * 689476 / 100; // Convert to pascals
+  return pascals;
 }
