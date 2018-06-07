@@ -34,20 +34,23 @@
 #define RG_REAR_BRAKE_THRESH 827370          // Pa
 #define RG_FRONT_BRAKE_THRESH 827370         // Pa
 #define RG_BATTERY_VOLTAGE_MAX_THRESH 299000 // mV
-#define RG_ACCEL_MAX_THRESH 5                // %
-#define RG_TORQUE_COMMAND_MAX 100            // Nm
-#define RG_K 1
+#define RG_TORQUE_COMMAND_MAX 1000           // 10 * Nm
 
-// Need to eventually be set by dash
-#define REGEN true
-#define BB_ef 1
+// K = mu_padrotor * 2 * r_rotoreffective * A_Cf / GR
+// See equation 13 in Luis's thesis
+// With plugged in constants:
+// K = 0.35 * 2 * 0.0863 * 0.000792 / (52/15) = 1.38013615e-5
+#define RG_10_7_K 138 // K * 10**7
+
+#define REGEN true // Needs to eventually be set by dash
+#define RG_cBB_ef 50  // Needs to eventually be set by dash -- BB_e_f * 100
 #define FRONT_BRAKE brake_1
 #define REAR_BRAKE brake_2
 
 
 // PRIVATE FUNCTIONS
 static int16_t get_torque(void);
-static int16_t get_regen_torque(void);
+static int32_t get_regen_torque(void);
 static int16_t get_launch_control_torque(void);
 static int16_t get_pwr_limited_torque(int16_t raw_torque);
 

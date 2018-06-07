@@ -29,20 +29,15 @@ void execute_controls(void) {
   torque_command = get_torque();
   sendTorqueCmdMsg(torque_command);
 
-  int16_t regen_torque = get_regen_torque();
-  // printf("REGEN: %d, Regen torque: %d\r\n", REGEN, regen_torque);
-
   // Control regen brake valve:
-  if (REGEN) {
-    printf("REGEN is true ");
-    if (get_pascals(pedalbox.REAR_BRAKE) < RG_REAR_BRAKE_THRESH) { // rear brake
-      printf("BRAKE is less than threshold (brake: %d, thresh: %d)", get_pascals(pedalbox.REAR_BRAKE), RG_REAR_BRAKE_THRESH);
-      set_brake_valve(true);
-      printf("Brake valve true\r\n");
-    } else {
-      set_brake_valve(false);
-      printf("Brake valve false\r\n");
-    }
+  bool brake_valve_state = REGEN && get_pascals(pedalbox.REAR_BRAKE) < RG_REAR_BRAKE_THRESH;
+  set_brake_valve(brake_valve_state);
+
+  int32_t regen_torque;
+  if (brake_valve_state) {
+    regen_torque = get_regen_torque();
+  } else {
+    regen_torque = 0;
   }
 }
 
@@ -60,22 +55,25 @@ static int16_t get_torque(void) {
   return power_limited_torque;
 }
 
-static int16_t get_regen_torque() {
-  int16_t regen_torque = 0;
+static int32_t get_regen_torque() {
+  int32_t regen_torque = 0;
 
-  /*if ((mc_readings.speed > RG_MOTOR_SPEED_THRESH) &&
+  if ((mc_readings.speed * -1 > RG_MOTOR_SPEED_THRESH) &&
       (cs_readings.V_bus < RG_BATTERY_VOLTAGE_MAX_THRESH) &&
-      (get_pascals(pedalbox.FRONT_BRAKE) < RG_FRONT_BRAKE_THRESH) &&
+      (get_pascals(pedalbox.FRONT_BRAKE) > RG_FRONT_BRAKE_THRESH) &&
       // check car speed
-      false) { // Front brake ...? TODO: check this
-    regen_torque = RG_K * get_pascals(pedalbox.FRONT_BRAKE) * (1 - BB_ef) / BB_ef;
-    printf("Conditions satisfied!\r\n");
-    if (regen_torque >
-        RG_TORQUE_COMMAND_MAX) regen_torque = RG_TORQUE_COMMAND_MAX;
-  } else {
-    printf("Conditions not satisfied.\r\n");
+      true) {
+    int32_t kilo_pascals = get_pascals(pedalbox.FRONT_BRAKE) / 1000;
+    // Because we already divded by 1000 by using kilo_pascals instead of
+    // pascals, we only need to divde by 10^4, not 10^7 for RG_10_7_K
+    // And by dividing by 10^3 instead of 10^4, we are multiplying by 10 to get
+    // dNm instead of Nm
+    regen_torque = RG_10_7_K * kilo_pascals * (100 - RG_cBB_ef) /(RG_cBB_ef * 1000);
+    if (regen_torque > RG_TORQUE_COMMAND_MAX) {
+      regen_torque = RG_TORQUE_COMMAND_MAX;
+    }
   }
-  printf("Conditional exited.");*/
+
   return -1 * regen_torque;
 }
 
