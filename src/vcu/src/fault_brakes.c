@@ -10,12 +10,13 @@ void set_brake_valve(bool state) {
 }
 
 void lock_brake_valve(void) {
+  if (!locked) {
+    printf("[BRAKE VALVE] Locked open!\r\n");
+  }
   locked = true;
 
   // Can only lock the valve to open state.
   set_brake_valve(false);
-
-  printf("[BRAKE VALVE] Locked open!\r\n");
 }
 
 void unlock_brake_valve(void) {
