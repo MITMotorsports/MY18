@@ -2,7 +2,8 @@
 
 static bool enabled = false;
 static int16_t torque_command = 0;
-Regen_Settings_T regen_settings = {};
+static int16_t speed_command = 0;
+Controls_Settings_T control_settings = {};
 
 void enable_controls(void) {
   enabled = true;
@@ -25,25 +26,34 @@ bool get_controls_enabled(void) {
 void execute_controls(void) {
   if (!enabled) return;
 
-  // Control regen brake valve:
-  bool brake_valve_state = regen_settings.using_regen && get_pascals(pedalbox.REAR_BRAKE) < RG_REAR_BRAKE_THRESH;
-  set_brake_valve(brake_valve_state);
-
-  int32_t regen_torque;
-  if (brake_valve_state) {
-    regen_torque = get_regen_torque();
-  } else {
-    regen_torque = 0;
-  }
-
   torque_command = get_torque();
 
-  // Extra check to ensure we are only sending regen torque when allowed
-  if (torque_command == 0) {
-    torque_command = regen_torque;
-  }
+  if (true){ //control_settings.using_launch_control) {
+    // We shouldn't be braking in launch control, so don't worry about regen
+    set_brake_valve(false);
 
-  sendTorqueCmdMsg(torque_command);
+    speed_command = get_launch_control_speed();
+
+    sendSpeedCmdMsg(speed_command, 0);
+  } else {
+    // Control regen brake valve:
+    bool brake_valve_state = control_settings.using_regen && get_pascals(pedalbox.REAR_BRAKE) < RG_REAR_BRAKE_THRESH;
+    set_brake_valve(brake_valve_state);
+
+    int32_t regen_torque;
+    if (brake_valve_state) {
+      regen_torque = get_regen_torque();
+    } else {
+      regen_torque = 0;
+    }
+
+    // Extra check to ensure we are only sending regen torque when allowed
+    if (torque_command == 0) {
+      torque_command = regen_torque;
+    }
+
+    sendTorqueCmdMsg(torque_command);
+  }
 }
 
 static int16_t get_torque(void) {
@@ -74,11 +84,35 @@ static int32_t get_regen_torque() {
     // pascals, we only need to divde by 10^4, not 10^7 for RG_10_7_K
     // And by dividing by 10^3 instead of 10^4, we are multiplying by 10 to get
     // dNm instead of Nm
-    regen_torque = RG_10_7_K * kilo_pascals * (100 - regen_settings.cBB_ef) /(regen_settings.cBB_ef * 1000);
+    regen_torque = RG_10_7_K * kilo_pascals * (100 - control_settings.cBB_ef) /(control_settings.cBB_ef * 1000);
     if (regen_torque > RG_TORQUE_COMMAND_MAX) {
       regen_torque = RG_TORQUE_COMMAND_MAX;
     }
   }
 
   return -1 * regen_torque;
+}
+
+static int32_t get_launch_control_speed() {
+  uint32_t left_front_speed;
+  uint32_t right_front_speed;
+
+  // If the 32 bit wheel speed is zero, then it's disconnect (in which case we should
+  // use the 16 bit one), or the wheels are actually not moving, so the 16 bit one will
+  // be zero as well
+  if (wheel_speeds.front_left_32b_wheel_speed == 0) {
+    left_front_speed = wheel_speeds.front_left_16b_wheel_speed;
+  } else {
+    left_front_speed = wheel_speeds.front_left_32b_wheel_speed;
+  }
+
+  if (wheel_speeds.front_right_32b_wheel_speed == 0) {
+    right_front_speed = wheel_speeds.front_right_16b_wheel_speed;
+  } else {
+    right_front_speed = wheel_speeds.front_right_32b_wheel_speed;
+  }
+
+  uint32_t avg_wheel_speed = left_front_speed/2 + right_front_speed/2;
+  int32_t target_speed = avg_wheel_speed * LC_10_5_WS_FACTOR / (100000);
+  return target_speed;
 }

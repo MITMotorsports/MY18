@@ -54,10 +54,10 @@ typedef struct {
 } IMUVelocity_T;
 
 typedef struct {
-  int32_t front_left_32b_wheel_speed;
-  int32_t front_left_16b_wheel_speed;
-  int32_t front_right_32b_wheel_speed;
-  int32_t front_right_16b_wheel_speed;
+  uint32_t front_left_32b_wheel_speed;
+  uint32_t front_left_16b_wheel_speed;
+  uint32_t front_right_32b_wheel_speed;
+  uint32_t front_right_16b_wheel_speed;
 } Wheel_Speeds_T;
 
 // GLOBAL CONTAINER DEFINITIONS

@@ -25,7 +25,6 @@
 // target_slip_ratio * gear_ratio / 1000 = LC_WS_FACTOR
 // 1.12 * (52/15) / 1000 = 0.00388266666 = LC_WS_FACTOR
 #define LC_10_5_WS_FACTOR 388 // Real factor multiplied by 10^5
-#define GEAR_RATIO 3
 
 #define LC_TARGET_SLIP_RATIO 112 // Target ratio times 100
 
@@ -48,14 +47,17 @@
 
 typedef struct {
   bool using_regen;
+  bool using_launch_control;
   uint16_t cBB_ef; // Electric front brake bias * 100
-} Regen_Settings_T;
+  uint32_t lc_msTicks; // Time spent in launch control
+} Controls_Settings_T;
 
-extern Regen_Settings_T regen_settings;
+extern Controls_Settings_T control_settings;
 
 // PRIVATE FUNCTIONS
 static int16_t get_torque(void);
 static int32_t get_regen_torque(void);
+static int32_t get_launch_control_speed(void);
 
 // INTERACTION FUNCTIONS
 void           enable_controls(void);
