@@ -1,9 +1,8 @@
 #include "controls.h"
 
-#define HUMAN_READABLE true
-
 static bool enabled = false;
 static int16_t torque_command = 0;
+Regen_Settings_T regen_settings = {};
 
 void enable_controls(void) {
   enabled = true;
@@ -27,7 +26,7 @@ void execute_controls(void) {
   if (!enabled) return;
 
   // Control regen brake valve:
-  bool brake_valve_state = REGEN && get_pascals(pedalbox.REAR_BRAKE) < RG_REAR_BRAKE_THRESH;
+  bool brake_valve_state = regen_settings.using_regen && get_pascals(pedalbox.REAR_BRAKE) < RG_REAR_BRAKE_THRESH;
   set_brake_valve(brake_valve_state);
 
   int32_t regen_torque;
@@ -75,7 +74,7 @@ static int32_t get_regen_torque() {
     // pascals, we only need to divde by 10^4, not 10^7 for RG_10_7_K
     // And by dividing by 10^3 instead of 10^4, we are multiplying by 10 to get
     // dNm instead of Nm
-    regen_torque = RG_10_7_K * kilo_pascals * (100 - RG_cBB_ef) /(RG_cBB_ef * 1000);
+    regen_torque = RG_10_7_K * kilo_pascals * (100 - regen_settings.cBB_ef) /(regen_settings.cBB_ef * 1000);
     if (regen_torque > RG_TORQUE_COMMAND_MAX) {
       regen_torque = RG_TORQUE_COMMAND_MAX;
     }

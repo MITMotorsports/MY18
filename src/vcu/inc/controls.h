@@ -35,11 +35,15 @@
 // K = 0.35 * 2 * 0.0863 * 0.000792 / (52/15) = 1.38013615e-5
 #define RG_10_7_K 138 // K * 10**7
 
-#define REGEN true // Needs to eventually be set by dash
-#define RG_cBB_ef 50  // Needs to eventually be set by dash. Also, is really BB_e_f * 100 (hence cBB_e_f)
 #define FRONT_BRAKE brake_1
 #define REAR_BRAKE brake_2
 
+typedef struct {
+  bool using_regen;
+  uint16_t cBB_ef; // Electric front brake bias * 100
+} Regen_Settings_T;
+
+extern Regen_Settings_T regen_settings;
 
 // PRIVATE FUNCTIONS
 static int16_t get_torque(void);
