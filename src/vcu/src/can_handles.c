@@ -70,6 +70,14 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleSBG_EKF_Velocity(&frame);
     break;
 
+  case can0_FrontCanNodeRightWheelSpeed:
+    handleFrontCanNodeRightWheelSpeed(&frame);
+    break;
+
+  case can0_FrontCanNodeLeftWheelSpeed:
+    handleFrontCanNodeRightWheelSpeed(&frame);
+    break;
+
   default:
     break;
   }
@@ -181,6 +189,24 @@ void handleSBG_EKF_Velocity(Frame *msg) {
 
   imu_velocity.north = unpacked_msg.north;
   imu_velocity.east = unpacked_msg.east;
+}
+
+void handleFrontCanNodeLeftWheelSpeed(Frame *msg) {
+  can0_FrontCanNodeLeftWheelSpeed_T unpacked_msg;
+
+  unpack_can0_FrontCanNodeLeftWheelSpeed(msg, &unpacked_msg);
+
+  wheel_speeds.front_left_32b_wheel_speed = unpacked_msg.left_32b;
+  wheel_speeds.front_left_16b_wheel_speed = unpacked_msg.left_16b;
+}
+
+void handleFrontCanNodeRightWheelSpeed(Frame *msg) {
+  can0_FrontCanNodeRightWheelSpeed_T unpacked_msg;
+
+  unpack_can0_FrontCanNodeRightWheelSpeed(msg, &unpacked_msg);
+
+  wheel_speeds.front_right_32b_wheel_speed = unpacked_msg.right_32b;
+  wheel_speeds.front_right_16b_wheel_speed = unpacked_msg.right_16b;
 }
 
 void send_VCUHeartbeat() {

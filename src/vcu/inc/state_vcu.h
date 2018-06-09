@@ -53,6 +53,13 @@ typedef struct {
   int16_t east;
 } IMUVelocity_T;
 
+typedef struct {
+  int32_t front_left_32b_wheel_speed;
+  int32_t front_left_16b_wheel_speed;
+  int32_t front_right_32b_wheel_speed;
+  int32_t front_right_16b_wheel_speed;
+} Wheel_Speeds_T;
+
 // GLOBAL CONTAINER DEFINITIONS
 extern volatile Voltages_T  voltages;
 extern volatile Buttons_T   buttons;
@@ -60,6 +67,7 @@ extern volatile Buttons_T   buttons;
 extern volatile MCReadings_T mc_readings;
 extern volatile CSReadings_T cs_readings;
 extern volatile IMUVelocity_T imu_velocity;
+extern volatile Wheel_Speeds_T wheel_speeds;
 
 // INTERACTION FUNCTIONS
 void        init_vcu_state(void);
