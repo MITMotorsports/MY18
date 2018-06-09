@@ -5,6 +5,8 @@ static int16_t torque_command = 0;
 static int16_t speed_command = 0;
 Controls_Settings_T control_settings = {};
 
+static uint32_t get_front_wheel_speed(void);
+
 void enable_controls(void) {
   enabled = true;
   torque_command = 0;
@@ -32,9 +34,13 @@ void execute_controls(void) {
     // We shouldn't be braking in launch control, so don't worry about regen
     set_brake_valve(false);
 
-    speed_command = get_launch_control_speed();
-
-    sendSpeedCmdMsg(speed_command, 0);
+    uint32_t front_wheel_speed = get_front_wheel_speed();
+    if (front_wheel_speed < LC_WS_THRESH) {
+      sendSpeedCmdMsg(100, 1000);
+    } else {
+      speed_command = get_launch_control_speed(front_wheel_speed);
+      sendSpeedCmdMsg(speed_command, 0);
+    }
   } else {
     // Control regen brake valve:
     bool brake_valve_state = control_settings.using_regen && get_pascals(pedalbox.REAR_BRAKE) < RG_REAR_BRAKE_THRESH;
@@ -93,7 +99,12 @@ static int32_t get_regen_torque() {
   return -1 * regen_torque;
 }
 
-static int32_t get_launch_control_speed() {
+static int32_t get_launch_control_speed(uint32_t front_wheel_speed) {
+  int32_t target_speed = front_wheel_speed * LC_10_5_WS_FACTOR / (100000);
+  return target_speed;
+}
+
+static uint32_t get_front_wheel_speed() {
   uint32_t left_front_speed;
   uint32_t right_front_speed;
 
@@ -113,6 +124,5 @@ static int32_t get_launch_control_speed() {
   }
 
   uint32_t avg_wheel_speed = left_front_speed/2 + right_front_speed/2;
-  int32_t target_speed = avg_wheel_speed * LC_10_5_WS_FACTOR / (100000);
-  return target_speed;
+  return avg_wheel_speed;
 }

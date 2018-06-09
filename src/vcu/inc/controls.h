@@ -14,8 +14,8 @@
 #define MIN_ACCEL_VAL 0
 
 // Launch control contants
-// How long we command max torque
-#define LC_TIME_OFFSET 10
+// After wheel speed crosses this threshold, start using slip controller
+#define LC_WS_THRESH 45000
 // Define LC_WS_FACTOR as commanded_motor_speed/front_wheel_speed
 // (i.e. multiply front_wheel_speed by it to get our setpoint)
 // To find its value:
@@ -25,8 +25,6 @@
 // target_slip_ratio * gear_ratio / 1000 = LC_WS_FACTOR
 // 1.12 * (52/15) / 1000 = 0.00388266666 = LC_WS_FACTOR
 #define LC_10_5_WS_FACTOR 388 // Real factor multiplied by 10^5
-
-#define LC_TARGET_SLIP_RATIO 112 // Target ratio times 100
 
 // RG = regen
 #define RG_MOTOR_SPEED_THRESH 250            // RPM
@@ -57,7 +55,7 @@ extern Controls_Settings_T control_settings;
 // PRIVATE FUNCTIONS
 static int16_t get_torque(void);
 static int32_t get_regen_torque(void);
-static int32_t get_launch_control_speed(void);
+static int32_t get_launch_control_speed(uint32_t front_wheel_speed);
 
 // INTERACTION FUNCTIONS
 void           enable_controls(void);
