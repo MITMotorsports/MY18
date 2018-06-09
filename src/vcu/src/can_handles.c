@@ -177,6 +177,8 @@ void handleMCMotor_Position_Info(Frame *msg) {
 void handleSBG_EKF_Velocity(Frame *msg) {
   can0_SBG_EKF_Velocity_T unpacked_msg;
 
+  unpack_can0_SBG_EKF_Velocity(msg, &unpacked_msg);
+
   imu_velocity.north = unpacked_msg.north;
   imu_velocity.east = unpacked_msg.east;
 }
