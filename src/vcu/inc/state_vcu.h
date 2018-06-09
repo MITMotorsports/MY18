@@ -49,16 +49,9 @@ typedef struct {
 } Buttons_T;
 
 typedef struct {
-  uint32_t raw_torque;
-  uint32_t power_limited_torque;
-  uint32_t omega;
-  int32_t error;
-  uint32_t PI_torque;
-  uint32_t torque_offset;
-  int32_t I_sum;
-  uint32_t P_torque;
-  uint32_t I_torque;
-} PL_T;
+  int16_t north;
+  int16_t east;
+} IMUVelocity_T;
 
 // GLOBAL CONTAINER DEFINITIONS
 extern volatile Voltages_T  voltages;
@@ -66,7 +59,7 @@ extern volatile Buttons_T   buttons;
 
 extern volatile MCReadings_T mc_readings;
 extern volatile CSReadings_T cs_readings;
-extern volatile PL_T pl;
+extern volatile IMUVelocity_T imu_velocity;
 
 // INTERACTION FUNCTIONS
 void        init_vcu_state(void);

@@ -66,6 +66,10 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleMCMotor_Position_Info(&frame);
     break;
 
+  case can0_SBG_EKF_Velocity:
+    handleSBG_EKF_Velocity(&frame);
+    break;
+
   default:
     break;
   }
@@ -170,6 +174,13 @@ void handleMCMotor_Position_Info(Frame *msg) {
   mc_readings.speed = unpacked_msg.motor_speed;
 }
 
+void handleSBG_EKF_Velocity(Frame *msg) {
+  can0_SBG_EKF_Velocity_T unpacked_msg;
+
+  imu_velocity.north = unpacked_msg.north;
+  imu_velocity.east = unpacked_msg.east;
+}
+
 void send_VCUHeartbeat() {
   LIMIT(can0_VCUHeartbeat);
 
@@ -252,47 +263,4 @@ void send_mc_fault_clear() {
   msg.data    = 0;
 
   can0_MCParameterRequest_Write(&msg);
-}
-
-void send_PL1_monitoring() {
-  LIMIT(can0_PLMonitoring1);
-  //printf("Sending PL monitoring 1!\r\n");
-
-  can0_PLMonitoring1_T msg1;
-
-  msg1.raw_torque = pl.raw_torque;
-  msg1.power_limited_torque = pl.power_limited_torque;
-
-  can0_PLMonitoring1_Write(&msg1);
-
-  can0_PLMonitoring2_T msg2;
-
-  msg2.omega = pl.omega;
-  msg2.error = pl.error;
-
-  can0_PLMonitoring2_Write(&msg2);
-
-  can0_PLMonitoring3_T msg3;
-
-  msg3.PI_torque = pl.PI_torque;
-  msg3.torque_offset = pl.torque_offset;
-
-  can0_PLMonitoring3_Write(&msg3);
-}
-
-void send_PL2_monitoring() {
-  LIMIT(can0_PLMonitoring2);
-  //printf("Sending PL monitoring 2!\r\n");
-  can0_PLMonitoring4_T msg4;
-
-  msg4.I_sum = pl.I_sum;
-  msg4.P_torque = pl.P_torque;
-
-  can0_PLMonitoring4_Write(&msg4);
-
-  can0_PLMonitoring5_T msg5;
-
-  msg5.I_torque = pl.I_torque;
-
-  can0_PLMonitoring5_Write(&msg5);
 }

@@ -6,7 +6,7 @@ volatile Voltages_T   voltages    = {};
 volatile Buttons_T    buttons     = {};
 volatile MCReadings_T mc_readings = {};
 volatile CSReadings_T cs_readings = {};
-volatile PL_T pl = {};
+volatile IMUVelocity_T imu_velocity = {};
 
 void init_vcu_state(void) {
   // BOARD HEARTBEATS
@@ -38,9 +38,6 @@ void init_vcu_state(void) {
   buttons.MasterReset  = 0;
   buttons.DriverReset  = 0;
   buttons.ScrollSelect = 0;
-
-  pl.raw_torque = 0;
-  pl.power_limited_torque = 0;
 
   // CAR Mode
   set_vcu_state(VCU_STATE_ROOT);

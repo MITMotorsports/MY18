@@ -13,13 +13,6 @@
 #define MAX_ACCEL_VAL 1000
 #define MIN_ACCEL_VAL 0
 
-// Power limit constants. All in W
-// Threshold at which we start to adjust torque commands to limit power
-#define PL_THRESHOLD 400
-#define PL_KP 1
-#define PL_KI 100
-#define PL_I_CAP 1000000
-
 // Launch control contants
 #define GEAR_RATIO 3
 #define LC_TIME_OFFSET 10
@@ -43,7 +36,7 @@
 #define RG_10_7_K 138 // K * 10**7
 
 #define REGEN true // Needs to eventually be set by dash
-#define RG_cBB_ef 50  // Needs to eventually be set by dash -- BB_e_f * 100
+#define RG_cBB_ef 50  // Needs to eventually be set by dash. Also, is really BB_e_f * 100 (hence cBB_e_f)
 #define FRONT_BRAKE brake_1
 #define REAR_BRAKE brake_2
 
@@ -51,8 +44,6 @@
 // PRIVATE FUNCTIONS
 static int16_t get_torque(void);
 static int32_t get_regen_torque(void);
-static int16_t get_launch_control_torque(void);
-static int16_t get_pwr_limited_torque(int16_t raw_torque);
 
 // INTERACTION FUNCTIONS
 void           enable_controls(void);

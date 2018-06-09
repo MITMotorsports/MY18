@@ -58,7 +58,6 @@ int main(void) {
   printf("\r\n\r\n");
 
   init_states();
-  printf("PL thresh: %d\r\n", PL_THRESHOLD);
 
   while (1) {
     advance_states();
