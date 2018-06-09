@@ -709,7 +709,7 @@ buses:
             signed: true
             c_type: int16_t
             unit: dA
-      MCFaultCodes
+      MCFaultCodes:
         can_id: 0x0AB
         is_big_endian: false
         segments:
