@@ -14,12 +14,20 @@
 #define MIN_ACCEL_VAL 0
 
 // Launch control contants
-#define GEAR_RATIO 3
+// How long we command max torque
 #define LC_TIME_OFFSET 10
+// Define LC_WS_FACTOR as commanded_motor_speed/front_wheel_speed
+// (i.e. multiply front_wheel_speed by it to get our setpoint)
+// To find its value:
+// target_slip_ratio = rear_wheel_speed / front_wheel_speed
+// target_slip_ratio = (motor_speed * (1000 mRPM / 1 RPM) / gear_ratio) / front_wheel_speed
+// target_slip_ratio * gear_ratio / 1000 = motor_speed / front_wheel_speed
+// target_slip_ratio * gear_ratio / 1000 = LC_WS_FACTOR
+// 1.12 * (52/15) / 1000 = 0.00388266666 = LC_WS_FACTOR
+#define LC_10_5_WS_FACTOR 388 // Real factor multiplied by 10^5
+#define GEAR_RATIO 3
+
 #define LC_TARGET_SLIP_RATIO 112 // Target ratio times 100
-#define LC_SLEW_RATE_CAP 10
-#define LC_KP 1000
-#define LC_KI 1
 
 // RG = regen
 #define RG_MOTOR_SPEED_THRESH 250            // RPM
