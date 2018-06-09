@@ -34,6 +34,7 @@ void send_VCUErrors();
 void send_VCU();
 
 void sendTorqueCmdMsg(int16_t torque);
+void sendSpeedCmdMsg(int16_t speed, int16_t torque_limit);
 void sendMotorOffCmdMsg(void);
 void send_mc_fault_clear(void);
 

@@ -75,7 +75,7 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     break;
 
   case can0_FrontCanNodeLeftWheelSpeed:
-    handleFrontCanNodeRightWheelSpeed(&frame);
+    handleFrontCanNodeLeftWheelSpeed(&frame);
     break;
 
   default:
@@ -261,6 +261,22 @@ void sendTorqueCmdMsg(int16_t torque) {
   msg.discharge_enabled             = false;
   msg.speed_mode                    = false;
   msg.torque_limit                  = 0;
+
+  can0_MCCommand_Write(&msg);
+}
+
+void sendSpeedCmdMsg(int16_t speed, int16_t torque_limit) {
+  LIMIT(can0_MCCommand);
+
+  can0_MCCommand_T msg;
+
+  msg.torque                        = 0;
+  msg.angular_vel                   = speed;
+  msg.direction_is_counterclockwise = false;
+  msg.inverter_enabled              = true;
+  msg.discharge_enabled             = false;
+  msg.speed_mode                    = true;
+  msg.torque_limit                  = torque_limit;
 
   can0_MCCommand_Write(&msg);
 }
