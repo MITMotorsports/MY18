@@ -26,20 +26,25 @@ bool get_controls_enabled(void) {
 }
 
 void execute_controls(void) {
+  static bool up_to_speed = false;
+  static bool launch_control_entered;
+  static bool launch_control_exited;
   if (!enabled) return;
 
   torque_command = get_torque();
 
-  if (true){ //control_settings.using_launch_control) {
+  if (control_settings.using_launch_control) {
     // We shouldn't be braking in launch control, so don't worry about regen
     set_brake_valve(false);
 
     uint32_t front_wheel_speed = get_front_wheel_speed();
-    if (front_wheel_speed < LC_WS_THRESH) {
-      sendSpeedCmdMsg(100, 1000);
+    if (front_wheel_speed < LC_WS_THRESH && !up_to_speed) {
+      int32_t torque_limit = 1000 > torque_command ? torque_command : 1000;
+      sendSpeedCmdMsg(500, torque_limit);
     } else {
+      up_to_speed = true;
       speed_command = get_launch_control_speed(front_wheel_speed);
-      sendSpeedCmdMsg(speed_command, 0);
+      sendSpeedCmdMsg(speed_command, torque_command);
     }
   } else {
     // Control regen brake valve:
@@ -100,7 +105,10 @@ static int32_t get_regen_torque() {
 }
 
 static int32_t get_launch_control_speed(uint32_t front_wheel_speed) {
-  int32_t target_speed = front_wheel_speed * LC_10_5_WS_FACTOR / (100000);
+uint32_t front_wheel_speedRPM = front_wheel_speed / 1000;
+  // Divide 100 because slip ratio is times 100, divide by 100 again because
+  // gear ratio is also multiplied by 100
+  int32_t target_speed = front_wheel_speedRPM * control_settings.slip_ratio * LC_cGR / (100 * 100);
   return target_speed;
 }
 

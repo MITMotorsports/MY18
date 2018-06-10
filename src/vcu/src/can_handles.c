@@ -78,6 +78,10 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleFrontCanNodeLeftWheelSpeed(&frame);
     break;
 
+  case can0_MCTorque_Timer_Info:
+    handleMCTorque_Timer_Info(&frame);
+    break;
+
   default:
     break;
   }
@@ -209,6 +213,14 @@ void handleFrontCanNodeRightWheelSpeed(Frame *msg) {
   wheel_speeds.front_right_16b_wheel_speed = unpacked_msg.right_16b;
 }
 
+void handleMCTorque_Timer_Info(Frame *msg) {
+  can0_MCTorque_Timer_Info_T unpacked_msg;
+
+  unpack_can0_MCTorque_Timer_Info(msg, &unpacked_msg);
+
+  mc_readings.torque_feedback = unpacked_msg.torque_feedback;
+}
+
 void send_VCUHeartbeat() {
   LIMIT(can0_VCUHeartbeat);
 
@@ -269,6 +281,7 @@ void sendSpeedCmdMsg(int16_t speed, int16_t torque_limit) {
   LIMIT(can0_MCCommand);
 
   can0_MCCommand_T msg;
+  if (speed < 0) speed = 0;
 
   msg.torque                        = 0;
   msg.angular_vel                   = speed;

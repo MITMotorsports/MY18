@@ -16,15 +16,7 @@
 // Launch control contants
 // After wheel speed crosses this threshold, start using slip controller
 #define LC_WS_THRESH 45000
-// Define LC_WS_FACTOR as commanded_motor_speed/front_wheel_speed
-// (i.e. multiply front_wheel_speed by it to get our setpoint)
-// To find its value:
-// target_slip_ratio = rear_wheel_speed / front_wheel_speed
-// target_slip_ratio = (motor_speed * (1000 mRPM / 1 RPM) / gear_ratio) / front_wheel_speed
-// target_slip_ratio * gear_ratio / 1000 = motor_speed / front_wheel_speed
-// target_slip_ratio * gear_ratio / 1000 = LC_WS_FACTOR
-// 1.12 * (52/15) / 1000 = 0.00388266666 = LC_WS_FACTOR
-#define LC_10_5_WS_FACTOR 388 // Real factor multiplied by 10^5
+#define LC_cGR 347 // Gear ratio times 100
 
 // RG = regen
 #define RG_MOTOR_SPEED_THRESH 250            // RPM
@@ -47,7 +39,7 @@ typedef struct {
   bool using_regen;
   bool using_launch_control;
   uint16_t cBB_ef; // Electric front brake bias * 100
-  uint32_t lc_msTicks; // Time spent in launch control
+  int32_t slip_ratio;
 } Controls_Settings_T;
 
 extern Controls_Settings_T control_settings;
