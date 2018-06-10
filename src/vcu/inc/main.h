@@ -10,6 +10,7 @@
 #include "extern.h"
 #include "gpio.h"
 #include "state.h"
+#include "pwm.h"
 
 #ifdef __GNUC__
 
@@ -56,6 +57,9 @@
 
 #define CANx_RX_IRQn                   CAN1_RX0_IRQn
 #define CANx_RX_IRQHandler             CAN1_RX0_IRQHandler
+
+// PWM -----------------------------------------------------------
+// MOVED TO pwm.h
 
 void USART_Init(uint32_t baudrate);
 static void SystemClock_Config(void);
