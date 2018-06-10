@@ -59,7 +59,7 @@ void update_no_error_state(void) {
 }
 
 void enter_recoverable_error_state(void) {
-  set_lc_done();
+  set_lc_zero_torque();
   printf("[ERROR FSM : RECOVERABLE_ERROR_STATE] ENTERED!\r\n");
 }
 
@@ -86,7 +86,7 @@ void update_recoverable_error_state(void) {
 
 void enter_fatal_error_state(void) {
   printf("[ERROR FSM : FATAL_ERROR_STATE] ENTERED!\r\n");
-  set_lc_done();
+  set_lc_zero_torque();
 }
 
 void update_fatal_error_state(void) {

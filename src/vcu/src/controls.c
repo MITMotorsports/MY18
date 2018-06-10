@@ -10,7 +10,7 @@ static uint32_t get_front_wheel_speed(void);
 static bool any_lc_faults();
 
 void init_controls_defaults(void) {
-  control_settings.using_regen = true;
+  control_settings.using_regen = false;
   control_settings.using_launch_control = false;
   control_settings.cBB_ef = 50;
   control_settings.slip_ratio = 112;
@@ -202,6 +202,6 @@ void set_lc_state_before() {
   lc_state = BEFORE;
 }
 
-void set_lc_done() {
-  lc_state = DONE;
+void set_lc_zero_torque() {
+  lc_state = ZERO_TORQUE;
 }
