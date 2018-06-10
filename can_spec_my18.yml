@@ -1090,6 +1090,10 @@ buses:
             c_type: uint32_t
             signed: false
             unit: mRPM
+  can1:
+    baudrate: 500000
+    is_extended: false
+    messages:
       SBG_EKF_VelocityAcceleration:
         can_id: 312
         is_big_endian: false
