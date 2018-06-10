@@ -82,6 +82,10 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleMCTorque_Timer_Info(&frame);
     break;
 
+  case can0_DashControls:
+    handleDashControls(&frame);
+    break;
+
   default:
     break;
   }
@@ -228,7 +232,7 @@ void handleDashControls(Frame *msg) {
 
   control_settings.using_regen;
   control_settings.using_launch_control;
-  control_settings.cBB_ef; // Electric front brake bias * 100
+  control_settings.cBB_ef = unpacked_msg.regen_bias; // Electric front brake bias * 100
   control_settings.slip_ratio; // Slip ratio * 100
   control_settings.limp_factor; // Limp facotr * 100
 }

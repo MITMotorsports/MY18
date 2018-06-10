@@ -74,6 +74,8 @@ int main(void) {
     if (HAL_GetTick() - lastt > 1000) {
       HAL_GPIO_TogglePin(GPIO(LED));
 
+      printf("Bias: %d\r\n", control_settings.cBB_ef);
+
       lastt = HAL_GetTick();
     }
   }

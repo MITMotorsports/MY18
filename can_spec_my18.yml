@@ -140,14 +140,14 @@ buses:
         period: 10ms
         segments:
           # Wheel speed from 32-bit timer (accurate at most speeds)
-          can_node_left_32b_wheel_speed:
+          left_32b:
             position: 0
             length: 32
             c_type: uint32_t
             signed: false
             unit: mRPM
           # Wheel speed from 16-bit timer (accurate only at high speeds)
-          can_node_left_16b_wheel_speed:
+          left_16b:
             position: 32
             length: 32
             c_type: uint32_t
@@ -159,14 +159,14 @@ buses:
         period: 10ms
         segments:
           # Wheel speed from 32-bit timer (accurate at most speeds)
-          can_node_right_32b_wheel_speed:
+          right_32b:
             position: 0
             length: 32
             c_type: uint32_t
             signed: false
             unit: mRPM
           # Wheel speed from 16-bit timer (accurate only at high speeds)
-          can_node_right_16b_wheel_speed:
+          right_16b:
             position: 32
             length: 32
             c_type: uint32_t
@@ -1082,10 +1082,6 @@ buses:
             unit: decidegC
             signed: true
             c_type: int16_t
-  can1:
-    baudrate: 500000
-    is_extended: false
-    messages:
       SBG_EKF_VelocityAcceleration:
         can_id: 312
         is_big_endian: false
