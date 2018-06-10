@@ -66,7 +66,7 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleMCMotor_Position_Info(&frame);
     break;
 
-  case can1_SBG_EKF_Velocity:
+  case can0_SBG_EKF_Velocity:
     handleSBG_EKF_Velocity(&frame);
     break;
 
@@ -190,9 +190,9 @@ void handleMCMotor_Position_Info(Frame *msg) {
 }
 
 void handleSBG_EKF_Velocity(Frame *msg) {
-  can1_SBG_EKF_Velocity_T unpacked_msg;
+  can0_SBG_EKF_Velocity_T unpacked_msg;
 
-  unpack_can1_SBG_EKF_Velocity(msg, &unpacked_msg);
+  unpack_can0_SBG_EKF_Velocity(msg, &unpacked_msg);
 
   imu_velocity.north = unpacked_msg.north;
   imu_velocity.east = unpacked_msg.east;
@@ -227,23 +227,21 @@ void handleMCTorque_Timer_Info(Frame *msg) {
 void handleDashControls(Frame *msg) {
   can0_DashControls_T unpacked_msg;
 
-  bool ignoring = true;
-  for (uint8_t i = 0; i < 8; i++) {
-    if (msg->data[i] != 0xFF) {
-      ignoring = false;
-      break;
-    }
-  }
-
-  if (ignoring) return;
-
   unpack_can0_DashControls(msg, &unpacked_msg);
 
-  control_settings.using_regen;
-  control_settings.using_launch_control;
-  control_settings.cBB_ef = unpacked_msg.regen_bias; // Electric front brake bias * 100
-  control_settings.slip_ratio; // Slip ratio * 100
-  control_settings.limp_factor; // Limp facotr * 100
+  if (unpacked_msg.regen_bias != 65535) {
+    control_settings.cBB_ef = unpacked_msg.regen_bias;
+    control_settings.using_regen = unpacked_msg.using_regen;
+  }
+
+  if (unpacked_msg.launch_ctrl_slip_ratio != 65535) {
+    control_settings.slip_ratio = unpacked_msg.launch_ctrl_slip_ratio;
+    control_settings.using_launch_control = unpacked_msg.using_launch_ctrl;
+  }
+
+  if (unpacked_msg.limp_factor != 65535) {
+    control_settings.limp_factor = unpacked_msg.limp_factor;
+  }
 }
 
 void send_VCUHeartbeat() {
