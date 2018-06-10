@@ -12,7 +12,6 @@ boards:
     publish:
       can0:
         - FrontCanNodeBrakeThrottle
-        - FrontCanNodeWheelSpeed
     subscribe:
       can0:
         - VCUHeartbeat
@@ -131,23 +130,6 @@ buses:
             position: 59
             length: 1
             c_type: bool
-      FrontCanNodeWheelSpeed:
-        can_id: 0x0F0
-        is_big_endian: true
-        period: 1000s
-        segments:
-          front_right_wheel_speed:
-            position: 0
-            length: 32
-            c_type: uint32_t
-            signed: false
-            unit: mRPM
-          front_left_wheel_speed:
-            position: 32
-            length: 32
-            c_type: uint32_t
-            signed: false
-            unit: mRPM
       CellTemperatures:
         can_id: 0x0F1
         period: 10s
