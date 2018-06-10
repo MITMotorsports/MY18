@@ -132,7 +132,7 @@ buses:
             c_type: bool
       CellTemperatures:
         can_id: 0x0F1
-        period: 10s
+        period: 0.5s
         is_big_endian: true
         segments:
           min:
@@ -227,7 +227,7 @@ buses:
             position: 11
             length: 1
             c_type: bool
-          error_blown_fuse:
+          error_force_over_can:
             position: 12
             length: 1
             c_type: bool
@@ -255,14 +255,10 @@ buses:
         can_id: 0x0D3
         is_big_endian: true
         segments:
-          state:
+          force_error:
             position: 0
             length: 1
-            c_type: enum
-            enum:
-              DISCHARGE_ENABLE: 0x0
-              DISCHARGE_DISABLE: 0x1
-              NO_REQUEST: 0x2
+            c_type: bool
       VCUHeartbeat:
         can_id: 0x0F3
         period: 41ms
