@@ -554,6 +554,7 @@ buses:
       DashControls:
         can_id: 0x0D2
         is_big_endian: true
+        period: 200ms
         segments:
           using_regen:
             position: 0
@@ -564,11 +565,11 @@ buses:
             length: 16
             c_type: uint16_t
             signed: false
-          using_launch_control:
+          using_launch_ctrl:
             position: 17
             length: 1
             c_type: bool
-          launch_control_slip_ratio: # Ranges from 105 to 115
+          launch_ctrl_slip_ratio: # Ranges from 105 to 115
             position: 18
             length: 16
             c_type: uint16_t

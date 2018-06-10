@@ -2,13 +2,15 @@
 #define _PAGE_MANAGER_H_
 
 #include "carstats.h"
+#include "button_listener.h"
 #include "NHD_US2066.h"
 
 typedef enum {
     DASH_PAGE_CRITICAL = 0,
     DASH_PAGE_TRACTION,
-    DASH_PAGE_WHEEL_SPEED,
-    DASH_PAGE_CHARGE,
+    // DASH_PAGE_WHEEL_SPEED,
+    // DASH_PAGE_CHARGE,
+    DASH_PAGE_CONTROLS,
     DASH_PAGE_FAULT,
     DASH_PAGE_COUNT
 } dash_page_type;

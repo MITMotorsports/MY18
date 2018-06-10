@@ -11,7 +11,7 @@ static button_state_t left_button;
 static button_state_t right_button;
 
 static page_manager_t page_manager;
-static carstats_t carstats;
+static carstats_t carstats = {};
 
 static NHD_US2066_OLED oled;
 
@@ -29,7 +29,7 @@ static int previous_scroll_select;
 #define BMS_HEARTBEAT_EXPIRE 1000
 
 void update_lights(void);
-void send_dash_request(can0_DashRequest_type_T type);
+void send_dash_controls(void);
 
 void dispatch_init() {
     init_button_state(&left_button);
@@ -93,27 +93,18 @@ void dispatch_init() {
     carstats.vcu_state               = can0_VCUHeartbeat_vcu_state_VCU_STATE_ROOT;
     carstats.last_vcu_heartbeat      = msTicks;
     carstats.last_bms_heartbeat      = msTicks;
+
+    carstats.controls.regen_bias        = -1;
+    carstats.controls.launch_ctrl_slip_ratio = -1;
+    carstats.controls.limp_factor       = -1;
+
+    init_button_state(&carstats.left_button);
+    init_button_state(&carstats.right_button);
 }
 
-void dispatch_update() {
-    //// TODO: Reenable once internal buttons are wired.
-    // bool left_button_down  = (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN);
-    // bool right_button_down = (Pin_Read(PIN_BUTTON2) == BUTTON_DOWN);
-    // update_button_state(&left_button, left_button_down);
-    // update_button_state(&right_button, right_button_down);
-
-    // if (right_button.action == BUTTON_ACTION_TAP) {
-    //     page_manager_next_page(&page_manager);
-    //
-    //     active_aero_enabled = !active_aero_enabled;
-    //     if (active_aero_enabled) {
-    //         send_dash_request(can0_DashRequest_type_ACTIVE_AERO_ENABLE);
-    //     } else {
-    //         send_dash_request(can0_DashRequest_type_ACTIVE_AERO_DISABLE);
-    //     }
-    // } else if (right_button.action == BUTTON_ACTION_HOLD) {
-    //     page_manager_prev_page(&page_manager);
-    // }
+inline void dispatch_update() {
+    update_button_state(&carstats.left_button,  (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN));
+    update_button_state(&carstats.right_button, (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN));
 
     can_update_carstats(&carstats);
     bool res = carstats.buttons.ScrollSelect;
@@ -130,6 +121,8 @@ void dispatch_update() {
         page_manager_update(&page_manager, &oled);
         oled_update(&oled);
     }
+
+    send_dash_controls();
 }
 
 void update_lights(void) {
@@ -156,9 +149,7 @@ void update_lights(void) {
 
 }
 
-void send_dash_request(can0_DashRequest_type_T type) {
-    can0_DashRequest_T msg;
-    msg.type = type;
-
-    handle_can_error(can0_DashRequest_Write(&msg));
+void send_dash_controls(void) {
+    LIMIT(can0_DashControls_period);
+    handle_can_error(can0_DashControls_Write(&carstats.controls));
 }

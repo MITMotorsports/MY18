@@ -47,7 +47,7 @@ void Board_GPIO_Init(void) {
     Pin_Init_Out(PIN_OLED_SCLK);
     Pin_Init_Out(PIN_OLED_SDI);
     Pin_Init_Out(PIN_OLED_SDO);
-    
+
     Pin_Init_Out(PIN_LED_HV);
     Pin_Init_Out(PIN_LED_RTD);
     Pin_Init_Out(PIN_LED_IMD);

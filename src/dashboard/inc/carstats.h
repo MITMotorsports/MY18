@@ -6,7 +6,14 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "button_listener.h"
+
+#define LEN(x)  (sizeof(x) / sizeof((x)[0])
+#define CONSTRAIN(x, min, max) (((x) < (min)) ? (min) : (((x) > (max)) ? (max) : x))
+#define LOOPOVER(x, min, max) (((x) < (min)) ? (max) : (((x) > (max)) ? (min) : x))
+
 typedef struct {
+    // Values obseverd by dashboard
     int cs_voltage;  // in dV
     int mc_voltage;  // in dV
     int cs_current;  // in mA
@@ -41,6 +48,12 @@ typedef struct {
     int16_t max_igbt_temp;
 
     can0_VCUErrors_T vcu_errors;
+
+    // Values set by dashboard
+    can0_DashControls_T controls;
+
+    button_state_t left_button;
+    button_state_t right_button;
 } carstats_t;
 
 void can_update_carstats(carstats_t *cs);
