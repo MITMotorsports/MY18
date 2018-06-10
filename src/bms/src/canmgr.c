@@ -8,7 +8,7 @@ void Board_CAN_Init() {
   // HACK: Infrequent messages such as CellTemperatures get cleared out of the
   //       TX buffer due to Can_Error_RX_BUFFER_FULL occurring before transmission
   //       thus reinitializing CAN and emptying the TX buffer.
-  Can_SetFilter(2047, can0_CurrentSensor_Energy_can_id);
+  // Can_SetFilter(2047, can0_CurrentSensor_Energy_can_id);
   // Can_SetFilter(0, 1);  // Disable ALL incoming messages
 }
 
@@ -45,13 +45,19 @@ void can_receive_bms_request(BMS_INPUT_T *bms_input) {
   can0_BMSRequest_T msg;
 
   unpack_can0_BMSRequest(&can_input, &msg);
+  if (msg.force_error) {
+    Error_Present(ERROR_FORCE_OVER_CAN);
+  }
+  else {
+    Error_Clear(ERROR_FORCE_OVER_CAN);
+  }
 }
 
 void can_receive_current(BMS_INPUT_T *bms_input) {
   can0_CurrentSensor_Current_T msg;
 
   unpack_can0_CurrentSensor_Current(&can_input, &msg);
-  bms_input->pack_status->pack_current_mA = msg.current;
+  bms_input->pack_status->pack_current_mA = msg.result;
 }
 
 void can_receive_voltage(BMS_INPUT_T *bms_input) {
@@ -70,14 +76,9 @@ void can_receive_energy(BMS_INPUT_T *bms_input) {
 
 Frame can_output;
 void Board_CAN_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
-
   can_transmit_bms_heartbeat(bms_input);
   can_transmit_cell_voltages(bms_input);
   can_transmit_cell_temperatures(bms_input);
-
-
-  // TODO: agree upon resending only if updated or
-  // repeating existing info on bus (bms_input0->msTicks)
 }
 
 void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
@@ -98,7 +99,7 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
   msg.error_cell_over_voltage = Check_Error(ERROR_CELL_OVER_VOLTAGE, false);
   msg.error_cell_over_temp = Check_Error(ERROR_CELL_OVER_TEMP, false);
   msg.error_control_flow = Check_Error(ERROR_CONTROL_FLOW, false);
-  msg.error_blown_fuse = 0;
+  msg.error_force_over_can = Check_Error(ERROR_FORCE_OVER_CAN, false);
   msg.L_contactor_closed = bms_input->L_contactor_closed;
   msg.H_contactor_closed = bms_input->H_contactor_closed;
   msg.L_contactor_welded = bms_input->L_contactor_welded;
@@ -125,8 +126,6 @@ void can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
   //can message size too small for 3 32 bit
   // msg.sum = ps->pack_voltage_sum_mV;
   handle_can_error(can0_CellVoltages_Write(&msg));
-
-
 }
 
 void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
@@ -142,7 +141,6 @@ void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
   msg.argmax = ps->max_cell_temp_position;
 
   handle_can_error(can0_CellTemperatures_Write(&msg));
-
 }
 
 void handle_can_error(Can_ErrorID_T error) {

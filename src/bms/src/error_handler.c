@@ -40,18 +40,19 @@ static ERROR_HANDLER_STATUS_T _Error_Handle_Timeout(ERROR_STATUS_T *er_stat,
 }
 
 static ERROR_HANDLER error_handler_vector[ERROR_NUM_ERRORS] = {
-  { _Error_Handle_Count,   LTC_PEC_count                    },
-  { _Error_Handle_Count,   LTC_CVST_count                   },
-  { _Error_Handle_Count,   LTC_OWT_count                    },
-  { _Error_Handle_Timeout, L_CONTACTOR_ERROR_time          },
-  { _Error_Handle_Timeout, H_CONTACTOR_ERROR_time          },
-  { _Error_Handle_Timeout, L_CONTACTOR_WELD_time          },
-  { _Error_Handle_Timeout, H_CONTACTOR_WELD_time          },
-  { _Error_Handle_Timeout, CELL_UNDER_VOLTAGE_time          },
-  { _Error_Handle_Timeout, CELL_OVER_VOLTAGE_time           },
-  { _Error_Handle_Timeout, CELL_UNDER_TEMP_time             },
-  { _Error_Handle_Timeout, CELL_OVER_TEMP_time              },
-  { _Error_Handle_Count, CONTROL_FLOW_count                },
+  { _Error_Handle_Count,   LTC_PEC_count              },
+  { _Error_Handle_Count,   LTC_CVST_count             },
+  { _Error_Handle_Count,   LTC_OWT_count              },
+  { _Error_Handle_Timeout, L_CONTACTOR_ERROR_time     },
+  { _Error_Handle_Timeout, H_CONTACTOR_ERROR_time     },
+  { _Error_Handle_Timeout, L_CONTACTOR_WELD_time      },
+  { _Error_Handle_Timeout, H_CONTACTOR_WELD_time      },
+  { _Error_Handle_Timeout, CELL_UNDER_VOLTAGE_time    },
+  { _Error_Handle_Timeout, CELL_OVER_VOLTAGE_time     },
+  { _Error_Handle_Timeout, CELL_UNDER_TEMP_time       },
+  { _Error_Handle_Timeout, CELL_OVER_TEMP_time        },
+  { _Error_Handle_Count,   CONTROL_FLOW_count         },
+  { _Error_Handle_Count,   FORCE_OVER_CAN_count       },
 };
 
 void Error_Init(void) {
