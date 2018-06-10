@@ -26,8 +26,8 @@ bool update_recoverable_faults(void) {
   recoverable_faults.contactor = any_recoverable_contactor_faults();
 
   return VS_NEQ(ROOT) && recoverable_faults.gate ||
-         recoverable_faults.heartbeat                          ||
-         recoverable_faults.conflict                           ||
+         recoverable_faults.heartbeat            ||
+         recoverable_faults.conflict             ||
          recoverable_faults.contactor;
 }
 
@@ -40,7 +40,10 @@ void handle_fatal_fault(void) {
   sendMotorOffCmdMsg();
   sendMotorOffCmdMsg();
 
-  resetDrivingValues(); // from the driving file
+  // Make sure the driver can avoid death.
+  set_brake_valve(false);
+  lock_brake_valve();
+  disable_controls();
 
   openLowSideContactor();
   openHighSideContactor();
@@ -55,7 +58,11 @@ void handle_recoverable_fault(void) {
   else {
     sendTorqueCmdMsg(0);
   }
-  resetDrivingValues();
+
+  // Make sure the driver can avoid death.
+  set_brake_valve(false);
+  lock_brake_valve();
+  disable_controls();
 }
 
 void handle_test_fault(void) {

@@ -12,6 +12,8 @@ boards:
     publish:
       can0:
         - FrontCanNodeBrakeThrottle
+        - FrontCanNodeRightWheelSpeed
+        - FrontCanNodeLeftWheelSpeed
     subscribe:
       can0:
         - VCUHeartbeat
@@ -25,13 +27,12 @@ boards:
     subscribe:
       can0:
         - FrontCanNodeBrakeThrottle
-        - DashRequest
         - MCVoltage
   dash:
     arch: arm
     publish:
       can0:
-        - DashRequest
+        - DashControls
     subscribe:
       can0:
         - VCUHeartbeat
@@ -50,6 +51,9 @@ boards:
       can0:
         - ButtonRequest
   mc:
+    publish:
+      can0:
+        - MC_MotorPositionInformation
     subscribe:
       can0:
         - MCCommand
@@ -130,6 +134,44 @@ buses:
             position: 59
             length: 1
             c_type: bool
+      FrontCanNodeLeftWheelSpeed:
+        can_id: 0x0E0
+        is_big_endian: true
+        period: 10ms
+        segments:
+          # Wheel speed from 32-bit timer (accurate at most speeds)
+          left_32b:
+            position: 0
+            length: 32
+            c_type: uint32_t
+            signed: false
+            unit: mRPM
+          # Wheel speed from 16-bit timer (accurate only at high speeds)
+          left_16b:
+            position: 32
+            length: 32
+            c_type: uint32_t
+            signed: false
+            unit: mRPM
+      FrontCanNodeRightWheelSpeed:
+        can_id: 0x0E1
+        is_big_endian: true
+        period: 10ms
+        segments:
+          # Wheel speed from 32-bit timer (accurate at most speeds)
+          right_32b:
+            position: 0
+            length: 32
+            c_type: uint32_t
+            signed: false
+            unit: mRPM
+          # Wheel speed from 16-bit timer (accurate only at high speeds)
+          right_16b:
+            position: 32
+            length: 32
+            c_type: uint32_t
+            signed: false
+            unit: mRPM
       CellTemperatures:
         can_id: 0x0F1
         period: 0.5s
@@ -509,22 +551,32 @@ buses:
             c_type: int32_t
             signed: false
             unit: Wh
-      DashRequest:
+      DashControls:
         can_id: 0x0D2
         is_big_endian: true
+        period: 200ms
         segments:
-          type:
+          using_regen:
             position: 0
-            length: 3
-            c_type: enum
-            enum:
-              NO_REQUEST: 0x0
-              TRACTION_CONTROL_ENABLE: 0x5
-              TRACTION_CONTROL_DISABLE: 0x6
-              ACTIVE_AERO_ENABLE: 0x7
-              ACTIVE_AERO_DISABLE: 0x8
-              FAN_ENABLE: 0x9
-              FAN_DISABLE: 0xA
+            length: 1
+            c_type: bool
+          regen_bias: # Ranges from 0 to 100
+            position: 1
+            length: 16
+            c_type: uint16_t
+            signed: false
+          using_launch_ctrl:
+            position: 17
+            length: 1
+            c_type: bool
+          launch_ctrl_slip_ratio: # Ranges from 105 to 115
+            position: 18
+            length: 16
+            c_type: uint16_t
+          limp_factor: # Ranges from 0 to 100
+            position: 34
+            length: 16
+            c_type: uint16_t
       ButtonRequest:
         can_id: 0x0D8
         period: 73ms
@@ -1030,48 +1082,6 @@ buses:
             unit: decidegC
             signed: true
             c_type: int16_t
-      FrontCanNodeLeftWheelSpeed:
-        can_id: 0x0E0
-        is_big_endian: true
-        period: 10ms
-        segments:
-          # Wheel speed from 32-bit timer (accurate at most speeds)
-          left_32b:
-            position: 0
-            length: 32
-            c_type: uint32_t
-            signed: false
-            unit: mRPM
-          # Wheel speed from 16-bit timer (accurate only at high speeds)
-          left_16b:
-            position: 32
-            length: 32
-            c_type: uint32_t
-            signed: false
-            unit: mRPM
-      FrontCanNodeRightWheelSpeed:
-        can_id: 0x0E1
-        is_big_endian: true
-        period: 10ms
-        segments:
-          # Wheel speed from 32-bit timer (accurate at most speeds)
-          right_32b:
-            position: 0
-            length: 32
-            c_type: uint32_t
-            signed: false
-            unit: mRPM
-          # Wheel speed from 16-bit timer (accurate only at high speeds)
-          right_16b:
-            position: 32
-            length: 32
-            c_type: uint32_t
-            signed: false
-            unit: mRPM
-  can1:
-    baudrate: 500000
-    is_extended: false
-    messages:
       SBG_EKF_VelocityAcceleration:
         can_id: 312
         is_big_endian: false
@@ -1235,73 +1245,3 @@ buses:
             position: 32
             length: 16
             c_type: int16_t
-      PLMonitoring1:
-        can_id: 0x601
-        period: 20ms
-        is_big_endian: true
-        segments:
-          raw_torque:
-            position: 0
-            length: 32
-            signed: false
-            c_type: uint32_t
-          power_limited_torque:
-            position: 32
-            length: 32
-            signed: false
-            c_type: uint32_t
-      PLMonitoring2:
-        can_id: 0x602
-        period: 19ms
-        is_big_endian: true
-        segments:
-          omega:
-            position: 0
-            length: 32
-            signed: false
-            c_type: uint32_t
-          error:
-            position: 32
-            length: 32
-            signed: false
-            c_type: int32_t
-      PLMonitoring3:
-        can_id: 0x603
-        period: 20ms
-        is_big_endian: true
-        segments:
-          PI_torque:
-            position: 0
-            length: 32
-            signed: false
-            c_type: uint32_t
-          torque_offset:
-            position: 32
-            length: 32
-            signed: false
-            c_type: uint32_t
-      PLMonitoring4:
-        can_id: 0x604
-        period: 20ms
-        is_big_endian: true
-        segments:
-          I_sum:
-            position: 0
-            length: 32
-            signed: false
-            c_type: int32_t
-          P_torque:
-            position: 32
-            length: 32
-            signed: false
-            c_type: uint32_t
-      PLMonitoring5:
-        can_id: 0x605
-        period: 20ms
-        is_big_endian: true
-        segments:
-          I_torque:
-            position: 0
-            length: 32
-            signed: false
-            c_type: uint32_t

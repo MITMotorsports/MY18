@@ -25,13 +25,18 @@ void handleBMSHeartbeatMsg(Frame *msg);
 void handleCurrentSensorVoltageMsg(Frame *msg);
 void handleCellVoltagesMsg(Frame *msg);
 void handleButtonRequest(Frame *msg);
+void handleCurrentSensor_Power(Frame *msg);
+void handleMCMotor_Position_Info(Frame *msg);
+void handleSBG_EKF_Velocity(Frame *msg);
+void handleDashControls(Frame *msg);
 
 void send_VCUHeartbeat();
 void send_VCUErrors();
 void send_VCU();
 
 void sendTorqueCmdMsg(int16_t torque);
-void sendMotorOffCmdMsg();
-void send_mc_fault_clear();
+void sendSpeedCmdMsg(int16_t speed, int16_t torque_limit);
+void sendMotorOffCmdMsg(void);
+void send_mc_fault_clear(void);
 
 #endif // ifndef __CAN_HANDLES_H

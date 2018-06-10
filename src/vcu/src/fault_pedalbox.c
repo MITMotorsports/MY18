@@ -61,3 +61,13 @@ void update_implausibility() {
 
   conflicts.observed_implausibility = implausibility;
 }
+
+int32_t get_pascals(int16_t brake_reading) {
+  // Same conversion as the dash
+  int32_t psi = (2019 * brake_reading) / 1000 - 188;
+
+  // Convert to pascals
+  int32_t pascals = 689476 * psi / 100;
+
+  return pascals;
+}

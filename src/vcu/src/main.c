@@ -21,9 +21,10 @@ int main(void) {
 
   DGPIO_INIT_IN(MASTER_RST, GPIO_PULLUP);
 
-  /// OUTPUTS
-  DGPIO_INIT_OUT( DRIVER_RST, GPIO_PIN_SET);
+  // Low Side Contactor closed signal from BMS
+  DGPIO_INIT_IN(L_CONTACTOR_STATUS, GPIO_NOPULL);
 
+  /// OUTPUTS
   // HVDCDC Disable Pin:
   //   - When it is HIGH HVDCDC is disabled
   //   - Normally LOW, except during precharge
@@ -38,6 +39,9 @@ int main(void) {
 
   // Brake Light
   DGPIO_INIT_OUT(BRAKE_LIGHT, GPIO_PIN_RESET);
+
+  // Brake Valve
+  DGPIO_INIT_OUT(BRAKE_VALVE, GPIO_PIN_RESET);
 
   // Driver Reset GPIO output for when Driver Reset is pressed
   DGPIO_INIT_OUT( DRIVER_RST, GPIO_PIN_SET);
@@ -62,13 +66,15 @@ int main(void) {
     // TODO: Find a better location for this.
     // Update brake light all the time.
     HAL_GPIO_WritePin(GPIO(BRAKE_LIGHT),
-                      pedalbox.brake_1 > PEDALBOX_BRAKE_BEGIN);
+                      pedalbox.brake_2 > PEDALBOX_BRAKE_BEGIN);
 
     static uint32_t lastt = 0;
 
     print_gate_faults(false);
     if (HAL_GetTick() - lastt > 1000) {
       HAL_GPIO_TogglePin(GPIO(LED));
+
+      printf("Bias: %d\r\n", control_settings.cBB_ef);
 
       lastt = HAL_GetTick();
     }
