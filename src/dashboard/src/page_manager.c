@@ -115,40 +115,16 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_set_pos(oled, 0, 0);
 
     carstats_t *stats = pm->stats;
-    if (stats->vcu_errors.fatal_gate) {
-        oled_print(oled, "F:GATE");
-    }
-    else if (stats->vcu_errors.fatal_contactor) {
-      oled_print(oled, "F:CONTACT");
-    }
-    else if (stats->vcu_errors.fatal_precharge) {
-        oled_print(oled, "F:PRECHRG");
-    }
-    else if (stats->vcu_errors.fatal_conflict) {
-        oled_print(oled, "F:ACC_IMP");
-    }
-    else if (stats->vcu_errors.recoverable_conflict) {
-        oled_print(oled, "R:BRK_ACC");
-    }
-    else if (stats->vcu_errors.recoverable_gate) {
-        oled_print(oled, "R:ESTOP");
-    }
-    else if (stats->vcu_errors.recoverable_heartbeat) {
-        oled_print(oled, "R:HRTBEAT");
-    }
-    else if (stats->vcu_errors.recoverable_contactor) {
-        oled_print(oled, "R:ESTOP");
-    }
-    else {
-        if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
-            oled_print(oled, "RECOV");
-        }
-        else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
-            oled_print(oled, "FATAL");
-        }
+
+    if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
+        oled_print(oled, "R");
+    } else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
+        oled_print(oled, "F");
     }
 
-    if (msTicks > pm->stats->last_vcu_heartbeat + 1000) {
+#define VCU_HEARTBEAT_TIMEOUT 1000 // ms
+
+    if (msTicks > pm->stats->last_vcu_heartbeat + VCU_HEARTBEAT_TIMEOUT) {
         oled_rprint(oled, "\xFAVCU DEAD\xFC");
     } else {
         switch (pm->stats->vcu_state) {
@@ -337,18 +313,99 @@ void draw_controls_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 void draw_fault_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
   carstats_t *stats = pm->stats;
 
-  oled_clearline(oled, 0);
-  oled_set_pos(oled, 0, 0);
-  if (stats->vcu_errors.gate_sdn) oled_print(oled, "G:SDN");
-  oled_clearline(oled, 1);
-  oled_set_pos(oled, 1, 0);
-  if (stats->vcu_errors.gate_bms) oled_print(oled, "G:BMS");
-  oled_clearline(oled, 2);
-  oled_set_pos(oled, 2, 0);
-  if (stats->vcu_errors.gate_imd) oled_print(oled, "G:IMD");
-  oled_clearline(oled, 3);
-  oled_set_pos(oled, 3, 0);
-  if (stats->vcu_errors.gate_bpd) oled_print(oled, "G:BPD");
+#define MAX_FAULTS 10
+
+    char *fatal_faults[MAX_FAULTS] = {NULL};
+    int n_fatal_faults = 0;
+    char *recov_faults[MAX_FAULTS] = {NULL};
+    int n_recov_faults = 0;
+    char *gates[MAX_FAULTS] = {NULL};
+    int n_gates = 0;
+    
+    can0_VCUErrors_T *errs = &stats->vcu_errors;
+
+    // fatals
+    if (errs->fatal_gate)
+        fatal_faults[n_fatal_faults++] = "GATE";
+    if (errs->fatal_contactor)
+        fatal_faults[n_fatal_faults++] = "CONTACT";
+    if (errs->fatal_precharge)
+        fatal_faults[n_fatal_faults++] = "PRECHRG";
+    if (errs->fatal_conflict)
+        fatal_faults[n_fatal_faults++] = "ACC_IMP";
+
+    // recoverables
+    if (errs->recoverable_conflict)
+        recov_faults[n_recov_faults++] = "BRK_IMP";
+    if (errs->recoverable_gate || errs->recoverable_contactor)
+        recov_faults[n_recov_faults++] = "TSMS";
+    if (errs->recoverable_heartbeat)
+        recov_faults[n_recov_faults++] = "HRTBEAT";
+
+    // gates
+    if (errs->gate_sdn)
+        gates[n_gates++] = "SDN";
+    if (errs->gate_bpd)
+        gates[n_gates++] = "BPD";
+    if (errs->gate_bms)
+        gates[n_gates++] = "BMS";
+    if (errs->gate_imd)
+        gates[n_gates++] = "IMD";
+
+
+    // unnamed error?
+    if (n_recov_faults == 0 && stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
+        recov_faults[n_recov_faults++] = "?";
+    }
+    if (n_fatal_faults == 0 && stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
+        fatal_faults[n_fatal_faults++] = "?";
+    }
+
+    oled_clearline(oled, 0);
+    oled_clearline(oled, 1);
+    oled_clearline(oled, 2);
+    oled_clearline(oled, 3);
+
+    oled_set_pos(oled, 0, 0);
+    oled_print(oled, "FATAL: ");
+    if (n_fatal_faults > 0) {
+        for (int i = 0; i < n_fatal_faults; i++) {
+            oled_print_wrap(oled, fatal_faults[i]);
+            if (i < n_fatal_faults - 1)
+                oled_print_wrap(oled, " ");
+        }
+    } else {
+        oled_print(oled, "NONE :)");
+    }
+
+    // so many faults we ran out of space
+    if (oled->line == 3) return;
+
+    oled_set_pos(oled, oled->line + 1, 0);
+    oled_print(oled, "RECOV: ");
+    if (n_recov_faults > 0) {
+        for (int i = 0; i < n_recov_faults; i++) {
+            oled_print_wrap(oled, recov_faults[i]);
+            if (i < n_recov_faults - 1)
+                oled_print_wrap(oled, " ");
+        }
+    } else {
+        oled_print(oled, "NONE :)");
+    }
+  
+    // so many faults we ran out of space
+    if (oled->line == 3) return;
+
+    if (n_gates > 0) {
+        oled_set_pos(oled, oled->line + 1, 0);
+        oled_print(oled, "GATE: ");
+
+        for (int i = 0; i < n_gates; i++) {
+            oled_print_wrap(oled, gates[i]);
+            if (i < n_gates - 1)
+                oled_print(oled, " ");
+        }
+    }
 }
 
 void draw_charging_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
