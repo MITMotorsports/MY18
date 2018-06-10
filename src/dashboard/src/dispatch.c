@@ -107,7 +107,7 @@ inline void dispatch_update() {
     update_button_state(&carstats.right_button, (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN));
 
     can_update_carstats(&carstats);
-    bool res = carstats.buttons.ScrollSelect;
+    bool res = carstats.buttons.A;
     if (!previous_scroll_select && res) {
         page_manager_next_page(&page_manager);
         oled_clear(&oled);

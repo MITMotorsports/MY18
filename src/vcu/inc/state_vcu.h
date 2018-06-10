@@ -46,7 +46,6 @@ typedef struct {
   bool RTD;
   bool MasterReset;
   bool DriverReset;
-  bool ScrollSelect;
 } Buttons_T;
 
 typedef struct {
