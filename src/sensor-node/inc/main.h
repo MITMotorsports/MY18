@@ -2,7 +2,8 @@
 #include "uart.h"
 #include "adc.h"
 #include "gpio.h"
-#include "canmgr.h"
+#include "i2c.h"
+// #include "canmgr.h"
 
 extern volatile uint32_t msTicks;
 

@@ -1,120 +1,120 @@
 #include "canmgr.h"
 
-void can_transmit(uint16_t* ext_adc_data, uint16_t* int_adc_data) {
-	can_transmit_adc_data1(ext_adc_data);
-	can_transmit_adc_data2(ext_adc_data);
-	can_transmit_adc_data3(int_adc_data);
-}
+// void can_transmit(uint16_t* ext_adc_data, uint16_t* int_adc_data) {
+// 	can_transmit_adc_data1(ext_adc_data);
+// 	can_transmit_adc_data2(ext_adc_data);
+// 	can_transmit_adc_data3(int_adc_data);
+// }
 
-void can_transmit_adc_data1(uint16_t* ext_adc_data) {
-	LIMIT(can0_ADC_Data1_period);
+// void can_transmit_adc_data1(uint16_t* ext_adc_data) {
+// 	LIMIT(can0_ADC_Data1_period);
 
-	can0_ADC_Data1_T msg;
-	msg.shockpot = ext_adc_data[SHOCKPOT];
-	msg.load_cell = ext_adc_data[LOAD_CELL];
-	msg.ext_adc_ch2 = ext_adc_data[2];
-	msg.ext_adc_ch3 = ext_adc_data[3];
- 	handle_can_error(can0_ADC_Data1_Write(&msg));
+// 	can0_ADC_Data1_T msg;
+// 	msg.shockpot = ext_adc_data[SHOCKPOT];
+// 	msg.load_cell = ext_adc_data[LOAD_CELL];
+// 	msg.ext_adc_ch2 = ext_adc_data[2];
+// 	msg.ext_adc_ch3 = ext_adc_data[3];
+//  	handle_can_error(can0_ADC_Data1_Write(&msg));
 
-}
-void can_transmit_adc_data2(uint16_t* ext_adc_data) {
-	LIMIT(can0_ADC_Data2_period);
+// }
+// void can_transmit_adc_data2(uint16_t* ext_adc_data) {
+// 	LIMIT(can0_ADC_Data2_period);
 
-	can0_ADC_Data2_T msg;
-	msg.ext_adc_ch4 = ext_adc_data[4];
-	msg.ext_adc_ch5 = ext_adc_data[5];
-	msg.ext_adc_ch6 = ext_adc_data[6];
-	msg.ext_adc_ch7 = ext_adc_data[7];
- 	handle_can_error(can0_ADC_Data2_Write(&msg));
+// 	can0_ADC_Data2_T msg;
+// 	msg.ext_adc_ch4 = ext_adc_data[4];
+// 	msg.ext_adc_ch5 = ext_adc_data[5];
+// 	msg.ext_adc_ch6 = ext_adc_data[6];
+// 	msg.ext_adc_ch7 = ext_adc_data[7];
+//  	handle_can_error(can0_ADC_Data2_Write(&msg));
 
-}
-void can_transmit_adc_data3(uint16_t* int_adc_data) {
-	LIMIT(can0_ADC_Data3_period);
+// }
+// void can_transmit_adc_data3(uint16_t* int_adc_data) {
+// 	LIMIT(can0_ADC_Data3_period);
 
-	can0_ADC_Data3_T msg;
-	msg.int_adc_ch2 = int_adc_data[0];
-	msg.int_adc_ch3 = int_adc_data[1];
-	msg.int_adc_ch4 = int_adc_data[2];
-	msg.int_adc_ch5 = int_adc_data[3];
- 	handle_can_error(can0_ADC_Data3_Write(&msg));
+// 	can0_ADC_Data3_T msg;
+// 	msg.int_adc_ch2 = int_adc_data[0];
+// 	msg.int_adc_ch3 = int_adc_data[1];
+// 	msg.int_adc_ch4 = int_adc_data[2];
+// 	msg.int_adc_ch5 = int_adc_data[3];
+//  	handle_can_error(can0_ADC_Data3_Write(&msg));
 
-}
+// }
 
-void handle_can_error(Can_ErrorID_T error){
-  if ((error != Can_Error_NONE) && (error != Can_Error_NO_RX)) {
-    switch (error) {
-    case Can_Error_NONE:
-      print("Can_Error_NONE\n");
-      break;
+// void handle_can_error(Can_ErrorID_T error){
+//   if ((error != Can_Error_NONE) && (error != Can_Error_NO_RX)) {
+//     switch (error) {
+//     case Can_Error_NONE:
+//       print("Can_Error_NONE\n");
+//       break;
 
-    case Can_Error_NO_RX:
-      print("Can_Error_NO_RX\n");
-      break;
+//     case Can_Error_NO_RX:
+//       print("Can_Error_NO_RX\n");
+//       break;
 
-    case Can_Error_EPASS:
-      print("Can_Error_EPASS\n");
-      break;
+//     case Can_Error_EPASS:
+//       print("Can_Error_EPASS\n");
+//       break;
 
-    case Can_Error_WARN:
-      print("Can_Error_WARN\n");
-      break;
+//     case Can_Error_WARN:
+//       print("Can_Error_WARN\n");
+//       break;
 
-    case Can_Error_BOFF:
-      print("Can_Error_BOFF\n");
-      break;
+//     case Can_Error_BOFF:
+//       print("Can_Error_BOFF\n");
+//       break;
 
-    case Can_Error_STUF:
-      print("Can_Error_STUF\n");
-      break;
+//     case Can_Error_STUF:
+//       print("Can_Error_STUF\n");
+//       break;
 
-    case Can_Error_FORM:
-      print("Can_Error_FORM\n");
-      break;
+//     case Can_Error_FORM:
+//       print("Can_Error_FORM\n");
+//       break;
 
-    case Can_Error_ACK:
-      print("Can_Error_ACK\n");
-      break;
+//     case Can_Error_ACK:
+//       print("Can_Error_ACK\n");
+//       break;
 
-    case Can_Error_BIT1:
-      print("Can_Error_BIT1\n");
-      break;
+//     case Can_Error_BIT1:
+//       print("Can_Error_BIT1\n");
+//       break;
 
-    case Can_Error_BIT0:
-      print("Can_Error_BIT0\n");
-      break;
+//     case Can_Error_BIT0:
+//       print("Can_Error_BIT0\n");
+//       break;
 
-    case Can_Error_CRC:
-      print("Can_Error_CRC\n");
-      break;
+//     case Can_Error_CRC:
+//       print("Can_Error_CRC\n");
+//       break;
 
-    case Can_Error_UNUSED:
-      print("Can_Error_UNUSED\n");
-      break;
+//     case Can_Error_UNUSED:
+//       print("Can_Error_UNUSED\n");
+//       break;
 
-    case Can_Error_UNRECOGNIZED_MSGOBJ:
-      print("Can_Error_UNRECOGNIZED_MSGOBJ\n");
-      break;
+//     case Can_Error_UNRECOGNIZED_MSGOBJ:
+//       print("Can_Error_UNRECOGNIZED_MSGOBJ\n");
+//       break;
 
-    case Can_Error_UNRECOGNIZED_ERROR:
-      print("Can_Error_UNRECOGNIZED_ERROR\n");
-      break;
+//     case Can_Error_UNRECOGNIZED_ERROR:
+//       print("Can_Error_UNRECOGNIZED_ERROR\n");
+//       break;
 
-    case Can_Error_TX_BUFFER_FULL:
-      print("Can_Error_TX_BUFFER_FULL\n");
-      CAN_Flush_Tx();
-      CAN_Clear_Error();
-      CAN_ResetPeripheral();
-      init_can0_sensor_node();
-      break;
+//     case Can_Error_TX_BUFFER_FULL:
+//       print("Can_Error_TX_BUFFER_FULL\n");
+//       CAN_Flush_Tx();
+//       CAN_Clear_Error();
+//       CAN_ResetPeripheral();
+//       init_can0_sensor_node();
+//       break;
 
-    case Can_Error_RX_BUFFER_FULL:
-      print("Can_Error_RX_BUFFER_FULL\n");
-      CAN_Flush_Tx();
-      CAN_Clear_Error();
-      CAN_ResetPeripheral();
-      init_can0_sensor_node();
-      break;
-    }
-  }
-}
+//     case Can_Error_RX_BUFFER_FULL:
+//       print("Can_Error_RX_BUFFER_FULL\n");
+//       CAN_Flush_Tx();
+//       CAN_Clear_Error();
+//       CAN_ResetPeripheral();
+//       init_can0_sensor_node();
+//       break;
+//     }
+//   }
+// }
 
