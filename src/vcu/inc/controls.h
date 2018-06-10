@@ -14,12 +14,12 @@
 #define MIN_ACCEL_VAL 0
 
 // Launch control contants
-#define GEAR_RATIO 3
-#define LC_TIME_OFFSET 10
-#define LC_TARGET_SLIP_RATIO 112 // Target ratio times 100
-#define LC_SLEW_RATE_CAP 10
-#define LC_KP 1000
-#define LC_KI 1
+// After wheel speed crosses this threshold, start using slip controller
+#define LC_WS_THRESH 45000
+#define LC_cGR 347 // Gear ratio times 100
+#define LC_ACCEL_BEGIN 950 // 95%
+#define LC_ACCEL_RELEASE 50 // 5%
+#define LC_BRAKE_BEGIN 100 // We want a lower threshold
 
 // RG = regen
 #define RG_MOTOR_SPEED_THRESH 250            // RPM
@@ -40,14 +40,25 @@
 
 typedef struct {
   bool using_regen;
+  bool using_launch_control;
   uint16_t cBB_ef; // Electric front brake bias * 100
-} Regen_Settings_T;
+  int32_t slip_ratio;
+} Controls_Settings_T;
 
-extern Regen_Settings_T regen_settings;
+typedef enum {
+  BEFORE,
+  SPEEDING_UP,
+  SPEED_CONTROLLER,
+  ZERO_TORQUE,
+  DONE,
+} Launch_Control_State_T;
+
+extern Controls_Settings_T control_settings;
 
 // PRIVATE FUNCTIONS
 static int16_t get_torque(void);
 static int32_t get_regen_torque(void);
+static int32_t get_launch_control_speed(uint32_t front_wheel_speed);
 
 // INTERACTION FUNCTIONS
 void           enable_controls(void);

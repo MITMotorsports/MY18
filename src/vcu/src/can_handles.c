@@ -70,6 +70,18 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleSBG_EKF_Velocity(&frame);
     break;
 
+  case can0_FrontCanNodeRightWheelSpeed:
+    handleFrontCanNodeRightWheelSpeed(&frame);
+    break;
+
+  case can0_FrontCanNodeLeftWheelSpeed:
+    handleFrontCanNodeLeftWheelSpeed(&frame);
+    break;
+
+  case can0_MCTorque_Timer_Info:
+    handleMCTorque_Timer_Info(&frame);
+    break;
+
   default:
     break;
   }
@@ -183,6 +195,32 @@ void handleSBG_EKF_Velocity(Frame *msg) {
   imu_velocity.east = unpacked_msg.east;
 }
 
+void handleFrontCanNodeLeftWheelSpeed(Frame *msg) {
+  can0_FrontCanNodeLeftWheelSpeed_T unpacked_msg;
+
+  unpack_can0_FrontCanNodeLeftWheelSpeed(msg, &unpacked_msg);
+
+  wheel_speeds.front_left_32b_wheel_speed = unpacked_msg.left_32b;
+  wheel_speeds.front_left_16b_wheel_speed = unpacked_msg.left_16b;
+}
+
+void handleFrontCanNodeRightWheelSpeed(Frame *msg) {
+  can0_FrontCanNodeRightWheelSpeed_T unpacked_msg;
+
+  unpack_can0_FrontCanNodeRightWheelSpeed(msg, &unpacked_msg);
+
+  wheel_speeds.front_right_32b_wheel_speed = unpacked_msg.right_32b;
+  wheel_speeds.front_right_16b_wheel_speed = unpacked_msg.right_16b;
+}
+
+void handleMCTorque_Timer_Info(Frame *msg) {
+  can0_MCTorque_Timer_Info_T unpacked_msg;
+
+  unpack_can0_MCTorque_Timer_Info(msg, &unpacked_msg);
+
+  mc_readings.torque_feedback = unpacked_msg.torque_feedback;
+}
+
 void send_VCUHeartbeat() {
   LIMIT(can0_VCUHeartbeat);
 
@@ -235,6 +273,23 @@ void sendTorqueCmdMsg(int16_t torque) {
   msg.discharge_enabled             = false;
   msg.speed_mode                    = false;
   msg.torque_limit                  = 0;
+
+  can0_MCCommand_Write(&msg);
+}
+
+void sendSpeedCmdMsg(int16_t speed, int16_t torque_limit) {
+  LIMIT(can0_MCCommand);
+
+  can0_MCCommand_T msg;
+  if (speed < 0) speed = 0;
+
+  msg.torque                        = 0;
+  msg.angular_vel                   = speed;
+  msg.direction_is_counterclockwise = false;
+  msg.inverter_enabled              = true;
+  msg.discharge_enabled             = false;
+  msg.speed_mode                    = true;
+  msg.torque_limit                  = torque_limit;
 
   can0_MCCommand_Write(&msg);
 }
