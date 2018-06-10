@@ -576,6 +576,10 @@ buses:
             position: 18
             length: 16
             c_type: uint16_t
+          limp_factor: # Ranges from 0 to 100
+            position: 34
+            length: 16
+            c_type: uint16_t
       ButtonRequest:
         can_id: 0x0D8
         period: 73ms
