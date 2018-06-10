@@ -20,6 +20,7 @@
 #define LC_ACCEL_BEGIN 950 // 95%
 #define LC_ACCEL_RELEASE 50 // 5%
 #define LC_BRAKE_BEGIN 100 // We want a lower threshold
+#define LC_BACKWARDS_CUTOFF 10
 
 // RG = regen
 #define RG_MOTOR_SPEED_THRESH 250            // RPM
@@ -62,10 +63,11 @@ static int32_t get_regen_torque(void);
 static int32_t get_launch_control_speed(uint32_t front_wheel_speed);
 
 // INTERACTION FUNCTIONS
-void           enable_controls(void);
-void           disable_controls(void);
-bool           get_controls_enabled(void);
-
-void           execute_controls(void);
+void enable_controls(void);
+void disable_controls(void);
+bool get_controls_enabled(void);
+void execute_controls(void);
+void set_lc_done(void);
+void set_lc_state_before();
 
 #endif // ifndef __TORQUE_CALC

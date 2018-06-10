@@ -9,10 +9,19 @@ static Launch_Control_State_T lc_state = BEFORE;
 static uint32_t get_front_wheel_speed(void);
 static bool any_lc_faults();
 
+void init_controls_defaults(void) {
+  control_settings.using_regen = true;
+  control_settings.using_launch_control = false;
+  control_settings.cBB_ef = 50;
+  control_settings.slip_ratio = 112;
+  control_settings.limp_factor = 100;
+}
+
 void enable_controls(void) {
   enabled = true;
   torque_command = 0;
   speed_command = 0;
+
   unlock_brake_valve();
 }
 
@@ -20,7 +29,7 @@ void disable_controls(void) {
   enabled = false;
   torque_command = 0;
   speed_command = 0;
-  lc_state = BEFORE;
+  lc_state = DONE;
 
   set_brake_valve(false);
   lock_brake_valve();
@@ -31,10 +40,7 @@ bool get_controls_enabled(void) {
 }
 
 void execute_controls(void) {
-  static bool up_to_speed = false;
-
   if (!enabled) return;
-
 
   torque_command = get_torque();
 
@@ -56,7 +62,7 @@ void execute_controls(void) {
         break;
       case SPEEDING_UP:
         if (1000 > torque_command) sendSpeedCmdMsg(500, torque_command);
-        else sendSpeedCmdMsg(500, 1000);
+        else sendSpeedCmdMsg(300, 1000);
 
         // Transition
         if (any_lc_faults()) {
@@ -84,6 +90,8 @@ void execute_controls(void) {
           printf("[LAUNCH CONTROL] DONE STATE ENTERED\r\n");
         }
         break;
+      default:
+        printf("ERROR: NO STATE!\r\n");
     }
 
   } else {
@@ -130,7 +138,7 @@ static int32_t get_regen_torque() {
   if ((mc_readings.speed * -1 > RG_MOTOR_SPEED_THRESH) &&
       (cs_readings.V_bus < RG_BATTERY_VOLTAGE_MAX_THRESH) &&
       (get_pascals(pedalbox.FRONT_BRAKE) > RG_FRONT_BRAKE_THRESH) &&
-      car_speed_squared > 25) { // Threshold is 5 kph, so 25 (kph)^2
+      car_speed_squared > RG_CAR_SPEED_THRESH * RG_CAR_SPEED_THRESH) { // Threshold is 5 kph, so 25 (kph)^2
     int32_t kilo_pascals = get_pascals(pedalbox.FRONT_BRAKE) / 1000;
     // Because we already divded by 1000 by using kilo_pascals instead of
     // pascals, we only need to divde by 10^4, not 10^7 for RG_10_7_K
@@ -177,15 +185,23 @@ static uint32_t get_front_wheel_speed() {
 }
 
 static bool any_lc_faults() {
-  return pedalbox_min(accel) < LC_ACCEL_BEGIN ||
-        pedalbox.brake_2 > LC_BRAKE_BEGIN     ||
-        mc_readings.speed > 0; // Backwards is positive
+  if (pedalbox_min(accel) < LC_ACCEL_BEGIN) {
+    printf("[LAUNCH CONTROL ERROR] Accel min (%d) too low\r\n", pedalbox_min(accel));
+    return true;
+  } else if (pedalbox.brake_2 > LC_BRAKE_BEGIN) {
+    printf("[LAUNCH CONTROL ERROR] Brake min (%d) too low\r\n", pedalbox.brake_2);
+    return true;
+  } else if (mc_readings.speed > LC_BACKWARDS_CUTOFF) {
+    printf("[LAUNCH CONTROL ERROR] MC reading (%d) is great than cutoff (%d)\r\n", mc_readings.speed, LC_BACKWARDS_CUTOFF);
+    return true;
+  }
+    return false;
 }
 
-Launch_Control_State_T get_lc_state() {
-  return lc_state;
-}
-
-void reset_lc_state() {
+void set_lc_state_before() {
   lc_state = BEFORE;
+}
+
+void set_lc_done() {
+  lc_state = DONE;
 }

@@ -40,6 +40,8 @@ void init_vcu_state(void) {
   buttons.DriverReset  = 0;
   buttons.ScrollSelect = 0;
 
+  init_controls_defaults();
+
   // CAR Mode
   set_vcu_state(VCU_STATE_ROOT);
   // TODO: Remove this skip to RTD.
