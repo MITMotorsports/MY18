@@ -17,6 +17,9 @@
 // After wheel speed crosses this threshold, start using slip controller
 #define LC_WS_THRESH 45000
 #define LC_cGR 347 // Gear ratio times 100
+#define LC_ACCEL_BEGIN 950 // 95%
+#define LC_ACCEL_RELEASE 50 // 5%
+#define LC_BRAKE_BEGIN 100 // We want a lower threshold
 
 // RG = regen
 #define RG_MOTOR_SPEED_THRESH 250            // RPM
@@ -41,6 +44,14 @@ typedef struct {
   uint16_t cBB_ef; // Electric front brake bias * 100
   int32_t slip_ratio;
 } Controls_Settings_T;
+
+typedef enum {
+  BEFORE,
+  SPEEDING_UP,
+  SPEED_CONTROLLER,
+  ZERO_TORQUE,
+  DONE,
+} Launch_Control_State_T;
 
 extern Controls_Settings_T control_settings;
 
