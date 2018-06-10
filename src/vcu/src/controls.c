@@ -112,7 +112,8 @@ static int16_t get_torque(void) {
 
   if (accel < PEDALBOX_ACCEL_RELEASE) return 0;
 
-  return MAX_TORQUE * (accel - PEDALBOX_ACCEL_RELEASE) / (MAX_ACCEL_VAL - PEDALBOX_ACCEL_RELEASE);
+  int16_t raw_torque =  MAX_TORQUE * (accel - PEDALBOX_ACCEL_RELEASE) / (MAX_ACCEL_VAL - PEDALBOX_ACCEL_RELEASE);
+  return raw_torque * control_settings.limp_factor / 100;
 }
 
 static int32_t get_regen_torque() {
