@@ -4,7 +4,7 @@
 #define DEBUG_MODE true
 
 #define OUT_STRINGIFY(val) ((val) ? "HIGH\n" : "LOW\n")
-#define SET_ZERO(name) memset(&name, 0, sizeof(name));
+#define VCU_STATE(name) can0_VCUHeartbeat_vcu_state_VCU_STATE_ ## name
 
 bool button_state[LEN_BUTTONS] = {};
 car_states_t car_state = {};
@@ -85,13 +85,33 @@ int main(void) {
 void poll_buttons(bool* button_state) {
   button_state[rtd]           = (READ_PIN(BTN_RTD)        == BTN_DOWN);
   button_state[driver_reset]  = (READ_PIN(BTN_DRIVER_RST) == BTN_DOWN);
-  button_state[scroll_select] = (READ_PIN(BTN_SCROLL_SEL) == BTN_DOWN);
+  button_state[A]             = (READ_PIN(BTN_A) == BTN_DOWN);
+  button_state[B]             = (READ_PIN(BTN_B) == BTN_DOWN);
+}
+
+can0_VCUHeartbeat_vcu_state_T get_vcu_state(void) {
+  static can0_VCUHeartbeat_vcu_state_T last_state = VCU_STATE(ROOT);
+  static can0_VCUHeartbeat_vcu_state_T used_state = VCU_STATE(ROOT);
+  static uint32_t edge_time = 0;
+
+  if (car_state.vcu_state != last_state) {
+    edge_time = msTicks;
+    last_state = car_state.vcu_state;
+  }
+
+  if (car_state.vcu_state != used_state) {
+    if (msTicks - edge_time > VCU_INTRO_TIME) {
+      used_state = car_state.vcu_state;
+    }
+  }
+
+  return used_state;
 }
 
 void buzz(void) {
   static bool last = false;
   static uint32_t last_start = 0;
-  bool current = (car_state.vcu_state == can0_VCUHeartbeat_vcu_state_VCU_STATE_DRIVING);
+  bool current = (get_vcu_state() == VCU_STATE(DRIVING));
 
   bool buzz = false;
   if (current) {
@@ -111,11 +131,18 @@ void buzz(void) {
   SET_PIN(BUZZER, buzz);
 }
 
+
+// TODO: Figure out why August named the buttons backwards.
 void button_leds(void) {
   static uint32_t next_led_blink = 0;
 
-  switch (car_state.vcu_state) {
-  case can0_VCUHeartbeat_vcu_state_VCU_STATE_LV:
+  switch (get_vcu_state()) {
+  case VCU_STATE(ROOT):
+    SET_PIN(RTD_LED, LED_ON);
+    SET_PIN(DRIVER_RST_LED, LED_ON);
+    break;
+
+  case VCU_STATE(LV):
     SET_PIN(DRIVER_RST_LED, LED_OFF);
     if (msTicks > next_led_blink) {
       SET_PIN(RTD_LED, !READ_PIN(RTD_LED)); // toggle
@@ -123,7 +150,12 @@ void button_leds(void) {
     }
     break;
 
-  case can0_VCUHeartbeat_vcu_state_VCU_STATE_RTD:
+  case VCU_STATE(PRECHARGING):
+    SET_PIN(DRIVER_RST_LED, LED_OFF);
+    SET_PIN(RTD_LED, LED_ON);
+    break;
+
+  case VCU_STATE(RTD):
     SET_PIN(RTD_LED, LED_OFF);
     if (msTicks > next_led_blink) {
       SET_PIN(DRIVER_RST_LED, !READ_PIN(DRIVER_RST_LED)); // toggle
@@ -150,7 +182,8 @@ void print_buttons(bool* bs) {
   // Print the button states on condition that they are different than before
   EZ_PRINT(rtd);
   EZ_PRINT(driver_reset);
-  EZ_PRINT(scroll_select);
+  EZ_PRINT(A);
+  EZ_PRINT(B);
 
   // Update the current button state
   memcpy(last_bs, bs, sizeof(last_bs));
@@ -169,7 +202,8 @@ bool send_buttonrequest(bool* bs) {
 
     msg.RTD          = bs[rtd];
     msg.DriverReset  = bs[driver_reset];
-    msg.ScrollSelect = bs[scroll_select];
+    msg.A            = bs[A];
+    msg.B            = bs[B];
 
     can_error_handler(can0_ButtonRequest_Write(&msg));
 
@@ -286,11 +320,14 @@ void GPIO_Init(void) {
   Chip_GPIO_SetPinDIRInput(LPC_GPIO, BTN_DRIVER_RST);
   Chip_IOCON_PinMuxSet(LPC_IOCON, BTN_DRIVER_RST_IOCON, BTN_CONFIG);
 
-  Chip_GPIO_SetPinDIRInput(LPC_GPIO, BTN_SCROLL_SEL);
-  Chip_IOCON_PinMuxSet(LPC_IOCON, BTN_SCROLL_SEL_IOCON, BTN_CONFIG);
-
   Chip_GPIO_SetPinDIRInput(LPC_GPIO, BTN_RTD);
   Chip_IOCON_PinMuxSet(LPC_IOCON, BTN_RTD_IOCON, BTN_CONFIG);
+
+  Chip_GPIO_SetPinDIRInput(LPC_GPIO, BTN_A);
+  Chip_IOCON_PinMuxSet(LPC_IOCON, BTN_A_IOCON, BTN_CONFIG);
+
+  Chip_GPIO_SetPinDIRInput(LPC_GPIO, BTN_B);
+  Chip_IOCON_PinMuxSet(LPC_IOCON, BTN_B_IOCON, BTN_CONFIG);
 
   /// OUTPUTS
   // Chip_GPIO_SetPinDIROutput(LPC_GPIO, BUZZER);

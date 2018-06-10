@@ -86,15 +86,19 @@ void Process_Input(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
   bms_input->H_contactor_closed = Board_Contactor_High_Closed();
   bms_input->L_contactor_closed = Board_Contactor_Low_Closed();
 
-  if(bms_input->H_contactor_welded != bms_input->H_contactor_closed) {
-    Error_Present(ERROR_H_CONTACTOR_ERROR);
-    if(bms_input->H_contactor_welded) {
-      Error_Present(ERROR_H_CONTACTOR_WELD);
-    }
-  } else {
-    Error_Clear(ERROR_H_CONTACTOR_ERROR);
-    Error_Clear(ERROR_H_CONTACTOR_WELD);
-  }
+
+  // TODO: Fix the BMS in hardware for HIGH side weld.
+  // if(bms_input->H_contactor_welded != bms_input->H_contactor_closed) {
+  //   Error_Present(ERROR_H_CONTACTOR_ERROR);
+  //   if(bms_input->H_contactor_welded) {
+  //     Error_Present(ERROR_H_CONTACTOR_WELD);
+  //   }
+  // } else {
+  //   Error_Clear(ERROR_H_CONTACTOR_ERROR);
+  //   Error_Clear(ERROR_H_CONTACTOR_WELD);
+  // }
+  Error_Clear(ERROR_H_CONTACTOR_ERROR);
+  Error_Clear(ERROR_H_CONTACTOR_WELD);
 
   if(bms_input->L_contactor_welded != bms_input->L_contactor_closed) {
     Error_Present(ERROR_L_CONTACTOR_ERROR);

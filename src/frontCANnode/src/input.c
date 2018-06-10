@@ -1,80 +1,96 @@
 #include "input.h"
-#include "adc.h"
 
-#define ACCEL_SCALE_MAX 1000
+extern Input_T input;
+extern volatile uint32_t msTicks;
 
-#define ADC_UPDATE_PERIOD_MS 10
+void update_adc(void);
+void update_wheel_speed(void);
+void update_can(void);
 
-#define ACCEL_1_LOWER_BOUND 135
-#define ACCEL_1_UPPER_BOUND 504
-
-#define ACCEL_2_LOWER_BOUND 245
-#define ACCEL_2_UPPER_BOUND 894
-
-// Some wheel speed stuff (copied from MY17)
-#define WHEEL_SPEED_TIMEOUT_MS 100
-#define WHEEL_SPEED_READ_PERIOD_MS 10
-
-// Microsecond = 1 millionth of a second
-#define MICROSECONDS_PER_SECOND_F 1000000.0
-// 1000 millirevs = 1 rev
-#define MILLIREVS_PER_REV_F 1000.0
-#define SECONDS_PER_MINUTE 60
-
-void update_adc(Input_T *input);
-void update_wheel_speed(Speed_Input_T *speed, uint32_t msTicks);
-void update_can(Input_T *input);
 
 uint16_t transform1(uint32_t accel_1_raw);
 uint16_t transform2(uint32_t accel_2_raw);
 
-
-void Input_initialize(Input_T *input) {
-  input->adc->accel_1 = 0;
-  input->adc->accel_2 = 0;
-  input->adc->accel_1_raw = 0;
-  input->adc->accel_2_raw = 0;
-  input->adc->brake_1 = 0;
-  input->adc->brake_2 = 0;
-  input->adc->steering_pot = 0;
+void Input_fill_input() {
+  update_adc();
+  update_wheel_speed();
 }
 
-void Input_fill_input(Input_T *input) {
-  update_adc(input);
-  update_wheel_speed(input->speed, input->msTicks);
-}
-
-void update_adc(Input_T *input) {
-  ADC_Input_T *adc = input->adc;
+void update_adc() {
+  ADC_Input_T *adc = input.adc;
   uint32_t next_updated = adc->last_updated + ADC_UPDATE_PERIOD_MS;
 
-  if (next_updated < input->msTicks) {
-    adc->accel_1_raw = ADC_Read(ACCEL_1_CHANNEL);
-    adc->accel_2_raw = ADC_Read(ACCEL_2_CHANNEL);
-    adc->brake_1 = ADC_Read(BRAKE_1_CHANNEL);
-    adc->brake_2 = ADC_Read(BRAKE_2_CHANNEL);
-    adc->steering_pot = ADC_Read(STEERING_CHANNEL);
-    adc->last_updated = input->msTicks;
 
-    adc->accel_1 = transform1(adc->accel_1_raw);
-    adc->accel_2 = transform2(adc->accel_2_raw);
-    // adc->accel_1 = adc->accel_1_raw;
-    // adc->accel_2 = adc->accel_2_raw;
+  if (next_updated < input.msTicks) {
+    uint16_t lastest_accel_1 = ADC_Read(ACCEL_1_CHANNEL);
+    uint16_t lastest_accel_2 = ADC_Read(ACCEL_2_CHANNEL);
+    uint16_t lastest_brake_1 = ADC_Read(BRAKE_1_CHANNEL);
+    uint16_t lastest_brake_2 = ADC_Read(BRAKE_2_CHANNEL);
+
+    adc->errors->accel_1_under = lastest_accel_1 < ACCEL_1_ERROR_LOWER_BOUND;
+    adc->errors->accel_1_over = lastest_accel_1 > ACCEL_1_ERROR_UPPER_BOUND;
+    adc->errors->accel_2_under = lastest_accel_2 < ACCEL_2_ERROR_LOWER_BOUND;
+    adc->errors->accel_2_over = lastest_accel_2 > ACCEL_2_ERROR_UPPER_BOUND;
+    adc->errors->brake_1_under = lastest_brake_1 < BRAKE_1_ERROR_LOWER_BOUND;
+    adc->errors->brake_1_over = lastest_brake_1 > BRAKE_1_ERROR_UPPER_BOUND;
+    adc->errors->brake_2_under = lastest_brake_2 < BRAKE_2_ERROR_LOWER_BOUND;
+    adc->errors->brake_2_over = lastest_brake_2 > BRAKE_2_ERROR_UPPER_BOUND;
+
+    // Update accels
+    for (int i = 0; i < ACCEL_LOG_LENGTH - 1; i++) {
+      adc->accel_1_raws[i] = adc->accel_1_raws[i+1];
+      adc->accel_2_raws[i] = adc->accel_2_raws[i+1];
+    }
+    adc->accel_1_raws[ACCEL_LOG_LENGTH-1] = lastest_accel_1;
+    adc->accel_2_raws[ACCEL_LOG_LENGTH-1] = lastest_accel_2;
+    uint32_t accel_1_sum = 0;
+    uint32_t accel_2_sum = 0;
+    for (int i = 0; i < ACCEL_LOG_LENGTH; i ++) {
+      accel_1_sum += adc->accel_1_raws[i];
+      accel_2_sum += adc->accel_2_raws[i];
+    }
+    adc->accel_1 = transform1(accel_1_sum / ACCEL_LOG_LENGTH);
+    adc->accel_2 = transform2(accel_2_sum / ACCEL_LOG_LENGTH);
+
+    // Update brakes
+    for (int i = 0; i < BRAKE_LOG_LENGTH - 1; i++) {
+      adc->brake_1_raws[i] = adc->brake_1_raws[i+1];
+      adc->brake_2_raws[i] = adc->brake_2_raws[i+1];
+    }
+    adc->brake_1_raws[BRAKE_LOG_LENGTH-1] = lastest_brake_1;
+    adc->brake_2_raws[BRAKE_LOG_LENGTH-1] = lastest_brake_2;
+    uint32_t brake_1_sum = 0;
+    uint32_t brake_2_sum = 0;
+    for (int i = 0; i < BRAKE_LOG_LENGTH; i ++) {
+      brake_1_sum += adc->brake_1_raws[i];
+      brake_2_sum += adc->brake_2_raws[i];
+    }
+    adc->brake_1 = brake_1_sum / BRAKE_LOG_LENGTH;
+    adc->brake_2 = brake_2_sum / BRAKE_LOG_LENGTH;
+
+    // Update other sensors
+    adc->steering_pot = ADC_Read(STEERING_CHANNEL);
+    adc->last_updated = input.msTicks;
   }
 }
 
 uint32_t click_time_to_mRPM(uint32_t us_per_click) {
-  const float us_per_rev = us_per_click * 1.0 * NUM_TEETH;
+  if (us_per_click == 0) {
+    return 0;
+  }
+  // Convert milliseconds per click to milli rpm
+  const float us_per_rev = us_per_click * 1.0 * NUM_TEETH * 2;
 
   const float s_per_rev = us_per_rev / MICROSECONDS_PER_SECOND_F;
 
   const float mrev_per_s = MILLIREVS_PER_REV_F / s_per_rev;
 
   const float mrev_per_min = mrev_per_s * SECONDS_PER_MINUTE;
-  return (uint32_t)mrev_per_min;
+  return mrev_per_min;
 }
 
-void update_wheel_speed(Speed_Input_T *speed, uint32_t msTicks) {
+void update_wheel_speed() {
+  Speed_Input_T* speed = input.speed;
   if (speed->last_speed_read_ms + WHEEL_SPEED_READ_PERIOD_MS < msTicks) {
     // Capture values
     speed->last_speed_read_ms = msTicks;
@@ -98,24 +114,50 @@ void update_wheel_speed(Speed_Input_T *speed, uint32_t msTicks) {
       }
       const bool timeout =
         speed->last_updated[wheel] + WHEEL_SPEED_TIMEOUT_MS < msTicks;
-      speed->wheel_stopped[wheel] = timeout || count == 0;
-      speed->disregard[wheel] = timeout;
 
-      // Save value
-      uint32_t *ptr;
-      if (wheel == LEFT) {
-        ptr = &speed->front_left_wheel_speed;
-      } else if (wheel == RIGHT) {
-        ptr = &speed->front_right_wheel_speed;
-      } else continue;
+      uint32_t calculated_speed;
+      speed->wheel_stopped[wheel] = timeout;
       if (speed->wheel_stopped[wheel]) {
-        *ptr = 0;
-        continue;
-      }
-      if (count < NUM_TEETH) {
-        *ptr = click_time_to_mRPM(speed->last_tick[wheel][idx]);
+        calculated_speed = 0;
       } else {
-        *ptr = click_time_to_mRPM(moving_avg);
+        if (count < NUM_TEETH) {
+          calculated_speed = click_time_to_mRPM(speed->last_tick[wheel][idx]);
+        } else {
+          calculated_speed = click_time_to_mRPM(moving_avg);
+        }
+      }
+
+      // 32 bit timer speeds are first in the enum, so it's safe to look back at
+      // their values
+      switch (wheel) {
+        case LEFT_16:
+          // If the 32 bit timer says the speed is too slow for the 16 bit timer
+          // to read, ignor the 16 bit timer.
+          // Increase the cutoff by 10% because near the actual minimum speed,
+          // some 16 bit times will overflow and some will not, so the spded
+          // will still be wrong
+          if (speed->can_node_left_32b_wheel_speed < click_time_to_mRPM(MAX_16_TIME) * 11 / 10) {
+            speed->can_node_left_16b_wheel_speed = 0;
+          } else {
+            speed->can_node_left_16b_wheel_speed = calculated_speed;
+          }
+          break;
+        case LEFT_32:
+          speed->can_node_left_32b_wheel_speed = calculated_speed;
+          break;
+        case RIGHT_16:
+          // See explanatino for LEFT_16
+          if (speed->can_node_right_32b_wheel_speed < click_time_to_mRPM(MAX_16_TIME) * 11 / 10) {
+            speed->can_node_right_16b_wheel_speed = 0;
+          } else {
+            speed->can_node_right_16b_wheel_speed = calculated_speed;
+          }
+          break;
+        case RIGHT_32:
+          speed->can_node_right_32b_wheel_speed = calculated_speed;
+          break;
+        default:
+          continue;
       }
     }
   }
@@ -152,8 +194,9 @@ uint16_t transform2(uint32_t accel_2_raw) {
   return linear_transfer_fn(accel_2_raw, ACCEL_SCALE_MAX, ACCEL_2_LOWER_BOUND, ACCEL_2_UPPER_BOUND);
 }
 
-void Input_handle_interrupt(Speed_Input_T *speed, uint32_t msTicks, uint32_t curr_tick, Wheel_T wheel) {
-  if (speed->disregard[wheel]) {
+void Input_handle_interrupt(uint32_t msTicks, uint32_t curr_tick, Wheel_T wheel) {
+  Speed_Input_T *speed = input.speed;
+  if (speed->wheel_stopped[wheel]) {
     speed->num_ticks[wheel] = 0;
     speed->big_sum[wheel] = 0;
     speed->little_sum[wheel] = 0;

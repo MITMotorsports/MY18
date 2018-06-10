@@ -11,6 +11,10 @@ void init_button_state(button_state_t *state) {
     state->is_pressed = false;
     state->lockout    = false;
     state->action     = BUTTON_ACTION_NONE;
+
+    state->edge         = false;
+    state->rising_edge  = false;
+    state->falling_edge = false;
 }
 
 void update_button_state(button_state_t *state, bool newval) {
@@ -18,11 +22,16 @@ void update_button_state(button_state_t *state, bool newval) {
 
     int duration = msTicks - state->press_start_ms;
 
+    state->edge = state->is_pressed != newval;
+
     // on button down
+    state->rising_edge = false;
+    state->falling_edge = false;
     if (!state->is_pressed && newval) {
         state->is_pressed = true;
         state->press_start_ms = msTicks;
         state->lockout = false;
+        state->rising_edge = true;
         duration = 0;
 
     // on button up
@@ -33,6 +42,7 @@ void update_button_state(button_state_t *state, bool newval) {
            state->action = BUTTON_ACTION_TAP;
         }
 
+        state->falling_edge = true;
     }
     if (state->is_pressed && duration > BUTTON_HOLD_DURATION && !state->lockout) {
         state->lockout = true;

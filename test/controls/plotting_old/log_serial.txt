@@ -1,0 +1,5969 @@
+Start tick: 1
+ADC read: 891
+End tick: 6
+Data from CAN msg: 891, 1191
+
+Start tick: 15
+ADC read: 852
+End tick: 20
+Data from CAN msg: 852, 1152
+
+Start tick: 28
+ADC read: 813
+End tick: 34
+Data from CAN msg: 813, 1113
+
+Start tick: 42
+ADC read: 777
+End tick: 47
+Data from CAN msg: 777, 1077
+
+Start tick: 56
+ADC read: 742
+End tick: 61
+Data from CAN msg: 742, 1042
+
+Start tick: 69
+ADC read: 711
+End tick: 75
+Data from CAN msg: 711, 1011
+
+Start tick: 83
+ADC read: 680
+End tick: 88
+Data from CAN msg: 680, 980
+
+Start tick: 97
+ADC read: 651
+End tick: 102
+Data from CAN msg: 651, 951
+
+Start tick: 110
+ADC read: 624
+End tick: 116
+Data from CAN msg: 624, 924
+
+Start tick: 124
+ADC read: 597
+End tick: 130
+Data from CAN msg: 597, 897
+
+Start tick: 138
+ADC read: 572
+End tick: 143
+Data from CAN msg: 572, 872
+
+Start tick: 152
+ADC read: 547
+End tick: 157
+Data from CAN msg: 547, 847
+
+Start tick: 166
+ADC read: 525
+End tick: 171
+Data from CAN msg: 525, 825
+
+Start tick: 180
+ADC read: 503
+End tick: 185
+Data from CAN msg: 503, 803
+
+Start tick: 193
+ADC read: 482
+End tick: 199
+Data from CAN msg: 482, 782
+
+Start tick: 207
+ADC read: 463
+End tick: 213
+Data from CAN msg: 463, 763
+
+Start tick: 221
+ADC read: 444
+End tick: 227
+Data from CAN msg: 444, 744
+
+Start tick: 235
+ADC read: 426
+End tick: 240
+Data from CAN msg: 426, 726
+
+Start tick: 249
+ADC read: 410
+End tick: 254
+Data from CAN msg: 410, 710
+
+Start tick: 263
+ADC read: 393
+End tick: 268
+Data from CAN msg: 393, 693
+
+Start tick: 276
+ADC read: 377
+End tick: 282
+Data from CAN msg: 377, 677
+
+Start tick: 290
+ADC read: 363
+End tick: 296
+Data from CAN msg: 363, 663
+
+Start tick: 304
+ADC read: 349
+End tick: 310
+Data from CAN msg: 349, 649
+
+Start tick: 318
+ADC read: 336
+End tick: 324
+Data from CAN msg: 336, 636
+
+Start tick: 332
+ADC read: 324
+End tick: 337
+Data from CAN msg: 324, 624
+
+Start tick: 346
+ADC read: 312
+End tick: 351
+Data from CAN msg: 312, 612
+
+Start tick: 360
+ADC read: 301
+End tick: 365
+Data from CAN msg: 301, 601
+
+Start tick: 373
+ADC read: 291
+End tick: 379
+Data from CAN msg: 291, 591
+
+Start tick: 387
+ADC read: 282
+End tick: 393
+Data from CAN msg: 282, 582
+
+Start tick: 401
+ADC read: 273
+End tick: 407
+Data from CAN msg: 273, 573
+
+Start tick: 415
+ADC read: 265
+End tick: 421
+Data from CAN msg: 265, 565
+
+Start tick: 429
+ADC read: 257
+End tick: 434
+Data from CAN msg: 257, 557
+
+Start tick: 443
+ADC read: 250
+End tick: 448
+Data from CAN msg: 250, 550
+
+Start tick: 457
+ADC read: 243
+End tick: 462
+Data from CAN msg: 243, 543
+
+Start tick: 470
+ADC read: 238
+End tick: 476
+Data from CAN msg: 238, 538
+
+Start tick: 484
+ADC read: 233
+End tick: 490
+Data from CAN msg: 233, 533
+
+Start tick: 498
+ADC read: 228
+End tick: 504
+Data from CAN msg: 228, 528
+
+Start tick: 512
+ADC read: 223
+End tick: 518
+Data from CAN msg: 223, 523
+
+Start tick: 526
+ADC read: 219
+End tick: 531
+Data from CAN msg: 219, 519
+
+Start tick: 540
+ADC read: 216
+End tick: 545
+Data from CAN msg: 216, 516
+
+Start tick: 554
+ADC read: 212
+End tick: 559
+Data from CAN msg: 212, 512
+
+Start tick: 568
+ADC read: 208
+End tick: 573
+Data from CAN msg: 208, 508
+
+Start tick: 581
+ADC read: 206
+End tick: 587
+Data from CAN msg: 206, 506
+
+Start tick: 595
+ADC read: 204
+End tick: 601
+Data from CAN msg: 204, 504
+
+Start tick: 609
+ADC read: 201
+End tick: 615
+Data from CAN msg: 201, 501
+
+Start tick: 623
+ADC read: 199
+End tick: 629
+Data from CAN msg: 199, 499
+
+Start tick: 637
+ADC read: 198
+End tick: 642
+Data from CAN msg: 198, 498
+
+Start tick: 651
+ADC read: 196
+End tick: 656
+Data from CAN msg: 196, 496
+
+Start tick: 665
+ADC read: 194
+End tick: 670
+Data from CAN msg: 194, 494
+
+Start tick: 678
+ADC read: 193
+End tick: 684
+Data from CAN msg: 193, 493
+
+Start tick: 692
+ADC read: 192
+End tick: 698
+Data from CAN msg: 192, 492
+
+Start tick: 706
+ADC read: 191
+End tick: 712
+Data from CAN msg: 191, 491
+
+Start tick: 720
+ADC read: 190
+End tick: 726
+Data from CAN msg: 190, 490
+
+Start tick: 734
+ADC read: 190
+End tick: 739
+Data from CAN msg: 190, 490
+
+Start tick: 748
+ADC read: 190
+End tick: 753
+Data from CAN msg: 190, 490
+
+Start tick: 762
+ADC read: 190
+End tick: 767
+Data from CAN msg: 190, 490
+
+Start tick: 776
+ADC read: 189
+End tick: 781
+Data from CAN msg: 189, 489
+
+Start tick: 789
+ADC read: 189
+End tick: 795
+Data from CAN msg: 189, 489
+
+Start tick: 803
+ADC read: 188
+End tick: 809
+Data from CAN msg: 188, 488
+
+Start tick: 817
+ADC read: 188
+End tick: 823
+Data from CAN msg: 188, 488
+
+Start tick: 831
+ADC read: 188
+End tick: 836
+Data from CAN msg: 188, 488
+
+Start tick: 845
+ADC read: 188
+End tick: 850
+Data from CAN msg: 188, 488
+
+Start tick: 859
+ADC read: 187
+End tick: 864
+Data from CAN msg: 187, 487
+
+Start tick: 872
+ADC read: 188
+End tick: 878
+Data from CAN msg: 188, 488
+
+Start tick: 886
+ADC read: 187
+End tick: 892
+Data from CAN msg: 187, 487
+
+Start tick: 900
+ADC read: 188
+End tick: 906
+Data from CAN msg: 188, 488
+
+Start tick: 914
+ADC read: 188
+End tick: 920
+Data from CAN msg: 188, 488
+
+Start tick: 928
+ADC read: 187
+End tick: 933
+Data from CAN msg: 187, 487
+
+Start tick: 942
+ADC read: 188
+End tick: 947
+Data from CAN msg: 188, 488
+
+Start tick: 956
+ADC read: 187
+End tick: 961
+Data from CAN msg: 187, 487
+
+Start tick: 970
+ADC read: 188
+End tick: 975
+Data from CAN msg: 188, 488
+
+Start tick: 983
+ADC read: 188
+End tick: 989
+Data from CAN msg: 188, 488
+
+Start tick: 997
+ADC read: 187
+End tick: 1003
+Data from CAN msg: 187, 487
+
+Start tick: 1011
+ADC read: 188
+End tick: 1017
+Data from CAN msg: 188, 488
+
+Start tick: 1026
+ADC read: 188
+End tick: 1031
+Data from CAN msg: 188, 488
+
+Start tick: 1040
+ADC read: 188
+End tick: 1045
+Data from CAN msg: 188, 488
+
+Start tick: 1054
+ADC read: 187
+End tick: 1060
+Data from CAN msg: 187, 487
+
+Start tick: 1068
+ADC read: 188
+End tick: 1074
+Data from CAN msg: 188, 488
+
+Start tick: 1082
+ADC read: 187
+End tick: 1088
+Data from CAN msg: 187, 487
+
+Start tick: 1097
+ADC read: 187
+End tick: 1102
+Data from CAN msg: 187, 487
+
+Start tick: 1111
+ADC read: 187
+End tick: 1116
+Data from CAN msg: 187, 487
+
+Start tick: 1125
+ADC read: 187
+End tick: 1131
+Data from CAN msg: 187, 487
+
+Start tick: 1139
+ADC read: 187
+End tick: 1145
+Data from CAN msg: 187, 487
+
+Start tick: 1153
+ADC read: 187
+End tick: 1159
+Data from CAN msg: 187, 487
+
+Start tick: 1168
+ADC read: 187
+End tick: 1173
+Data from CAN msg: 187, 487
+
+Start tick: 1182
+ADC read: 187
+End tick: 1187
+Data from CAN msg: 187, 487
+
+Start tick: 1196
+ADC read: 186
+End tick: 1202
+Data from CAN msg: 186, 486
+
+Start tick: 1210
+ADC read: 187
+End tick: 1216
+Data from CAN msg: 187, 487
+
+Start tick: 1224
+ADC read: 186
+End tick: 1230
+Data from CAN msg: 186, 486
+
+Start tick: 1239
+ADC read: 186
+End tick: 1244
+Data from CAN msg: 186, 486
+
+Start tick: 1253
+ADC read: 187
+End tick: 1258
+Data from CAN msg: 187, 487
+
+Start tick: 1267
+ADC read: 187
+End tick: 1273
+Data from CAN msg: 187, 487
+
+Start tick: 1281
+ADC read: 186
+End tick: 1287
+Data from CAN msg: 186, 486
+
+Start tick: 1295
+ADC read: 187
+End tick: 1301
+Data from CAN msg: 187, 487
+
+Start tick: 1310
+ADC read: 186
+End tick: 1315
+Data from CAN msg: 186, 486
+
+Start tick: 1324
+ADC read: 186
+End tick: 1330
+Data from CAN msg: 186, 486
+
+Start tick: 1338
+ADC read: 186
+End tick: 1344
+Data from CAN msg: 186, 486
+
+Start tick: 1352
+ADC read: 186
+End tick: 1358
+Data from CAN msg: 186, 486
+
+Start tick: 1366
+ADC read: 186
+End tick: 1372
+Data from CAN msg: 186, 486
+
+Start tick: 1381
+ADC read: 186
+End tick: 1386
+Data from CAN msg: 186, 486
+
+Start tick: 1395
+ADC read: 186
+End tick: 1401
+Data from CAN msg: 186, 486
+
+Start tick: 1409
+ADC read: 186
+End tick: 1415
+Data from CAN msg: 186, 486
+
+Start tick: 1423
+ADC read: 186
+End tick: 1429
+Data from CAN msg: 186, 486
+
+Start tick: 1438
+ADC read: 186
+End tick: 1443
+Data from CAN msg: 186, 486
+
+Start tick: 1452
+ADC read: 186
+End tick: 1457
+Data from CAN msg: 186, 486
+
+Start tick: 1466
+ADC read: 186
+End tick: 1472
+Data from CAN msg: 186, 486
+
+Start tick: 1480
+ADC read: 186
+End tick: 1486
+Data from CAN msg: 186, 486
+
+Start tick: 1494
+ADC read: 186
+End tick: 1500
+Data from CAN msg: 186, 486
+
+Start tick: 1509
+ADC read: 186
+End tick: 1514
+Data from CAN msg: 186, 486
+
+Start tick: 1523
+ADC read: 186
+End tick: 1529
+Data from CAN msg: 186, 486
+
+Start tick: 1537
+ADC read: 186
+End tick: 1543
+Data from CAN msg: 186, 486
+
+Start tick: 1551
+ADC read: 186
+End tick: 1557
+Data from CAN msg: 186, 486
+
+Start tick: 1565
+ADC read: 186
+End tick: 1571
+Data from CAN msg: 186, 486
+
+Start tick: 1580
+ADC read: 186
+End tick: 1585
+Data from CAN msg: 186, 486
+
+Start tick: 1594
+ADC read: 186
+End tick: 1600
+Data from CAN msg: 186, 486
+
+Start tick: 1608
+ADC read: 186
+End tick: 1614
+Data from CAN msg: 186, 486
+
+Start tick: 1622
+ADC read: 186
+End tick: 1628
+Data from CAN msg: 186, 486
+
+Start tick: 1637
+ADC read: 186
+End tick: 1642
+Data from CAN msg: 186, 486
+
+Start tick: 1651
+ADC read: 186
+End tick: 1656
+Data from CAN msg: 186, 486
+
+Start tick: 1665
+ADC read: 186
+End tick: 1671
+Data from CAN msg: 186, 486
+
+Start tick: 1679
+ADC read: 186
+End tick: 1685
+Data from CAN msg: 186, 486
+
+Start tick: 1693
+ADC read: 186
+End tick: 1699
+Data from CAN msg: 186, 486
+
+Start tick: 1708
+ADC read: 186
+End tick: 1713
+Data from CAN msg: 186, 486
+
+Start tick: 1722
+ADC read: 186
+End tick: 1727
+Data from CAN msg: 186, 486
+
+Start tick: 1736
+ADC read: 186
+End tick: 1742
+Data from CAN msg: 186, 486
+
+Start tick: 1750
+ADC read: 186
+End tick: 1756
+Data from CAN msg: 186, 486
+
+Start tick: 1764
+ADC read: 186
+End tick: 1770
+Data from CAN msg: 186, 486
+
+Start tick: 1779
+ADC read: 186
+End tick: 1784
+Data from CAN msg: 186, 486
+
+Start tick: 1793
+ADC read: 186
+End tick: 1799
+Data from CAN msg: 186, 486
+
+Start tick: 1807
+ADC read: 186
+End tick: 1813
+Data from CAN msg: 186, 486
+
+Start tick: 1821
+ADC read: 186
+End tick: 1827
+Data from CAN msg: 186, 486
+
+Start tick: 1835
+ADC read: 186
+End tick: 1841
+Data from CAN msg: 186, 486
+
+Start tick: 1850
+ADC read: 186
+End tick: 1855
+Data from CAN msg: 186, 486
+
+Start tick: 1864
+ADC read: 186
+End tick: 1870
+Data from CAN msg: 186, 486
+
+Start tick: 1878
+ADC read: 186
+End tick: 1884
+Data from CAN msg: 186, 486
+
+Start tick: 1892
+ADC read: 186
+End tick: 1898
+Data from CAN msg: 186, 486
+
+Start tick: 1907
+ADC read: 186
+End tick: 1912
+Data from CAN msg: 186, 486
+
+Start tick: 1921
+ADC read: 186
+End tick: 1926
+Data from CAN msg: 186, 486
+
+Start tick: 1935
+ADC read: 186
+End tick: 1941
+Data from CAN msg: 186, 486
+
+Start tick: 1949
+ADC read: 186
+End tick: 1955
+Data from CAN msg: 186, 486
+
+Start tick: 1963
+ADC read: 186
+End tick: 1969
+Data from CAN msg: 186, 486
+
+Start tick: 1978
+ADC read: 186
+End tick: 1983
+Data from CAN msg: 186, 486
+
+Start tick: 1992
+ADC read: 186
+End tick: 1997
+Data from CAN msg: 186, 486
+
+Start tick: 2006
+ADC read: 186
+End tick: 2012
+Data from CAN msg: 186, 486
+
+Start tick: 2020
+ADC read: 186
+End tick: 2026
+Data from CAN msg: 186, 486
+
+Start tick: 2034
+ADC read: 186
+End tick: 2040
+Data from CAN msg: 186, 486
+
+Start tick: 2049
+ADC read: 186
+End tick: 2054
+Data from CAN msg: 186, 486
+
+Start tick: 2063
+ADC read: 185
+End tick: 2069
+Data from CAN msg: 185, 485
+
+Start tick: 2077
+ADC read: 186
+End tick: 2083
+Data from CAN msg: 186, 486
+
+Start tick: 2091
+ADC read: 186
+End tick: 2097
+Data from CAN msg: 186, 486
+
+Start tick: 2105
+ADC read: 185
+End tick: 2111
+Data from CAN msg: 185, 485
+
+Start tick: 2120
+ADC read: 185
+End tick: 2125
+Data from CAN msg: 185, 485
+
+Start tick: 2134
+ADC read: 185
+End tick: 2140
+Data from CAN msg: 185, 485
+
+Start tick: 2148
+ADC read: 184
+End tick: 2154
+Data from CAN msg: 184, 484
+
+Start tick: 2162
+ADC read: 184
+End tick: 2168
+Data from CAN msg: 184, 484
+
+Start tick: 2176
+ADC read: 184
+End tick: 2182
+Data from CAN msg: 184, 484
+
+Start tick: 2191
+ADC read: 184
+End tick: 2196
+Data from CAN msg: 184, 484
+
+Start tick: 2205
+ADC read: 184
+End tick: 2211
+Data from CAN msg: 184, 484
+
+Start tick: 2219
+ADC read: 184
+End tick: 2225
+Data from CAN msg: 184, 484
+
+Start tick: 2233
+ADC read: 184
+End tick: 2239
+Data from CAN msg: 184, 484
+
+Start tick: 2247
+ADC read: 184
+End tick: 2253
+Data from CAN msg: 184, 484
+
+Start tick: 2262
+ADC read: 184
+End tick: 2267
+Data from CAN msg: 184, 484
+
+Start tick: 2276
+ADC read: 183
+End tick: 2282
+Data from CAN msg: 183, 483
+
+Start tick: 2290
+ADC read: 184
+End tick: 2296
+Data from CAN msg: 184, 484
+
+Start tick: 2304
+ADC read: 184
+End tick: 2310
+Data from CAN msg: 184, 484
+
+Start tick: 2319
+ADC read: 183
+End tick: 2324
+Data from CAN msg: 183, 483
+
+Start tick: 2333
+ADC read: 184
+End tick: 2338
+Data from CAN msg: 184, 484
+
+Start tick: 2347
+ADC read: 184
+End tick: 2353
+Data from CAN msg: 184, 484
+
+Start tick: 2361
+ADC read: 184
+End tick: 2367
+Data from CAN msg: 184, 484
+
+Start tick: 2375
+ADC read: 183
+End tick: 2381
+Data from CAN msg: 183, 483
+
+Start tick: 2390
+ADC read: 184
+End tick: 2395
+Data from CAN msg: 184, 484
+
+Start tick: 2404
+ADC read: 184
+End tick: 2409
+Data from CAN msg: 184, 484
+
+Start tick: 2418
+ADC read: 183
+End tick: 2424
+Data from CAN msg: 183, 483
+
+Start tick: 2432
+ADC read: 184
+End tick: 2438
+Data from CAN msg: 184, 484
+
+Start tick: 2446
+ADC read: 184
+End tick: 2452
+Data from CAN msg: 184, 484
+
+Start tick: 2461
+ADC read: 183
+End tick: 2466
+Data from CAN msg: 183, 483
+
+Start tick: 2475
+ADC read: 184
+End tick: 2480
+Data from CAN msg: 184, 484
+
+Start tick: 2489
+ADC read: 184
+End tick: 2495
+Data from CAN msg: 184, 484
+
+Start tick: 2503
+ADC read: 184
+End tick: 2509
+Data from CAN msg: 184, 484
+
+Start tick: 2517
+ADC read: 183
+End tick: 2523
+Data from CAN msg: 183, 483
+
+Start tick: 2532
+ADC read: 184
+End tick: 2537
+Data from CAN msg: 184, 484
+
+Start tick: 2546
+ADC read: 184
+End tick: 2552
+Data from CAN msg: 184, 484
+
+Start tick: 2560
+ADC read: 184
+End tick: 2566
+Data from CAN msg: 184, 484
+
+Start tick: 2574
+ADC read: 184
+End tick: 2580
+Data from CAN msg: 184, 484
+
+Start tick: 2588
+ADC read: 183
+End tick: 2594
+Data from CAN msg: 183, 483
+
+Start tick: 2603
+ADC read: 184
+End tick: 2608
+Data from CAN msg: 184, 484
+
+Start tick: 2617
+ADC read: 183
+End tick: 2623
+Data from CAN msg: 183, 483
+
+Start tick: 2631
+ADC read: 184
+End tick: 2637
+Data from CAN msg: 184, 484
+
+Start tick: 2645
+ADC read: 184
+End tick: 2651
+Data from CAN msg: 184, 484
+
+Start tick: 2659
+ADC read: 184
+End tick: 2665
+Data from CAN msg: 184, 484
+
+Start tick: 2674
+ADC read: 184
+End tick: 2679
+Data from CAN msg: 184, 484
+
+Start tick: 2688
+ADC read: 183
+End tick: 2694
+Data from CAN msg: 183, 483
+
+Start tick: 2702
+ADC read: 184
+End tick: 2708
+Data from CAN msg: 184, 484
+
+Start tick: 2716
+ADC read: 183
+End tick: 2722
+Data from CAN msg: 183, 483
+
+Start tick: 2730
+ADC read: 184
+End tick: 2736
+Data from CAN msg: 184, 484
+
+Start tick: 2745
+ADC read: 184
+End tick: 2750
+Data from CAN msg: 184, 484
+
+Start tick: 2759
+ADC read: 184
+End tick: 2765
+Data from CAN msg: 184, 484
+
+Start tick: 2773
+ADC read: 183
+End tick: 2779
+Data from CAN msg: 183, 483
+
+Start tick: 2787
+ADC read: 184
+End tick: 2793
+Data from CAN msg: 184, 484
+
+Start tick: 2801
+ADC read: 184
+End tick: 2807
+Data from CAN msg: 184, 484
+
+Start tick: 2816
+ADC read: 184
+End tick: 2821
+Data from CAN msg: 184, 484
+
+Start tick: 2830
+ADC read: 184
+End tick: 2836
+Data from CAN msg: 184, 484
+
+Start tick: 2844
+ADC read: 183
+End tick: 2850
+Data from CAN msg: 183, 483
+
+Start tick: 2858
+ADC read: 184
+End tick: 2864
+Data from CAN msg: 184, 484
+
+Start tick: 2872
+ADC read: 183
+End tick: 2878
+Data from CAN msg: 183, 483
+
+Start tick: 2887
+ADC read: 184
+End tick: 2892
+Data from CAN msg: 184, 484
+
+Start tick: 2901
+ADC read: 184
+End tick: 2907
+Data from CAN msg: 184, 484
+
+Start tick: 2915
+ADC read: 183
+End tick: 2921
+Data from CAN msg: 183, 483
+
+Start tick: 2929
+ADC read: 184
+End tick: 2935
+Data from CAN msg: 184, 484
+
+Start tick: 2944
+ADC read: 184
+End tick: 2949
+Data from CAN msg: 184, 484
+
+Start tick: 2958
+ADC read: 184
+End tick: 2963
+Data from CAN msg: 184, 484
+
+Start tick: 2972
+ADC read: 184
+End tick: 2978
+Data from CAN msg: 184, 484
+
+Start tick: 2986
+ADC read: 184
+End tick: 2992
+Data from CAN msg: 184, 484
+
+Start tick: 3000
+ADC read: 183
+End tick: 3006
+Data from CAN msg: 183, 483
+
+Start tick: 3015
+ADC read: 184
+End tick: 3020
+Data from CAN msg: 184, 484
+
+Start tick: 3029
+ADC read: 183
+End tick: 3034
+Data from CAN msg: 183, 483
+
+Start tick: 3043
+ADC read: 184
+End tick: 3049
+Data from CAN msg: 184, 484
+
+Start tick: 3057
+ADC read: 184
+End tick: 3063
+Data from CAN msg: 184, 484
+
+Start tick: 3071
+ADC read: 184
+End tick: 3077
+Data from CAN msg: 184, 484
+
+Start tick: 3086
+ADC read: 183
+End tick: 3091
+Data from CAN msg: 183, 483
+
+Start tick: 3100
+ADC read: 184
+End tick: 3105
+Data from CAN msg: 184, 484
+
+Start tick: 3114
+ADC read: 183
+End tick: 3120
+Data from CAN msg: 183, 483
+
+Start tick: 3128
+ADC read: 184
+End tick: 3134
+Data from CAN msg: 184, 484
+
+Start tick: 3142
+ADC read: 183
+End tick: 3148
+Data from CAN msg: 183, 483
+
+Start tick: 3157
+ADC read: 184
+End tick: 3162
+Data from CAN msg: 184, 484
+
+Start tick: 3171
+ADC read: 183
+End tick: 3176
+Data from CAN msg: 183, 483
+
+Start tick: 3185
+ADC read: 184
+End tick: 3191
+Data from CAN msg: 184, 484
+
+Start tick: 3199
+ADC read: 184
+End tick: 3205
+Data from CAN msg: 184, 484
+
+Start tick: 3213
+ADC read: 184
+End tick: 3219
+Data from CAN msg: 184, 484
+
+Start tick: 3228
+ADC read: 184
+End tick: 3233
+Data from CAN msg: 184, 484
+
+Start tick: 3242
+ADC read: 183
+End tick: 3248
+Data from CAN msg: 183, 483
+
+Start tick: 3256
+ADC read: 184
+End tick: 3262
+Data from CAN msg: 184, 484
+
+Start tick: 3270
+ADC read: 184
+End tick: 3276
+Data from CAN msg: 184, 484
+
+Start tick: 3284
+ADC read: 184
+End tick: 3290
+Data from CAN msg: 184, 484
+
+Start tick: 3299
+ADC read: 183
+End tick: 3304
+Data from CAN msg: 183, 483
+
+Start tick: 3313
+ADC read: 184
+End tick: 3319
+Data from CAN msg: 184, 484
+
+Start tick: 3327
+ADC read: 184
+End tick: 3333
+Data from CAN msg: 184, 484
+
+Start tick: 3341
+ADC read: 184
+End tick: 3347
+Data from CAN msg: 184, 484
+
+Start tick: 3355
+ADC read: 183
+End tick: 3361
+Data from CAN msg: 183, 483
+
+Start tick: 3370
+ADC read: 184
+End tick: 3375
+Data from CAN msg: 184, 484
+
+Start tick: 3384
+ADC read: 184
+End tick: 3390
+Data from CAN msg: 184, 484
+
+Start tick: 3398
+ADC read: 183
+End tick: 3404
+Data from CAN msg: 183, 483
+
+Start tick: 3412
+ADC read: 183
+End tick: 3418
+Data from CAN msg: 183, 483
+
+Start tick: 3427
+ADC read: 184
+End tick: 3432
+Data from CAN msg: 184, 484
+
+Start tick: 3441
+ADC read: 184
+End tick: 3446
+Data from CAN msg: 184, 484
+
+Start tick: 3455
+ADC read: 184
+End tick: 3461
+Data from CAN msg: 184, 484
+
+Start tick: 3469
+ADC read: 184
+End tick: 3475
+Data from CAN msg: 184, 484
+
+Start tick: 3483
+ADC read: 183
+End tick: 3489
+Data from CAN msg: 183, 483
+
+Start tick: 3497
+ADC read: 184
+End tick: 3503
+Data from CAN msg: 184, 484
+
+Start tick: 3512
+ADC read: 183
+End tick: 3517
+Data from CAN msg: 183, 483
+
+Start tick: 3526
+ADC read: 184
+End tick: 3532
+Data from CAN msg: 184, 484
+
+Start tick: 3540
+ADC read: 184
+End tick: 3546
+Data from CAN msg: 184, 484
+
+Start tick: 3554
+ADC read: 184
+End tick: 3560
+Data from CAN msg: 184, 484
+
+Start tick: 3569
+ADC read: 184
+End tick: 3574
+Data from CAN msg: 184, 484
+
+Start tick: 3583
+ADC read: 183
+End tick: 3588
+Data from CAN msg: 183, 483
+
+Start tick: 3597
+ADC read: 183
+End tick: 3603
+Data from CAN msg: 183, 483
+
+Start tick: 3611
+ADC read: 184
+End tick: 3617
+Data from CAN msg: 184, 484
+
+Start tick: 3625
+ADC read: 184
+End tick: 3631
+Data from CAN msg: 184, 484
+
+Start tick: 3640
+ADC read: 184
+End tick: 3645
+Data from CAN msg: 184, 484
+
+Start tick: 3654
+ADC read: 183
+End tick: 3659
+Data from CAN msg: 183, 483
+
+Start tick: 3668
+ADC read: 184
+End tick: 3674
+Data from CAN msg: 184, 484
+
+Start tick: 3682
+ADC read: 184
+End tick: 3688
+Data from CAN msg: 184, 484
+
+Start tick: 3696
+ADC read: 184
+End tick: 3702
+Data from CAN msg: 184, 484
+
+Start tick: 3711
+ADC read: 184
+End tick: 3716
+Data from CAN msg: 184, 484
+
+Start tick: 3725
+ADC read: 183
+End tick: 3730
+Data from CAN msg: 183, 483
+
+Start tick: 3739
+ADC read: 184
+End tick: 3745
+Data from CAN msg: 184, 484
+
+Start tick: 3753
+ADC read: 183
+End tick: 3759
+Data from CAN msg: 183, 483
+
+Start tick: 3767
+ADC read: 184
+End tick: 3773
+Data from CAN msg: 184, 484
+
+Start tick: 3782
+ADC read: 184
+End tick: 3787
+Data from CAN msg: 184, 484
+
+Start tick: 3796
+ADC read: 184
+End tick: 3802
+Data from CAN msg: 184, 484
+
+Start tick: 3810
+ADC read: 183
+End tick: 3816
+Data from CAN msg: 183, 483
+
+Start tick: 3824
+ADC read: 184
+End tick: 3830
+Data from CAN msg: 184, 484
+
+Start tick: 3838
+ADC read: 184
+End tick: 3844
+Data from CAN msg: 184, 484
+
+Start tick: 3853
+ADC read: 183
+End tick: 3858
+Data from CAN msg: 183, 483
+
+Start tick: 3867
+ADC read: 184
+End tick: 3873
+Data from CAN msg: 184, 484
+
+Start tick: 3881
+ADC read: 183
+End tick: 3887
+Data from CAN msg: 183, 483
+
+Start tick: 3895
+ADC read: 184
+End tick: 3901
+Data from CAN msg: 184, 484
+
+Start tick: 3909
+ADC read: 183
+End tick: 3915
+Data from CAN msg: 183, 483
+
+Start tick: 3924
+ADC read: 184
+End tick: 3929
+Data from CAN msg: 184, 484
+
+Start tick: 3938
+ADC read: 184
+End tick: 3944
+Data from CAN msg: 184, 484
+
+Start tick: 3952
+ADC read: 183
+End tick: 3958
+Data from CAN msg: 183, 483
+
+Start tick: 3966
+ADC read: 184
+End tick: 3972
+Data from CAN msg: 184, 484
+
+Start tick: 3980
+ADC read: 183
+End tick: 3986
+Data from CAN msg: 183, 483
+
+Start tick: 3995
+ADC read: 184
+End tick: 4000
+Data from CAN msg: 184, 484
+
+Start tick: 4009
+ADC read: 184
+End tick: 4015
+Data from CAN msg: 184, 484
+
+Start tick: 4023
+ADC read: 184
+End tick: 4029
+Data from CAN msg: 184, 484
+
+Start tick: 4037
+ADC read: 183
+End tick: 4043
+Data from CAN msg: 183, 483
+
+Start tick: 4051
+ADC read: 184
+End tick: 4057
+Data from CAN msg: 184, 484
+
+Start tick: 4066
+ADC read: 184
+End tick: 4071
+Data from CAN msg: 184, 484
+
+Start tick: 4080
+ADC read: 183
+End tick: 4086
+Data from CAN msg: 183, 483
+
+Start tick: 4094
+ADC read: 184
+End tick: 4100
+Data from CAN msg: 184, 484
+
+Start tick: 4108
+ADC read: 184
+End tick: 4114
+Data from CAN msg: 184, 484
+
+Start tick: 4123
+ADC read: 184
+End tick: 4128
+Data from CAN msg: 184, 484
+
+Start tick: 4137
+ADC read: 183
+End tick: 4142
+Data from CAN msg: 183, 483
+
+Start tick: 4151
+ADC read: 184
+End tick: 4157
+Data from CAN msg: 184, 484
+
+Start tick: 4165
+ADC read: 183
+End tick: 4171
+Data from CAN msg: 183, 483
+
+Start tick: 4179
+ADC read: 184
+End tick: 4185
+Data from CAN msg: 184, 484
+
+Start tick: 4194
+ADC read: 184
+End tick: 4199
+Data from CAN msg: 184, 484
+
+Start tick: 4208
+ADC read: 184
+End tick: 4213
+Data from CAN msg: 184, 484
+
+Start tick: 4222
+ADC read: 183
+End tick: 4228
+Data from CAN msg: 183, 483
+
+Start tick: 4236
+ADC read: 184
+End tick: 4242
+Data from CAN msg: 184, 484
+
+Start tick: 4250
+ADC read: 184
+End tick: 4256
+Data from CAN msg: 184, 484
+
+Start tick: 4265
+ADC read: 184
+End tick: 4270
+Data from CAN msg: 184, 484
+
+Start tick: 4279
+ADC read: 183
+End tick: 4284
+Data from CAN msg: 183, 483
+
+Start tick: 4293
+ADC read: 183
+End tick: 4299
+Data from CAN msg: 183, 483
+
+Start tick: 4307
+ADC read: 184
+End tick: 4313
+Data from CAN msg: 184, 484
+
+Start tick: 4321
+ADC read: 184
+End tick: 4327
+Data from CAN msg: 184, 484
+
+Start tick: 4336
+ADC read: 184
+End tick: 4341
+Data from CAN msg: 184, 484
+
+Start tick: 4350
+ADC read: 184
+End tick: 4355
+Data from CAN msg: 184, 484
+
+Start tick: 4364
+ADC read: 184
+End tick: 4370
+Data from CAN msg: 184, 484
+
+Start tick: 4378
+ADC read: 184
+End tick: 4384
+Data from CAN msg: 184, 484
+
+Start tick: 4392
+ADC read: 183
+End tick: 4398
+Data from CAN msg: 183, 483
+
+Start tick: 4407
+ADC read: 184
+End tick: 4412
+Data from CAN msg: 184, 484
+
+Start tick: 4421
+ADC read: 183
+End tick: 4426
+Data from CAN msg: 183, 483
+
+Start tick: 4435
+ADC read: 184
+End tick: 4441
+Data from CAN msg: 184, 484
+
+Start tick: 4449
+ADC read: 183
+End tick: 4455
+Data from CAN msg: 183, 483
+
+Start tick: 4463
+ADC read: 184
+End tick: 4469
+Data from CAN msg: 184, 484
+
+Start tick: 4478
+ADC read: 184
+End tick: 4483
+Data from CAN msg: 184, 484
+
+Start tick: 4492
+ADC read: 184
+End tick: 4498
+Data from CAN msg: 184, 484
+
+Start tick: 4506
+ADC read: 183
+End tick: 4512
+Data from CAN msg: 183, 483
+
+Start tick: 4520
+ADC read: 184
+End tick: 4526
+Data from CAN msg: 184, 484
+
+Start tick: 4534
+ADC read: 184
+End tick: 4540
+Data from CAN msg: 184, 484
+
+Start tick: 4549
+ADC read: 183
+End tick: 4554
+Data from CAN msg: 183, 483
+
+Start tick: 4563
+ADC read: 184
+End tick: 4569
+Data from CAN msg: 184, 484
+
+Start tick: 4577
+ADC read: 184
+End tick: 4583
+Data from CAN msg: 184, 484
+
+Start tick: 4591
+ADC read: 184
+End tick: 4597
+Data from CAN msg: 184, 484
+
+Start tick: 4605
+ADC read: 184
+End tick: 4611
+Data from CAN msg: 184, 484
+
+Start tick: 4620
+ADC read: 184
+End tick: 4625
+Data from CAN msg: 184, 484
+
+Start tick: 4634
+ADC read: 183
+End tick: 4640
+Data from CAN msg: 183, 483
+
+Start tick: 4648
+ADC read: 184
+End tick: 4654
+Data from CAN msg: 184, 484
+
+Start tick: 4662
+ADC read: 183
+End tick: 4668
+Data from CAN msg: 183, 483
+
+Start tick: 4676
+ADC read: 184
+End tick: 4682
+Data from CAN msg: 184, 484
+
+Start tick: 4691
+ADC read: 183
+End tick: 4696
+Data from CAN msg: 183, 483
+
+Start tick: 4705
+ADC read: 184
+End tick: 4711
+Data from CAN msg: 184, 484
+
+Start tick: 4719
+ADC read: 183
+End tick: 4725
+Data from CAN msg: 183, 483
+
+Start tick: 4733
+ADC read: 184
+End tick: 4739
+Data from CAN msg: 184, 484
+
+Start tick: 4747
+ADC read: 184
+End tick: 4753
+Data from CAN msg: 184, 484
+
+Start tick: 4762
+ADC read: 183
+End tick: 4767
+Data from CAN msg: 183, 483
+
+Start tick: 4776
+ADC read: 184
+End tick: 4782
+Data from CAN msg: 184, 484
+
+Start tick: 4790
+ADC read: 184
+End tick: 4796
+Data from CAN msg: 184, 484
+
+Start tick: 4804
+ADC read: 184
+End tick: 4810
+Data from CAN msg: 184, 484
+
+Start tick: 4819
+ADC read: 183
+End tick: 4824
+Data from CAN msg: 183, 483
+
+Start tick: 4833
+ADC read: 184
+End tick: 4838
+Data from CAN msg: 184, 484
+
+Start tick: 4847
+ADC read: 184
+End tick: 4853
+Data from CAN msg: 184, 484
+
+Start tick: 4861
+ADC read: 184
+End tick: 4867
+Data from CAN msg: 184, 484
+
+Start tick: 4875
+ADC read: 183
+End tick: 4881
+Data from CAN msg: 183, 483
+
+Start tick: 4890
+ADC read: 184
+End tick: 4895
+Data from CAN msg: 184, 484
+
+Start tick: 4904
+ADC read: 184
+End tick: 4909
+Data from CAN msg: 184, 484
+
+Start tick: 4918
+ADC read: 183
+End tick: 4924
+Data from CAN msg: 183, 483
+
+Start tick: 4932
+ADC read: 184
+End tick: 4938
+Data from CAN msg: 184, 484
+
+Start tick: 4946
+ADC read: 183
+End tick: 4952
+Data from CAN msg: 183, 483
+
+Start tick: 4961
+ADC read: 184
+End tick: 4966
+Data from CAN msg: 184, 484
+
+Start tick: 4975
+ADC read: 184
+End tick: 4980
+Data from CAN msg: 184, 484
+
+Start tick: 4989
+ADC read: 184
+End tick: 4995
+Data from CAN msg: 184, 484
+
+Start tick: 5003
+ADC read: 183
+End tick: 5009
+Data from CAN msg: 183, 483
+
+Start tick: 5017
+ADC read: 184
+End tick: 5023
+Data from CAN msg: 184, 484
+
+Start tick: 5032
+ADC read: 184
+End tick: 5037
+Data from CAN msg: 184, 484
+
+Start tick: 5046
+ADC read: 183
+End tick: 5052
+Data from CAN msg: 183, 483
+
+Start tick: 5060
+ADC read: 184
+End tick: 5066
+Data from CAN msg: 184, 484
+
+Start tick: 5074
+ADC read: 184
+End tick: 5080
+Data from CAN msg: 184, 484
+
+Start tick: 5088
+ADC read: 184
+End tick: 5094
+Data from CAN msg: 184, 484
+
+Start tick: 5103
+ADC read: 183
+End tick: 5108
+Data from CAN msg: 183, 483
+
+Start tick: 5117
+ADC read: 184
+End tick: 5123
+Data from CAN msg: 184, 484
+
+Start tick: 5131
+ADC read: 183
+End tick: 5137
+Data from CAN msg: 183, 483
+
+Start tick: 5145
+ADC read: 184
+End tick: 5151
+Data from CAN msg: 184, 484
+
+Start tick: 5159
+ADC read: 184
+End tick: 5165
+Data from CAN msg: 184, 484
+
+Start tick: 5174
+ADC read: 184
+End tick: 5179
+Data from CAN msg: 184, 484
+
+Start tick: 5188
+ADC read: 184
+End tick: 5194
+Data from CAN msg: 184, 484
+
+Start tick: 5202
+ADC read: 184
+End tick: 5208
+Data from CAN msg: 184, 484
+
+Start tick: 5216
+ADC read: 183
+End tick: 5222
+Data from CAN msg: 183, 483
+
+Start tick: 5230
+ADC read: 184
+End tick: 5236
+Data from CAN msg: 184, 484
+
+Start tick: 5245
+ADC read: 183
+End tick: 5250
+Data from CAN msg: 183, 483
+
+Start tick: 5259
+ADC read: 184
+End tick: 5265
+Data from CAN msg: 184, 484
+
+Start tick: 5273
+ADC read: 184
+End tick: 5279
+Data from CAN msg: 184, 484
+
+Start tick: 5287
+ADC read: 184
+End tick: 5293
+Data from CAN msg: 184, 484
+
+Start tick: 5301
+ADC read: 184
+End tick: 5307
+Data from CAN msg: 184, 484
+
+Start tick: 5316
+ADC read: 183
+End tick: 5321
+Data from CAN msg: 183, 483
+
+Start tick: 5330
+ADC read: 184
+End tick: 5336
+Data from CAN msg: 184, 484
+
+Start tick: 5344
+ADC read: 184
+End tick: 5350
+Data from CAN msg: 184, 484
+
+Start tick: 5358
+ADC read: 183
+End tick: 5364
+Data from CAN msg: 183, 483
+
+Start tick: 5372
+ADC read: 184
+End tick: 5378
+Data from CAN msg: 184, 484
+
+Start tick: 5387
+ADC read: 183
+End tick: 5392
+Data from CAN msg: 183, 483
+
+Start tick: 5401
+ADC read: 184
+End tick: 5407
+Data from CAN msg: 184, 484
+
+Start tick: 5415
+ADC read: 184
+End tick: 5421
+Data from CAN msg: 184, 484
+
+Start tick: 5429
+ADC read: 183
+End tick: 5435
+Data from CAN msg: 183, 483
+
+Start tick: 5444
+ADC read: 184
+End tick: 5449
+Data from CAN msg: 184, 484
+
+Start tick: 5458
+ADC read: 184
+End tick: 5463
+Data from CAN msg: 184, 484
+
+Start tick: 5472
+ADC read: 184
+End tick: 5478
+Data from CAN msg: 184, 484
+
+Start tick: 5486
+ADC read: 183
+End tick: 5492
+Data from CAN msg: 183, 483
+
+Start tick: 5500
+ADC read: 184
+End tick: 5506
+Data from CAN msg: 184, 484
+
+Start tick: 5515
+ADC read: 183
+End tick: 5520
+Data from CAN msg: 183, 483
+
+Start tick: 5529
+ADC read: 184
+End tick: 5535
+Data from CAN msg: 184, 484
+
+Start tick: 5543
+ADC read: 183
+End tick: 5549
+Data from CAN msg: 183, 483
+
+Start tick: 5557
+ADC read: 184
+End tick: 5563
+Data from CAN msg: 184, 484
+
+Start tick: 5571
+ADC read: 184
+End tick: 5577
+Data from CAN msg: 184, 484
+
+Start tick: 5586
+ADC read: 184
+End tick: 5591
+Data from CAN msg: 184, 484
+
+Start tick: 5600
+ADC read: 184
+End tick: 5606
+Data from CAN msg: 184, 484
+
+Start tick: 5614
+ADC read: 183
+End tick: 5620
+Data from CAN msg: 183, 483
+
+Start tick: 5628
+ADC read: 184
+End tick: 5634
+Data from CAN msg: 184, 484
+
+Start tick: 5642
+ADC read: 184
+End tick: 5648
+Data from CAN msg: 184, 484
+
+Start tick: 5657
+ADC read: 183
+End tick: 5662
+Data from CAN msg: 183, 483
+
+Start tick: 5671
+ADC read: 184
+End tick: 5677
+Data from CAN msg: 184, 484
+
+Start tick: 5685
+ADC read: 184
+End tick: 5691
+Data from CAN msg: 184, 484
+
+Start tick: 5699
+ADC read: 183
+End tick: 5705
+Data from CAN msg: 183, 483
+
+Start tick: 5713
+ADC read: 184
+End tick: 5719
+Data from CAN msg: 184, 484
+
+Start tick: 5728
+ADC read: 183
+End tick: 5733
+Data from CAN msg: 183, 483
+
+Start tick: 5742
+ADC read: 184
+End tick: 5748
+Data from CAN msg: 184, 484
+
+Start tick: 5756
+ADC read: 183
+End tick: 5762
+Data from CAN msg: 183, 483
+
+Start tick: 5770
+ADC read: 184
+End tick: 5776
+Data from CAN msg: 184, 484
+
+Start tick: 5784
+ADC read: 183
+End tick: 5790
+Data from CAN msg: 183, 483
+
+Start tick: 5799
+ADC read: 184
+End tick: 5804
+Data from CAN msg: 184, 484
+
+Start tick: 5813
+ADC read: 184
+End tick: 5819
+Data from CAN msg: 184, 484
+
+Start tick: 5827
+ADC read: 183
+End tick: 5833
+Data from CAN msg: 183, 483
+
+Start tick: 5841
+ADC read: 184
+End tick: 5847
+Data from CAN msg: 184, 484
+
+Start tick: 5855
+ADC read: 184
+End tick: 5861
+Data from CAN msg: 184, 484
+
+Start tick: 5870
+ADC read: 184
+End tick: 5875
+Data from CAN msg: 184, 484
+
+Start tick: 5884
+ADC read: 183
+End tick: 5890
+Data from CAN msg: 183, 483
+
+Start tick: 5898
+ADC read: 184
+End tick: 5904
+Data from CAN msg: 184, 484
+
+Start tick: 5912
+ADC read: 184
+End tick: 5918
+Data from CAN msg: 184, 484
+
+Start tick: 5927
+ADC read: 184
+End tick: 5932
+Data from CAN msg: 184, 484
+
+Start tick: 5941
+ADC read: 183
+End tick: 5946
+Data from CAN msg: 183, 483
+
+Start tick: 5955
+ADC read: 184
+End tick: 5961
+Data from CAN msg: 184, 484
+
+Start tick: 5969
+ADC read: 184
+End tick: 5975
+Data from CAN msg: 184, 484
+
+Start tick: 5983
+ADC read: 184
+End tick: 5989
+Data from CAN msg: 184, 484
+
+Start tick: 5998
+ADC read: 183
+End tick: 6003
+Data from CAN msg: 183, 483
+
+Start tick: 6012
+ADC read: 183
+End tick: 6017
+Data from CAN msg: 183, 483
+
+Start tick: 6026
+ADC read: 184
+End tick: 6032
+Data from CAN msg: 184, 484
+
+Start tick: 6040
+ADC read: 184
+End tick: 6046
+Data from CAN msg: 184, 484
+
+Start tick: 6054
+ADC read: 184
+End tick: 6060
+Data from CAN msg: 184, 484
+
+Start tick: 6069
+ADC read: 184
+End tick: 6074
+Data from CAN msg: 184, 484
+
+Start tick: 6083
+ADC read: 184
+End tick: 6088
+Data from CAN msg: 184, 484
+
+Start tick: 6097
+ADC read: 183
+End tick: 6103
+Data from CAN msg: 183, 483
+
+Start tick: 6111
+ADC read: 183
+End tick: 6117
+Data from CAN msg: 183, 483
+
+Start tick: 6125
+ADC read: 184
+End tick: 6131
+Data from CAN msg: 184, 484
+
+Start tick: 6140
+ADC read: 184
+End tick: 6145
+Data from CAN msg: 184, 484
+
+Start tick: 6154
+ADC read: 184
+End tick: 6159
+Data from CAN msg: 184, 484
+
+Start tick: 6168
+ADC read: 184
+End tick: 6174
+Data from CAN msg: 184, 484
+
+Start tick: 6182
+ADC read: 183
+End tick: 6188
+Data from CAN msg: 183, 483
+
+Start tick: 6196
+ADC read: 184
+End tick: 6202
+Data from CAN msg: 184, 484
+
+Start tick: 6211
+ADC read: 184
+End tick: 6216
+Data from CAN msg: 184, 484
+
+Start tick: 6225
+ADC read: 183
+End tick: 6230
+Data from CAN msg: 183, 483
+
+Start tick: 6239
+ADC read: 184
+End tick: 6245
+Data from CAN msg: 184, 484
+
+Start tick: 6253
+ADC read: 183
+End tick: 6259
+Data from CAN msg: 183, 483
+
+Start tick: 6267
+ADC read: 184
+End tick: 6273
+Data from CAN msg: 184, 484
+
+Start tick: 6282
+ADC read: 184
+End tick: 6287
+Data from CAN msg: 184, 484
+
+Start tick: 6296
+ADC read: 184
+End tick: 6302
+Data from CAN msg: 184, 484
+
+Start tick: 6310
+ADC read: 183
+End tick: 6316
+Data from CAN msg: 183, 483
+
+Start tick: 6324
+ADC read: 184
+End tick: 6330
+Data from CAN msg: 184, 484
+
+Start tick: 6338
+ADC read: 184
+End tick: 6344
+Data from CAN msg: 184, 484
+
+Start tick: 6353
+ADC read: 184
+End tick: 6358
+Data from CAN msg: 184, 484
+
+Start tick: 6367
+ADC read: 183
+End tick: 6373
+Data from CAN msg: 183, 483
+
+Start tick: 6381
+ADC read: 184
+End tick: 6387
+Data from CAN msg: 184, 484
+
+Start tick: 6395
+ADC read: 184
+End tick: 6401
+Data from CAN msg: 184, 484
+
+Start tick: 6409
+ADC read: 184
+End tick: 6415
+Data from CAN msg: 184, 484
+
+Start tick: 6424
+ADC read: 183
+End tick: 6429
+Data from CAN msg: 183, 483
+
+Start tick: 6438
+ADC read: 183
+End tick: 6444
+Data from CAN msg: 183, 483
+
+Start tick: 6452
+ADC read: 184
+End tick: 6458
+Data from CAN msg: 184, 484
+
+Start tick: 6466
+ADC read: 184
+End tick: 6472
+Data from CAN msg: 184, 484
+
+Start tick: 6480
+ADC read: 183
+End tick: 6486
+Data from CAN msg: 183, 483
+
+Start tick: 6495
+ADC read: 184
+End tick: 6500
+Data from CAN msg: 184, 484
+
+Start tick: 6509
+ADC read: 184
+End tick: 6515
+Data from CAN msg: 184, 484
+
+Start tick: 6523
+ADC read: 183
+End tick: 6529
+Data from CAN msg: 183, 483
+
+Start tick: 6537
+ADC read: 184
+End tick: 6543
+Data from CAN msg: 184, 484
+
+Start tick: 6551
+ADC read: 184
+End tick: 6557
+Data from CAN msg: 184, 484
+
+Start tick: 6566
+ADC read: 183
+End tick: 6571
+Data from CAN msg: 183, 483
+
+Start tick: 6580
+ADC read: 184
+End tick: 6586
+Data from CAN msg: 184, 484
+
+Start tick: 6594
+ADC read: 183
+End tick: 6600
+Data from CAN msg: 183, 483
+
+Start tick: 6608
+ADC read: 184
+End tick: 6614
+Data from CAN msg: 184, 484
+
+Start tick: 6623
+ADC read: 184
+End tick: 6628
+Data from CAN msg: 184, 484
+
+Start tick: 6637
+ADC read: 184
+End tick: 6642
+Data from CAN msg: 184, 484
+
+Start tick: 6651
+ADC read: 183
+End tick: 6657
+Data from CAN msg: 183, 483
+
+Start tick: 6665
+ADC read: 184
+End tick: 6671
+Data from CAN msg: 184, 484
+
+Start tick: 6679
+ADC read: 184
+End tick: 6685
+Data from CAN msg: 184, 484
+
+Start tick: 6694
+ADC read: 184
+End tick: 6699
+Data from CAN msg: 184, 484
+
+Start tick: 6708
+ADC read: 183
+End tick: 6714
+Data from CAN msg: 183, 483
+
+Start tick: 6722
+ADC read: 184
+End tick: 6728
+Data from CAN msg: 184, 484
+
+Start tick: 6736
+ADC read: 184
+End tick: 6742
+Data from CAN msg: 184, 484
+
+Start tick: 6750
+ADC read: 184
+End tick: 6756
+Data from CAN msg: 184, 484
+
+Start tick: 6765
+ADC read: 183
+End tick: 6770
+Data from CAN msg: 183, 483
+
+Start tick: 6779
+ADC read: 183
+End tick: 6785
+Data from CAN msg: 183, 483
+
+Start tick: 6793
+ADC read: 184
+End tick: 6799
+Data from CAN msg: 184, 484
+
+Start tick: 6807
+ADC read: 184
+End tick: 6813
+Data from CAN msg: 184, 484
+
+Start tick: 6821
+ADC read: 183
+End tick: 6827
+Data from CAN msg: 183, 483
+
+Start tick: 6836
+ADC read: 184
+End tick: 6841
+Data from CAN msg: 184, 484
+
+Start tick: 6850
+ADC read: 184
+End tick: 6856
+Data from CAN msg: 184, 484
+
+Start tick: 6864
+ADC read: 183
+End tick: 6870
+Data from CAN msg: 183, 483
+
+Start tick: 6878
+ADC read: 184
+End tick: 6884
+Data from CAN msg: 184, 484
+
+Start tick: 6892
+ADC read: 184
+End tick: 6898
+Data from CAN msg: 184, 484
+
+Start tick: 6907
+ADC read: 183
+End tick: 6912
+Data from CAN msg: 183, 483
+
+Start tick: 6921
+ADC read: 184
+End tick: 6927
+Data from CAN msg: 184, 484
+
+Start tick: 6935
+ADC read: 184
+End tick: 6941
+Data from CAN msg: 184, 484
+
+Start tick: 6949
+ADC read: 184
+End tick: 6955
+Data from CAN msg: 184, 484
+
+Start tick: 6963
+ADC read: 184
+End tick: 6969
+Data from CAN msg: 184, 484
+
+Start tick: 6978
+ADC read: 183
+End tick: 6983
+Data from CAN msg: 183, 483
+
+Start tick: 6992
+ADC read: 184
+End tick: 6998
+Data from CAN msg: 184, 484
+
+Start tick: 7006
+ADC read: 183
+End tick: 7012
+Data from CAN msg: 183, 483
+
+Start tick: 7020
+ADC read: 184
+End tick: 7026
+Data from CAN msg: 184, 484
+
+Start tick: 7034
+ADC read: 184
+End tick: 7040
+Data from CAN msg: 184, 484
+
+Start tick: 7049
+ADC read: 184
+End tick: 7054
+Data from CAN msg: 184, 484
+
+Start tick: 7063
+ADC read: 184
+End tick: 7069
+Data from CAN msg: 184, 484
+
+Start tick: 7077
+ADC read: 183
+End tick: 7083
+Data from CAN msg: 183, 483
+
+Start tick: 7091
+ADC read: 183
+End tick: 7097
+Data from CAN msg: 183, 483
+
+Start tick: 7106
+ADC read: 184
+End tick: 7111
+Data from CAN msg: 184, 484
+
+Start tick: 7120
+ADC read: 183
+End tick: 7125
+Data from CAN msg: 183, 483
+
+Start tick: 7134
+ADC read: 184
+End tick: 7140
+Data from CAN msg: 184, 484
+
+Start tick: 7148
+ADC read: 184
+End tick: 7154
+Data from CAN msg: 184, 484
+
+Start tick: 7162
+ADC read: 184
+End tick: 7168
+Data from CAN msg: 184, 484
+
+Start tick: 7177
+ADC read: 183
+End tick: 7182
+Data from CAN msg: 183, 483
+
+Start tick: 7191
+ADC read: 184
+End tick: 7196
+Data from CAN msg: 184, 484
+
+Start tick: 7205
+ADC read: 184
+End tick: 7211
+Data from CAN msg: 184, 484
+
+Start tick: 7219
+ADC read: 184
+End tick: 7225
+Data from CAN msg: 184, 484
+
+Start tick: 7233
+ADC read: 184
+End tick: 7239
+Data from CAN msg: 184, 484
+
+Start tick: 7248
+ADC read: 183
+End tick: 7253
+Data from CAN msg: 183, 483
+
+Start tick: 7262
+ADC read: 184
+End tick: 7267
+Data from CAN msg: 184, 484
+
+Start tick: 7276
+ADC read: 183
+End tick: 7282
+Data from CAN msg: 183, 483
+
+Start tick: 7290
+ADC read: 184
+End tick: 7296
+Data from CAN msg: 184, 484
+
+Start tick: 7304
+ADC read: 184
+End tick: 7310
+Data from CAN msg: 184, 484
+
+Start tick: 7319
+ADC read: 183
+End tick: 7324
+Data from CAN msg: 183, 483
+
+Start tick: 7333
+ADC read: 184
+End tick: 7338
+Data from CAN msg: 184, 484
+
+Start tick: 7347
+ADC read: 184
+End tick: 7353
+Data from CAN msg: 184, 484
+
+Start tick: 7361
+ADC read: 183
+End tick: 7367
+Data from CAN msg: 183, 483
+
+Start tick: 7375
+ADC read: 184
+End tick: 7381
+Data from CAN msg: 184, 484
+
+Start tick: 7390
+ADC read: 183
+End tick: 7395
+Data from CAN msg: 183, 483
+
+Start tick: 7404
+ADC read: 183
+End tick: 7409
+Data from CAN msg: 183, 483
+
+Start tick: 7418
+ADC read: 184
+End tick: 7424
+Data from CAN msg: 184, 484
+
+Start tick: 7432
+ADC read: 184
+End tick: 7438
+Data from CAN msg: 184, 484
+
+Start tick: 7446
+ADC read: 184
+End tick: 7452
+Data from CAN msg: 184, 484
+
+Start tick: 7461
+ADC read: 183
+End tick: 7466
+Data from CAN msg: 183, 483
+
+Start tick: 7475
+ADC read: 184
+End tick: 7481
+Data from CAN msg: 184, 484
+
+Start tick: 7489
+ADC read: 184
+End tick: 7495
+Data from CAN msg: 184, 484
+
+Start tick: 7503
+ADC read: 183
+End tick: 7509
+Data from CAN msg: 183, 483
+
+Start tick: 7517
+ADC read: 184
+End tick: 7523
+Data from CAN msg: 184, 484
+
+Start tick: 7532
+ADC read: 184
+End tick: 7537
+Data from CAN msg: 184, 484
+
+Start tick: 7546
+ADC read: 184
+End tick: 7552
+Data from CAN msg: 184, 484
+
+Start tick: 7560
+ADC read: 183
+End tick: 7566
+Data from CAN msg: 183, 483
+
+Start tick: 7574
+ADC read: 184
+End tick: 7580
+Data from CAN msg: 184, 484
+
+Start tick: 7588
+ADC read: 183
+End tick: 7594
+Data from CAN msg: 183, 483
+
+Start tick: 7603
+ADC read: 184
+End tick: 7608
+Data from CAN msg: 184, 484
+
+Start tick: 7617
+ADC read: 183
+End tick: 7623
+Data from CAN msg: 183, 483
+
+Start tick: 7631
+ADC read: 184
+End tick: 7637
+Data from CAN msg: 184, 484
+
+Start tick: 7645
+ADC read: 184
+End tick: 7651
+Data from CAN msg: 184, 484
+
+Start tick: 7659
+ADC read: 184
+End tick: 7665
+Data from CAN msg: 184, 484
+
+Start tick: 7674
+ADC read: 184
+End tick: 7679
+Data from CAN msg: 184, 484
+
+Start tick: 7688
+ADC read: 184
+End tick: 7694
+Data from CAN msg: 184, 484
+
+Start tick: 7702
+ADC read: 183
+End tick: 7708
+Data from CAN msg: 183, 483
+
+Start tick: 7716
+ADC read: 184
+End tick: 7722
+Data from CAN msg: 184, 484
+
+Start tick: 7730
+ADC read: 183
+End tick: 7736
+Data from CAN msg: 183, 483
+
+Start tick: 7745
+ADC read: 184
+End tick: 7750
+Data from CAN msg: 184, 484
+
+Start tick: 7759
+ADC read: 184
+End tick: 7765
+Data from CAN msg: 184, 484
+
+Start tick: 7773
+ADC read: 184
+End tick: 7779
+Data from CAN msg: 184, 484
+
+Start tick: 7787
+ADC read: 183
+End tick: 7793
+Data from CAN msg: 183, 483
+
+Start tick: 7801
+ADC read: 183
+End tick: 7807
+Data from CAN msg: 183, 483
+
+Start tick: 7816
+ADC read: 184
+End tick: 7821
+Data from CAN msg: 184, 484
+
+Start tick: 7830
+ADC read: 184
+End tick: 7836
+Data from CAN msg: 184, 484
+
+Start tick: 7844
+ADC read: 184
+End tick: 7850
+Data from CAN msg: 184, 484
+
+Start tick: 7858
+ADC read: 183
+End tick: 7864
+Data from CAN msg: 183, 483
+
+Start tick: 7872
+ADC read: 184
+End tick: 7878
+Data from CAN msg: 184, 484
+
+Start tick: 7887
+ADC read: 183
+End tick: 7892
+Data from CAN msg: 183, 483
+
+Start tick: 7901
+ADC read: 184
+End tick: 7907
+Data from CAN msg: 184, 484
+
+Start tick: 7915
+ADC read: 184
+End tick: 7921
+Data from CAN msg: 184, 484
+
+Start tick: 7929
+ADC read: 183
+End tick: 7935
+Data from CAN msg: 183, 483
+
+Start tick: 7943
+ADC read: 184
+End tick: 7949
+Data from CAN msg: 184, 484
+
+Start tick: 7958
+ADC read: 184
+End tick: 7963
+Data from CAN msg: 184, 484
+
+Start tick: 7972
+ADC read: 183
+End tick: 7978
+Data from CAN msg: 183, 483
+
+Start tick: 7986
+ADC read: 184
+End tick: 7992
+Data from CAN msg: 184, 484
+
+Start tick: 8000
+ADC read: 183
+End tick: 8006
+Data from CAN msg: 183, 483
+
+Start tick: 8015
+ADC read: 184
+End tick: 8020
+Data from CAN msg: 184, 484
+
+Start tick: 8029
+ADC read: 183
+End tick: 8034
+Data from CAN msg: 183, 483
+
+Start tick: 8043
+ADC read: 184
+End tick: 8049
+Data from CAN msg: 184, 484
+
+Start tick: 8057
+ADC read: 184
+End tick: 8063
+Data from CAN msg: 184, 484
+
+Start tick: 8071
+ADC read: 184
+End tick: 8077
+Data from CAN msg: 184, 484
+
+Start tick: 8086
+ADC read: 184
+End tick: 8091
+Data from CAN msg: 184, 484
+
+Start tick: 8100
+ADC read: 183
+End tick: 8105
+Data from CAN msg: 183, 483
+
+Start tick: 8114
+ADC read: 184
+End tick: 8120
+Data from CAN msg: 184, 484
+
+Start tick: 8128
+ADC read: 184
+End tick: 8134
+Data from CAN msg: 184, 484
+
+Start tick: 8142
+ADC read: 183
+End tick: 8148
+Data from CAN msg: 183, 483
+
+Start tick: 8157
+ADC read: 184
+End tick: 8162
+Data from CAN msg: 184, 484
+
+Start tick: 8171
+ADC read: 184
+End tick: 8176
+Data from CAN msg: 184, 484
+
+Start tick: 8185
+ADC read: 184
+End tick: 8191
+Data from CAN msg: 184, 484
+
+Start tick: 8199
+ADC read: 183
+End tick: 8205
+Data from CAN msg: 183, 483
+
+Start tick: 8213
+ADC read: 184
+End tick: 8219
+Data from CAN msg: 184, 484
+
+Start tick: 8228
+ADC read: 184
+End tick: 8233
+Data from CAN msg: 184, 484
+
+Start tick: 8242
+ADC read: 183
+End tick: 8248
+Data from CAN msg: 183, 483
+
+Start tick: 8256
+ADC read: 183
+End tick: 8262
+Data from CAN msg: 183, 483
+
+Start tick: 8270
+ADC read: 184
+End tick: 8276
+Data from CAN msg: 184, 484
+
+Start tick: 8284
+ADC read: 183
+End tick: 8290
+Data from CAN msg: 183, 483
+
+Start tick: 8299
+ADC read: 184
+End tick: 8304
+Data from CAN msg: 184, 484
+
+Start tick: 8313
+ADC read: 184
+End tick: 8319
+Data from CAN msg: 184, 484
+
+Start tick: 8327
+ADC read: 183
+End tick: 8333
+Data from CAN msg: 183, 483
+
+Start tick: 8341
+ADC read: 184
+End tick: 8347
+Data from CAN msg: 184, 484
+
+Start tick: 8355
+ADC read: 183
+End tick: 8361
+Data from CAN msg: 183, 483
+
+Start tick: 8370
+ADC read: 184
+End tick: 8375
+Data from CAN msg: 184, 484
+
+Start tick: 8384
+ADC read: 184
+End tick: 8390
+Data from CAN msg: 184, 484
+
+Start tick: 8398
+ADC read: 184
+End tick: 8404
+Data from CAN msg: 184, 484
+
+Start tick: 8412
+ADC read: 184
+End tick: 8418
+Data from CAN msg: 184, 484
+
+Start tick: 8426
+ADC read: 184
+End tick: 8432
+Data from CAN msg: 184, 484
+
+Start tick: 8441
+ADC read: 183
+End tick: 8446
+Data from CAN msg: 183, 483
+
+Start tick: 8455
+ADC read: 183
+End tick: 8461
+Data from CAN msg: 183, 483
+
+Start tick: 8469
+ADC read: 184
+End tick: 8475
+Data from CAN msg: 184, 484
+
+Start tick: 8483
+ADC read: 184
+End tick: 8489
+Data from CAN msg: 184, 484
+
+Start tick: 8498
+ADC read: 183
+End tick: 8503
+Data from CAN msg: 183, 483
+
+Start tick: 8512
+ADC read: 184
+End tick: 8517
+Data from CAN msg: 184, 484
+
+Start tick: 8526
+ADC read: 184
+End tick: 8532
+Data from CAN msg: 184, 484
+
+Start tick: 8540
+ADC read: 183
+End tick: 8546
+Data from CAN msg: 183, 483
+
+Start tick: 8554
+ADC read: 184
+End tick: 8560
+Data from CAN msg: 184, 484
+
+Start tick: 8569
+ADC read: 184
+End tick: 8574
+Data from CAN msg: 184, 484
+
+Start tick: 8583
+ADC read: 184
+End tick: 8588
+Data from CAN msg: 184, 484
+
+Start tick: 8597
+ADC read: 184
+End tick: 8603
+Data from CAN msg: 184, 484
+
+Start tick: 8611
+ADC read: 183
+End tick: 8617
+Data from CAN msg: 183, 483
+
+Start tick: 8625
+ADC read: 183
+End tick: 8631
+Data from CAN msg: 183, 483
+
+Start tick: 8640
+ADC read: 184
+End tick: 8645
+Data from CAN msg: 184, 484
+
+Start tick: 8654
+ADC read: 184
+End tick: 8660
+Data from CAN msg: 184, 484
+
+Start tick: 8668
+ADC read: 183
+End tick: 8674
+Data from CAN msg: 183, 483
+
+Start tick: 8682
+ADC read: 184
+End tick: 8688
+Data from CAN msg: 184, 484
+
+Start tick: 8696
+ADC read: 184
+End tick: 8702
+Data from CAN msg: 184, 484
+
+Start tick: 8711
+ADC read: 184
+End tick: 8716
+Data from CAN msg: 184, 484
+
+Start tick: 8725
+ADC read: 184
+End tick: 8731
+Data from CAN msg: 184, 484
+
+Start tick: 8739
+ADC read: 183
+End tick: 8745
+Data from CAN msg: 183, 483
+
+Start tick: 8753
+ADC read: 184
+End tick: 8759
+Data from CAN msg: 184, 484
+
+Start tick: 8767
+ADC read: 183
+End tick: 8773
+Data from CAN msg: 183, 483
+
+Start tick: 8782
+ADC read: 184
+End tick: 8787
+Data from CAN msg: 184, 484
+
+Start tick: 8796
+ADC read: 183
+End tick: 8802
+Data from CAN msg: 183, 483
+
+Start tick: 8810
+ADC read: 184
+End tick: 8816
+Data from CAN msg: 184, 484
+
+Start tick: 8824
+ADC read: 184
+End tick: 8830
+Data from CAN msg: 184, 484
+
+Start tick: 8838
+ADC read: 183
+End tick: 8844
+Data from CAN msg: 183, 483
+
+Start tick: 8853
+ADC read: 184
+End tick: 8858
+Data from CAN msg: 184, 484
+
+Start tick: 8867
+ADC read: 183
+End tick: 8873
+Data from CAN msg: 183, 483
+
+Start tick: 8881
+ADC read: 184
+End tick: 8887
+Data from CAN msg: 184, 484
+
+Start tick: 8895
+ADC read: 184
+End tick: 8901
+Data from CAN msg: 184, 484
+
+Start tick: 8909
+ADC read: 183
+End tick: 8915
+Data from CAN msg: 183, 483
+
+Start tick: 8924
+ADC read: 184
+End tick: 8929
+Data from CAN msg: 184, 484
+
+Start tick: 8938
+ADC read: 183
+End tick: 8944
+Data from CAN msg: 183, 483
+
+Start tick: 8952
+ADC read: 184
+End tick: 8958
+Data from CAN msg: 184, 484
+
+Start tick: 8966
+ADC read: 183
+End tick: 8972
+Data from CAN msg: 183, 483
+
+Start tick: 8981
+ADC read: 184
+End tick: 8986
+Data from CAN msg: 184, 484
+
+Start tick: 8995
+ADC read: 184
+End tick: 9000
+Data from CAN msg: 184, 484
+
+Start tick: 9009
+ADC read: 184
+End tick: 9015
+Data from CAN msg: 184, 484
+
+Start tick: 9023
+ADC read: 184
+End tick: 9029
+Data from CAN msg: 184, 484
+
+Start tick: 9037
+ADC read: 183
+End tick: 9043
+Data from CAN msg: 183, 483
+
+Start tick: 9052
+ADC read: 184
+End tick: 9057
+Data from CAN msg: 184, 484
+
+Start tick: 9066
+ADC read: 183
+End tick: 9071
+Data from CAN msg: 183, 483
+
+Start tick: 9080
+ADC read: 184
+End tick: 9086
+Data from CAN msg: 184, 484
+
+Start tick: 9094
+ADC read: 184
+End tick: 9100
+Data from CAN msg: 184, 484
+
+Start tick: 9108
+ADC read: 183
+End tick: 9114
+Data from CAN msg: 183, 483
+
+Start tick: 9123
+ADC read: 184
+End tick: 9128
+Data from CAN msg: 184, 484
+
+Start tick: 9137
+ADC read: 183
+End tick: 9143
+Data from CAN msg: 183, 483
+
+Start tick: 9151
+ADC read: 184
+End tick: 9157
+Data from CAN msg: 184, 484
+
+Start tick: 9165
+ADC read: 184
+End tick: 9171
+Data from CAN msg: 184, 484
+
+Start tick: 9179
+ADC read: 184
+End tick: 9185
+Data from CAN msg: 184, 484
+
+Start tick: 9194
+ADC read: 183
+End tick: 9199
+Data from CAN msg: 183, 483
+
+Start tick: 9208
+ADC read: 184
+End tick: 9214
+Data from CAN msg: 184, 484
+
+Start tick: 9222
+ADC read: 183
+End tick: 9228
+Data from CAN msg: 183, 483
+
+Start tick: 9236
+ADC read: 184
+End tick: 9242
+Data from CAN msg: 184, 484
+
+Start tick: 9250
+ADC read: 183
+End tick: 9256
+Data from CAN msg: 183, 483
+
+Start tick: 9265
+ADC read: 184
+End tick: 9270
+Data from CAN msg: 184, 484
+
+Start tick: 9279
+ADC read: 184
+End tick: 9285
+Data from CAN msg: 184, 484
+
+Start tick: 9293
+ADC read: 184
+End tick: 9299
+Data from CAN msg: 184, 484
+
+Start tick: 9307
+ADC read: 183
+End tick: 9313
+Data from CAN msg: 183, 483
+
+Start tick: 9321
+ADC read: 184
+End tick: 9327
+Data from CAN msg: 184, 484
+
+Start tick: 9336
+ADC read: 184
+End tick: 9341
+Data from CAN msg: 184, 484
+
+Start tick: 9350
+ADC read: 183
+End tick: 9356
+Data from CAN msg: 183, 483
+
+Start tick: 9364
+ADC read: 184
+End tick: 9370
+Data from CAN msg: 184, 484
+
+Start tick: 9378
+ADC read: 184
+End tick: 9384
+Data from CAN msg: 184, 484
+
+Start tick: 9393
+ADC read: 183
+End tick: 9398
+Data from CAN msg: 183, 483
+
+Start tick: 9407
+ADC read: 184
+End tick: 9412
+Data from CAN msg: 184, 484
+
+Start tick: 9421
+ADC read: 184
+End tick: 9427
+Data from CAN msg: 184, 484
+
+Start tick: 9435
+ADC read: 183
+End tick: 9441
+Data from CAN msg: 183, 483
+
+Start tick: 9449
+ADC read: 184
+End tick: 9455
+Data from CAN msg: 184, 484
+
+Start tick: 9464
+ADC read: 184
+End tick: 9469
+Data from CAN msg: 184, 484
+
+Start tick: 9478
+ADC read: 183
+End tick: 9483
+Data from CAN msg: 183, 483
+
+Start tick: 9492
+ADC read: 184
+End tick: 9498
+Data from CAN msg: 184, 484
+
+Start tick: 9506
+ADC read: 184
+End tick: 9512
+Data from CAN msg: 184, 484
+
+Start tick: 9520
+ADC read: 183
+End tick: 9526
+Data from CAN msg: 183, 483
+
+Start tick: 9535
+ADC read: 184
+End tick: 9540
+Data from CAN msg: 184, 484
+
+Start tick: 9549
+ADC read: 184
+End tick: 9554
+Data from CAN msg: 184, 484
+
+Start tick: 9563
+ADC read: 184
+End tick: 9569
+Data from CAN msg: 184, 484
+
+Start tick: 9577
+ADC read: 183
+End tick: 9583
+Data from CAN msg: 183, 483
+
+Start tick: 9591
+ADC read: 184
+End tick: 9597
+Data from CAN msg: 184, 484
+
+Start tick: 9606
+ADC read: 183
+End tick: 9611
+Data from CAN msg: 183, 483
+
+Start tick: 9620
+ADC read: 184
+End tick: 9626
+Data from CAN msg: 184, 484
+
+Start tick: 9634
+ADC read: 183
+End tick: 9640
+Data from CAN msg: 183, 483
+
+Start tick: 9648
+ADC read: 184
+End tick: 9654
+Data from CAN msg: 184, 484
+
+Start tick: 9662
+ADC read: 184
+End tick: 9668
+Data from CAN msg: 184, 484
+
+Start tick: 9677
+ADC read: 183
+End tick: 9682
+Data from CAN msg: 183, 483
+
+Start tick: 9691
+ADC read: 184
+End tick: 9697
+Data from CAN msg: 184, 484
+
+Start tick: 9705
+ADC read: 183
+End tick: 9711
+Data from CAN msg: 183, 483
+
+Start tick: 9719
+ADC read: 184
+End tick: 9725
+Data from CAN msg: 184, 484
+
+Start tick: 9733
+ADC read: 184
+End tick: 9739
+Data from CAN msg: 184, 484
+
+Start tick: 9748
+ADC read: 183
+End tick: 9753
+Data from CAN msg: 183, 483
+
+Start tick: 9762
+ADC read: 184
+End tick: 9768
+Data from CAN msg: 184, 484
+
+Start tick: 9776
+ADC read: 184
+End tick: 9782
+Data from CAN msg: 184, 484
+
+Start tick: 9790
+ADC read: 184
+End tick: 9796
+Data from CAN msg: 184, 484
+
+Start tick: 9805
+ADC read: 184
+End tick: 9810
+Data from CAN msg: 184, 484
+
+Start tick: 9819
+ADC read: 183
+End tick: 9824
+Data from CAN msg: 183, 483
+
+Start tick: 9833
+ADC read: 183
+End tick: 9839
+Data from CAN msg: 183, 483
+
+Start tick: 9847
+ADC read: 184
+End tick: 9853
+Data from CAN msg: 184, 484
+
+Start tick: 9861
+ADC read: 184
+End tick: 9867
+Data from CAN msg: 184, 484
+
+Start tick: 9876
+ADC read: 183
+End tick: 9881
+Data from CAN msg: 183, 483
+
+Start tick: 9890
+ADC read: 184
+End tick: 9895
+Data from CAN msg: 184, 484
+
+Start tick: 9904
+ADC read: 183
+End tick: 9910
+Data from CAN msg: 183, 483
+
+Start tick: 9918
+ADC read: 184
+End tick: 9924
+Data from CAN msg: 184, 484
+
+Start tick: 9932
+ADC read: 184
+End tick: 9938
+Data from CAN msg: 184, 484
+
+Start tick: 9947
+ADC read: 183
+End tick: 9952
+Data from CAN msg: 183, 483
+
+Start tick: 9961
+ADC read: 183
+End tick: 9966
+Data from CAN msg: 183, 483
+
+Start tick: 9975
+ADC read: 184
+End tick: 9981
+Data from CAN msg: 184, 484
+
+Start tick: 9989
+ADC read: 184
+End tick: 9995
+Data from CAN msg: 184, 484
+
+Start tick: 10003
+ADC read: 183
+End tick: 10009
+Data from CAN msg: 183, 483
+
+Start tick: 10018
+ADC read: 184
+End tick: 10024
+Data from CAN msg: 184, 484
+
+Start tick: 10032
+ADC read: 183
+End tick: 10038
+Data from CAN msg: 183, 483
+
+Start tick: 10047
+ADC read: 184
+End tick: 10053
+Data from CAN msg: 184, 484
+
+Start tick: 10062
+ADC read: 184
+End tick: 10067
+Data from CAN msg: 184, 484
+
+Start tick: 10076
+ADC read: 183
+End tick: 10082
+Data from CAN msg: 183, 483
+
+Start tick: 10091
+ADC read: 183
+End tick: 10097
+Data from CAN msg: 183, 483
+
+Start tick: 10105
+ADC read: 183
+End tick: 10111
+Data from CAN msg: 183, 483
+
+Start tick: 10120
+ADC read: 183
+End tick: 10126
+Data from CAN msg: 183, 483
+
+Start tick: 10134
+ADC read: 184
+End tick: 10140
+Data from CAN msg: 184, 484
+
+Start tick: 10149
+ADC read: 184
+End tick: 10155
+Data from CAN msg: 184, 484
+
+Start tick: 10164
+ADC read: 183
+End tick: 10169
+Data from CAN msg: 183, 483
+
+Start tick: 10178
+ADC read: 183
+End tick: 10184
+Data from CAN msg: 183, 483
+
+Start tick: 10193
+ADC read: 183
+End tick: 10199
+Data from CAN msg: 183, 483
+
+Start tick: 10207
+ADC read: 184
+End tick: 10213
+Data from CAN msg: 184, 484
+
+Start tick: 10222
+ADC read: 183
+End tick: 10228
+Data from CAN msg: 183, 483
+
+Start tick: 10236
+ADC read: 183
+End tick: 10242
+Data from CAN msg: 183, 483
+
+Start tick: 10251
+ADC read: 184
+End tick: 10257
+Data from CAN msg: 184, 484
+
+Start tick: 10265
+ADC read: 184
+End tick: 10271
+Data from CAN msg: 184, 484
+
+Start tick: 10280
+ADC read: 183
+End tick: 10286
+Data from CAN msg: 183, 483
+
+Start tick: 10295
+ADC read: 183
+End tick: 10300
+Data from CAN msg: 183, 483
+
+Start tick: 10309
+ADC read: 184
+End tick: 10315
+Data from CAN msg: 184, 484
+
+Start tick: 10324
+ADC read: 184
+End tick: 10330
+Data from CAN msg: 184, 484
+
+Start tick: 10338
+ADC read: 183
+End tick: 10344
+Data from CAN msg: 183, 483
+
+Start tick: 10353
+ADC read: 183
+End tick: 10359
+Data from CAN msg: 183, 483
+
+Start tick: 10367
+ADC read: 183
+End tick: 10373
+Data from CAN msg: 183, 483
+
+Start tick: 10382
+ADC read: 183
+End tick: 10388
+Data from CAN msg: 183, 483
+
+Start tick: 10396
+ADC read: 184
+End tick: 10402
+Data from CAN msg: 184, 484
+
+Start tick: 10411
+ADC read: 184
+End tick: 10417
+Data from CAN msg: 184, 484
+
+Start tick: 10426
+ADC read: 183
+End tick: 10431
+Data from CAN msg: 183, 483
+
+Start tick: 10440
+ADC read: 184
+End tick: 10446
+Data from CAN msg: 184, 484
+
+Start tick: 10455
+ADC read: 183
+End tick: 10461
+Data from CAN msg: 183, 483
+
+Start tick: 10469
+ADC read: 184
+End tick: 10475
+Data from CAN msg: 184, 484
+
+Start tick: 10484
+ADC read: 183
+End tick: 10490
+Data from CAN msg: 183, 483
+
+Start tick: 10498
+ADC read: 183
+End tick: 10504
+Data from CAN msg: 183, 483
+
+Start tick: 10513
+ADC read: 184
+End tick: 10519
+Data from CAN msg: 184, 484
+
+Start tick: 10527
+ADC read: 183
+End tick: 10533
+Data from CAN msg: 183, 483
+
+Start tick: 10542
+ADC read: 184
+End tick: 10548
+Data from CAN msg: 184, 484
+
+Start tick: 10557
+ADC read: 183
+End tick: 10562
+Data from CAN msg: 183, 483
+
+Start tick: 10571
+ADC read: 183
+End tick: 10577
+Data from CAN msg: 183, 483
+
+Start tick: 10586
+ADC read: 184
+End tick: 10591
+Data from CAN msg: 184, 484
+
+Start tick: 10600
+ADC read: 183
+End tick: 10606
+Data from CAN msg: 183, 483
+
+Start tick: 10615
+ADC read: 183
+End tick: 10621
+Data from CAN msg: 183, 483
+
+Start tick: 10629
+ADC read: 183
+End tick: 10635
+Data from CAN msg: 183, 483
+
+Start tick: 10644
+ADC read: 184
+End tick: 10650
+Data from CAN msg: 184, 484
+
+Start tick: 10658
+ADC read: 184
+End tick: 10664
+Data from CAN msg: 184, 484
+
+Start tick: 10673
+ADC read: 183
+End tick: 10679
+Data from CAN msg: 183, 483
+
+Start tick: 10688
+ADC read: 183
+End tick: 10693
+Data from CAN msg: 183, 483
+
+Start tick: 10702
+ADC read: 184
+End tick: 10708
+Data from CAN msg: 184, 484
+
+Start tick: 10717
+ADC read: 183
+End tick: 10722
+Data from CAN msg: 183, 483
+
+Start tick: 10731
+ADC read: 184
+End tick: 10737
+Data from CAN msg: 184, 484
+
+Start tick: 10746
+ADC read: 183
+End tick: 10752
+Data from CAN msg: 183, 483
+
+Start tick: 10760
+ADC read: 183
+End tick: 10766
+Data from CAN msg: 183, 483
+
+Start tick: 10775
+ADC read: 183
+End tick: 10781
+Data from CAN msg: 183, 483
+
+Start tick: 10789
+ADC read: 184
+End tick: 10795
+Data from CAN msg: 184, 484
+
+Start tick: 10804
+ADC read: 183
+End tick: 10810
+Data from CAN msg: 183, 483
+
+Start tick: 10818
+ADC read: 183
+End tick: 10824
+Data from CAN msg: 183, 483
+
+Start tick: 10833
+ADC read: 184
+End tick: 10839
+Data from CAN msg: 184, 484
+
+Start tick: 10848
+ADC read: 183
+End tick: 10853
+Data from CAN msg: 183, 483
+
+Start tick: 10862
+ADC read: 183
+End tick: 10868
+Data from CAN msg: 183, 483
+
+Start tick: 10877
+ADC read: 184
+End tick: 10883
+Data from CAN msg: 184, 484
+
+Start tick: 10891
+ADC read: 184
+End tick: 10897
+Data from CAN msg: 184, 484
+
+Start tick: 10906
+ADC read: 183
+End tick: 10912
+Data from CAN msg: 183, 483
+
+Start tick: 10920
+ADC read: 183
+End tick: 10926
+Data from CAN msg: 183, 483
+
+Start tick: 10935
+ADC read: 184
+End tick: 10941
+Data from CAN msg: 184, 484
+
+Start tick: 10949
+ADC read: 183
+End tick: 10955
+Data from CAN msg: 183, 483
+
+Start tick: 10964
+ADC read: 183
+End tick: 10970
+Data from CAN msg: 183, 483
+
+Start tick: 10979
+ADC read: 183
+End tick: 10984
+Data from CAN msg: 183, 483
+
+Start tick: 10993
+ADC read: 184
+End tick: 10999
+Data from CAN msg: 184, 484
+
+Start tick: 11008
+ADC read: 183
+End tick: 11014
+Data from CAN msg: 183, 483
+
+Start tick: 11022
+ADC read: 184
+End tick: 11028
+Data from CAN msg: 184, 484
+
+Start tick: 11037
+ADC read: 184
+End tick: 11043
+Data from CAN msg: 184, 484
+
+Start tick: 11051
+ADC read: 183
+End tick: 11057
+Data from CAN msg: 183, 483
+
+Start tick: 11066
+ADC read: 183
+End tick: 11072
+Data from CAN msg: 183, 483
+
+Start tick: 11080
+ADC read: 183
+End tick: 11086
+Data from CAN msg: 183, 483
+
+Start tick: 11095
+ADC read: 183
+End tick: 11101
+Data from CAN msg: 183, 483
+
+Start tick: 11110
+ADC read: 184
+End tick: 11115
+Data from CAN msg: 184, 484
+
+Start tick: 11124
+ADC read: 183
+End tick: 11130
+Data from CAN msg: 183, 483
+
+Start tick: 11139
+ADC read: 184
+End tick: 11145
+Data from CAN msg: 184, 484
+
+Start tick: 11153
+ADC read: 184
+End tick: 11159
+Data from CAN msg: 184, 484
+
+Start tick: 11168
+ADC read: 183
+End tick: 11174
+Data from CAN msg: 183, 483
+
+Start tick: 11182
+ADC read: 183
+End tick: 11188
+Data from CAN msg: 183, 483
+
+Start tick: 11197
+ADC read: 183
+End tick: 11203
+Data from CAN msg: 183, 483
+
+Start tick: 11211
+ADC read: 184
+End tick: 11217
+Data from CAN msg: 184, 484
+
+Start tick: 11226
+ADC read: 184
+End tick: 11232
+Data from CAN msg: 184, 484
+
+Start tick: 11240
+ADC read: 183
+End tick: 11246
+Data from CAN msg: 183, 483
+
+Start tick: 11255
+ADC read: 183
+End tick: 11261
+Data from CAN msg: 183, 483
+
+Start tick: 11270
+ADC read: 184
+End tick: 11275
+Data from CAN msg: 184, 484
+
+Start tick: 11284
+ADC read: 183
+End tick: 11290
+Data from CAN msg: 183, 483
+
+Start tick: 11299
+ADC read: 184
+End tick: 11305
+Data from CAN msg: 184, 484
+
+Start tick: 11313
+ADC read: 183
+End tick: 11319
+Data from CAN msg: 183, 483
+
+Start tick: 11328
+ADC read: 183
+End tick: 11334
+Data from CAN msg: 183, 483
+
+Start tick: 11342
+ADC read: 184
+End tick: 11348
+Data from CAN msg: 184, 484
+
+Start tick: 11357
+ADC read: 183
+End tick: 11363
+Data from CAN msg: 183, 483
+
+Start tick: 11371
+ADC read: 183
+End tick: 11377
+Data from CAN msg: 183, 483
+
+Start tick: 11386
+ADC read: 183
+End tick: 11392
+Data from CAN msg: 183, 483
+
+Start tick: 11401
+ADC read: 184
+End tick: 11406
+Data from CAN msg: 184, 484
+
+Start tick: 11415
+ADC read: 183
+End tick: 11421
+Data from CAN msg: 183, 483
+
+Start tick: 11430
+ADC read: 184
+End tick: 11436
+Data from CAN msg: 184, 484
+
+Start tick: 11444
+ADC read: 183
+End tick: 11450
+Data from CAN msg: 183, 483
+
+Start tick: 11459
+ADC read: 183
+End tick: 11465
+Data from CAN msg: 183, 483
+
+Start tick: 11473
+ADC read: 184
+End tick: 11479
+Data from CAN msg: 184, 484
+
+Start tick: 11488
+ADC read: 183
+End tick: 11494
+Data from CAN msg: 183, 483
+
+Start tick: 11502
+ADC read: 184
+End tick: 11508
+Data from CAN msg: 184, 484
+
+Start tick: 11517
+ADC read: 183
+End tick: 11523
+Data from CAN msg: 183, 483
+
+Start tick: 11532
+ADC read: 183
+End tick: 11537
+Data from CAN msg: 183, 483
+
+Start tick: 11546
+ADC read: 184
+End tick: 11552
+Data from CAN msg: 184, 484
+
+Start tick: 11561
+ADC read: 183
+End tick: 11567
+Data from CAN msg: 183, 483
+
+Start tick: 11575
+ADC read: 183
+End tick: 11581
+Data from CAN msg: 183, 483
+
+Start tick: 11590
+ADC read: 183
+End tick: 11596
+Data from CAN msg: 183, 483
+
+Start tick: 11604
+ADC read: 184
+End tick: 11610
+Data from CAN msg: 184, 484
+
+Start tick: 11619
+ADC read: 184
+End tick: 11625
+Data from CAN msg: 184, 484
+
+Start tick: 11633
+ADC read: 184
+End tick: 11639
+Data from CAN msg: 184, 484
+
+Start tick: 11648
+ADC read: 183
+End tick: 11654
+Data from CAN msg: 183, 483
+
+Start tick: 11662
+ADC read: 183
+End tick: 11668
+Data from CAN msg: 183, 483
+
+Start tick: 11677
+ADC read: 183
+End tick: 11683
+Data from CAN msg: 183, 483
+
+Start tick: 11692
+ADC read: 184
+End tick: 11697
+Data from CAN msg: 184, 484
+
+Start tick: 11706
+ADC read: 183
+End tick: 11712
+Data from CAN msg: 183, 483
+
+Start tick: 11721
+ADC read: 183
+End tick: 11727
+Data from CAN msg: 183, 483
+
+Start tick: 11735
+ADC read: 184
+End tick: 11741
+Data from CAN msg: 184, 484
+
+Start tick: 11750
+ADC read: 184
+End tick: 11756
+Data from CAN msg: 184, 484
+
+Start tick: 11764
+ADC read: 183
+End tick: 11770
+Data from CAN msg: 183, 483
+
+Start tick: 11779
+ADC read: 183
+End tick: 11785
+Data from CAN msg: 183, 483
+
+Start tick: 11793
+ADC read: 184
+End tick: 11799
+Data from CAN msg: 184, 484
+
+Start tick: 11808
+ADC read: 183
+End tick: 11814
+Data from CAN msg: 183, 483
+
+Start tick: 11823
+ADC read: 183
+End tick: 11828
+Data from CAN msg: 183, 483
+
+Start tick: 11837
+ADC read: 183
+End tick: 11843
+Data from CAN msg: 183, 483
+
+Start tick: 11852
+ADC read: 184
+End tick: 11858
+Data from CAN msg: 184, 484
+
+Start tick: 11866
+ADC read: 184
+End tick: 11872
+Data from CAN msg: 184, 484
+
+Start tick: 11881
+ADC read: 183
+End tick: 11887
+Data from CAN msg: 183, 483
+
+Start tick: 11895
+ADC read: 183
+End tick: 11901
+Data from CAN msg: 183, 483
+
+Start tick: 11910
+ADC read: 183
+End tick: 11916
+Data from CAN msg: 183, 483
+
+Start tick: 11924
+ADC read: 183
+End tick: 11930
+Data from CAN msg: 183, 483
+
+Start tick: 11939
+ADC read: 184
+End tick: 11945
+Data from CAN msg: 184, 484
+
+Start tick: 11953
+ADC read: 183
+End tick: 11959
+Data from CAN msg: 183, 483
+
+Start tick: 11968
+ADC read: 184
+End tick: 11974
+Data from CAN msg: 184, 484
+
+Start tick: 11983
+ADC read: 183
+End tick: 11988
+Data from CAN msg: 183, 483
+
+Start tick: 11997
+ADC read: 183
+End tick: 12003
+Data from CAN msg: 183, 483
+
+Start tick: 12012
+ADC read: 183
+End tick: 12018
+Data from CAN msg: 183, 483
+
+Start tick: 12026
+ADC read: 184
+End tick: 12032
+Data from CAN msg: 184, 484
+
+Start tick: 12041
+ADC read: 184
+End tick: 12047
+Data from CAN msg: 184, 484
+
+Start tick: 12055
+ADC read: 183
+End tick: 12061
+Data from CAN msg: 183, 483
+
+Start tick: 12070
+ADC read: 183
+End tick: 12076
+Data from CAN msg: 183, 483
+
+Start tick: 12084
+ADC read: 184
+End tick: 12090
+Data from CAN msg: 184, 484
+
+Start tick: 12099
+ADC read: 183
+End tick: 12105
+Data from CAN msg: 183, 483
+
+Start tick: 12114
+ADC read: 183
+End tick: 12119
+Data from CAN msg: 183, 483
+
+Start tick: 12128
+ADC read: 184
+End tick: 12134
+Data from CAN msg: 184, 484
+
+Start tick: 12143
+ADC read: 183
+End tick: 12149
+Data from CAN msg: 183, 483
+
+Start tick: 12157
+ADC read: 183
+End tick: 12163
+Data from CAN msg: 183, 483
+
+Start tick: 12172
+ADC read: 183
+End tick: 12178
+Data from CAN msg: 183, 483
+
+Start tick: 12186
+ADC read: 184
+End tick: 12192
+Data from CAN msg: 184, 484
+
+Start tick: 12201
+ADC read: 184
+End tick: 12207
+Data from CAN msg: 184, 484
+
+Start tick: 12215
+ADC read: 183
+End tick: 12221
+Data from CAN msg: 183, 483
+
+Start tick: 12230
+ADC read: 183
+End tick: 12236
+Data from CAN msg: 183, 483
+
+Start tick: 12245
+ADC read: 184
+End tick: 12250
+Data from CAN msg: 184, 484
+
+Start tick: 12259
+ADC read: 183
+End tick: 12265
+Data from CAN msg: 183, 483
+
+Start tick: 12274
+ADC read: 184
+End tick: 12279
+Data from CAN msg: 184, 484
+
+Start tick: 12288
+ADC read: 183
+End tick: 12294
+Data from CAN msg: 183, 483
+
+Start tick: 12303
+ADC read: 183
+End tick: 12309
+Data from CAN msg: 183, 483
+
+Start tick: 12317
+ADC read: 183
+End tick: 12323
+Data from CAN msg: 183, 483
+
+Start tick: 12332
+ADC read: 183
+End tick: 12338
+Data from CAN msg: 183, 483
+
+Start tick: 12346
+ADC read: 184
+End tick: 12352
+Data from CAN msg: 184, 484
+
+Start tick: 12361
+ADC read: 183
+End tick: 12367
+Data from CAN msg: 183, 483
+
+Start tick: 12375
+ADC read: 184
+End tick: 12381
+Data from CAN msg: 184, 484
+
+Start tick: 12390
+ADC read: 183
+End tick: 12396
+Data from CAN msg: 183, 483
+
+Start tick: 12405
+ADC read: 184
+End tick: 12410
+Data from CAN msg: 184, 484
+
+Start tick: 12419
+ADC read: 183
+End tick: 12425
+Data from CAN msg: 183, 483
+
+Start tick: 12434
+ADC read: 183
+End tick: 12440
+Data from CAN msg: 183, 483
+
+Start tick: 12448
+ADC read: 183
+End tick: 12454
+Data from CAN msg: 183, 483
+
+Start tick: 12463
+ADC read: 183
+End tick: 12469
+Data from CAN msg: 183, 483
+
+Start tick: 12477
+ADC read: 184
+End tick: 12483
+Data from CAN msg: 184, 484
+
+Start tick: 12492
+ADC read: 183
+End tick: 12498
+Data from CAN msg: 183, 483
+
+Start tick: 12506
+ADC read: 184
+End tick: 12512
+Data from CAN msg: 184, 484
+
+Start tick: 12521
+ADC read: 183
+End tick: 12527
+Data from CAN msg: 183, 483
+
+Start tick: 12536
+ADC read: 184
+End tick: 12541
+Data from CAN msg: 184, 484
+
+Start tick: 12550
+ADC read: 184
+End tick: 12556
+Data from CAN msg: 184, 484
+
+Start tick: 12565
+ADC read: 183
+End tick: 12571
+Data from CAN msg: 183, 483
+
+Start tick: 12579
+ADC read: 183
+End tick: 12585
+Data from CAN msg: 183, 483
+
+Start tick: 12594
+ADC read: 183
+End tick: 12600
+Data from CAN msg: 183, 483
+
+Start tick: 12608
+ADC read: 183
+End tick: 12614
+Data from CAN msg: 183, 483
+
+Start tick: 12623
+ADC read: 184
+End tick: 12629
+Data from CAN msg: 184, 484
+
+Start tick: 12637
+ADC read: 183
+End tick: 12643
+Data from CAN msg: 183, 483
+
+Start tick: 12652
+ADC read: 184
+End tick: 12658
+Data from CAN msg: 184, 484
+
+Start tick: 12667
+ADC read: 183
+End tick: 12672
+Data from CAN msg: 183, 483
+
+Start tick: 12681
+ADC read: 183
+End tick: 12687
+Data from CAN msg: 183, 483
+
+Start tick: 12696
+ADC read: 184
+End tick: 12701
+Data from CAN msg: 184, 484
+
+Start tick: 12710
+ADC read: 183
+End tick: 12716
+Data from CAN msg: 183, 483
+
+Start tick: 12725
+ADC read: 183
+End tick: 12731
+Data from CAN msg: 183, 483
+
+Start tick: 12739
+ADC read: 184
+End tick: 12745
+Data from CAN msg: 184, 484
+
+Start tick: 12754
+ADC read: 183
+End tick: 12760
+Data from CAN msg: 183, 483
+
+Start tick: 12768
+ADC read: 184
+End tick: 12774
+Data from CAN msg: 184, 484
+
+Start tick: 12783
+ADC read: 183
+End tick: 12789
+Data from CAN msg: 183, 483
+
+Start tick: 12798
+ADC read: 184
+End tick: 12803
+Data from CAN msg: 184, 484
+
+Start tick: 12812
+ADC read: 183
+End tick: 12818
+Data from CAN msg: 183, 483
+
+Start tick: 12827
+ADC read: 183
+End tick: 12833
+Data from CAN msg: 183, 483
+
+Start tick: 12841
+ADC read: 184
+End tick: 12847
+Data from CAN msg: 184, 484
+
+Start tick: 12856
+ADC read: 183
+End tick: 12862
+Data from CAN msg: 183, 483
+
+Start tick: 12870
+ADC read: 183
+End tick: 12876
+Data from CAN msg: 183, 483
+
+Start tick: 12885
+ADC read: 184
+End tick: 12891
+Data from CAN msg: 184, 484
+
+Start tick: 12899
+ADC read: 183
+End tick: 12905
+Data from CAN msg: 183, 483
+
+Start tick: 12914
+ADC read: 183
+End tick: 12920
+Data from CAN msg: 183, 483
+
+Start tick: 12929
+ADC read: 183
+End tick: 12934
+Data from CAN msg: 183, 483
+
+Start tick: 12943
+ADC read: 184
+End tick: 12949
+Data from CAN msg: 184, 484
+
+Start tick: 12958
+ADC read: 184
+End tick: 12963
+Data from CAN msg: 184, 484
+
+Start tick: 12972
+ADC read: 183
+End tick: 12978
+Data from CAN msg: 183, 483
+
+Start tick: 12987
+ADC read: 183
+End tick: 12993
+Data from CAN msg: 183, 483
+
+Start tick: 13001
+ADC read: 183
+End tick: 13007
+Data from CAN msg: 183, 483
+
+Start tick: 13016
+ADC read: 184
+End tick: 13022
+Data from CAN msg: 184, 484
+
+Start tick: 13030
+ADC read: 183
+End tick: 13036
+Data from CAN msg: 183, 483
+
+Start tick: 13045
+ADC read: 183
+End tick: 13051
+Data from CAN msg: 183, 483
+
+Start tick: 13059
+ADC read: 184
+End tick: 13065
+Data from CAN msg: 184, 484
+
+Start tick: 13074
+ADC read: 183
+End tick: 13080
+Data from CAN msg: 183, 483
+
+Start tick: 13089
+ADC read: 184
+End tick: 13094
+Data from CAN msg: 184, 484
+
+Start tick: 13103
+ADC read: 183
+End tick: 13109
+Data from CAN msg: 183, 483
+
+Start tick: 13118
+ADC read: 183
+End tick: 13124
+Data from CAN msg: 183, 483
+
+Start tick: 13132
+ADC read: 184
+End tick: 13138
+Data from CAN msg: 184, 484
+
+Start tick: 13147
+ADC read: 183
+End tick: 13153
+Data from CAN msg: 183, 483
+
+Start tick: 13161
+ADC read: 183
+End tick: 13167
+Data from CAN msg: 183, 483
+
+Start tick: 13176
+ADC read: 183
+End tick: 13182
+Data from CAN msg: 183, 483
+
+Start tick: 13190
+ADC read: 184
+End tick: 13196
+Data from CAN msg: 184, 484
+
+Start tick: 13205
+ADC read: 183
+End tick: 13211
+Data from CAN msg: 183, 483
+
+Start tick: 13220
+ADC read: 184
+End tick: 13225
+Data from CAN msg: 184, 484
+
+Start tick: 13234
+ADC read: 184
+End tick: 13240
+Data from CAN msg: 184, 484
+
+Start tick: 13249
+ADC read: 183
+End tick: 13254
+Data from CAN msg: 183, 483
+
+Start tick: 13263
+ADC read: 183
+End tick: 13269
+Data from CAN msg: 183, 483
+
+Start tick: 13278
+ADC read: 183
+End tick: 13284
+Data from CAN msg: 183, 483
+
+Start tick: 13292
+ADC read: 183
+End tick: 13298
+Data from CAN msg: 183, 483
+
+Start tick: 13307
+ADC read: 183
+End tick: 13313
+Data from CAN msg: 183, 483
+
+Start tick: 13321
+ADC read: 184
+End tick: 13327
+Data from CAN msg: 184, 484
+
+Start tick: 13336
+ADC read: 184
+End tick: 13342
+Data from CAN msg: 184, 484
+
+Start tick: 13350
+ADC read: 183
+End tick: 13356
+Data from CAN msg: 183, 483
+
+Start tick: 13365
+ADC read: 183
+End tick: 13371
+Data from CAN msg: 183, 483
+
+Start tick: 13380
+ADC read: 184
+End tick: 13385
+Data from CAN msg: 184, 484
+
+Start tick: 13394
+ADC read: 183
+End tick: 13400
+Data from CAN msg: 183, 483
+
+Start tick: 13409
+ADC read: 184
+End tick: 13415
+Data from CAN msg: 184, 484
+
+Start tick: 13423
+ADC read: 183
+End tick: 13429
+Data from CAN msg: 183, 483
+
+Start tick: 13438
+ADC read: 183
+End tick: 13444
+Data from CAN msg: 183, 483
+
+Start tick: 13452
+ADC read: 183
+End tick: 13458
+Data from CAN msg: 183, 483
+
+Start tick: 13467
+ADC read: 184
+End tick: 13473
+Data from CAN msg: 184, 484
+
+Start tick: 13481
+ADC read: 183
+End tick: 13487
+Data from CAN msg: 183, 483
+
+Start tick: 13496
+ADC read: 183
+End tick: 13502
+Data from CAN msg: 183, 483
+
+Start tick: 13510
+ADC read: 184
+End tick: 13516
+Data from CAN msg: 184, 484
+
+Start tick: 13525
+ADC read: 184
+End tick: 13531
+Data from CAN msg: 184, 484
+
+Start tick: 13540
+ADC read: 184
+End tick: 13545
+Data from CAN msg: 184, 484
+
+Start tick: 13554
+ADC read: 183
+End tick: 13560
+Data from CAN msg: 183, 483
+
+Start tick: 13569
+ADC read: 183
+End tick: 13575
+Data from CAN msg: 183, 483
+
+Start tick: 13583
+ADC read: 183
+End tick: 13589
+Data from CAN msg: 183, 483
+
+Start tick: 13598
+ADC read: 183
+End tick: 13604
+Data from CAN msg: 183, 483
+
+Start tick: 13612
+ADC read: 184
+End tick: 13618
+Data from CAN msg: 184, 484
+
+Start tick: 13627
+ADC read: 183
+End tick: 13633
+Data from CAN msg: 183, 483
+
+Start tick: 13641
+ADC read: 184
+End tick: 13647
+Data from CAN msg: 184, 484
+
+Start tick: 13656
+ADC read: 183
+End tick: 13662
+Data from CAN msg: 183, 483
+
+Start tick: 13671
+ADC read: 184
+End tick: 13676
+Data from CAN msg: 184, 484
+
+Start tick: 13685
+ADC read: 183
+End tick: 13691
+Data from CAN msg: 183, 483
+
+Start tick: 13700
+ADC read: 183
+End tick: 13706
+Data from CAN msg: 183, 483
+
+Start tick: 13714
+ADC read: 184
+End tick: 13720
+Data from CAN msg: 184, 484
+
+Start tick: 13729
+ADC read: 183
+End tick: 13735
+Data from CAN msg: 183, 483
+
+Start tick: 13743
+ADC read: 183
+End tick: 13749
+Data from CAN msg: 183, 483
+
+Start tick: 13758
+ADC read: 183
+End tick: 13764
+Data from CAN msg: 183, 483
+
+Start tick: 13772
+ADC read: 184
+End tick: 13778
+Data from CAN msg: 184, 484
+
+Start tick: 13787
+ADC read: 184
+End tick: 13793
+Data from CAN msg: 184, 484
+
+Start tick: 13802
+ADC read: 183
+End tick: 13807
+Data from CAN msg: 183, 483
+
+Start tick: 13816
+ADC read: 183
+End tick: 13822
+Data from CAN msg: 183, 483
+
+Start tick: 13831
+ADC read: 184
+End tick: 13836
+Data from CAN msg: 184, 484
+
+Start tick: 13845
+ADC read: 184
+End tick: 13851
+Data from CAN msg: 184, 484
+
+Start tick: 13860
+ADC read: 183
+End tick: 13866
+Data from CAN msg: 183, 483
+
+Start tick: 13874
+ADC read: 183
+End tick: 13880
+Data from CAN msg: 183, 483
+
+Start tick: 13889
+ADC read: 183
+End tick: 13895
+Data from CAN msg: 183, 483
+
+Start tick: 13903
+ADC read: 183
+End tick: 13909
+Data from CAN msg: 183, 483
+
+Start tick: 13918
+ADC read: 184
+End tick: 13924
+Data from CAN msg: 184, 484
+
+Start tick: 13932
+ADC read: 183
+End tick: 13938
+Data from CAN msg: 183, 483
+
+Start tick: 13947
+ADC read: 184
+End tick: 13953
+Data from CAN msg: 184, 484
+
+Start tick: 13962
+ADC read: 183
+End tick: 13968
+Data from CAN msg: 183, 483
+
+Start tick: 13976
+ADC read: 183
+End tick: 13982
+Data from CAN msg: 183, 483
+
+Start tick: 13991
+ADC read: 184
+End tick: 13997
+Data from CAN msg: 184, 484
+
+Start tick: 14005
+ADC read: 183
+End tick: 14011
+Data from CAN msg: 183, 483
+
+Start tick: 14020
+ADC read: 184
+End tick: 14026
+Data from CAN msg: 184, 484
+
+Start tick: 14034
+ADC read: 183
+End tick: 14040
+Data from CAN msg: 183, 483
+
+Start tick: 14049
+ADC read: 184
+End tick: 14055
+Data from CAN msg: 184, 484
+
+Start tick: 14063
+ADC read: 183
+End tick: 14069
+Data from CAN msg: 183, 483
+
+Start tick: 14078
+ADC read: 183
+End tick: 14084
+Data from CAN msg: 183, 483
+
+Start tick: 14093
+ADC read: 184
+End tick: 14098
+Data from CAN msg: 184, 484
+
+Start tick: 14107
+ADC read: 182
+End tick: 14113
+Data from CAN msg: 182, 482
+
+Start tick: 14122
+ADC read: 182
+End tick: 14128
+Data from CAN msg: 182, 482
+
+Start tick: 14136
+ADC read: 182
+End tick: 14142
+Data from CAN msg: 182, 482
+
+Start tick: 14151
+ADC read: 182
+End tick: 14157
+Data from CAN msg: 182, 482
+
+Start tick: 14165
+ADC read: 182
+End tick: 14171
+Data from CAN msg: 182, 482
+
+Start tick: 14180
+ADC read: 182
+End tick: 14186
+Data from CAN msg: 182, 482
+
+Start tick: 14194
+ADC read: 182
+End tick: 14200
+Data from CAN msg: 182, 482
+
+Start tick: 14209
+ADC read: 182
+End tick: 14215
+Data from CAN msg: 182, 482
+
+Start tick: 14223
+ADC read: 183
+End tick: 14229
+Data from CAN msg: 183, 483
+
+Start tick: 14238
+ADC read: 183
+End tick: 14244
+Data from CAN msg: 183, 483
+
+Start tick: 14253
+ADC read: 183
+End tick: 14258
+Data from CAN msg: 183, 483
+
+Start tick: 14267
+ADC read: 183
+End tick: 14273
+Data from CAN msg: 183, 483
+
+Start tick: 14282
+ADC read: 184
+End tick: 14288
+Data from CAN msg: 184, 484
+
+Start tick: 14296
+ADC read: 183
+End tick: 14302
+Data from CAN msg: 183, 483
+
+Start tick: 14311
+ADC read: 183
+End tick: 14317
+Data from CAN msg: 183, 483
+
+Start tick: 14325
+ADC read: 183
+End tick: 14331
+Data from CAN msg: 183, 483
+
+Start tick: 14340
+ADC read: 183
+End tick: 14346
+Data from CAN msg: 183, 483
+
+Start tick: 14354
+ADC read: 184
+End tick: 14360
+Data from CAN msg: 184, 484
+
+Start tick: 14369
+ADC read: 184
+End tick: 14375
+Data from CAN msg: 184, 484
+
+Start tick: 14384
+ADC read: 183
+End tick: 14389
+Data from CAN msg: 183, 483
+
+Start tick: 14398
+ADC read: 184
+End tick: 14404
+Data from CAN msg: 184, 484
+
+Start tick: 14413
+ADC read: 183
+End tick: 14419
+Data from CAN msg: 183, 483
+
+Start tick: 14427
+ADC read: 183
+End tick: 14433
+Data from CAN msg: 183, 483
+
+Start tick: 14442
+ADC read: 183
+End tick: 14448
+Data from CAN msg: 183, 483
+
+Start tick: 14456
+ADC read: 183
+End tick: 14462
+Data from CAN msg: 183, 483
+
+Start tick: 14471
+ADC read: 184
+End tick: 14477
+Data from CAN msg: 184, 484
+
+Start tick: 14485
+ADC read: 183
+End tick: 14491
+Data from CAN msg: 183, 483
+
+Start tick: 14500
+ADC read: 184
+End tick: 14506
+Data from CAN msg: 184, 484
+
+Start tick: 14515
+ADC read: 183
+End tick: 14520
+Data from CAN msg: 183, 483
+
+Start tick: 14529
+ADC read: 184
+End tick: 14535
+Data from CAN msg: 184, 484
+
+Start tick: 14544
+ADC read: 183
+End tick: 14550
+Data from CAN msg: 183, 483
+
+Start tick: 14558
+ADC read: 184
+End tick: 14564
+Data from CAN msg: 184, 484
+
+Start tick: 14573
+ADC read: 183
+End tick: 14579
+Data from CAN msg: 183, 483
+
+Start tick: 14587
+ADC read: 183
+End tick: 14593
+Data from CAN msg: 183, 483
+
+Start tick: 14602
+ADC read: 183
+End tick: 14608
+Data from CAN msg: 183, 483
+
+Start tick: 14616
+ADC read: 184
+End tick: 14622
+Data from CAN msg: 184, 484
+
+Start tick: 14631
+ADC read: 184
+End tick: 14637
+Data from CAN msg: 184, 484
+
+Start tick: 14646
+ADC read: 183
+End tick: 14651
+Data from CAN msg: 183, 483
+
+Start tick: 14660
+ADC read: 183
+End tick: 14666
+Data from CAN msg: 183, 483
+
+Start tick: 14675
+ADC read: 183
+End tick: 14680
+Data from CAN msg: 183, 483
+
+Start tick: 14689
+ADC read: 183
+End tick: 14695
+Data from CAN msg: 183, 483
+
+Start tick: 14704
+ADC read: 184
+End tick: 14710
+Data from CAN msg: 184, 484
+
+Start tick: 14718
+ADC read: 183
+End tick: 14724
+Data from CAN msg: 183, 483
+
+Start tick: 14733
+ADC read: 183
+End tick: 14739
+Data from CAN msg: 183, 483
+
+Start tick: 14747
+ADC read: 183
+End tick: 14753
+Data from CAN msg: 183, 483
+
+Start tick: 14762
+ADC read: 184
+End tick: 14768
+Data from CAN msg: 184, 484
+
+Start tick: 14776
+ADC read: 183
+End tick: 14782
+Data from CAN msg: 183, 483
+
+Start tick: 14791
+ADC read: 184
+End tick: 14797
+Data from CAN msg: 184, 484
+
+Start tick: 14806
+ADC read: 183
+End tick: 14811
+Data from CAN msg: 183, 483
+
+Start tick: 14820
+ADC read: 184
+End tick: 14826
+Data from CAN msg: 184, 484
+
+Start tick: 14835
+ADC read: 183
+End tick: 14841
+Data from CAN msg: 183, 483
+
+Start tick: 14849
+ADC read: 183
+End tick: 14855
+Data from CAN msg: 183, 483
+
+Start tick: 14864
+ADC read: 184
+End tick: 14870
+Data from CAN msg: 184, 484
+
+Start tick: 14878
+ADC read: 183
+End tick: 14884
+Data from CAN msg: 183, 483
+
+Start tick: 14893
+ADC read: 184
+End tick: 14899
+Data from CAN msg: 184, 484
+
+Start tick: 14907
+ADC read: 183
+End tick: 14913
+Data from CAN msg: 183, 483
+
+Start tick: 14922
+ADC read: 183
+End tick: 14928
+Data from CAN msg: 183, 483
+
+Start tick: 14937
+ADC read: 183
+End tick: 14942
+Data from CAN msg: 183, 483
+
+Start tick: 14951
+ADC read: 184
+End tick: 14957
+Data from CAN msg: 184, 484
+
+Start tick: 14966
+ADC read: 183
+End tick: 14972
+Data from CAN msg: 183, 483
+
+Start tick: 14980
+ADC read: 184
+End tick: 14986
+Data from CAN msg: 184, 484
+
+Start tick: 14995
+ADC read: 183
+End tick: 15001
+Data from CAN msg: 183, 483
+
+Start tick: 15009
+ADC read: 183
+End tick: 15015
+Data from CAN msg: 183, 483
+
+Start tick: 15024
+ADC read: 184
+End tick: 15030
+Data from CAN msg: 184, 484
+
+Start tick: 15038
+ADC read: 184
+End tick: 15044
+Data from CAN msg: 184, 484
+
+Start tick: 15053
+ADC read: 183
+End tick: 15059
+Data from CAN msg: 183, 483
+
+Start tick: 15068
+ADC read: 183
+End tick: 15073
+Data from CAN msg: 183, 483
+
+Start tick: 15082
+ADC read: 183
+End tick: 15088
+Data from CAN msg: 183, 483
+
+Start tick: 15097
+ADC read: 183
+End tick: 15103
+Data from CAN msg: 183, 483
+
+Start tick: 15111
+ADC read: 184
+End tick: 15117
+Data from CAN msg: 184, 484
+
+Start tick: 15126
+ADC read: 183
+End tick: 15132
+Data from CAN msg: 183, 483
+
+Start tick: 15140
+ADC read: 183
+End tick: 15146
+Data from CAN msg: 183, 483
+
+Start tick: 15155
+ADC read: 184
+End tick: 15161
+Data from CAN msg: 184, 484
+
+Start tick: 15169
+ADC read: 183
+End tick: 15175
+Data from CAN msg: 183, 483
+
+Start tick: 15184
+ADC read: 184
+End tick: 15190
+Data from CAN msg: 184, 484
+
+Start tick: 15198
+ADC read: 183
+End tick: 15204
+Data from CAN msg: 183, 483
+
+Start tick: 15213
+ADC read: 183
+End tick: 15219
+Data from CAN msg: 183, 483
+
+Start tick: 15228
+ADC read: 184
+End tick: 15233
+Data from CAN msg: 184, 484
+
+Start tick: 15242
+ADC read: 184
+End tick: 15248
+Data from CAN msg: 184, 484
+
+Start tick: 15257
+ADC read: 183
+End tick: 15263
+Data from CAN msg: 183, 483
+
+Start tick: 15271
+ADC read: 184
+End tick: 15277
+Data from CAN msg: 184, 484
+
+Start tick: 15286
+ADC read: 183
+End tick: 15292
+Data from CAN msg: 183, 483
+
+Start tick: 15300
+ADC read: 183
+End tick: 15306
+Data from CAN msg: 183, 483
+
+Start tick: 15315
+ADC read: 183
+End tick: 15321
+Data from CAN msg: 183, 483
+
+Start tick: 15329
+ADC read: 183
+End tick: 15335
+Data from CAN msg: 183, 483
+
+Start tick: 15344
+ADC read: 184
+End tick: 15350
+Data from CAN msg: 184, 484
+
+Start tick: 15359
+ADC read: 184
+End tick: 15364
+Data from CAN msg: 184, 484
+
+Start tick: 15373
+ADC read: 183
+End tick: 15379
+Data from CAN msg: 183, 483
+
+Start tick: 15388
+ADC read: 183
+End tick: 15394
+Data from CAN msg: 183, 483
+
+Start tick: 15402
+ADC read: 183
+End tick: 15408
+Data from CAN msg: 183, 483
+
+Start tick: 15417
+ADC read: 184
+End tick: 15423
+Data from CAN msg: 184, 484
+
+Start tick: 15431
+ADC read: 184
+End tick: 15437
+Data from CAN msg: 184, 484
+
+Start tick: 15446
+ADC read: 183
+End tick: 15452
+Data from CAN msg: 183, 483
+
+Start tick: 15460
+ADC read: 183
+End tick: 15466
+Data from CAN msg: 183, 483
+
+Start tick: 15475
+ADC read: 183
+End tick: 15481
+Data from CAN msg: 183, 483
+
+Start tick: 15490
+ADC read: 184
+End tick: 15495
+Data from CAN msg: 184, 484
+
+Start tick: 15504
+ADC read: 183
+End tick: 15510
+Data from CAN msg: 183, 483
+
+Start tick: 15519
+ADC read: 184
+End tick: 15525
+Data from CAN msg: 184, 484
+
+Start tick: 15533
+ADC read: 183
+End tick: 15539
+Data from CAN msg: 183, 483
+
+Start tick: 15548
+ADC read: 183
+End tick: 15554
+Data from CAN msg: 183, 483
+
+Start tick: 15562
+ADC read: 184
+End tick: 15568
+Data from CAN msg: 184, 484
+
+Start tick: 15577
+ADC read: 183
+End tick: 15583
+Data from CAN msg: 183, 483
+
+Start tick: 15591
+ADC read: 183
+End tick: 15597
+Data from CAN msg: 183, 483
+
+Start tick: 15606
+ADC read: 184
+End tick: 15612
+Data from CAN msg: 184, 484
+
+Start tick: 15621
+ADC read: 183
+End tick: 15626
+Data from CAN msg: 183, 483
+
+Start tick: 15635
+ADC read: 183
+End tick: 15641
+Data from CAN msg: 183, 483
+
+Start tick: 15650
+ADC read: 183
+End tick: 15656
+Data from CAN msg: 183, 483
+
+Start tick: 15664
+ADC read: 184
+End tick: 15670
+Data from CAN msg: 184, 484
+
+Start tick: 15679
+ADC read: 183
+End tick: 15685
+Data from CAN msg: 183, 483
+
+Start tick: 15693
+ADC read: 184
+End tick: 15699
+Data from CAN msg: 184, 484
+
+Start tick: 15708
+ADC read: 183
+End tick: 15714
+Data from CAN msg: 183, 483
+
+Start tick: 15722
+ADC read: 184
+End tick: 15728
+Data from CAN msg: 184, 484
+
+Start tick: 15737
+ADC read: 183
+End tick: 15743
+Data from CAN msg: 183, 483
+
+Start tick: 15752
+ADC read: 184
+End tick: 15757
+Data from CAN msg: 184, 484
+
+Start tick: 15766
+ADC read: 183
+End tick: 15772
+Data from CAN msg: 183, 483
+
+Start tick: 15781
+ADC read: 184
+End tick: 15787
+Data from CAN msg: 184, 484
+
+Start tick: 15795
+ADC read: 183
+End tick: 15801
+Data from CAN msg: 183, 483
+
+Start tick: 15810
+ADC read: 183
+End tick: 15816
+Data from CAN msg: 183, 483
+
+Start tick: 15824
+ADC read: 183
+End tick: 15830
+Data from CAN msg: 183, 483
+
+Start tick: 15839
+ADC read: 183
+End tick: 15845
+Data from CAN msg: 183, 483
+
+Start tick: 15853
+ADC read: 184
+End tick: 15859
+Data from CAN msg: 184, 484
+
+Start tick: 15868
+ADC read: 183
+End tick: 15874
+Data from CAN msg: 183, 483
+
+Start tick: 15883
+ADC read: 184
+End tick: 15888
+Data from CAN msg: 184, 484
+
+Start tick: 15897
+ADC read: 183
+End tick: 15903
+Data from CAN msg: 183, 483
+
+Start tick: 15912
+ADC read: 184
+End tick: 15917
+Data from CAN msg: 184, 484
+
+Start tick: 15926
+ADC read: 183
+End tick: 15932
+Data from CAN msg: 183, 483
+
+Start tick: 15941
+ADC read: 183
+End tick: 15947
+Data from CAN msg: 183, 483
+
+Start tick: 15955
+ADC read: 183
+End tick: 15961
+Data from CAN msg: 183, 483
+
+Start tick: 15970
+ADC read: 184
+End tick: 15976
+Data from CAN msg: 184, 484
+
+Start tick: 15984
+ADC read: 183
+End tick: 15990
+Data from CAN msg: 183, 483
+
+Start tick: 15999
+ADC read: 184
+End tick: 16005
+Data from CAN msg: 184, 484
+
+Start tick: 16013
+ADC read: 183
+End tick: 16019
+Data from CAN msg: 183, 483
+
+Start tick: 16028
+ADC read: 183
+End tick: 16034
+Data from CAN msg: 183, 483
+
+Start tick: 16043
+ADC read: 184
+End tick: 16048
+Data from CAN msg: 184, 484
+
+Start tick: 16057
+ADC read: 183
+End tick: 16063
+Data from CAN msg: 183, 483
+
+Start tick: 16072
+ADC read: 183
+End tick: 16078
+Data from CAN msg: 183, 483
+
+Start tick: 16086
+ADC read: 184
+End tick: 16092
+Data from CAN msg: 184, 484
+
+Start tick: 16101
+ADC read: 183
+End tick: 16107
+Data from CAN msg: 183, 483
+
+Start tick: 16115
+ADC read: 183
+End tick: 16121
+Data from CAN msg: 183, 483
+
+Start tick: 16130
+ADC read: 184
+End tick: 16136
+Data from CAN msg: 184, 484
+
+Start tick: 16144
+ADC read: 184
+End tick: 16150
+Data from CAN msg: 184, 484
+
+Start tick: 16159
+ADC read: 183
+End tick: 16165
+Data from CAN msg: 183, 483
+
+Start tick: 16174
+ADC read: 183
+End tick: 16179
+Data from CAN msg: 183, 483
+
+Start tick: 16188
+ADC read: 184
+End tick: 16194
+Data from CAN msg: 184, 484
+
+Start tick: 16203
+ADC read: 183
+End tick: 16208
+Data from CAN msg: 183, 483
+
+Start tick: 16217
+ADC read: 184
+End tick: 16223
+Data from CAN msg: 184, 484
+
+Start tick: 16232
+ADC read: 183
+End tick: 16238
+Data from CAN msg: 183, 483
+
+Start tick: 16246
+ADC read: 183
+End tick: 16252
+Data from CAN msg: 183, 483
+
+Start tick: 16261
+ADC read: 184
+End tick: 16267
+Data from CAN msg: 184, 484
+
+Start tick: 16275
+ADC read: 183
+End tick: 16281
+Data from CAN msg: 183, 483
+
+Start tick: 16290
+ADC read: 183
+End tick: 16296
+Data from CAN msg: 183, 483
+
+Start tick: 16304
+ADC read: 184
+End tick: 16310
+Data from CAN msg: 184, 484
+
+Start tick: 16319
+ADC read: 183
+End tick: 16325
+Data from CAN msg: 183, 483
+
+Start tick: 16334
+ADC read: 183
+End tick: 16339
+Data from CAN msg: 183, 483
+
+Start tick: 16348
+ADC read: 183
+End tick: 16354
+Data from CAN msg: 183, 483
+
+Start tick: 16363
+ADC read: 184
+End tick: 16369
+Data from CAN msg: 184, 484
+
+Start tick: 16377
+ADC read: 183
+End tick: 16383
+Data from CAN msg: 183, 483
+
+Start tick: 16392
+ADC read: 184
+End tick: 16398
+Data from CAN msg: 184, 484
+
+Start tick: 16406
+ADC read: 183
+End tick: 16412
+Data from CAN msg: 183, 483
+
+Start tick: 16421
+ADC read: 183
+End tick: 16427
+Data from CAN msg: 183, 483
+
+Start tick: 16435
+ADC read: 184
+End tick: 16441
+Data from CAN msg: 184, 484
+
+Start tick: 16450
+ADC read: 183
+End tick: 16456
+Data from CAN msg: 183, 483
+
+Start tick: 16465
+ADC read: 183
+End tick: 16470
+Data from CAN msg: 183, 483
+
+Start tick: 16479
+ADC read: 184
+End tick: 16485
+Data from CAN msg: 184, 484
+
+Start tick: 16494
+ADC read: 183
+End tick: 16500
+Data from CAN msg: 183, 483
+
+Start tick: 16508
+ADC read: 183
+End tick: 16514
+Data from CAN msg: 183, 483
+
+Start tick: 16523
+ADC read: 183
+End tick: 16529
+Data from CAN msg: 183, 483
+
+Start tick: 16537
+ADC read: 184
+End tick: 16543
+Data from CAN msg: 184, 484
+
+Start tick: 16552
+ADC read: 184
+End tick: 16558
+Data from CAN msg: 184, 484
+
+Start tick: 16566
+ADC read: 183
+End tick: 16572
+Data from CAN msg: 183, 483
+
+Start tick: 16581
+ADC read: 183
+End tick: 16587
+Data from CAN msg: 183, 483
+
+Start tick: 16596
+ADC read: 184
+End tick: 16601
+Data from CAN msg: 184, 484
+
+Start tick: 16610
+ADC read: 183
+End tick: 16616
+Data from CAN msg: 183, 483
+
+Start tick: 16625
+ADC read: 184
+End tick: 16631
+Data from CAN msg: 184, 484
+
+Start tick: 16639
+ADC read: 183
+End tick: 16645
+Data from CAN msg: 183, 483
+
+Start tick: 16654
+ADC read: 184
+End tick: 16660
+Data from CAN msg: 184, 484
+
+Start tick: 16668
+ADC read: 183
+End tick: 16674
+Data from CAN msg: 183, 483
+
+Start tick: 16683
+ADC read: 183
+End tick: 16689
+Data from CAN msg: 183, 483
+
+Start tick: 16697
+ADC read: 184
+End tick: 16703
+Data from CAN msg: 184, 484
+
+Start tick: 16712
+ADC read: 183
+End tick: 16718
+Data from CAN msg: 183, 483
+
+Start tick: 16726
+ADC read: 183
+End tick: 16732
+Data from CAN msg: 183, 483
+
+Start tick: 16741
+ADC read: 183
+End tick: 16747
+Data from CAN msg: 183, 483
+
+Start tick: 16756
+ADC read: 184
+End tick: 16761
+Data from CAN msg: 184, 484
+
+Start tick: 16770
+ADC read: 184
+End tick: 16776
+Data from CAN msg: 184, 484
+
+Start tick: 16785
+ADC read: 183
+End tick: 16791
+Data from CAN msg: 183, 483
+
+Start tick: 16799
+ADC read: 183
+End tick: 16805
+Data from CAN msg: 183, 483
+
+Start tick: 16814
+ADC read: 183
+End tick: 16820
+Data from CAN msg: 183, 483
+
+Start tick: 16828
+ADC read: 184
+End tick: 16834
+Data from CAN msg: 184, 484
+
+Start tick: 16843
+ADC read: 183
+End tick: 16849
+Data from CAN msg: 183, 483
+
+Start tick: 16857
+ADC read: 184
+End tick: 16863
+Data from CAN msg: 184, 484
+
+Start tick: 16872
+ADC read: 183
+End tick: 16878
+Data from CAN msg: 183, 483
+
+Start tick: 16887
+ADC read: 183
+End tick: 16892
+Data from CAN msg: 183, 483
+
+Start tick: 16901
+ADC read: 183
+End tick: 16907
+Data from CAN msg: 183, 483
+
+Start tick: 16916
+ADC read: 184
+End tick: 16922
+Data from CAN msg: 184, 484
+
+Start tick: 16930
+ADC read: 184
+End tick: 16936
+Data from CAN msg: 184, 484
+
+Start tick: 16945
+ADC read: 183
+End tick: 16951
+Data from CAN msg: 183, 483
+
+Start tick: 16959
+ADC read: 183
+End tick: 16965
+Data from CAN msg: 183, 483
+
+Start tick: 16974
+ADC read: 184
+End tick: 16980
+Data from CAN msg: 184, 484
+
+Start tick: 16988
+ADC read: 183
+End tick: 16994
+Data from CAN msg: 183, 483
+
+Start tick: 17003
+ADC read: 183
+End tick: 17009
+Data from CAN msg: 183, 483
+
+Start tick: 17017
+ADC read: 183
+End tick: 17023
+Data from CAN msg: 183, 483
+
+Start tick: 17032
+ADC read: 184
+End tick: 17038
+Data from CAN msg: 184, 484
+
+Start tick: 17047
+ADC read: 183
+End tick: 17052
+Data from CAN msg: 183, 483
+
+Start tick: 17061
+ADC read: 184
+End tick: 17067
+Data from CAN msg: 184, 484
+
+Start tick: 17076
+ADC read: 183
+End tick: 17082
+Data from CAN msg: 183, 483
+
+Start tick: 17090
+ADC read: 184
+End tick: 17096
+Data from CAN msg: 184, 484

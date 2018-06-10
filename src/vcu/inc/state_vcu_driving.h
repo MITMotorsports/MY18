@@ -5,7 +5,7 @@
 
 #include "state_vcu.h"
 #include "can_handles.h"
-#include "torque_calc.h"
+#include "controls.h"
 
 void resetDrivingValues();
 void enter_vcu_state_driving();

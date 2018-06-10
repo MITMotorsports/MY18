@@ -46,7 +46,7 @@ bool any_fatal_gate_faults(void) {
 
   if (retval) {
     if (last_val) {
-      if (HAL_GetTick() - last_time > FAULT_GATE_SETUP) {
+      if (HAL_GetTick() - last_time > 5) {
         return true;
       }
     }
