@@ -321,7 +321,7 @@ void draw_fault_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     int n_recov_faults = 0;
     char *gates[MAX_FAULTS] = {NULL};
     int n_gates = 0;
-    
+
     can0_VCUErrors_T *errs = &stats->vcu_errors;
 
     // fatals
@@ -392,13 +392,13 @@ void draw_fault_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     } else {
         oled_print(oled, "NONE :)");
     }
-  
+
     // so many faults we ran out of space
     if (oled->line == 3) return;
 
     if (n_gates > 0) {
         oled_set_pos(oled, oled->line + 1, 0);
-        oled_print(oled, "GATE: ");
+        oled_print(oled, "GATE:");
 
         for (int i = 0; i < n_gates; i++) {
             oled_print_wrap(oled, gates[i]);
