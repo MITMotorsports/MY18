@@ -42,7 +42,8 @@ typedef struct {
   bool using_regen;
   bool using_launch_control;
   uint16_t cBB_ef; // Electric front brake bias * 100
-  int32_t slip_ratio;
+  uint16_t slip_ratio; // Slip ratio * 100
+  uint16_t limp_factor; // Limp facotr * 100
 } Controls_Settings_T;
 
 typedef enum {

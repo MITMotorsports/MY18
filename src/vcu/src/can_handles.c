@@ -221,6 +221,18 @@ void handleMCTorque_Timer_Info(Frame *msg) {
   mc_readings.torque_feedback = unpacked_msg.torque_feedback;
 }
 
+void handleDashControls(Frame *msg) {
+  can0_DashControls_T unpacked_msg;
+
+  unpack_can0_DashControls(msg, &unpacked_msg);
+
+  control_settings.using_regen;
+  control_settings.using_launch_control;
+  control_settings.cBB_ef; // Electric front brake bias * 100
+  control_settings.slip_ratio; // Slip ratio * 100
+  control_settings.limp_factor; // Limp facotr * 100
+}
+
 void send_VCUHeartbeat() {
   LIMIT(can0_VCUHeartbeat);
 
