@@ -223,19 +223,24 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
 
 void draw_controls_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+    carstats_t *stats = pm->stats;
+
     oled_clearline(oled, 1);
     oled_set_pos(oled, 1, 0);
 
-    oled_print(oled, "BIAS ");
-
-    carstats_t *stats = pm->stats;
-    if (stats->right_button.is_pressed) {
+    if (stats->buttons.right.is_pressed) {
         stats->controls.regen_bias += 1;
     }
-    // if (pm->stats->left_button.action == BUTTON_ACTION_TAP)
-        // pm->stats->controls.regen_bias -= 1;
 
     stats->controls.regen_bias = LOOPOVER(stats->controls.regen_bias, 25, 75);
+
+    if (stats->buttons.B.rising_edge) stats->controls.using_regen ^= 1;  // NOT
+
+    oled_print(oled, "REGEN ");
+
+    oled_print(oled, (stats->controls.using_regen) ? "ON" : "OFF");
+
+    oled_rprint_pad(oled, "BIAS ", 4);
 
     if (stats->controls.regen_bias != -1) {
         oled_print_num(oled, stats->controls.regen_bias);
@@ -243,71 +248,6 @@ void draw_controls_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     else {
         oled_print(oled, DATA_UNKNOWN);
     }
-
-    // oled_set_pos(oled, 1, 0);
-    // oled_clearline(oled, 1);
-    // oled_print(oled, " ");
-    // if (pm->stats->torque_mc >= 0) {
-    //     int torque_Nm = pm->stats->torque_mc / 10;
-    //     oled_print_num(oled, torque_Nm);
-    // } else {
-    //     oled_print(oled, DATA_UNKNOWN);
-    // }
-
-    // oled_rprint_pad(oled, "BUS", 6);
-    // if (pm->stats->DESIRED_VOLTAGE != -10) {
-    //     int voltage = pm->stats->DESIRED_VOLTAGE / 10;
-    //     oled_rprint_num_pad(oled, voltage, 1);
-    //     oled_rprint(oled, "V");
-    // } else {
-    //     oled_rprint(oled, DATA_UNKNOWN);
-    // }
-    //
-    // oled_clearline(oled, 2);
-    // oled_set_pos(oled, 2, 0);
-    //
-    // oled_print(oled, "IGBT ");
-    // if (pm->stats->max_igbt_temp >= 0) {
-    //     int igbt_temp_C = pm->stats->max_igbt_temp / 10;
-    //     oled_print_num(oled, igbt_temp_C);
-    //     oled_print(oled, "C");
-    // } else {
-    //     oled_print(oled, DATA_UNKNOWN);
-    // }
-    //
-    // oled_rprint_pad(oled, "CELL ", 4);
-    // if (pm->stats->min_cell_voltage >= 0) {
-    //     int cell_mV = pm->stats->min_cell_voltage;
-    //     oled_print_num_dec(oled, pm->stats->min_cell_voltage, 1000, 2);
-    // } else {
-    //     oled_rprint(oled, DATA_UNKNOWN);
-    // }
-    //
-    //
-    // oled_clearline(oled, 3);
-    // oled_set_pos(oled, 3, 0);
-    // /*
-    // oled_print(oled, "RPM ");
-    // if (pm->stats->motor_rpm >= 0) {
-    //     oled_print_num(oled, pm->stats->motor_rpm);
-    // } else {
-    //     oled_print(oled, DATA_UNKNOWN);
-    // }
-    // */
-    // oled_print(oled, "CUR ");
-    // if (pm->stats->cs_current != -10) {
-    //     oled_print_num_dec(oled, pm->stats->cs_current, 1000, 2);
-    //     oled_print(oled, "A");
-    // } else {
-    //     oled_print(oled, DATA_UNKNOWN);
-    // }
-    //
-    // oled_rprint_pad(oled, "TEMP ", 4);
-    // if (pm->stats->max_cell_temp >= 0) {
-    //     oled_print_num_dec(oled, pm->stats->max_cell_temp, 10, 1);
-    // } else {
-    //     oled_rprint(oled, DATA_UNKNOWN);
-    // }
 }
 
 void draw_fault_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
@@ -337,7 +277,9 @@ void draw_fault_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     // recoverables
     if (errs->recoverable_conflict)
         recov_faults[n_recov_faults++] = "BRK_IMP";
-    if (errs->recoverable_gate || errs->recoverable_contactor)
+    if (errs->recoverable_gate)
+        recov_faults[n_recov_faults++] = "GATE";
+    if (errs->recoverable_contactor)
         recov_faults[n_recov_faults++] = "TSMS";
     if (errs->recoverable_heartbeat)
         recov_faults[n_recov_faults++] = "HRTBEAT";

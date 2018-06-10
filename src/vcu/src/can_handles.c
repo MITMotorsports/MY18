@@ -171,7 +171,6 @@ void handleButtonRequest(Frame *msg) {
 
   buttons.RTD          = unpacked_msg.RTD;
   buttons.DriverReset  = unpacked_msg.DriverReset;
-  buttons.ScrollSelect = unpacked_msg.ScrollSelect;
 }
 
 void handleCurrentSensor_Power(Frame *msg) {

@@ -101,7 +101,7 @@ void can_handle_vcu_errors(carstats_t *cs) {
 void can_handle_button_request(carstats_t *cs) {
     can0_ButtonRequest_T msg;
     unpack_can0_ButtonRequest(&frame, &msg);
-    memcpy(&(cs->buttons), &msg, sizeof(msg));
+    memcpy(&(cs->button_bank), &msg, sizeof(msg));
 }
 
 void can_handle_brake_throttle(carstats_t *cs) {

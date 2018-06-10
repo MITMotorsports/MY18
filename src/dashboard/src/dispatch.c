@@ -19,9 +19,6 @@ static uint32_t nextOLEDUpdate;
 
 static bool active_aero_enabled = false;
 
-static can0_ButtonRequest_T button_request;
-static int previous_scroll_select;
-
 #define BUTTON_DOWN false
 #define OLED_UPDATE_INTERVAL_MS 50
 
@@ -68,9 +65,6 @@ void dispatch_init() {
 
     nextOLEDUpdate = 0;
 
-    memset(&button_request, 0, sizeof(button_request));
-    previous_scroll_select = 0;
-
     // init carstats fields
     carstats.mc_voltage              = -10;  // TODO: Make less sketchy for unknown values.
     carstats.cs_voltage              = -10;
@@ -98,27 +92,30 @@ void dispatch_init() {
     carstats.controls.launch_ctrl_slip_ratio = -1;
     carstats.controls.limp_factor       = -1;
 
-    init_button_state(&carstats.left_button);
-    init_button_state(&carstats.right_button);
+    init_button_state(&carstats.buttons.left);
+    init_button_state(&carstats.buttons.right);
+    init_button_state(&carstats.buttons.A);
+    init_button_state(&carstats.buttons.B);
 }
 
 inline void dispatch_update() {
-    update_button_state(&carstats.left_button,  (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN));
-    update_button_state(&carstats.right_button, (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN));
+    update_button_state(&carstats.buttons.left,  (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN));
+    update_button_state(&carstats.buttons.right, (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN));
+    update_button_state(&carstats.buttons.A, carstats.button_bank.A);
+    update_button_state(&carstats.buttons.B, carstats.button_bank.B);
 
     can_update_carstats(&carstats);
-    bool res = carstats.buttons.ScrollSelect;
-    if (!previous_scroll_select && res) {
+    if (carstats.buttons.A.rising_edge) {
         page_manager_next_page(&page_manager);
         oled_clear(&oled);
     }
-    previous_scroll_select = res;
 
     update_lights();
 
+    // Run the update always, such that the carstats set in the update also change.
+    page_manager_update(&page_manager, &oled);
     if (msTicks > nextOLEDUpdate) {
         nextOLEDUpdate = msTicks + OLED_UPDATE_INTERVAL_MS;
-        page_manager_update(&page_manager, &oled);
         oled_update(&oled);
     }
 

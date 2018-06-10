@@ -38,7 +38,6 @@ void init_vcu_state(void) {
   buttons.RTD          = 0;
   buttons.MasterReset  = 0;
   buttons.DriverReset  = 0;
-  buttons.ScrollSelect = 0;
 
   init_controls_defaults();
 

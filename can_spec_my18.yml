@@ -590,8 +590,12 @@ buses:
             position: 1
             length: 1
             c_type: bool
-          ScrollSelect:
+          A:
             position: 2
+            length: 1
+            c_type: bool
+          B:
+            position: 3
             length: 1
             c_type: bool
       MCCommand:

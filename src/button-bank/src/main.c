@@ -85,7 +85,8 @@ int main(void) {
 void poll_buttons(bool* button_state) {
   button_state[rtd]           = (READ_PIN(BTN_RTD)        == BTN_DOWN);
   button_state[driver_reset]  = (READ_PIN(BTN_DRIVER_RST) == BTN_DOWN);
-  button_state[scroll_select] = (READ_PIN(BTN_SCROLL_SEL) == BTN_DOWN);
+  button_state[A]             = (READ_PIN(BTN_A) == BTN_DOWN);
+  button_state[B]             = (READ_PIN(BTN_B) == BTN_DOWN);
 }
 
 can0_VCUHeartbeat_vcu_state_T get_vcu_state(void) {
@@ -181,7 +182,8 @@ void print_buttons(bool* bs) {
   // Print the button states on condition that they are different than before
   EZ_PRINT(rtd);
   EZ_PRINT(driver_reset);
-  EZ_PRINT(scroll_select);
+  EZ_PRINT(A);
+  EZ_PRINT(B);
 
   // Update the current button state
   memcpy(last_bs, bs, sizeof(last_bs));
@@ -200,7 +202,8 @@ bool send_buttonrequest(bool* bs) {
 
     msg.RTD          = bs[rtd];
     msg.DriverReset  = bs[driver_reset];
-    msg.ScrollSelect = bs[scroll_select];
+    msg.A            = bs[A];
+    msg.B            = bs[B];
 
     can_error_handler(can0_ButtonRequest_Write(&msg));
 
@@ -317,11 +320,14 @@ void GPIO_Init(void) {
   Chip_GPIO_SetPinDIRInput(LPC_GPIO, BTN_DRIVER_RST);
   Chip_IOCON_PinMuxSet(LPC_IOCON, BTN_DRIVER_RST_IOCON, BTN_CONFIG);
 
-  Chip_GPIO_SetPinDIRInput(LPC_GPIO, BTN_SCROLL_SEL);
-  Chip_IOCON_PinMuxSet(LPC_IOCON, BTN_SCROLL_SEL_IOCON, BTN_CONFIG);
-
   Chip_GPIO_SetPinDIRInput(LPC_GPIO, BTN_RTD);
   Chip_IOCON_PinMuxSet(LPC_IOCON, BTN_RTD_IOCON, BTN_CONFIG);
+
+  Chip_GPIO_SetPinDIRInput(LPC_GPIO, BTN_A);
+  Chip_IOCON_PinMuxSet(LPC_IOCON, BTN_A_IOCON, BTN_CONFIG);
+
+  Chip_GPIO_SetPinDIRInput(LPC_GPIO, BTN_B);
+  Chip_IOCON_PinMuxSet(LPC_IOCON, BTN_B_IOCON, BTN_CONFIG);
 
   /// OUTPUTS
   // Chip_GPIO_SetPinDIROutput(LPC_GPIO, BUZZER);

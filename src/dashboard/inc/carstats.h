@@ -13,6 +13,13 @@
 #define LOOPOVER(x, min, max) (((x) < (min)) ? (max) : (((x) > (max)) ? (min) : x))
 
 typedef struct {
+    button_state_t left;
+    button_state_t right;
+    button_state_t A;
+    button_state_t B;
+} Buttons_T;
+
+typedef struct {
     // Values obseverd by dashboard
     int cs_voltage;  // in dV
     int mc_voltage;  // in dV
@@ -38,7 +45,7 @@ typedef struct {
     int rear_left_wheel_speed;
     int rear_right_wheel_speed;
 
-    can0_ButtonRequest_T buttons;
+    can0_ButtonRequest_T button_bank;
 
     can0_VCUHeartbeat_vcu_state_T vcu_state;
     can0_VCUHeartbeat_error_state_T error_state;
@@ -52,8 +59,7 @@ typedef struct {
     // Values set by dashboard
     can0_DashControls_T controls;
 
-    button_state_t left_button;
-    button_state_t right_button;
+    Buttons_T buttons;
 } carstats_t;
 
 void can_update_carstats(carstats_t *cs);
