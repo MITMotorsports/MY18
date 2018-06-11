@@ -12,6 +12,8 @@ int main(void) {
 
   GPIO_BEGIN_INIT();
 
+  PWM_Output_Init(); // FAN PWM AND TIMERS
+
   /// INPUTS
   DGPIO_INIT_IN(       SDN, GPIO_NOPULL);
   DGPIO_INIT_IN(  SDN_GATE, GPIO_NOPULL);
