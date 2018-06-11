@@ -12,7 +12,7 @@ static bool any_lc_faults();
 void init_controls_defaults(void) {
   control_settings.using_regen = false;
   control_settings.using_launch_control = false;
-  control_settings.cBB_ef = 50;
+  control_settings.cBB_ef = 56;
   control_settings.slip_ratio = 112;
   control_settings.limp_factor = 100;
 }
@@ -137,8 +137,8 @@ static int32_t get_regen_torque() {
 
   if ((mc_readings.speed * -1 > RG_MOTOR_SPEED_THRESH) &&
       (cs_readings.V_bus < RG_BATTERY_VOLTAGE_MAX_THRESH) &&
-      (get_pascals(pedalbox.FRONT_BRAKE) > RG_FRONT_BRAKE_THRESH) &&
-      car_speed_squared > RG_CAR_SPEED_THRESH * RG_CAR_SPEED_THRESH) { // Threshold is 5 kph, so 25 (kph)^2
+      (get_pascals(pedalbox.FRONT_BRAKE) > RG_FRONT_BRAKE_THRESH)) {
+      // car_speed_squared > RG_CAR_SPEED_THRESH * RG_CAR_SPEED_THRESH) { // Threshold is 5 kph, so 25 (kph)^2
     int32_t kilo_pascals = get_pascals(pedalbox.FRONT_BRAKE) / 1000;
     // Because we already divded by 1000 by using kilo_pascals instead of
     // pascals, we only need to divde by 10^4, not 10^7 for RG_10_7_K

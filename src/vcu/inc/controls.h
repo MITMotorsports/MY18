@@ -28,7 +28,7 @@
 #define RG_REAR_BRAKE_THRESH 827370          // Pa
 #define RG_FRONT_BRAKE_THRESH 827370         // Pa
 #define RG_BATTERY_VOLTAGE_MAX_THRESH 299000 // mV
-#define RG_TORQUE_COMMAND_MAX 1000           // 10 * Nm
+#define RG_TORQUE_COMMAND_MAX 2000           // 10 * Nm
 
 // K = mu_padrotor * 2 * r_rotoreffective * A_Cf / GR
 // See equation 13 in Luis's thesis
