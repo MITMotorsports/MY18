@@ -170,7 +170,7 @@ void lcd_print(char *str) {
 }
 
 void lcd_print_num(int32_t num, unsigned base) {
-  char buff[11];  // Max length of 32 bit num including minus sign.
+  char buff[20] = {'\0'};
 
   itoa(num, buff, base);
   lcd_print(buff);
