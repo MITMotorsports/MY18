@@ -3,13 +3,11 @@
 static const int ext_ch[8] = {0, 8, 16, 24, 32, 40, 48, 56};
 
 static uint8_t Tx_Buf[BUFFER_SIZE];
-
-/* Rx buffer */
 static uint16_t Rx_Buf[BUFFER_SIZE];
 
 static SSP_ConfigFormat ssp_format;
 static Chip_SSP_DATA_SETUP_T xf_setup;
-static volatile uint8_t  isXferCompleted = 0;
+static volatile uint8_t isXferCompleted = 0;
 
 
 static void Init_SSP_PinMux(void) {
@@ -20,16 +18,14 @@ static void Init_SSP_PinMux(void) {
 	Chip_IOCON_PinLocSel(LPC_IOCON, IOCON_SCKLOC_PIO2_11);
 }
 
-static void Buffer_Init(int ch)
-{
-	uint16_t i;
-	for (i = 0; i < BUFFER_SIZE; i++) {
+static void Buffer_Init(unsigned ch) {
+	for (unsigned i = 0; i < BUFFER_SIZE; i++) {
 		Tx_Buf[i] = ext_ch[ch];
 		Rx_Buf[i] = 0x0;
 	}
 }
 
-void SSP_Init(void) {
+void Init_SPI_ADC(void) {
 	Init_SSP_PinMux();
 	Chip_SSP_Init(LPC_SSP);
 	Chip_SSP_SetBitRate(LPC_SSP, 30000);
@@ -42,17 +38,16 @@ void SSP_Init(void) {
 	Buffer_Init(0);
 }
 
-static void Read_ADC(int ch) {
+void Read_SPI_ADC(unsigned ch) {
 	Buffer_Init(ch);
 	Chip_SSP_WriteFrames_Blocking(LPC_SSP, Tx_Buf, BUFFER_SIZE);
 	Chip_GPIO_SetPinState(LPC_GPIO, CS, true);
 	Chip_SSP_ReadFrames_Blocking(LPC_SSP, Rx_Buf, BUFFER_SIZE);
 }
 
-void SPI_Read_ADC(uint16_t* ext_adc_data) {
-	int ch;
-	for (ch = 0; ch< 2; ch++) {
-		Read_ADC(ch);
+void Read_SPI_ADC_Range(uint16_t* ext_adc_data, unsigned start, unsigned stop, unsigned step) {
+	for (unsigned ch = start; ch < stop; ch += step) {
+		SPI_Read_ADC(ch);
 		ext_adc_data[ch] = Rx_Buf[0];
 	}
 }

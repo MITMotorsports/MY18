@@ -12,103 +12,39 @@ void SysTick_Handler(void) {
   msTicks++;
 }
 
-//15 0
-#define SERIAL_BAUDRATE 57600
-
-#define LED_PIN 5
-
-/* Tx buffer */
-
-
-static void LED_Config(void) {
-	Chip_GPIO_WriteDirBit(LPC_GPIO, 2, LED_PIN, true);
-
-}
-
-static void LED_On(void) {
-	Chip_GPIO_SetPinState(LPC_GPIO, 2, LED_PIN, true);
-	Chip_UART_SendBlocking(LPC_USART, "LED_ON", 6);
-}
-
-static void LED_Off(void) {
-	Chip_GPIO_SetPinState(LPC_GPIO, 2, LED_PIN, false);
-}
-
-void Serial_Init(uint32_t baudrate) {
-  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_6, (IOCON_FUNC1 | IOCON_MODE_INACT)); /* RXD */
-  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_7, (IOCON_FUNC1 | IOCON_MODE_INACT)); /* TXD */
-
-  Chip_UART_Init(LPC_USART);
-  Chip_UART_SetBaud(LPC_USART, baudrate);
-  // Configure data width, parity, and stop bits
-  Chip_UART_ConfigData(LPC_USART, (UART_LCR_WLEN8 | UART_LCR_SBS_1BIT | UART_LCR_PARITY_DIS));
-  Chip_UART_SetupFIFOS(LPC_USART, (UART_FCR_FIFO_EN | UART_FCR_TRG_LEV2));
-  Chip_UART_TXEnable(LPC_USART);
-}
-
-
-int main(void)
-{
+int main(void) {
 	SystemCoreClockUpdate();
-  	Serial_Init(SERIAL_BAUDRATE);
+  if (SysTick_Config (SystemCoreClock / 1000)) while(1);  // Hang on error
 
-	if (SysTick_Config (SystemCoreClock / 1000)) {
-		//Error
-		while(1);
-	}
+  Board_UART_Init(57600);
 
-
-	/* LED Initialization */
 	GPIO_Init();
-	LED_Config();
-	LED_On();
 
-	SSP_Init();
-  	ADC_Init();
+	Init_SPI_ADC();
+  Init_Internal_ADC();
 
-	/* SSP initialization 	*/
-  	I2C_Init();
-  	Accel_Init();
-
-	LED_On();
+  // I2C_Init();
+  // Accel_Init();
 
 	while (1) {
-		// println("looping");
+    Board_Print("CH2: ");
+    Board_PrintNum(Read_Internal_ADC(ADC_CH2), 10);
+    Board_Println("");
+    Board_Print("CH3: ");
+    Board_PrintNum(Read_Internal_ADC(ADC_CH3), 10);
+    Board_Println("");
+    Board_Print("CH4: ");
+    Board_PrintNum(Read_Internal_ADC(ADC_CH4), 10);
+    Board_Println("");
+    Board_Print("CH5: ");
+    Board_PrintNum(Read_Internal_ADC(ADC_CH5), 10);
+    Board_Println("");
 
-		// SPI_Read_ADC(ext_adc_data);
-		// for (int i = 0; i < 2; i++) {
-		// 	print("EXT ADC DATA : ");
-		// 	printNum(ext_adc_data[i],10);
-		// 	println("");
-		// }
-		//Internal_Read_ADC(int_adc_data);
-		//for (int i = 0; i < 4; i++) {
-		//	print("INT ADC DATA : ");
-        //    printNum(i, 10);
-        //    print(" ");
-		//	printNum(int_adc_data[i],10);
-		//	println("");
-		//}
-        //
-        //
-        print("CH2: ");
-        printNum(Read_ADC(ADC_CH2), 10);
-        println("");
-        print("CH3: ");
-        printNum(Read_ADC(ADC_CH3), 10);
-        println("");
-        print("CH4: ");
-        printNum(Read_ADC(ADC_CH4), 10);
-        println("");
-        print("CH5: ");
-        printNum(Read_ADC(ADC_CH5), 10);
-        println("");
-
-        uint32_t future = msTicks + 100;
-        while (msTicks < future);
+    uint32_t future = msTicks + 100;
+    while (msTicks < future);
 		//Read_Axes(&orient);
 		// can_transmit(ext_adc_data, int_adc_data);
-
 	}
+
 	return 0;
 }
