@@ -1,11 +1,15 @@
 #include "main.h"
 
-static Orient_T orient;
+#define DEBUG_UART false
 
 const uint32_t OscRateIn = 12000000;
 volatile uint32_t msTicks;
 
-uint16_t ext_adc_data[8]; //external adc data
+// Accelerometer Data Containers
+static Orient_T orient;
+
+// ADC Data Containers
+uint16_t ext_adc_data[8];
 uint16_t int_adc_data[4];
 
 void SysTick_Handler(void) {
@@ -27,23 +31,23 @@ int main(void) {
   // Accel_Init();
 
 	while (1) {
-    Board_Print("CH2: ");
-    Board_PrintNum(Read_Internal_ADC(ADC_CH2), 10);
-    Board_Println("");
-    Board_Print("CH3: ");
-    Board_PrintNum(Read_Internal_ADC(ADC_CH3), 10);
-    Board_Println("");
-    Board_Print("CH4: ");
-    Board_PrintNum(Read_Internal_ADC(ADC_CH4), 10);
-    Board_Println("");
-    Board_Print("CH5: ");
-    Board_PrintNum(Read_Internal_ADC(ADC_CH5), 10);
-    Board_Println("");
+    #if DEBUG_UART
+      Board_Print_BLOCKING("CH2: ");
+      Board_PrintNum(Read_Internal_ADC(ADC_CH2), 10);
+      Board_Println_BLOCKING("");
+      Board_Print_BLOCKING("CH3: ");
+      Board_PrintNum(Read_Internal_ADC(ADC_CH3), 10);
+      Board_Println_BLOCKING("");
+      Board_Print_BLOCKING("CH4: ");
+      Board_PrintNum(Read_Internal_ADC(ADC_CH4), 10);
+      Board_Println_BLOCKING("");
+      Board_Print_BLOCKING("CH5: ");
+      Board_PrintNum(Read_Internal_ADC(ADC_CH5), 10);
+      Board_Println_BLOCKING("");
+    #endif
 
-    uint32_t future = msTicks + 100;
-    while (msTicks < future);
-		//Read_Axes(&orient);
-		// can_transmit(ext_adc_data, int_adc_data);
+    Read_Internal_ADC_Range(int_adc_data, 0, 4, 1);
+    can_transmit(ext_adc_data, int_adc_data);
 	}
 
 	return 0;
