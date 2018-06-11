@@ -42,9 +42,12 @@ void advance_error_state(void) {
   }
 }
 
-#define TRANSITION_FATAL() if (update_fatal_faults()) set_error_state(FATAL_ERROR_STATE);
-#define TRANSITION_RECOVERABLE() if (!update_fatal_faults() && update_recoverable_faults()) set_error_state(RECOVERABLE_ERROR_STATE);
-#define TRANSITION_NERR() if (!update_fatal_faults() && !update_recoverable_faults()) set_error_state(NO_ERROR_STATE);
+#define TRANSITION_FATAL() \
+  if (update_fatal_faults()) set_error_state(FATAL_ERROR_STATE);
+#define TRANSITION_RECOVERABLE() \
+  if (!update_fatal_faults() && update_recoverable_faults()) set_error_state(RECOVERABLE_ERROR_STATE);
+#define TRANSITION_NERR() \
+  if (!update_fatal_faults() && !update_recoverable_faults()) set_error_state(NO_ERROR_STATE);
 
 void enter_no_error_state(void) {
   printf("[ERROR FSM : NO_ERROR_STATE] ENTERED!\r\n");
@@ -70,10 +73,11 @@ void update_recoverable_error_state(void) {
     // Resume from LV state (precharge needs to happen again)
     // This will let the car try to go through precharge again
     // by flipping the DRIVER_RST pin.
-    if (get_vcu_state() != VCU_STATE_LV) set_vcu_state(VCU_STATE_LV);
+    if ((get_vcu_state() != VCU_STATE_ROOT) &&
+        (get_vcu_state() != VCU_STATE_LV)) set_vcu_state(VCU_STATE_LV);
   }
 
-  // If no recoverable/fatal faults appear it means we've cleared.
+  // If no faults appear it means we've cleared.
   TRANSITION_NERR();
 
   handle_recoverable_fault();
@@ -84,11 +88,9 @@ void enter_fatal_error_state(void) {
 }
 
 void update_fatal_error_state(void) {
-  // We ded man.
   handle_fatal_fault();
 
-  send_VCU(); // Make sure fatal state is logged
-  // send_CAR ERROR MESSAGE; TODO: Conceptualize this message
+  send_VCU();
 
   set_vcu_state(VCU_STATE_ROOT);
 
@@ -105,15 +107,14 @@ bool error_may_advance(void) {
   // the shutdown gate then we can advance the VCU state, knowing that it is
   // in VCU_STATE_LV due to update_recoverable_error_state.
 
-  (void) update_recoverable_faults();
+  (void)update_recoverable_faults();
 
   bool recov_is_gate = get_error_state() == RECOVERABLE_ERROR_STATE &&
-                       recoverable_faults.gate &&
-                       !recoverable_faults.heartbeat &&
-                       !recoverable_faults.conflict &&
-                       !recoverable_faults.contactor &&
+                       recoverable_faults.gate                      &&
+                       !recoverable_faults.heartbeat                &&
+                       !recoverable_faults.conflict                 &&
+                       !recoverable_faults.contactor                &&
                        !any_recoverable_transient_gate_fault();
-  // If the error is recoverable, sdn is the only error, and the estop was hit but released.
 
   return (get_error_state() == NO_ERROR_STATE) || recov_is_gate;
 }

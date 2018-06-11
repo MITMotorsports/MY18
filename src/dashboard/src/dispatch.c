@@ -11,16 +11,13 @@ static button_state_t left_button;
 static button_state_t right_button;
 
 static page_manager_t page_manager;
-static carstats_t carstats;
+static carstats_t carstats = {};
 
 static NHD_US2066_OLED oled;
 
 static uint32_t nextOLEDUpdate;
 
 static bool active_aero_enabled = false;
-
-static can0_ButtonRequest_T button_request;
-static int previous_scroll_select;
 
 #define BUTTON_DOWN false
 #define OLED_UPDATE_INTERVAL_MS 50
@@ -29,7 +26,7 @@ static int previous_scroll_select;
 #define BMS_HEARTBEAT_EXPIRE 1000
 
 void update_lights(void);
-void send_dash_request(can0_DashRequest_type_T type);
+void send_dash_controls(void);
 
 void dispatch_init() {
     init_button_state(&left_button);
@@ -68,11 +65,10 @@ void dispatch_init() {
 
     nextOLEDUpdate = 0;
 
-    memset(&button_request, 0, sizeof(button_request));
-    previous_scroll_select = 0;
-
     // init carstats fields
-    carstats.battery_voltage         = -1;
+    carstats.mc_voltage              = -10;  // TODO: Make less sketchy for unknown values.
+    carstats.cs_voltage              = -10;
+    carstats.cs_current              = -10;
     carstats.min_cell_voltage        = -1;
     carstats.max_cell_voltage        = -1;
     carstats.min_cell_temp           = -1;
@@ -86,47 +82,44 @@ void dispatch_init() {
     carstats.rear_left_wheel_speed   = -1;
     carstats.rear_right_wheel_speed  = -1;
     carstats.max_igbt_temp           = -1;
-    carstats.current                 = -1;
-    carstats.voltage_2               = -1;
+    carstats.brake_1                 = -1;
+    carstats.brake_2                 = -1;
     carstats.vcu_state               = can0_VCUHeartbeat_vcu_state_VCU_STATE_ROOT;
     carstats.last_vcu_heartbeat      = msTicks;
     carstats.last_bms_heartbeat      = msTicks;
+
+    carstats.controls.regen_bias        = -1;
+    carstats.controls.launch_ctrl_slip_ratio = -1;
+    carstats.controls.limp_factor       = -1;
+
+    init_button_state(&carstats.buttons.left);
+    init_button_state(&carstats.buttons.right);
+    init_button_state(&carstats.buttons.A);
+    init_button_state(&carstats.buttons.B);
 }
 
-void dispatch_update() {
-    bool left_button_down  = (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN);
-    bool right_button_down = (Pin_Read(PIN_BUTTON2) == BUTTON_DOWN);
-    update_button_state(&left_button, left_button_down);
-    update_button_state(&right_button, right_button_down);
+inline void dispatch_update() {
+    update_button_state(&carstats.buttons.left,  (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN));
+    update_button_state(&carstats.buttons.right, (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN));
+    update_button_state(&carstats.buttons.A, carstats.button_bank.A);
+    update_button_state(&carstats.buttons.B, carstats.button_bank.B);
 
-    if (right_button.action == BUTTON_ACTION_TAP) {
+    can_update_carstats(&carstats);
+    if (carstats.buttons.A.rising_edge) {
         page_manager_next_page(&page_manager);
-
-        active_aero_enabled = !active_aero_enabled;
-        if (active_aero_enabled) {
-            send_dash_request(can0_DashRequest_type_ACTIVE_AERO_ENABLE);
-        } else {
-            send_dash_request(can0_DashRequest_type_ACTIVE_AERO_DISABLE);
-        }
-    } else if (right_button.action == BUTTON_ACTION_HOLD) {
-        page_manager_prev_page(&page_manager);
-    }
-
-    int res = can_update_carstats(&carstats, &button_request);
-    if (previous_scroll_select != 8 && res == 8) {
-        page_manager_next_page(&page_manager); 
         oled_clear(&oled);
     }
-    previous_scroll_select = res;
 
     update_lights();
 
+    // Run the update always, such that the carstats set in the update also change.
+    page_manager_update(&page_manager, &oled);
     if (msTicks > nextOLEDUpdate) {
         nextOLEDUpdate = msTicks + OLED_UPDATE_INTERVAL_MS;
-        page_manager_update(&page_manager, &oled);
         oled_update(&oled);
-
     }
+
+    send_dash_controls();
 }
 
 void update_lights(void) {
@@ -136,26 +129,24 @@ void update_lights(void) {
     else
         LED_RTD_off();
 
-    if (carstats.battery_voltage / 10 > 60)
+    if (carstats.cs_voltage / 10 > 60)
         LED_HV_on();
     else
         LED_HV_off();
 
-    if (false)
+    if (carstats.vcu_errors.gate_imd)
         LED_IMD_on();
     else
         LED_IMD_off();
 
-    if (msTicks < carstats.last_bms_heartbeat + BMS_HEARTBEAT_EXPIRE)
+    if (carstats.vcu_errors.gate_bms)
         LED_AMS_on();
     else
         LED_AMS_off();
 
 }
 
-void send_dash_request(can0_DashRequest_type_T type) {
-    can0_DashRequest_T msg;
-    msg.type = type;
-    
-    handle_can_error(can0_DashRequest_Write(&msg));
+void send_dash_controls(void) {
+    LIMIT(can0_DashControls_period);
+    handle_can_error(can0_DashControls_Write(&carstats.controls));
 }

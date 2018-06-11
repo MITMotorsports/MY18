@@ -20,6 +20,10 @@ typedef struct {
     bool lockout;
     btn_action_t action;
     int press_start_ms;
+
+    bool edge;
+    bool rising_edge;
+    bool falling_edge;
 } button_state_t;
 
 void init_button_state(button_state_t *state);

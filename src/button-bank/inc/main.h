@@ -18,6 +18,8 @@ extern volatile uint32_t msTicks;
 #define DEBOUNCE_SETUP 50
 #define DEBOUNCE_HOLD  100
 
+#define VCU_INTRO_TIME 100
+
 /// GPIO CONFIGS
 
 // INPUTS
@@ -25,20 +27,23 @@ extern volatile uint32_t msTicks;
 #define BTN_DRIVER_RST 1, 2
 #define BTN_DRIVER_RST_IOCON IOCON_PIO1_2
 
-#define BTN_SCROLL_SEL 3, 1
-#define BTN_SCROLL_SEL_IOCON IOCON_PIO3_1
+#define DRIVER_RST_LED 1, 0
+#define DRIVER_RST_LED_IOCON IOCON_PIO1_0
 
 #define BTN_RTD        1, 1
 #define BTN_RTD_IOCON  IOCON_PIO1_1
 
-#define DRIVER_RST_LED 1, 0
-#define DRIVER_RST_LED_IOCON IOCON_PIO1_0
-
 #define RTD_LED 3, 0
 #define RTD_LED_IOCON IOCON_PIO3_0
 
+#define BTN_A 3, 1
+#define BTN_A_IOCON IOCON_PIO3_1
+
 #define BTN_A_LED 2, 3
 #define BTN_A_LED_IOCON IOCON_PIO2_3
+
+#define BTN_B 1, 4
+#define BTN_B_IOCON IOCON_PIO1_4
 
 #define BTN_B_LED 1, 3
 #define BTN_B_LED_IOCON IOCON_PIO1_3
@@ -75,7 +80,8 @@ extern volatile uint32_t msTicks;
 typedef enum {
   rtd,
   driver_reset,
-  scroll_select,
+  A,
+  B,
   LEN_BUTTONS  // Last element in an enum cast to int gives #(elements defined)
 } BUTTONS;
 

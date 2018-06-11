@@ -77,6 +77,9 @@
 #define BFAN_PORT                     GPIOB
 
 
+#define L_CONTACTOR_STATUS_PIN        GPIO_PIN_13
+#define L_CONTACTOR_STATUS_PORT       GPIOC
+
 #define L_CONTACTOR_PIN               GPIO_PIN_7
 #define L_CONTACTOR_PORT              GPIOC
 
@@ -98,3 +101,7 @@
 
 #define BPD_GATE_PIN                  GPIO_PIN_6
 #define BPD_GATE_PORT                 GPIOC
+
+
+#define BRAKE_VALVE_PIN               GPIO_PIN_8
+#define BRAKE_VALVE_PORT              GPIOA

@@ -1,6 +1,5 @@
 #include "can_handles.h"
 
-
 void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *hcan) {
   HAL_StatusTypeDef CAN_RX_STATUS = HAL_CAN_Receive_IT(hcan, CAN_FIFO0);
 
@@ -57,6 +56,34 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
 
   case can0_ButtonRequest:
     handleButtonRequest(&frame);
+    break;
+
+  case can0_CurrentSensor_Power:
+    handleCurrentSensor_Power(&frame);
+    break;
+
+  case can0_MCMotor_Position_Info:
+    handleMCMotor_Position_Info(&frame);
+    break;
+
+  case can0_SBG_EKF_Velocity:
+    handleSBG_EKF_Velocity(&frame);
+    break;
+
+  case can0_FrontCanNodeRightWheelSpeed:
+    handleFrontCanNodeRightWheelSpeed(&frame);
+    break;
+
+  case can0_FrontCanNodeLeftWheelSpeed:
+    handleFrontCanNodeLeftWheelSpeed(&frame);
+    break;
+
+  case can0_MCTorque_Timer_Info:
+    handleMCTorque_Timer_Info(&frame);
+    break;
+
+  case can0_DashControls:
+    handleDashControls(&frame);
     break;
 
   default:
@@ -144,13 +171,75 @@ void handleButtonRequest(Frame *msg) {
 
   buttons.RTD          = unpacked_msg.RTD;
   buttons.DriverReset  = unpacked_msg.DriverReset;
-  buttons.ScrollSelect = unpacked_msg.ScrollSelect;
+}
+
+void handleCurrentSensor_Power(Frame *msg) {
+  can0_CurrentSensor_Power_T unpacked_msg;
+
+  unpack_can0_CurrentSensor_Power(msg, &unpacked_msg);
+
+  cs_readings.power = unpacked_msg.result;
+}
+
+void handleMCMotor_Position_Info(Frame *msg) {
+  can0_MCMotor_Position_Info_T unpacked_msg;
+
+  unpack_can0_MCMotor_Position_Info(msg, &unpacked_msg);
+
+  mc_readings.speed = unpacked_msg.motor_speed;
+}
+
+void handleSBG_EKF_Velocity(Frame *msg) {
+  can0_SBG_EKF_Velocity_T unpacked_msg;
+
+  unpack_can0_SBG_EKF_Velocity(msg, &unpacked_msg);
+
+  imu_velocity.north = unpacked_msg.north;
+  imu_velocity.east = unpacked_msg.east;
+}
+
+void handleFrontCanNodeLeftWheelSpeed(Frame *msg) {
+  can0_FrontCanNodeLeftWheelSpeed_T unpacked_msg;
+
+  unpack_can0_FrontCanNodeLeftWheelSpeed(msg, &unpacked_msg);
+
+  wheel_speeds.front_left_32b_wheel_speed = unpacked_msg.left_32b;
+  wheel_speeds.front_left_16b_wheel_speed = unpacked_msg.left_16b;
+}
+
+void handleFrontCanNodeRightWheelSpeed(Frame *msg) {
+  can0_FrontCanNodeRightWheelSpeed_T unpacked_msg;
+
+  unpack_can0_FrontCanNodeRightWheelSpeed(msg, &unpacked_msg);
+
+  wheel_speeds.front_right_32b_wheel_speed = unpacked_msg.right_32b;
+  wheel_speeds.front_right_16b_wheel_speed = unpacked_msg.right_16b;
+}
+
+void handleMCTorque_Timer_Info(Frame *msg) {
+  can0_MCTorque_Timer_Info_T unpacked_msg;
+
+  unpack_can0_MCTorque_Timer_Info(msg, &unpacked_msg);
+
+  mc_readings.torque_feedback = unpacked_msg.torque_feedback;
+}
+
+void handleDashControls(Frame *msg) {
+  can0_DashControls_T unpacked_msg;
+
+  unpack_can0_DashControls(msg, &unpacked_msg);
+
+  control_settings.using_regen;
+  control_settings.using_launch_control;
+  control_settings.cBB_ef = unpacked_msg.regen_bias; // Electric front brake bias * 100
+  control_settings.slip_ratio; // Slip ratio * 100
+  control_settings.limp_factor; // Limp facotr * 100
 }
 
 void send_VCUHeartbeat() {
   LIMIT(can0_VCUHeartbeat);
 
-  can0_VCUHeartbeat_T msg;
+  can0_VCUHeartbeat_T msg = {};
 
   msg.vcu_state   = get_vcu_state();
   msg.error_state = get_error_state();
@@ -162,7 +251,7 @@ void send_VCUHeartbeat() {
 void send_VCUErrors() {
   LIMIT(can0_VCUErrors);
 
-  can0_VCUErrors_T msg;
+  can0_VCUErrors_T msg = {};
 
   msg.fatal_gate      = fatal_faults.gate;
   msg.fatal_precharge = fatal_faults.precharge;
@@ -173,6 +262,11 @@ void send_VCUErrors() {
   msg.recoverable_heartbeat = recoverable_faults.heartbeat;
   msg.recoverable_conflict  = recoverable_faults.conflict;
   msg.recoverable_contactor = recoverable_faults.contactor;
+
+  msg.gate_sdn = gates.sdn_gate;
+  msg.gate_bms = gates.bms_gate;
+  msg.gate_imd = gates.imd_gate;
+  msg.gate_bpd = gates.bpd_gate;
 
   can0_VCUErrors_Write(&msg);
 }
@@ -194,6 +288,23 @@ void sendTorqueCmdMsg(int16_t torque) {
   msg.discharge_enabled             = false;
   msg.speed_mode                    = false;
   msg.torque_limit                  = 0;
+
+  can0_MCCommand_Write(&msg);
+}
+
+void sendSpeedCmdMsg(int16_t speed, int16_t torque_limit) {
+  LIMIT(can0_MCCommand);
+
+  can0_MCCommand_T msg;
+  if (speed < 0) speed = 0;
+
+  msg.torque                        = 0;
+  msg.angular_vel                   = speed;
+  msg.direction_is_counterclockwise = false;
+  msg.inverter_enabled              = true;
+  msg.discharge_enabled             = false;
+  msg.speed_mode                    = true;
+  msg.torque_limit                  = torque_limit;
 
   can0_MCCommand_Write(&msg);
 }

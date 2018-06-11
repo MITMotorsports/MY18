@@ -41,7 +41,7 @@ void _OLED_send_serial(unsigned char c, unsigned char temp) {
         c = c >> 1;
         Pin_Write(PIN_OLED_SCLK, 1);
     }
-        
+
     for (i = 0; i < 4; i++) {
         Pin_Write(PIN_OLED_SCLK, 0);
         Pin_Write(PIN_OLED_SDI, 0);
@@ -172,7 +172,23 @@ void oled_rprint_pad(NHD_US2066_OLED *oled, char *str, int pad) {
 }
 
 void oled_rprint_num(NHD_US2066_OLED *oled, int num) {
-    oled_rprint_num_pad(oled, num, 0);    
+    oled_rprint_num_pad(oled, num, 0);
+}
+
+// print `num` divided by `div` to `decimals` decimal points
+void oled_print_num_dec(NHD_US2066_OLED *oled, int num, int div, int decimals) {
+    if (div <= 0) return;  // TODO: Find a way to notify of attempt to zerodiv.
+    if (div % 10 != 0) return;  // TODO: Notifiy that div was not base 10.
+    oled_print_num(oled, num / div);
+    if (div > 1) {
+        oled_print(oled, ".");
+        for (int i = 0; i < decimals && div > 0; i++) {
+            div /= 10;
+            int dec = (num / div) % 10;
+            char c = dec + '0';
+            oled_print_char(oled, c);
+        }
+    }
 }
 
 void oled_rprint_num_pad(NHD_US2066_OLED *oled, int num, int pad) {
@@ -189,7 +205,7 @@ void _oled_writeline(NHD_US2066_OLED *oled, int line) {
     for (i = 0; i < oled->ncols; i++) {
         int idx = __pos2idx(oled, line, i);
         unsigned char c = oled->buf[idx];
-        OLED_data(c); 
+        OLED_data(c);
     }
 }
 
@@ -204,7 +220,7 @@ void oled_clear(NHD_US2066_OLED *oled) {
 
 void oled_clearline(NHD_US2066_OLED *oled, int line) {
     oled->lineupdates[line] = true;
-    
+
     int i;
     for (i = 0; i < oled->ncols; i++) {
         int idx = __pos2idx(oled, line, i);

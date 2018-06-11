@@ -4,17 +4,34 @@
 #include "CANlib.h"
 
 #include <stdbool.h>
+#include <stdint.h>
+
+#include "button_listener.h"
+
+#define LEN(x)  (sizeof(x) / sizeof((x)[0])
+#define CONSTRAIN(x, min, max) (((x) < (min)) ? (min) : (((x) > (max)) ? (max) : x))
+#define LOOPOVER(x, min, max) (((x) < (min)) ? (max) : (((x) > (max)) ? (min) : x))
 
 typedef struct {
-    int battery_voltage;
-    int voltage_2;
-    int battery_current;
+    button_state_t left;
+    button_state_t right;
+    button_state_t A;
+    button_state_t B;
+} Buttons_T;
+
+typedef struct {
+    // Values obseverd by dashboard
+    int cs_voltage;  // in dV
+    int mc_voltage;  // in dV
+    int cs_current;  // in mA
     int max_cell_voltage, min_cell_voltage;
     int max_cell_temp, min_cell_temp;
     int power;
     int current;
 
     bool brake_pressed;
+    int brake_1;
+    int brake_2;
     bool accel_pressed;
 
     uint32_t last_bms_heartbeat;
@@ -28,6 +45,8 @@ typedef struct {
     int rear_left_wheel_speed;
     int rear_right_wheel_speed;
 
+    can0_ButtonRequest_T button_bank;
+
     can0_VCUHeartbeat_vcu_state_T vcu_state;
     can0_VCUHeartbeat_error_state_T error_state;
     bool estop_hit;
@@ -36,8 +55,13 @@ typedef struct {
     int16_t max_igbt_temp;
 
     can0_VCUErrors_T vcu_errors;
+
+    // Values set by dashboard
+    can0_DashControls_T controls;
+
+    Buttons_T buttons;
 } carstats_t;
 
-int can_update_carstats(carstats_t *cs, can0_ButtonRequest_T *button_request);
+void can_update_carstats(carstats_t *cs);
 
 #endif

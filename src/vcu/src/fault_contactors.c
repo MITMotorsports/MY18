@@ -6,21 +6,20 @@ volatile Contactors_T contactors = {};
 // BMS too.
 
 bool any_fatal_contactor_faults(void) {
-  return any_fatal_contactor_weld_faults();
-  // return false;
+  return any_fatal_contactor_mismatch_faults();
 }
 
 bool any_recoverable_contactor_faults(void) {
   return false;
 }
 
-const Time_T L_side_timeout = 5000;
+const Time_T L_side_timeout = 200;
 
-bool any_fatal_contactor_weld_faults(void) {
+bool any_fatal_contactor_mismatch_faults(void) {
   static Time_T last_L_mismatch_time = 0;
   static bool   last_L_mismatch      = false;
 
-  bool L_mismatch = (READ_PIN(L_CONTACTOR) != contactors.L_contactor_welded);
+  bool L_mismatch = (READ_PIN(L_CONTACTOR) != READ_PIN(L_CONTACTOR_STATUS));
 
   if (L_mismatch) {
     if (last_L_mismatch) {
