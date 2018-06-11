@@ -7,36 +7,56 @@ static const uint8_t int_ch[] = {ADC_CH2, ADC_CH3, ADC_CH4, ADC_CH5};
 bool speed_1;
 bool speed_2;
 
+#define STEERING_PIN IOCON_PIO0_11
+#define ACCEL_1_PIN IOCON_PIO1_1
+#define ACCEL_2_PIN IOCON_PIO1_2
+#define BRAKE_1_PIN IOCON_PIO1_3
+#define BRAKE_2_PIN IOCON_PIO1_4
+
+// FUNC 2 is ADC for all pins here except for PIO1_4
+#define ACCEL_1_PIN_CONFIG (IOCON_FUNC2 | IOCON_MODE_INACT | IOCON_ADMODE_EN)
+#define ACCEL_2_PIN_CONFIG (IOCON_FUNC2 | IOCON_MODE_INACT | IOCON_ADMODE_EN)
+#define BRAKE_1_PIN_CONFIG (IOCON_FUNC2 | IOCON_MODE_INACT | IOCON_ADMODE_EN)
+#define BRAKE_2_PIN_CONFIG (IOCON_FUNC1 | IOCON_MODE_INACT | IOCON_ADMODE_EN)
+#define STEERING_PIN_CONFIG (IOCON_FUNC2 | IOCON_MODE_INACT | IOCON_ADMODE_EN)
+
+#define STEERING_CHANNEL ADC_CH0
+#define ACCEL_1_CHANNEL ADC_CH2
+#define ACCEL_2_CHANNEL ADC_CH3
+#define BRAKE_1_CHANNEL ADC_CH4
+#define BRAKE_2_CHANNEL ADC_CH5
 
 static void Disable_Channels(void) {
-	Chip_ADC_EnableChannel(LPC_ADC, ADC_CH2, DISABLE);
-	Chip_ADC_EnableChannel(LPC_ADC, ADC_CH3, DISABLE);
-	Chip_ADC_EnableChannel(LPC_ADC, ADC_CH4, DISABLE);
-	Chip_ADC_EnableChannel(LPC_ADC, ADC_CH5, DISABLE);	
 }
 
 void ADC_Init(void) {
-	Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_2, IOCON_FUNC2 | IOCON_ADMODE_EN); //ADC 3
-	Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_3, IOCON_FUNC2 | IOCON_ADMODE_EN); //ADC 4
-	Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_4, IOCON_FUNC1 | IOCON_ADMODE_EN); //ADC 5
-	Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_1, IOCON_FUNC2 | IOCON_ADMODE_EN); // ADC 2
-
 	Chip_ADC_Init(LPC_ADC, &adc_setup);
+
+  Chip_IOCON_PinMuxSet(LPC_IOCON, STEERING_PIN, STEERING_PIN_CONFIG);
+  Chip_ADC_EnableChannel(LPC_ADC, STEERING_CHANNEL, ENABLE);
+  // Accel 1 / AD2
+  Chip_IOCON_PinMuxSet(LPC_IOCON, ACCEL_1_PIN, ACCEL_1_PIN_CONFIG);
+  Chip_ADC_EnableChannel(LPC_ADC, ACCEL_1_CHANNEL, ENABLE);
+  // Accel 2 / AD3
+  Chip_IOCON_PinMuxSet(LPC_IOCON, ACCEL_2_PIN, ACCEL_2_PIN_CONFIG);
+  Chip_ADC_EnableChannel(LPC_ADC, ACCEL_2_CHANNEL, ENABLE);
+  // Brake 1 / AD4
+  Chip_IOCON_PinMuxSet(LPC_IOCON, BRAKE_1_PIN, BRAKE_1_PIN_CONFIG);
+  Chip_ADC_EnableChannel(LPC_ADC, BRAKE_1_CHANNEL, ENABLE);
+  // Brake 2 / AD5
+  Chip_IOCON_PinMuxSet(LPC_IOCON, BRAKE_2_PIN, BRAKE_2_PIN_CONFIG);
+  Chip_ADC_EnableChannel(LPC_ADC, BRAKE_2_CHANNEL, ENABLE);
+
+  Chip_ADC_SetBurstCmd(LPC_ADC, ENABLE);
 
 	Disable_Channels();
 
 }
 
-static uint16_t Read_ADC(int ch) {
-	uint16_t adc_data;
-	Disable_Channels();
-	Chip_ADC_SetStartMode(LPC_ADC, ADC_START_NOW, ADC_TRIGGERMODE_RISING);
-	Chip_ADC_EnableChannel(LPC_ADC, ch, ENABLE);
-	while (!Chip_ADC_ReadStatus(LPC_ADC, ch, ADC_DR_DONE_STAT)) {}
-
-	Chip_ADC_ReadValue(LPC_ADC, ch, &adc_data);
-	return adc_data;
-	
+uint16_t Read_ADC(ADC_CHANNEL_T channel) {
+  uint16_t result = 0;
+  Chip_ADC_ReadValue(LPC_ADC, channel, &result);
+  return result;
 }
 
 

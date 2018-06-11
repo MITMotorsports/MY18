@@ -25,7 +25,7 @@
 
 void SSP_Init(void);
 
-static void Read_ADC(int ch); //reads at specified channel, fills data array
+//static void Read_ADC(int ch); //reads at specified channel, fills data array
 void SPI_Read_ADC(uint16_t* ext_adc_data);
 
 #endif

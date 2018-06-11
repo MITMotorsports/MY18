@@ -81,13 +81,32 @@ int main(void)
 		// 	printNum(ext_adc_data[i],10);
 		// 	println("");
 		// }
-		// Internal_Read_ADC(int_adc_data);
-		// for (int i = 0; i < 4; i++) {
-		// 	print("INT ADC DATA : ");
-		// 	printNum(int_adc_data[i],10);
-		// 	println("");
-		// }
-		Read_Axes(&orient);
+		//Internal_Read_ADC(int_adc_data);
+		//for (int i = 0; i < 4; i++) {
+		//	print("INT ADC DATA : ");
+        //    printNum(i, 10);
+        //    print(" ");
+		//	printNum(int_adc_data[i],10);
+		//	println("");
+		//}
+        //
+        //
+        print("CH2: ");
+        printNum(Read_ADC(ADC_CH2), 10);
+        println("");
+        print("CH3: ");
+        printNum(Read_ADC(ADC_CH3), 10);
+        println("");
+        print("CH4: ");
+        printNum(Read_ADC(ADC_CH4), 10);
+        println("");
+        print("CH5: ");
+        printNum(Read_ADC(ADC_CH5), 10);
+        println("");
+
+        uint32_t future = msTicks + 100;
+        while (msTicks < future);
+		//Read_Axes(&orient);
 		// can_transmit(ext_adc_data, int_adc_data);
 
 	}
