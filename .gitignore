@@ -61,3 +61,4 @@ Mkfile.old
 dkms.conf
 **/bin
 .DS_Store
+_DS_Store
