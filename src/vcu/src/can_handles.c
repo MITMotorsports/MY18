@@ -46,6 +46,10 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleCellVoltagesMsg(&frame);
     break;
 
+  case can0_CellTemperatures:
+    handleCellTemperatures(&frame);
+    break;
+
   case can0_CurrentSensor_Voltage1:
     handleCurrentSensorVoltageMsg(&frame);
     break;
@@ -162,6 +166,16 @@ void handleCellVoltagesMsg(Frame *msg) {
   // to estimate the lower bound on the back voltage
   // (12 per cell, 6 cells, millivolts to decivolts)
   voltages.pack = unpacked_msg.max * 12 * 6 / 100;
+
+  cell_readings.cell_min_mV = unpacked_msg.min;
+}
+
+void handleCellTemperatures(Frame *msg) {
+  can0_CellTemperatures_T unpacked_msg;
+
+  unpack_can0_CellTemperatures(msg, &unpacked_msg);
+
+  cell_readings.cell_max_temp = unpacked_msg.max;
 }
 
 void handleButtonRequest(Frame *msg) {

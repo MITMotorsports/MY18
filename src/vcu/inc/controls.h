@@ -30,10 +30,20 @@
 #define FRONT_BRAKE brake_1
 #define REAR_BRAKE brake_2
 
+// TL = temp limiting
+#define MAX_TEMP_dC 600 // deciCelsius
+
+// VL = (under)voltage limiting
+#define MIN_VOLTAGE_mV 2500
+
 typedef struct {
   bool using_regen;
   uint16_t cBB_ef; // Electric front brake bias * 100
   uint16_t limp_factor; // Limp facotr * 100
+  uint16_t cTL_min_gain; // Min temp limiter gain * 100
+  uint16_t TL_threshold_temp;
+  uint16_t cMin_VL_gain; // Min voltage limiter gain * 100
+  uint16_t VL_threshold_voltage_mV;
 } Controls_Settings_T;
 
 extern Controls_Settings_T control_settings;
@@ -41,6 +51,8 @@ extern Controls_Settings_T control_settings;
 // PRIVATE FUNCTIONS
 static int16_t get_torque(void);
 static int32_t get_regen_torque(void);
+static int16_t get_temp_limited_torque(int16_t pedal_torque);
+static int16_t get_voltage_limited_torque(int16_t pedal_torque);
 
 // INTERACTION FUNCTIONS
 void enable_controls(void);
