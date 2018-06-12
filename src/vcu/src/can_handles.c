@@ -244,7 +244,7 @@ void handleDashControls(Frame *msg) {
   unpack_can0_DashControls(msg, &unpacked_msg);
 
   if (unpacked_msg.regen_bias != 65535) {
-    control_settings.cBB_ef = unpacked_msg.regen_bias;
+    control_settings.regen_bias = unpacked_msg.regen_bias;
     control_settings.using_regen = unpacked_msg.using_regen;
   }
 

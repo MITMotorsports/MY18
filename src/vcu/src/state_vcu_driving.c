@@ -18,7 +18,7 @@ void enter_vcu_state_driving() {
   rtd_started = false;
   rtd_last    = 0;
 
-  printf("CONTROLS PARAMS:\r\n  USING REGEN: %d\r\n  cBB_ef: %d\r\n  LIMP FACTOR: %d\r\n", control_settings.using_regen, control_settings.cBB_ef, control_settings.limp_factor);
+  printf("CONTROLS PARAMS:\r\n  USING REGEN: %d\r\n  regen_bias: %d\r\n  LIMP FACTOR: %d\r\n", control_settings.using_regen, control_settings.regen_bias, control_settings.limp_factor);
 
   enable_controls();
 }
