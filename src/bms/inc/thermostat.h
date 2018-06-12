@@ -2,6 +2,7 @@
 #define _THERMOSTAT_H_
 
 #include "i2c.h"
+#include "uart.h"
 
 #define THERMO_ADDR 0x48 //slave address is (1001 A2 A1 A0 R/W). 
 							//A2, A1, A0 user-configurable, allow for multiple thermostats same bus

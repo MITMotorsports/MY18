@@ -28,6 +28,8 @@ void I2C_Init(void) {
 
 	xfer.txBuff = tx_buf;
 	xfer.rxBuff = rx_buf;
+
+	Board_Println("Finished I2C init...");
 }
 
 void I2C_Set_Address(uint8_t addr) {
@@ -42,7 +44,9 @@ void I2C_Write(uint16_t* content) {
 	}
 
 	xfer.txSz = i;
+	//Board_Println("Before master send");
 	Chip_I2C_MasterSend(I2C0, xfer.slaveAddr, xfer.txBuff, xfer.txSz);
+	//Board_Println("After master send");
 }
 
 uint8_t* I2C_Read(uint8_t pointer_byte, uint8_t len) {

@@ -41,7 +41,9 @@ int main(void) {
     Board_Pin_Set(PIN_BMS_FAULT, GPIO_HIGH);
 
     Process_Keyboard();
+    Board_Println_BLOCKING("BEFORE INPUT");
     Process_Input(&bms_input, &bms_output);
+    Board_Println_BLOCKING("BEFORE OUTPUT");
     Process_Output(&bms_input, &bms_output, &bms_state);
 
     if(Error_Should_Fault()) {
@@ -49,6 +51,7 @@ int main(void) {
       break;
     }
     //TODO: charger enable pin for charger
+    Board_Println_BLOCKING("THERM");
     Board_Println_BLOCKING("Therm: ");
     Board_PrintNum(Thermo_Read(), 10);
 
