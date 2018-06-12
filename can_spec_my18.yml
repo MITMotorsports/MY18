@@ -334,6 +334,16 @@ buses:
             position: 6
             length: 1
             c_type: bool
+          lc_state:
+            position: 7
+            length: 3
+            c_type: enum
+            enum:
+              BEFORE: 0
+              SPEEDING_UP: 1
+              SPEED_CONTROLLER: 2
+              ZERO_TORQUE: 3
+              DONE: 4
       VCUErrors:
         can_id: 0x0F4
         period: 111ms
@@ -571,16 +581,8 @@ buses:
             length: 16
             c_type: uint16_t
             signed: false
-          using_launch_ctrl:
-            position: 17
-            length: 1
-            c_type: bool
-          launch_ctrl_slip_ratio: # Ranges from 105 to 115
-            position: 18
-            length: 16
-            c_type: uint16_t
           limp_factor: # Ranges from 0 to 100
-            position: 34
+            position: 17
             length: 16
             c_type: uint16_t
       ButtonRequest:

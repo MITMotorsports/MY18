@@ -26,6 +26,7 @@ typedef struct {
   Voltage_T bus;
   Voltage_T pack;
   Voltage_T precharge_target;
+  uint16_t cell_min_mV;
 } Voltages_T;
 
 typedef struct {
