@@ -8,6 +8,7 @@ volatile MCReadings_T mc_readings = {};
 volatile CSReadings_T cs_readings = {};
 volatile IMUVelocity_T imu_velocity = {};
 volatile Wheel_Speeds_T wheel_speeds = {};
+volatile Cell_Readings_T cell_readings = {};
 
 void init_vcu_state(void) {
   // BOARD HEARTBEATS

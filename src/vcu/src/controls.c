@@ -5,11 +5,16 @@ static int16_t torque_command = 0;
 static int16_t speed_command = 0;
 Controls_Settings_T control_settings = {};
 
+static int16_t limiter(uint16_t threshold, uint16_t absolute, uint16_t min_gain, uint16_t reading);
 
 void init_controls_defaults(void) {
   control_settings.using_regen = false;
   control_settings.cBB_ef = 56;
   control_settings.limp_factor = 100;
+  control_settings.cTL_min_gain = 35;
+  control_settings.TL_threshold_temp = 550;
+  control_settings.cMin_VL_gain = 35;
+  control_settings.VL_threshold_voltage_mV = 3000;
 }
 
 void enable_controls(void) {
@@ -38,7 +43,6 @@ void execute_controls(void) {
 
   torque_command = get_torque();
 
-
   // Control regen brake valve:
   bool brake_valve_state = control_settings.using_regen && get_pascals(pedalbox.REAR_BRAKE) < RG_REAR_BRAKE_THRESH;
   set_brake_valve(brake_valve_state);
@@ -53,6 +57,20 @@ void execute_controls(void) {
   // Extra check to ensure we are only sending regen torque when allowed
   if (torque_command == 0) {
     torque_command = regen_torque;
+  } else {
+    // Only use limits when we're not doing regen
+    int16_t voltage_limited_torque = get_voltage_limited_torque(torque_command);
+    int16_t temp_limited_torque = get_temp_limited_torque(torque_command);
+    int16_t min_sensor_torque = MIN_DE(voltage_limited_torque, temp_limited_torque);
+
+    int16_t dash_limited_torque = torque_command * control_settings.limp_factor / 100;
+
+    int16_t limited_torque = MIN_DE(min_sensor_torque, dash_limited_torque);
+
+    printf("TEMP: %d, VOLTAGE:%d\r\nRAW_TORQUE: %d\r\nVL TORQUE: %d\r\nTL TORQUE:%d\r\nDL TORQUE: %d\r\n COMMANDED TORQUE: %d\r\n\r\n", cell_readings.cell_max_temp, cell_readings.cell_min_mV,
+      torque_command, voltage_limited_torque, temp_limited_torque, dash_limited_torque, limited_torque);
+
+    torque_command = limited_torque;
   }
 
   sendTorqueCmdMsg(torque_command);
@@ -63,8 +81,8 @@ static int16_t get_torque(void) {
 
   if (accel < PEDALBOX_ACCEL_RELEASE) return 0;
 
-  int16_t raw_torque =  MAX_TORQUE * (accel - PEDALBOX_ACCEL_RELEASE) / (MAX_ACCEL_VAL - PEDALBOX_ACCEL_RELEASE);
-  return raw_torque * control_settings.limp_factor / 100;
+  int16_t torque =  MAX_TORQUE * (accel - PEDALBOX_ACCEL_RELEASE) / (MAX_ACCEL_VAL - PEDALBOX_ACCEL_RELEASE);
+  return torque;
 }
 
 static int32_t get_regen_torque() {
@@ -95,4 +113,40 @@ static int32_t get_regen_torque() {
 
   // Regen is negative torque, and we've calculated a positive number so far
   return -1 * regen_torque;
+}
+
+static int16_t get_temp_limited_torque(int16_t pedal_torque) {
+  if (cell_readings.cell_max_temp < control_settings.TL_threshold_temp) {
+    return pedal_torque;
+  }
+  int32_t gain;
+  if (cell_readings.cell_max_temp < MAX_TEMP_dC) {
+    gain = limiter(control_settings.TL_threshold_temp, MAX_TEMP_dC, control_settings.cTL_min_gain, cell_readings.cell_max_temp);
+  } else {
+    gain = control_settings.cTL_min_gain;
+  }
+    return gain * pedal_torque / 100;
+}
+
+static int16_t get_voltage_limited_torque(int16_t pedal_torque) {
+  if (cell_readings.cell_min_mV > control_settings.VL_threshold_voltage_mV) {
+    return pedal_torque;
+  }
+  int32_t gain;
+  if (cell_readings.cell_min_mV > MIN_VOLTAGE_mV) {
+    gain = limiter(control_settings.VL_threshold_voltage_mV, MIN_VOLTAGE_mV, control_settings.cMin_VL_gain, cell_readings.cell_min_mV);
+  } else {
+    gain = control_settings.cMin_VL_gain;
+  }
+  return gain * pedal_torque / 100;
+}
+
+static int16_t limiter(uint16_t threshold, uint16_t absolute, uint16_t min_gain, uint16_t reading) {
+  // Explanation:
+  // Desired points: LIMITER(threshold) = 100, LIMITER(absolute) = min_gain
+  // Slope: (LIMITER(threshold) - LIMITER(absolute)) / (threshold - absolute) = (100 - min_gain) / (threshold - absolute)
+  // Intercept: 100 = (100 - min_gain) / (threshold - absolute) * threshold + intercept
+  // --> intercept = 100 - (100 - min_gain) / (threshold - absolute) * threshold
+  // Add them together and factor out a (threshold - absolute)
+  return (100*(threshold - absolute) - (100 - min_gain) * threshold + reading * (100 - min_gain)) / (threshold - absolute);
 }
