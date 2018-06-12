@@ -9,7 +9,7 @@ int main(void) {
   Board_CAN_Init();
   EEPROM_Init(LPC_SSP1, EEPROM_BAUD, EEPROM_CS_PIN);
   I2C_Init();
-  Thermostat_Init();
+  Thermo_Init();
 
   SOC_Init(&pack_status);
 
@@ -35,6 +35,7 @@ int main(void) {
   Error_Ignore(ERROR_LTC_PEC);
   Error_Ignore(ERROR_LTC_CVST);
   Error_Ignore(ERROR_LTC_OWT);
+
   while (1) {
     // Setting fault pin high
     Board_Pin_Set(PIN_BMS_FAULT, GPIO_HIGH);
@@ -48,7 +49,8 @@ int main(void) {
       break;
     }
     //TODO: charger enable pin for charger
-
+    Board_Println_BLOCKING("Therm: ");
+    Board_PrintNum(Thermo_Read(), 10);
 
   }
 
