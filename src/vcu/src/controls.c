@@ -3,18 +3,18 @@
 static bool enabled = false;
 static int16_t torque_command = 0;
 static int16_t speed_command = 0;
-Controls_Settings_T control_settings = {};
+can0_DashControls_T control_settings = {};
 
 static int16_t limiter(uint16_t threshold, uint16_t absolute, uint16_t min_gain, uint16_t reading);
 
 void init_controls_defaults(void) {
   control_settings.using_regen = false;
-  control_settings.cBB_ef = 56;
+  control_settings.regen_bias = 56;
   control_settings.limp_factor = 100;
-  control_settings.cTL_min_gain = 35;
-  control_settings.TL_threshold_temp = 550;
-  control_settings.cMin_VL_gain = 35;
-  control_settings.VL_threshold_voltage_mV = 3000;
+  control_settings.temp_lim_min_gain = 35;
+  control_settings.temp_lim_thresh_temp = 55;
+  control_settings.volt_lim_min_gain = 35;
+  control_settings.volt_lim_min_voltage = 300;
 }
 
 void enable_controls(void) {
@@ -105,7 +105,7 @@ static int32_t get_regen_torque() {
     // pascals, we only need to divde by 10^4, not 10^7 for RG_10_7_K
     // And by dividing by 10^3 instead of 10^4, we are multiplying by 10 to get
     // dNm instead of Nm
-    regen_torque = RG_10_7_K * kilo_pascals * (100 - control_settings.cBB_ef) /(control_settings.cBB_ef * 1000);
+    regen_torque = RG_10_7_K * kilo_pascals * (100 - control_settings.regen_bias) /(control_settings.regen_bias * 1000);
     if (regen_torque > RG_TORQUE_COMMAND_MAX) {
       regen_torque = RG_TORQUE_COMMAND_MAX;
     }
@@ -116,27 +116,27 @@ static int32_t get_regen_torque() {
 }
 
 static int16_t get_temp_limited_torque(int16_t pedal_torque) {
-  if (cell_readings.cell_max_temp < control_settings.TL_threshold_temp) {
+  if (cell_readings.cell_max_temp/10 < control_settings.temp_lim_thresh_temp) {
     return pedal_torque;
   }
   int32_t gain;
-  if (cell_readings.cell_max_temp < MAX_TEMP_dC) {
-    gain = limiter(control_settings.TL_threshold_temp, MAX_TEMP_dC, control_settings.cTL_min_gain, cell_readings.cell_max_temp);
+  if (cell_readings.cell_max_temp/10 < MAX_TEMP) {
+    gain = limiter(control_settings.temp_lim_thresh_temp, MAX_TEMP, control_settings.temp_lim_min_gain, cell_readings.cell_max_temp);
   } else {
-    gain = control_settings.cTL_min_gain;
+    gain = control_settings.temp_lim_min_gain;
   }
     return gain * pedal_torque / 100;
 }
 
 static int16_t get_voltage_limited_torque(int16_t pedal_torque) {
-  if (cell_readings.cell_min_mV > control_settings.VL_threshold_voltage_mV) {
+  if (cell_readings.cell_min_mV/10 > control_settings.volt_lim_min_voltage) {
     return pedal_torque;
   }
   int32_t gain;
-  if (cell_readings.cell_min_mV > MIN_VOLTAGE_mV) {
-    gain = limiter(control_settings.VL_threshold_voltage_mV, MIN_VOLTAGE_mV, control_settings.cMin_VL_gain, cell_readings.cell_min_mV);
+  if (cell_readings.cell_min_mV/10 > MIN_VOLTAGE) {
+    gain = limiter(control_settings.volt_lim_min_voltage, MIN_VOLTAGE, control_settings.volt_lim_min_gain, cell_readings.cell_min_mV);
   } else {
-    gain = control_settings.cMin_VL_gain;
+    gain = control_settings.volt_lim_min_gain;
   }
   return gain * pedal_torque / 100;
 }
