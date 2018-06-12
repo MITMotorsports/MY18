@@ -179,6 +179,28 @@ buses:
             c_type: uint32_t
             signed: false
             unit: mRPM
+      SensorNodeLeftWheelSpeed:
+        can_id: 0x0E2
+        is_big_endian: true
+        period: 10ms
+        segments:
+          left_32b:
+            position: 0
+            length: 32
+            c_type: uint32_t
+            signed: false
+            unit: mRPM
+      SensorNodeRightWheelSpeed:
+        can_id: 0x0E3
+        is_big_endian: true
+        period: 10ms
+        segments:
+          right_32b:
+            position: 0
+            length: 32
+            c_type: uint32_t
+            signed: false
+            unit: mRPM
       CellTemperatures:
         can_id: 0x0F1
         period: 0.5s

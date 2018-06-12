@@ -1,6 +1,6 @@
 #include "main.h"
 
-#define DEBUG_UART false
+#define DEBUG_UART true
 
 const uint32_t OscRateIn = 12000000;
 volatile uint32_t msTicks;
@@ -18,7 +18,7 @@ void SysTick_Handler(void) {
 
 Speed_Input_T speed_val;
 
-#define ADC_UPDATE_PERIOD 20
+#define ADC_UPDATE_PERIOD 100
 #define WHEEL_SPEED_TIMEOUT_MS 100
 #define WHEEL_SPEED_READ_PERIOD_MS 10
 
@@ -41,11 +41,14 @@ int main(void) {
     uint32_t adc_update = 0;
 
 	while (1) {
-        Board_Print("Speed: ");
-        Board_PrintNum(speed_val.can_node_left_32b_wheel_speed, 10);
-        Board_Print(" / ");
-        Board_PrintNum(speed_val.can_node_left_32b_wheel_speed, 10);
-        Board_Println(""); 
+        send_wheel_speed_can();
+#ifdef DEBUG_UART
+        //Board_Print("Speed: ");
+        //Board_PrintNum(speed_val.can_node_left_32b_wheel_speed, 10);
+        //Board_Print(" / ");
+        //Board_PrintNum(speed_val.can_node_left_32b_wheel_speed, 10);
+        //Board_Println(""); 
+#endif
 
         if (speed_val.last_speed_read_ms + WHEEL_SPEED_READ_PERIOD_MS < msTicks) {
             update_wheel_speed();
@@ -217,4 +220,14 @@ void update_wheel_speed() {
       }
     }
   }
+}
+
+void send_wheel_speed_can() {
+    can0_SensorNodeRightWheelSpeed_T msg_right;
+    msg_right.right_32b = speed_val.can_node_right_32b_wheel_speed;
+    can0_SensorNodeRightWheelSpeed_Write(&msg_right);
+
+    can0_SensorNodeLeftWheelSpeed_T msg_left;
+    msg_left.left_32b = speed_val.can_node_left_32b_wheel_speed;
+    can0_SensorNodeLeftWheelSpeed_Write(&msg_left);
 }
