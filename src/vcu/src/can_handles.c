@@ -234,11 +234,6 @@ void handleDashControls(Frame *msg) {
     control_settings.using_regen = unpacked_msg.using_regen;
   }
 
-  if (unpacked_msg.launch_ctrl_slip_ratio != 65535) {
-    control_settings.slip_ratio = unpacked_msg.launch_ctrl_slip_ratio;
-    control_settings.using_launch_control = unpacked_msg.using_launch_ctrl;
-  }
-
   if (unpacked_msg.limp_factor != 65535) {
     control_settings.limp_factor = unpacked_msg.limp_factor;
   }
