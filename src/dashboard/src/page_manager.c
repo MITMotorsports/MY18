@@ -87,10 +87,22 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
             // draw_charging_page(pm, oled);
             // break;
         case DASH_PAGE_REGEN:
-           draw_regen_page(pm, oled);
-           break;
+            draw_regen_page(pm, oled);
+            break;
+        case DASH_PAGE_LIM_SELECT:
+            draw_limit_select_page(pm, oled);
+            break;
+        case DASH_PAGE_TEMP_LIM:
+            draw_temp_lim_page(pm, oled);
+            break;
+        case DASH_PAGE_VOLT_LIM:
+            draw_volt_lim_page(pm, oled);
+            break;
         case DASH_PAGE_TRACTION:
             draw_traction_page(pm, oled);
+            break;
+        case DASH_PAGE_MANUAL_LIMP:
+          draw_manual_limp_page(pm, oled);
             break;
         //case DASH_PAGE_WHEEL_SPEED:
         //    draw_wheel_speed_page(pm, oled);
@@ -244,6 +256,121 @@ void draw_regen_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     if (stats->controls.regen_bias != -1) {
         oled_print_num(oled, stats->controls.regen_bias);
+    }
+    else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+}
+
+void draw_limit_select_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+    carstats_t *stats = pm->stats;
+
+    oled_clearline(oled, 1);
+    oled_set_pos(oled, 1, 0);
+
+    if (stats->buttons.right.rising_edge) stats->controls.using_voltage_limiting ^= 1; // NOT
+
+    if (stats->buttons.B.rising_edge) stats->controls.using_temp_limiting ^= 1;
+
+    oled_print(oled, "TEMP LIM: ");
+
+    oled_print(oled, (stats->controls.using_temp_limiting) ? "ON" : "OFF");
+
+    oled_clearline(oled, 2);
+    oled_set_pos(oled, 2, 0);
+
+    oled_print(oled, "VOLT LIM: ");
+
+    oled_print(oled, (stats->controls.using_voltage_limiting) ? "ON" : "OFF");
+}
+
+void draw_temp_lim_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+    carstats_t *stats = pm->stats;
+
+    // Default should be 55
+    if (stats->buttons.B.rising_edge) {
+        stats->controls.temp_lim_min_gain += 1;
+    }
+    if (stats->buttons.right.rising_edge) {
+        stats->controls.temp_lim_thresh_temp += 1;
+    }
+
+    stats->controls.temp_lim_min_gain = LOOPOVER(stats->controls.temp_lim_min_gain, 25, 50);
+    stats->controls.temp_lim_thresh_temp = LOOPOVER(stats->controls.temp_lim_thresh_temp, 45, 60);
+
+    oled_clearline(oled, 1);
+    oled_set_pos(oled, 1, 0);
+    oled_print(oled, "TL MIN GAIN: ");
+    if (stats->controls.temp_lim_min_gain != -1) {
+        oled_print_num_dec(oled, stats->controls.temp_lim_min_gain, 100, 2);
+    }
+    else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+
+
+    oled_clearline(oled, 2);
+    oled_set_pos(oled, 2, 0);
+    oled_print(oled, "THRESH TEMP: ");
+    if (stats->controls.temp_lim_thresh_temp != -1) {
+        oled_print_num(oled, stats->controls.temp_lim_thresh_temp);
+        oled_print(oled, " C");
+    }
+    else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+}
+
+void draw_volt_lim_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+    carstats_t *stats = pm->stats;
+
+    if (stats->buttons.B.rising_edge) {
+        stats->controls.volt_lim_min_gain += 1;
+    }
+    if (stats->buttons.right.rising_edge) {
+        stats->controls.volt_lim_min_voltage += 5;
+    }
+
+    stats->controls.volt_lim_min_gain = LOOPOVER(stats->controls.volt_lim_min_gain, 25, 50);
+    stats->controls.volt_lim_min_voltage = LOOPOVER(stats->controls.volt_lim_min_voltage, 250, 325);
+
+    oled_clearline(oled, 1);
+    oled_set_pos(oled, 1, 0);
+    oled_print(oled, "VL MIN GAIN: ");
+    if (stats->controls.volt_lim_min_gain != -1) {
+        oled_print_num_dec(oled, stats->controls.volt_lim_min_gain, 100, 2);
+    }
+    else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+
+
+    oled_clearline(oled, 2);
+    oled_set_pos(oled, 2, 0);
+    oled_print(oled, "THRESH VOLTAGE: ");
+    if (stats->controls.volt_lim_min_voltage != -1) {
+        oled_print_num_dec(oled, stats->controls.volt_lim_min_voltage, 100, 2);
+        oled_print(oled, " V");
+    }
+    else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+}
+
+void draw_manual_limp_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+    carstats_t *stats = pm->stats;
+
+    if (stats->buttons.B.rising_edge) {
+        stats->controls.limp_factor += 1;
+    }
+
+    stats->controls.volt_lim_min_gain = LOOPOVER(stats->controls.volt_lim_min_gain, 25, 100);
+
+    oled_clearline(oled, 1);
+    oled_set_pos(oled, 1, 0);
+    oled_print(oled, "MANUAL LIMP: ");
+    if (stats->controls.limp_factor != -1) {
+        oled_print_num_dec(oled, stats->controls.limp_factor, 100, 2);
     }
     else {
         oled_print(oled, DATA_UNKNOWN);

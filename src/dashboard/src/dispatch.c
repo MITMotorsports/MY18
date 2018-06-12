@@ -88,9 +88,12 @@ void dispatch_init() {
     carstats.last_vcu_heartbeat      = msTicks;
     carstats.last_bms_heartbeat      = msTicks;
 
-    carstats.controls.regen_bias        = -1;
-    carstats.controls.launch_ctrl_slip_ratio = -1;
-    carstats.controls.limp_factor       = -1;
+    carstats.controls.regen_bias           = -1;
+    carstats.controls.limp_factor          = -1;
+    carstats.controls.temp_lim_min_gain    = -1;
+    carstats.controls.temp_lim_thresh_temp = -1;
+    carstats.controls.volt_lim_min_gain    = -1;
+    carstats.controls.volt_lim_min_voltage = -1;
 
     init_button_state(&carstats.buttons.left);
     init_button_state(&carstats.buttons.right);
