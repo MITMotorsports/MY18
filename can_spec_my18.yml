@@ -206,12 +206,18 @@ buses:
         segments:
           min:
             position: 0
-            length: 32
-            c_type: uint32_t
+            length: 14
+            c_type: uint16_t
             signed: false
             unit: mV
           max:
-            position: 32
+            position: 14
+            length: 14
+            c_type: uint16_t
+            signed: false
+            unit: mV
+          sum:
+            position: 28
             length: 32
             c_type: uint32_t
             signed: false

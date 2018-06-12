@@ -99,7 +99,7 @@ AS_SRCS = $(wildcard $(patsubst %, %/*.$(AS_EXT), . $(SRCS_DIRS)))
 
 # optimization flags ("-O0" - no optimization, "-O1" - optimize, "-O2" -
 # optimize even more, "-Os" - optimize for size or "-O3" - optimize yet more)
-OPTIMIZATION = -O2
+OPTIMIZATION = -Os
 
 # set to 1 to optimize size by removing unused code and data during link phase
 REMOVE_UNUSED = 1

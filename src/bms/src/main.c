@@ -39,14 +39,66 @@ int main(void) {
     Process_Keyboard();
     Process_Input(&bms_input, &bms_output);
     Process_Output(&bms_input, &bms_output, &bms_state);
+    if(false){
+      static uint32_t last_print = 0;
+      if (msTicks - last_print > 1000) {
+        Board_Print_BLOCKING("min: ");
+        Board_PrintNum(pack_status.min_cell_temp_dC, 10);
+        Board_Print_BLOCKING("\nmax: ");
+        Board_PrintNum(pack_status.max_cell_temp_dC, 10);
 
-    if(Error_Should_Fault()) {
+        Board_Print_BLOCKING("\ntemps: {");
+
+        for (uint8_t module = 0; module < NUM_MODULES; module++) {
+          uint16_t start = module * MAX_THERMISTORS_PER_MODULE;
+          for (uint16_t idx = start; idx < start + MAX_THERMISTORS_PER_MODULE; idx++) {
+            Board_PrintNum(pack_status.cell_temperatures_dC[idx], 10);
+            Board_Print_BLOCKING(", ");
+          }
+        }
+        Board_Print_BLOCKING("}\n");
+        last_print = msTicks;
+      }
+    }
+// #define TEMP_OFFSET_TARGET 185
+#ifndef TEMP_OFFSET_TARGET
+    if (Error_Should_Fault()) {
       Board_Println("Requesting Halt..");
       break;
     }
-    //TODO: charger enable pin for charger
+#else
+    static uint32_t last_print = 0;
+    if (msTicks - last_print > 1000) {
+      Board_Print_BLOCKING("\nbefore;min: ");
+      Board_PrintNum(pack_status.min_cell_temp_dC, 10);
+      Board_Print_BLOCKING("\nbefore;max: ");
+      Board_PrintNum(pack_status.max_cell_temp_dC, 10);
+      memset(cell_temperature_offsets, 0, sizeof(cell_temperature_offsets));
+      CellTemperatures_GetOffsets(TEMP_OFFSET_TARGET,
+                                  pack_status.cell_temperatures_dC,
+                                  cell_temperature_offsets);
+      Board_Print_BLOCKING("\ntemps: {");
+      for (uint8_t module = 0; module < NUM_MODULES; module++) {
+        uint16_t start = module * MAX_THERMISTORS_PER_MODULE;
+        for (uint16_t idx = start; idx < start + MAX_THERMISTORS_PER_MODULE; idx++) {
+          Board_PrintNum(pack_status.cell_temperatures_dC[idx], 10);
+          Board_Print_BLOCKING(", ");
+        }
+      }
+      Board_Print_BLOCKING("}\n");
 
+      Board_Print_BLOCKING("\noffsets: {");
+      for (uint16_t idx = 0; idx < MAX_NUM_MODULES * MAX_THERMISTORS_PER_MODULE; idx++) {
+        Board_PrintNum(cell_temperature_offsets[idx], 10);
+        Board_Print_BLOCKING(", ");
+      }
 
+      Board_Print_BLOCKING("}\n\n");
+
+      memset(cell_temperature_offsets, 0, sizeof(cell_temperature_offsets));
+      last_print = msTicks;
+    }
+#endif
   }
 
   Board_Pin_Set(PIN_BMS_FAULT, false);
@@ -67,22 +119,17 @@ void Process_Input(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
   Board_CAN_Receive(bms_input);
   // Board_GetModeRequest(&console_output, bms_input);
   if (!bms_output->attempt_ltc_init) {
-    Board_LTC6804_ProcessInputs(&pack_status, &bms_state);
+    Board_LTC6804_ProcessInputs(&pack_config, &pack_status, &bms_state);
   }
 
   // TODO: Reenable after Roman
   // SOC_Estimate(&pack_status);
-
-  // Pack voltage estimation
-  // BMS_VOLTAGE_ESTIMATE_T vol = Pack_Estimate_Total_Voltage(&pack_config,
-  //                                                          &pack_status);
 
   bms_input->H_contactor_welded = Board_Contactor_High_Welded();
   bms_input->L_contactor_welded = Board_Contactor_Low_Welded();
 
   bms_input->H_contactor_closed = Board_Contactor_High_Closed();
   bms_input->L_contactor_closed = Board_Contactor_Low_Closed();
-
 
   // TODO: Fix the BMS in hardware for HIGH side weld.
   // if(bms_input->H_contactor_welded != bms_input->H_contactor_closed) {
@@ -133,7 +180,7 @@ void Process_Output(BMS_INPUT_T  *bms_input,
   if (bms_output->attempt_ltc_init) {
 
     bms_output->attempt_ltc_init = !Board_LTC6804_Init(&pack_config,
-                                                              cell_voltages);
+                                                       cell_voltages);
   }
   else {
     Board_LTC6804_UpdateBalanceStates(bms_output->balance_req);
@@ -154,28 +201,31 @@ void Init_BMS_Structs(void) {
   bms_state.pack_config = &pack_config;
 
   // Default pack configuration, from pack.h
-  pack_config.module_cell_count          = module_cell_count;
-  pack_config.cell_min_mV                = CELL_MIN_mV;
-  pack_config.cell_max_mV                = CELL_MAX_mV;
-  pack_config.cell_capacity_cAh          = CELL_CAPACITY_cAh;
-  pack_config.num_modules                = NUM_MODULES;
-  pack_config.cell_charge_c_rating_cC    = CELL_CHARGE_C_RATING_cC;
-  pack_config.bal_on_thresh_mV           = BALANCE_ON_THRESHOLD_mV;
-  pack_config.bal_off_thresh_mV          = BALANCE_OFF_THRESHOLD_mV;
-  pack_config.pack_cells_p               = PACK_CELLS_PARALLEL;
-  pack_config.cv_min_current_mA          = CV_MIN_CURRENT_mA;
-  pack_config.cv_min_current_ms          = CV_MIN_CURRENT_ms;
-  pack_config.cc_cell_voltage_mV         = CC_CELL_VOLTAGE_mV;
-  pack_config.cell_discharge_c_rating_cC = CELL_DISCHARGE_C_RATING_cC;
-  pack_config.max_cell_temp_dC           = MAX_CELL_TEMP_dC;
-  pack_config.fan_on_threshold_dC        = FAN_ON_THRESHOLD_dC;
-  pack_config.min_cell_temp_dC           = MIN_CELL_TEMP_dC;
+  pack_config.module_cell_count           = module_cell_count;
+  pack_config.cell_min_mV                 = CELL_MIN_mV;
+  pack_config.cell_max_mV                 = CELL_MAX_mV;
+  pack_config.cell_capacity_cAh           = CELL_CAPACITY_cAh;
+  pack_config.num_modules                 = NUM_MODULES;
+  pack_config.cell_charge_c_rating_cC     = CELL_CHARGE_C_RATING_cC;
+  pack_config.bal_on_thresh_mV            = BALANCE_ON_THRESHOLD_mV;
+  pack_config.bal_off_thresh_mV           = BALANCE_OFF_THRESHOLD_mV;
+  pack_config.pack_cells_p                = PACK_CELLS_PARALLEL;
+  pack_config.cv_min_current_mA           = CV_MIN_CURRENT_mA;
+  pack_config.cv_min_current_ms           = CV_MIN_CURRENT_ms;
+  pack_config.cc_cell_voltage_mV          = CC_CELL_VOLTAGE_mV;
+  pack_config.cell_discharge_c_rating_cC  = CELL_DISCHARGE_C_RATING_cC;
+  pack_config.max_cell_temp_dC            = MAX_CELL_TEMP_dC;
+  pack_config.fan_on_threshold_dC         = FAN_ON_THRESHOLD_dC;
+  pack_config.min_cell_temp_dC            = MIN_CELL_TEMP_dC;
+
+  (void) Init_Offsets();
+  pack_config.cell_temperature_offsets_dC = cell_temperature_offsets;
 
   for (size_t i = 0; i < MAX_NUM_MODULES; i++) {
     pack_config.module_cell_count[i] = MODULE_CELL_COUNT;
   }
 
-  bms_input.pack_status      = &pack_status;
+  bms_input.pack_status        = &pack_status;
 
   bms_input.H_contactor_welded = false;
   bms_input.L_contactor_welded = false;
@@ -187,10 +237,10 @@ void Init_BMS_Structs(void) {
   bms_input.eeprom_read_error         = false;
 
   bms_output.attempt_ltc_init = true;
-  bms_output.balance_req  = balance_reqs;
+  bms_output.balance_req = balance_reqs;
   memset(balance_reqs,
          0,
-         sizeof(balance_reqs[0]) * MAX_NUM_MODULES * MAX_CELLS_PER_MODULE);
+         sizeof(balance_reqs));
 
   pack_status.cell_voltages_mV     = cell_voltages;
   pack_status.cell_temperatures_dC = cell_temperatures;
@@ -198,10 +248,159 @@ void Init_BMS_Structs(void) {
   pack_status.pack_cell_min_mV     = 0xFFFFFFFF;
   pack_status.pack_current_mA      = 0;
   pack_status.pack_voltage_mV      = 0;
-  pack_status.max_cell_temp_dC     = 0;
 
-  pack_status.min_cell_temp_dC       = -100;
+  pack_status.max_cell_temp_dC       = INT16_MIN;
+  pack_status.min_cell_temp_dC       = INT16_MAX;
   pack_status.avg_cell_temp_dC       = 0;
   pack_status.min_cell_temp_position = 0;
   pack_status.max_cell_temp_position = 0;
+}
+
+// You can tell me that I could've initialized this in the declaration.
+// I will ask you to try and see if it works.
+void Init_Offsets(void) {
+  cell_temperature_offsets[0] = -43;
+  cell_temperature_offsets[1] = -44;
+  cell_temperature_offsets[2] = -43;
+  cell_temperature_offsets[3] = -45;
+  cell_temperature_offsets[4] = -40;
+  cell_temperature_offsets[5] = -45;
+  cell_temperature_offsets[6] = -42;
+  cell_temperature_offsets[7] = -41;
+  cell_temperature_offsets[8] = -46;
+  cell_temperature_offsets[9] = -45;
+  cell_temperature_offsets[10] = -39;
+  cell_temperature_offsets[11] = -44;
+  cell_temperature_offsets[12] = -44;
+  cell_temperature_offsets[13] = -43;
+  cell_temperature_offsets[14] = -40;
+  cell_temperature_offsets[15] = -44;
+  cell_temperature_offsets[16] = -39;
+  cell_temperature_offsets[17] = -43;
+  cell_temperature_offsets[18] = -38;
+  cell_temperature_offsets[19] = -42;
+  cell_temperature_offsets[20] = -41;
+  cell_temperature_offsets[21] = -45;
+  cell_temperature_offsets[22] = -40;
+  cell_temperature_offsets[23] = -43;
+  cell_temperature_offsets[24] = -38;
+  cell_temperature_offsets[25] = -39;
+  cell_temperature_offsets[26] = -39;
+  cell_temperature_offsets[27] = -41;
+  cell_temperature_offsets[28] = -38;
+  cell_temperature_offsets[29] = -43;
+  cell_temperature_offsets[30] = -40;
+  cell_temperature_offsets[31] = -39;
+  cell_temperature_offsets[32] = -43;
+  cell_temperature_offsets[33] = -41;
+  cell_temperature_offsets[34] = -41;
+  cell_temperature_offsets[35] = -44;
+  cell_temperature_offsets[36] = -39;
+  cell_temperature_offsets[37] = -45;
+  cell_temperature_offsets[38] = -39;
+  cell_temperature_offsets[39] = -46;
+  cell_temperature_offsets[40] = -38;
+  cell_temperature_offsets[41] = -43;
+  cell_temperature_offsets[42] = -41;
+  cell_temperature_offsets[43] = -41;
+  cell_temperature_offsets[44] = -38;
+  cell_temperature_offsets[45] = -44;
+  cell_temperature_offsets[46] = -39;
+  cell_temperature_offsets[47] = -42;
+  cell_temperature_offsets[48] = -34;
+  cell_temperature_offsets[49] = -32;
+  cell_temperature_offsets[50] = -29;
+  cell_temperature_offsets[51] = -37;
+  cell_temperature_offsets[52] = -24;
+  cell_temperature_offsets[53] = -34;
+  cell_temperature_offsets[54] = -33;
+  cell_temperature_offsets[55] = -28;
+  cell_temperature_offsets[56] = -36;
+  cell_temperature_offsets[57] = -38;
+  cell_temperature_offsets[58] = -34;
+  cell_temperature_offsets[59] = -31;
+  cell_temperature_offsets[60] = -36;
+  cell_temperature_offsets[61] = -32;
+  cell_temperature_offsets[62] = -26;
+  cell_temperature_offsets[63] = -38;
+  cell_temperature_offsets[64] = -29;
+  cell_temperature_offsets[65] = -31;
+  cell_temperature_offsets[66] = -31;
+  cell_temperature_offsets[67] = -26;
+  cell_temperature_offsets[68] = -26;
+  cell_temperature_offsets[69] = -39;
+  cell_temperature_offsets[70] = -28;
+  cell_temperature_offsets[71] = -23;
+  cell_temperature_offsets[72] = -40;
+  cell_temperature_offsets[73] = -42;
+  cell_temperature_offsets[74] = -42;
+  cell_temperature_offsets[75] = -45;
+  cell_temperature_offsets[76] = -41;
+  cell_temperature_offsets[77] = -46;
+  cell_temperature_offsets[78] = -40;
+  cell_temperature_offsets[79] = -43;
+  cell_temperature_offsets[80] = -49;
+  cell_temperature_offsets[81] = -43;
+  cell_temperature_offsets[82] = -41;
+  cell_temperature_offsets[83] = -44;
+  cell_temperature_offsets[84] = -40;
+  cell_temperature_offsets[85] = -48;
+  cell_temperature_offsets[86] = -44;
+  cell_temperature_offsets[87] = -52;
+  cell_temperature_offsets[88] = -43;
+  cell_temperature_offsets[89] = -48;
+  cell_temperature_offsets[90] = -41;
+  cell_temperature_offsets[91] = -43;
+  cell_temperature_offsets[92] = -42;
+  cell_temperature_offsets[93] = -48;
+  cell_temperature_offsets[94] = -41;
+  cell_temperature_offsets[95] = -46;
+  cell_temperature_offsets[96] = -42;
+  cell_temperature_offsets[97] = -44;
+  cell_temperature_offsets[98] = -41;
+  cell_temperature_offsets[99] = -45;
+  cell_temperature_offsets[100] = -42;
+  cell_temperature_offsets[101] = -47;
+  cell_temperature_offsets[102] = -43;
+  cell_temperature_offsets[103] = -43;
+  cell_temperature_offsets[104] = -49;
+  cell_temperature_offsets[105] = -46;
+  cell_temperature_offsets[106] = -41;
+  cell_temperature_offsets[107] = -50;
+  cell_temperature_offsets[108] = -42;
+  cell_temperature_offsets[109] = -49;
+  cell_temperature_offsets[110] = -42;
+  cell_temperature_offsets[111] = -49;
+  cell_temperature_offsets[112] = -43;
+  cell_temperature_offsets[113] = -47;
+  cell_temperature_offsets[114] = -44;
+  cell_temperature_offsets[115] = -44;
+  cell_temperature_offsets[116] = -43;
+  cell_temperature_offsets[117] = -47;
+  cell_temperature_offsets[118] = -43;
+  cell_temperature_offsets[119] = -43;
+  cell_temperature_offsets[120] = -34;
+  cell_temperature_offsets[121] = -34;
+  cell_temperature_offsets[122] = -34;
+  cell_temperature_offsets[123] = -36;
+  cell_temperature_offsets[124] = -27;
+  cell_temperature_offsets[125] = -36;
+  cell_temperature_offsets[126] = -34;
+  cell_temperature_offsets[127] = -31;
+  cell_temperature_offsets[128] = -39;
+  cell_temperature_offsets[129] = -34;
+  cell_temperature_offsets[130] = -31;
+  cell_temperature_offsets[131] = -30;
+  cell_temperature_offsets[132] = -30;
+  cell_temperature_offsets[133] = -36;
+  cell_temperature_offsets[134] = -28;
+  cell_temperature_offsets[135] = -38;
+  cell_temperature_offsets[136] = -28;
+  cell_temperature_offsets[137] = -34;
+  cell_temperature_offsets[138] = -32;
+  cell_temperature_offsets[139] = -28;
+  cell_temperature_offsets[140] = -31;
+  cell_temperature_offsets[141] = -37;
+  cell_temperature_offsets[142] = -27;
+  cell_temperature_offsets[143] = -28;
 }
