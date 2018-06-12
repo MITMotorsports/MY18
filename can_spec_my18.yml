@@ -576,15 +576,44 @@ buses:
             position: 0
             length: 1
             c_type: bool
-          regen_bias: # Ranges from 0 to 100
+          using_voltage_limiting:
             position: 1
+            length: 1
+            c_type: bool
+          using_temp_limiting:
+            position: 2
+            length: 1
+            c_type: bool
+          regen_bias: # Ranges from 0 to 100
+            position: 3
+            length: 8
+            c_type: uint8_t
+            signed: false
+          limp_factor: # Ranges from 0 to 100
+            position: 11
+            length: 8
+            c_type: uint8_t
+            signed: false
+          temp_lim_min_gain:
+            position: 19
+            length: 8
+            c_type: uint8_t
+            signed: false
+          temp_lim_thresh_temp:
+            position: 27
+            length: 8
+            c_type: uint8_t
+            signed: false
+          volt_lim_min_gain:
+            position: 35
+            length: 8
+            c_type: uint8_t
+            signed: false
+          volt_lim_min_voltage:
+            position: 43
             length: 16
             c_type: uint16_t
             signed: false
-          limp_factor: # Ranges from 0 to 100
-            position: 17
-            length: 16
-            c_type: uint16_t
       ButtonRequest:
         can_id: 0x0D8
         period: 73ms
