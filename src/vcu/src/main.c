@@ -12,6 +12,8 @@ int main(void) {
 
   GPIO_BEGIN_INIT();
 
+  PWM_Output_Init(); // FAN PWM AND TIMERS
+
   /// INPUTS
   DGPIO_INIT_IN(       SDN, GPIO_NOPULL);
   DGPIO_INIT_IN(  SDN_GATE, GPIO_NOPULL);
@@ -74,7 +76,7 @@ int main(void) {
     if (HAL_GetTick() - lastt > 1000) {
       HAL_GPIO_TogglePin(GPIO(LED));
 
-      printf("Bias: %d\r\n", control_settings.cBB_ef);
+      printf("CONTROLS PARAMS:\r\n  USING REGEN: %d\r\n  USING LAUNCH CONTROL: %d\r\n  cBB_ef: %d\r\n  SLIP RATIO: %d\r\n  LIMP FACTOR: %d\r\n", control_settings.using_regen, control_settings.using_launch_control, control_settings.cBB_ef, control_settings.slip_ratio, control_settings.limp_factor);
 
       lastt = HAL_GetTick();
     }

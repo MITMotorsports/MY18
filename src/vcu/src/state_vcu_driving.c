@@ -18,6 +18,9 @@ void enter_vcu_state_driving() {
   rtd_started = false;
   rtd_last    = 0;
 
+  printf("CONTROLS PARAMS:\r\n  USING REGEN: %d\r\n  USING LAUNCH CONTROL: %d\r\n  cBB_ef: %d\r\n  SLIP RATIO: %d\r\n  LIMP FACTOR: %d\r\n", control_settings.using_regen, control_settings.using_launch_control, control_settings.cBB_ef, control_settings.slip_ratio, control_settings.limp_factor);
+
+  set_lc_state_before();
   enable_controls();
 }
 
@@ -33,6 +36,9 @@ void update_vcu_state_driving() {
   }
 
   // Calculate and send motor controller commands.
+  if (!get_controls_enabled()) {
+    enable_controls();
+  }
   execute_controls();
 
   if (buttons.RTD) {

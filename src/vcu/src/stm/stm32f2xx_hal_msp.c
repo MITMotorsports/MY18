@@ -2,6 +2,34 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
+/**
+  * @brief TIM MSP Initialization
+  *        This function configures the hardware resources used in this example:
+  *           - Peripheral's clock enable
+  *           - Peripheral's GPIO Configuration
+  * @param htim: TIM handle pointer
+  * @retval None
+  */
+void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
+{
+  GPIO_InitTypeDef   GPIO_InitStruct;
+  /*##-1- Enable peripherals and GPIO Clocks #################################*/
+  /* TIMx Peripheral clock enable */
+  TIMx_CLK_ENABLE();
+
+  /* Enable all GPIO Channels Clock requested */
+  TIMx_CHANNEL_GPIO_PORT();
+
+  /* Common configuration for all channels */
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+
+  GPIO_InitStruct.Alternate = TIMx_GPIO_AF_CHANNEL3;
+  GPIO_InitStruct.Pin = TIMx_GPIO_PIN_CHANNEL3;
+  HAL_GPIO_Init(TIMx_GPIO_PORT_CHANNEL3, &GPIO_InitStruct);
+}
+
 void HAL_USART_MspInit(USART_HandleTypeDef *husart) {
   GPIO_InitTypeDef GPIO_InitStruct;
 

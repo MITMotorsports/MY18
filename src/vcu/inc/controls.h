@@ -20,6 +20,7 @@
 #define LC_ACCEL_BEGIN 950 // 95%
 #define LC_ACCEL_RELEASE 50 // 5%
 #define LC_BRAKE_BEGIN 100 // We want a lower threshold
+#define LC_BACKWARDS_CUTOFF 10
 
 // RG = regen
 #define RG_MOTOR_SPEED_THRESH 250            // RPM
@@ -27,7 +28,7 @@
 #define RG_REAR_BRAKE_THRESH 827370          // Pa
 #define RG_FRONT_BRAKE_THRESH 827370         // Pa
 #define RG_BATTERY_VOLTAGE_MAX_THRESH 299000 // mV
-#define RG_TORQUE_COMMAND_MAX 1000           // 10 * Nm
+#define RG_TORQUE_COMMAND_MAX 2000           // 10 * Nm
 
 // K = mu_padrotor * 2 * r_rotoreffective * A_Cf / GR
 // See equation 13 in Luis's thesis
@@ -62,10 +63,11 @@ static int32_t get_regen_torque(void);
 static int32_t get_launch_control_speed(uint32_t front_wheel_speed);
 
 // INTERACTION FUNCTIONS
-void           enable_controls(void);
-void           disable_controls(void);
-bool           get_controls_enabled(void);
-
-void           execute_controls(void);
+void enable_controls(void);
+void disable_controls(void);
+bool get_controls_enabled(void);
+void execute_controls(void);
+void set_lc_done(void);
+void set_lc_state_before();
 
 #endif // ifndef __TORQUE_CALC

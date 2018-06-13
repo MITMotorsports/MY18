@@ -73,7 +73,8 @@ void draw_nav_line(page_manager_t *pm, NHD_US2066_OLED *oled) {
 }
 
 void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled);
-void draw_controls_page(page_manager_t *pm, NHD_US2066_OLED *oled);
+void draw_regen_page(page_manager_t *pm, NHD_US2066_OLED *oled);
+void draw_launch_control_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 void draw_traction_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 void draw_wheel_speed_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 void draw_fault_page(page_manager_t *pm, NHD_US2066_OLED *oled);
@@ -86,8 +87,11 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
         // case DASH_PAGE_CHARGE:
             // draw_charging_page(pm, oled);
             // break;
-        case DASH_PAGE_CONTROLS:
-           draw_controls_page(pm, oled);
+        case DASH_PAGE_REGEN:
+           draw_regen_page(pm, oled);
+           break;
+        case DASH_PAGE_LAUNCH_CONTROL:
+           draw_launch_control_page(pm, oled);
            break;
         case DASH_PAGE_TRACTION:
             draw_traction_page(pm, oled);
@@ -222,13 +226,13 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 }
 
 
-void draw_controls_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+void draw_regen_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     carstats_t *stats = pm->stats;
 
     oled_clearline(oled, 1);
     oled_set_pos(oled, 1, 0);
 
-    if (stats->buttons.right.is_pressed) {
+    if (stats->buttons.right.rising_edge) {
         stats->controls.regen_bias += 1;
     }
 
@@ -244,6 +248,34 @@ void draw_controls_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     if (stats->controls.regen_bias != -1) {
         oled_print_num(oled, stats->controls.regen_bias);
+    }
+    else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+}
+
+void draw_launch_control_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+    carstats_t *stats = pm->stats;
+
+    oled_clearline(oled, 1);
+    oled_set_pos(oled, 1, 0);
+
+    if (stats->buttons.right.rising_edge) {
+        stats->controls.launch_ctrl_slip_ratio += 1;
+    }
+
+    stats->controls.launch_ctrl_slip_ratio = LOOPOVER(stats->controls.launch_ctrl_slip_ratio, 101, 120);
+
+    if (stats->buttons.B.rising_edge) stats->controls.using_launch_ctrl ^= 1;  // NOT
+
+    oled_print(oled, "LAUNCH CONTROL ");
+
+    oled_print(oled, (stats->controls.using_launch_ctrl) ? "ON" : "OFF");
+
+    oled_rprint_pad(oled, "SLIP RATIO ", 4);
+
+    if (stats->controls.launch_ctrl_slip_ratio != -1) {
+        oled_print_num(oled, stats->controls.launch_ctrl_slip_ratio);
     }
     else {
         oled_print(oled, DATA_UNKNOWN);

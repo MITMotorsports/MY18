@@ -229,11 +229,19 @@ void handleDashControls(Frame *msg) {
 
   unpack_can0_DashControls(msg, &unpacked_msg);
 
-  control_settings.using_regen;
-  control_settings.using_launch_control;
-  control_settings.cBB_ef = unpacked_msg.regen_bias; // Electric front brake bias * 100
-  control_settings.slip_ratio; // Slip ratio * 100
-  control_settings.limp_factor; // Limp facotr * 100
+  if (unpacked_msg.regen_bias != 65535) {
+    control_settings.cBB_ef = unpacked_msg.regen_bias;
+    control_settings.using_regen = unpacked_msg.using_regen;
+  }
+
+  if (unpacked_msg.launch_ctrl_slip_ratio != 65535) {
+    control_settings.slip_ratio = unpacked_msg.launch_ctrl_slip_ratio;
+    control_settings.using_launch_control = unpacked_msg.using_launch_ctrl;
+  }
+
+  if (unpacked_msg.limp_factor != 65535) {
+    control_settings.limp_factor = unpacked_msg.limp_factor;
+  }
 }
 
 void send_VCUHeartbeat() {
