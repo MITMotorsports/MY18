@@ -59,15 +59,27 @@ void execute_controls(void) {
     torque_command = regen_torque;
   } else {
     // Only use limits when we're not doing regen
-    int16_t voltage_limited_torque = get_voltage_limited_torque(torque_command);
-    int16_t temp_limited_torque = get_temp_limited_torque(torque_command);
+    int16_t voltage_limited_torque;
+    if (control_settings.using_voltage_limiting) {
+      voltage_limited_torque = get_voltage_limited_torque(torque_command);
+    } else {
+      voltage_limited_torque = torque_command;
+    }
+
+    int16_t temp_limited_torque;
+    if (control_settings.using_temp_limiting) {
+      temp_limited_torque = get_temp_limited_torque(torque_command);
+    } else {
+      temp_limited_torque = torque_command;
+    }
+
     int16_t min_sensor_torque = MIN_DE(voltage_limited_torque, temp_limited_torque);
 
     int16_t dash_limited_torque = torque_command * control_settings.limp_factor / 100;
 
     int16_t limited_torque = MIN_DE(min_sensor_torque, dash_limited_torque);
 
-    printf("TEMP: %d, VOLTAGE:%d\r\nRAW_TORQUE: %d\r\nVL TORQUE: %d\r\nTL TORQUE:%d\r\nDL TORQUE: %d\r\n COMMANDED TORQUE: %d\r\n\r\n", cell_readings.cell_max_temp, cell_readings.cell_min_mV,
+    printf("TEMP: %d, VOLTAGE:%d\r\nRAW_TORQUE: %d\r\nVL TORQUE: %d\r\nTL TORQUE:%d\r\nDL TORQUE: %d\r\n COMMANDED TORQUE: %d\r\n\r\n", cell_readings.cell_max_temp, cell_readings.cell_min_cV,
       torque_command, voltage_limited_torque, temp_limited_torque, dash_limited_torque, limited_torque);
 
     torque_command = limited_torque;
@@ -116,11 +128,11 @@ static int32_t get_regen_torque() {
 }
 
 static int16_t get_temp_limited_torque(int16_t pedal_torque) {
-  if (cell_readings.cell_max_temp/10 < control_settings.temp_lim_thresh_temp) {
+  if (cell_readings.cell_max_temp < control_settings.temp_lim_thresh_temp) {
     return pedal_torque;
   }
   int32_t gain;
-  if (cell_readings.cell_max_temp/10 < MAX_TEMP) {
+  if (cell_readings.cell_max_temp < MAX_TEMP) {
     gain = limiter(control_settings.temp_lim_thresh_temp, MAX_TEMP, control_settings.temp_lim_min_gain, cell_readings.cell_max_temp);
   } else {
     gain = control_settings.temp_lim_min_gain;
@@ -129,12 +141,12 @@ static int16_t get_temp_limited_torque(int16_t pedal_torque) {
 }
 
 static int16_t get_voltage_limited_torque(int16_t pedal_torque) {
-  if (cell_readings.cell_min_mV/10 > control_settings.volt_lim_min_voltage) {
+  if (cell_readings.cell_min_cV > control_settings.volt_lim_min_voltage) {
     return pedal_torque;
   }
   int32_t gain;
-  if (cell_readings.cell_min_mV/10 > MIN_VOLTAGE) {
-    gain = limiter(control_settings.volt_lim_min_voltage, MIN_VOLTAGE, control_settings.volt_lim_min_gain, cell_readings.cell_min_mV);
+  if (cell_readings.cell_min_cV > MIN_VOLTAGE) {
+    gain = limiter(control_settings.volt_lim_min_voltage, MIN_VOLTAGE, control_settings.volt_lim_min_gain, cell_readings.cell_min_cV);
   } else {
     gain = control_settings.volt_lim_min_gain;
   }

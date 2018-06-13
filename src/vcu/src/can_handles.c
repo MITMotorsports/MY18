@@ -167,7 +167,7 @@ void handleCellVoltagesMsg(Frame *msg) {
   // (12 per cell, 6 cells, millivolts to decivolts)
   voltages.pack = unpacked_msg.max * 12 * 6 / 100;
 
-  cell_readings.cell_min_mV = unpacked_msg.min;
+  cell_readings.cell_min_cV = unpacked_msg.min / 10;
 }
 
 void handleCellTemperatures(Frame *msg) {

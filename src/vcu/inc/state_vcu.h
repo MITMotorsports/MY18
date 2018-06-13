@@ -54,8 +54,8 @@ typedef struct {
 } IMUVelocity_T;
 
 typedef struct {
-  uint16_t cell_min_mV;
-  uint16_t cell_max_temp;
+  uint16_t cell_min_cV;
+  uint16_t cell_max_temp; // C
 } Cell_Readings_T;
 
 typedef struct {
