@@ -14,7 +14,7 @@ typedef struct {
 class CommonListener : public CANListener {
 public:
   const uint8_t port;
-  CircBuf<LoggedFrame> buffer;
+  FIFOCircBuffer<LoggedFrame> buffer;
 
   CommonListener(uint8_t port) : port(port), buffer(256) {}
   void gotFrame(CAN_message_t &frame, int mailbox);

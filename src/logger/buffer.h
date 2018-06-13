@@ -4,42 +4,45 @@
 #include <iterator>
 
 template<typename T>
-class CircBuf {
+class FIFOCircBuffer {
   // Modified version of https://gist.github.com/xstherrera1987/3196485
 
   // don't use default ctor
-  CircBuf();
+  FIFOCircBuffer();
 
   const size_t size;
   T *data;
   size_t front;
   size_t count;
 public:
-  CircBuf(size_t);
-  ~CircBuf();
+  FIFOCircBuffer(size_t);
+  ~FIFOCircBuffer();
+
+  T    first() { return data[front]; }
+  T    last()  { return data[(front + count) % size]; }
 
   bool empty() { return count == 0; }
-  bool full() { return count == size; }
+  bool full()  { return count == size; }
 
   bool add(const T&);
   bool remove(T*);
 };
 
 template<typename T>
-CircBuf<T>::CircBuf(size_t sz): size(sz) {
+FIFOCircBuffer<T>::FIFOCircBuffer(size_t sz): size(sz) {
   data = new T[sz];
   front = 0;
   count = 0;
 }
 
 template<typename T>
-CircBuf<T>::~CircBuf() {
+FIFOCircBuffer<T>::~FIFOCircBuffer() {
   delete data;
 }
 
 // returns true if add was successful, false if the buffer is already full
 template<typename T>
-bool CircBuf<T>::add(const T &t) {
+bool FIFOCircBuffer<T>::add(const T &t) {
   if (full()) {
     return false;
   }
@@ -54,7 +57,7 @@ bool CircBuf<T>::add(const T &t) {
 
 // returns true if there is something to remove, false otherwise
 template<typename T>
-bool CircBuf<T>::remove(T *t) {
+bool FIFOCircBuffer<T>::remove(T *t) {
   if (empty()) {
     return false;
   }

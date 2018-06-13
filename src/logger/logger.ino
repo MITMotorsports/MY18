@@ -166,7 +166,7 @@ void loop(void) {
       log_file.println("FULL");
     }
 
-    while(listener.buffer.remove(&temp)) {
+    while (listener.buffer.remove(&temp)) {
       printLoggedFrame(log_file, temp);
     }
   }
