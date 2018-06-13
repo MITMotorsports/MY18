@@ -13,15 +13,6 @@
 #define MAX_ACCEL_VAL 1000
 #define MIN_ACCEL_VAL 0
 
-// Launch control contants
-// After wheel speed crosses this threshold, start using slip controller
-#define LC_WS_THRESH 45000
-#define LC_cGR 347 // Gear ratio times 100
-#define LC_ACCEL_BEGIN 950 // 95%
-#define LC_ACCEL_RELEASE 50 // 5%
-#define LC_BRAKE_BEGIN 100 // We want a lower threshold
-#define LC_BACKWARDS_CUTOFF 10
-
 // RG = regen
 #define RG_MOTOR_SPEED_THRESH 250            // RPM
 #define RG_CAR_SPEED_THRESH 5                // kph
@@ -39,35 +30,36 @@
 #define FRONT_BRAKE brake_1
 #define REAR_BRAKE brake_2
 
-typedef struct {
+// TL = temp limiting
+#define MAX_TEMP 60 // deciCelsius
+
+// VL = (under)voltage limiting
+#define MIN_VOLTAGE 250
+
+/*typedef struct {
   bool using_regen;
-  bool using_launch_control;
-  uint16_t cBB_ef; // Electric front brake bias * 100
-  uint16_t slip_ratio; // Slip ratio * 100
-  uint16_t limp_factor; // Limp facotr * 100
-} Controls_Settings_T;
+  bool using_voltage_limiting;
+  bool using_temp_limiting;
+  uint8_t regen_bias; // Electric front brake bias * 100
+  uint8_t limp_factor; // Limp facotr * 100
+  uint8_t temp_lim_min_gain; // Min temp limiter gain * 100
+  uint8_t temp_lim_thresh_temp;
+  uint8_t volt_lim_min_gain; // Min voltage limiter gain * 100
+  uint8_t volt_lim_min_voltage;
+} Controls_Settings_T;*/
 
-typedef enum {
-  BEFORE,
-  SPEEDING_UP,
-  SPEED_CONTROLLER,
-  ZERO_TORQUE,
-  DONE,
-} Launch_Control_State_T;
-
-extern Controls_Settings_T control_settings;
+extern can0_DashControls_T control_settings;
 
 // PRIVATE FUNCTIONS
 static int16_t get_torque(void);
 static int32_t get_regen_torque(void);
-static int32_t get_launch_control_speed(uint32_t front_wheel_speed);
+static int16_t get_temp_limited_torque(int16_t pedal_torque);
+static int16_t get_voltage_limited_torque(int16_t pedal_torque);
 
 // INTERACTION FUNCTIONS
 void enable_controls(void);
 void disable_controls(void);
 bool get_controls_enabled(void);
 void execute_controls(void);
-void set_lc_done(void);
-void set_lc_state_before();
 
 #endif // ifndef __TORQUE_CALC

@@ -31,20 +31,21 @@ bool Board_LTC6804_Init(BMS_PACK_CONFIG_T *pack_config,
 void Board_LTC6804_DeInit(void);
 
 // Gets Voltages, Temperatures, and runs OpenWireTest
-void Board_LTC6804_ProcessInputs(BMS_PACK_STATUS_T *pack_status,
-                                 BMS_STATE_T       *bms_state);
+void Board_LTC6804_ProcessInputs(BMS_PACK_CONFIG_T *pack_config,
+                                 BMS_PACK_STATUS_T *pack_status,
+                                 BMS_STATE_T *bms_state);
 
 // Updates Balancing Parameters
 void Board_LTC6804_UpdateBalanceStates(bool *balance_req);
 
 void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status);
 
-void Board_LTC6804_GetCellTemperatures(BMS_PACK_STATUS_T *pack_status,
-                                       uint8_t            num_modules);
+void Board_LTC6804_GetCellTemperatures(BMS_PACK_CONFIG_T *pack_config,
+                                       BMS_PACK_STATUS_T *pack_status,
+                                       uint8_t num_modules);
 
 // Prints temperatures of specific module
-void Board_PrintThermistorTemperatures(uint8_t            module,
-                                       BMS_PACK_STATUS_T *pack_status);
+void Board_PrintThermistorTemperatures(uint8_t module, BMS_PACK_STATUS_T *pack_status);
 
 // Does CVST Check
 bool Board_LTC6804_CVST(void);

@@ -46,6 +46,10 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleCellVoltagesMsg(&frame);
     break;
 
+  case can0_CellTemperatures:
+    handleCellTemperatures(&frame);
+    break;
+
   case can0_CurrentSensor_Voltage1:
     handleCurrentSensorVoltageMsg(&frame);
     break;
@@ -162,6 +166,16 @@ void handleCellVoltagesMsg(Frame *msg) {
   // to estimate the lower bound on the back voltage
   // (12 per cell, 6 cells, millivolts to decivolts)
   voltages.pack = unpacked_msg.max * 12 * 6 / 100;
+
+  cell_readings.cell_min_cV = unpacked_msg.min / 10;
+}
+
+void handleCellTemperatures(Frame *msg) {
+  can0_CellTemperatures_T unpacked_msg;
+
+  unpack_can0_CellTemperatures(msg, &unpacked_msg);
+
+  cell_readings.cell_max_temp = unpacked_msg.max;
 }
 
 void handleButtonRequest(Frame *msg) {
@@ -230,13 +244,8 @@ void handleDashControls(Frame *msg) {
   unpack_can0_DashControls(msg, &unpacked_msg);
 
   if (unpacked_msg.regen_bias != 65535) {
-    control_settings.cBB_ef = unpacked_msg.regen_bias;
+    control_settings.regen_bias = unpacked_msg.regen_bias;
     control_settings.using_regen = unpacked_msg.using_regen;
-  }
-
-  if (unpacked_msg.launch_ctrl_slip_ratio != 65535) {
-    control_settings.slip_ratio = unpacked_msg.launch_ctrl_slip_ratio;
-    control_settings.using_launch_control = unpacked_msg.using_launch_ctrl;
   }
 
   if (unpacked_msg.limp_factor != 65535) {

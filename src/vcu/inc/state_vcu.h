@@ -54,6 +54,11 @@ typedef struct {
 } IMUVelocity_T;
 
 typedef struct {
+  uint16_t cell_min_cV;
+  uint16_t cell_max_temp; // C
+} Cell_Readings_T;
+
+typedef struct {
   uint32_t front_left_32b_wheel_speed;
   uint32_t front_left_16b_wheel_speed;
   uint32_t front_right_32b_wheel_speed;
@@ -68,6 +73,7 @@ extern volatile MCReadings_T mc_readings;
 extern volatile CSReadings_T cs_readings;
 extern volatile IMUVelocity_T imu_velocity;
 extern volatile Wheel_Speeds_T wheel_speeds;
+extern volatile Cell_Readings_T cell_readings;
 
 // INTERACTION FUNCTIONS
 void        init_vcu_state(void);

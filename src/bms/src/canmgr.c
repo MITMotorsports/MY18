@@ -122,9 +122,8 @@ void can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
 
   msg.min = ps->pack_cell_min_mV;
   msg.max = ps->pack_cell_max_mV;
+  msg.sum = ps->pack_voltage_sum_mV;
 
-  //can message size too small for 3 32 bit
-  // msg.sum = ps->pack_voltage_sum_mV;
   handle_can_error(can0_CellVoltages_Write(&msg));
 }
 

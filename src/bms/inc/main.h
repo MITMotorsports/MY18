@@ -26,6 +26,7 @@ static BMS_STATE_T  bms_state;
 static BMS_PACK_CONFIG_T pack_config;
 static uint32_t cell_voltages[MAX_NUM_MODULES * MAX_CELLS_PER_MODULE];
 static int16_t  cell_temperatures[MAX_NUM_MODULES * MAX_THERMISTORS_PER_MODULE];
+static int16_t  cell_temperature_offsets[MAX_NUM_MODULES * MAX_THERMISTORS_PER_MODULE];
 static uint8_t  module_cell_count[MAX_NUM_MODULES];
 
 // memory allocation for BMS_OUTPUT balancing

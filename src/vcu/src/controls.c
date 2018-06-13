@@ -3,18 +3,18 @@
 static bool enabled = false;
 static int16_t torque_command = 0;
 static int16_t speed_command = 0;
-Controls_Settings_T control_settings = {};
-static Launch_Control_State_T lc_state = BEFORE;
+can0_DashControls_T control_settings = {};
 
-static uint32_t get_front_wheel_speed(void);
-static bool any_lc_faults();
+static int16_t limiter(uint16_t threshold, uint16_t absolute, uint16_t min_gain, uint16_t reading);
 
 void init_controls_defaults(void) {
   control_settings.using_regen = false;
-  control_settings.using_launch_control = false;
-  control_settings.cBB_ef = 56;
-  control_settings.slip_ratio = 112;
+  control_settings.regen_bias = 56;
   control_settings.limp_factor = 100;
+  control_settings.temp_lim_min_gain = 35;
+  control_settings.temp_lim_thresh_temp = 55;
+  control_settings.volt_lim_min_gain = 35;
+  control_settings.volt_lim_min_voltage = 300;
 }
 
 void enable_controls(void) {
@@ -29,7 +29,6 @@ void disable_controls(void) {
   enabled = false;
   torque_command = 0;
   speed_command = 0;
-  lc_state = DONE;
 
   set_brake_valve(false);
   lock_brake_valve();
@@ -44,75 +43,49 @@ void execute_controls(void) {
 
   torque_command = get_torque();
 
-  if (control_settings.using_launch_control && lc_state != DONE) {
-    // We shouldn't be braking in launch control, so don't worry about regen
-    set_brake_valve(false);
-    uint32_t front_wheel_speed = get_front_wheel_speed();
+  // Control regen brake valve:
+  bool brake_valve_state = control_settings.using_regen && get_pascals(pedalbox.REAR_BRAKE) < RG_REAR_BRAKE_THRESH;
+  set_brake_valve(brake_valve_state);
 
-    // Mini FSM
-    switch (lc_state) {
-      case BEFORE:
-        sendSpeedCmdMsg(0, 0);
-
-        // Transition
-        if (pedalbox_min(accel) > LC_ACCEL_BEGIN) {
-          lc_state = SPEEDING_UP;
-          printf("[LAUNCH CONTROL] SPEEDING UP STATE ENTERED\r\n");
-        }
-        break;
-      case SPEEDING_UP:
-        if (1000 > torque_command) sendSpeedCmdMsg(500, torque_command);
-        else sendSpeedCmdMsg(300, 1000);
-
-        // Transition
-        if (any_lc_faults()) {
-          lc_state = ZERO_TORQUE;
-          printf("[LAUNCH CONTROL] ZERO TORQUE STATE ENTERED\r\n");
-        } else if (front_wheel_speed > LC_WS_THRESH) {
-          lc_state = SPEED_CONTROLLER;
-          printf("[LAUNCH CONTROL] SPEED CONTROLLER STATE ENTERED\r\n");
-        }
-        break;
-      case SPEED_CONTROLLER:
-        speed_command = get_launch_control_speed(front_wheel_speed);
-        sendSpeedCmdMsg(speed_command, torque_command);
-
-        // Transition
-        if (any_lc_faults()) {
-          lc_state = ZERO_TORQUE;
-          printf("[LAUNCH CONTROL] ZERO TORQUE STATE ENTERED\r\n");
-        }
-      case ZERO_TORQUE:
-        sendTorqueCmdMsg(0);
-
-        if (pedalbox_max(accel) < LC_ACCEL_RELEASE) {
-          lc_state = DONE;
-          printf("[LAUNCH CONTROL] DONE STATE ENTERED\r\n");
-        }
-        break;
-      default:
-        printf("ERROR: NO STATE!\r\n");
-    }
-
+  int32_t regen_torque;
+  if (brake_valve_state) {
+    regen_torque = get_regen_torque();
   } else {
-    // Control regen brake valve:
-    bool brake_valve_state = control_settings.using_regen && get_pascals(pedalbox.REAR_BRAKE) < RG_REAR_BRAKE_THRESH;
-    set_brake_valve(brake_valve_state);
-
-    int32_t regen_torque;
-    if (brake_valve_state) {
-      regen_torque = get_regen_torque();
-    } else {
-      regen_torque = 0;
-    }
-
-    // Extra check to ensure we are only sending regen torque when allowed
-    if (torque_command == 0) {
-      torque_command = regen_torque;
-    }
-
-    sendTorqueCmdMsg(torque_command);
+    regen_torque = 0;
   }
+
+  // Extra check to ensure we are only sending regen torque when allowed
+  if (torque_command == 0) {
+    torque_command = regen_torque;
+  } else {
+    // Only use limits when we're not doing regen
+    int16_t voltage_limited_torque;
+    if (control_settings.using_voltage_limiting) {
+      voltage_limited_torque = get_voltage_limited_torque(torque_command);
+    } else {
+      voltage_limited_torque = torque_command;
+    }
+
+    int16_t temp_limited_torque;
+    if (control_settings.using_temp_limiting) {
+      temp_limited_torque = get_temp_limited_torque(torque_command);
+    } else {
+      temp_limited_torque = torque_command;
+    }
+
+    int16_t min_sensor_torque = MIN_DE(voltage_limited_torque, temp_limited_torque);
+
+    int16_t dash_limited_torque = torque_command * control_settings.limp_factor / 100;
+
+    int16_t limited_torque = MIN_DE(min_sensor_torque, dash_limited_torque);
+
+    printf("TEMP: %d, VOLTAGE:%d\r\nRAW_TORQUE: %d\r\nVL TORQUE: %d\r\nTL TORQUE:%d\r\nDL TORQUE: %d\r\n COMMANDED TORQUE: %d\r\n\r\n", cell_readings.cell_max_temp, cell_readings.cell_min_cV,
+      torque_command, voltage_limited_torque, temp_limited_torque, dash_limited_torque, limited_torque);
+
+    torque_command = limited_torque;
+  }
+
+  sendTorqueCmdMsg(torque_command);
 }
 
 static int16_t get_torque(void) {
@@ -120,8 +93,8 @@ static int16_t get_torque(void) {
 
   if (accel < PEDALBOX_ACCEL_RELEASE) return 0;
 
-  int16_t raw_torque =  MAX_TORQUE * (accel - PEDALBOX_ACCEL_RELEASE) / (MAX_ACCEL_VAL - PEDALBOX_ACCEL_RELEASE);
-  return raw_torque * control_settings.limp_factor / 100;
+  int16_t torque =  MAX_TORQUE * (accel - PEDALBOX_ACCEL_RELEASE) / (MAX_ACCEL_VAL - PEDALBOX_ACCEL_RELEASE);
+  return torque;
 }
 
 static int32_t get_regen_torque() {
@@ -144,64 +117,48 @@ static int32_t get_regen_torque() {
     // pascals, we only need to divde by 10^4, not 10^7 for RG_10_7_K
     // And by dividing by 10^3 instead of 10^4, we are multiplying by 10 to get
     // dNm instead of Nm
-    regen_torque = RG_10_7_K * kilo_pascals * (100 - control_settings.cBB_ef) /(control_settings.cBB_ef * 1000);
+    regen_torque = RG_10_7_K * kilo_pascals * (100 - control_settings.regen_bias) /(control_settings.regen_bias * 1000);
     if (regen_torque > RG_TORQUE_COMMAND_MAX) {
       regen_torque = RG_TORQUE_COMMAND_MAX;
     }
   }
 
+  // Regen is negative torque, and we've calculated a positive number so far
   return -1 * regen_torque;
 }
 
-static int32_t get_launch_control_speed(uint32_t front_wheel_speed) {
-uint32_t front_wheel_speedRPM = front_wheel_speed / 1000;
-  // Divide 100 because slip ratio is times 100, divide by 100 again because
-  // gear ratio is also multiplied by 100
-  int32_t target_speed = front_wheel_speedRPM * control_settings.slip_ratio * LC_cGR / (100 * 100);
-  return target_speed;
-}
-
-static uint32_t get_front_wheel_speed() {
-  uint32_t left_front_speed;
-  uint32_t right_front_speed;
-
-  // If the 32 bit wheel speed is zero, then it's disconnect (in which case we should
-  // use the 16 bit one), or the wheels are actually not moving, so the 16 bit one will
-  // be zero as well
-  if (wheel_speeds.front_left_32b_wheel_speed == 0) {
-    left_front_speed = wheel_speeds.front_left_16b_wheel_speed;
+static int16_t get_temp_limited_torque(int16_t pedal_torque) {
+  if (cell_readings.cell_max_temp < control_settings.temp_lim_thresh_temp) {
+    return pedal_torque;
+  }
+  int32_t gain;
+  if (cell_readings.cell_max_temp < MAX_TEMP) {
+    gain = limiter(control_settings.temp_lim_thresh_temp, MAX_TEMP, control_settings.temp_lim_min_gain, cell_readings.cell_max_temp);
   } else {
-    left_front_speed = wheel_speeds.front_left_32b_wheel_speed;
+    gain = control_settings.temp_lim_min_gain;
   }
+    return gain * pedal_torque / 100;
+}
 
-  if (wheel_speeds.front_right_32b_wheel_speed == 0) {
-    right_front_speed = wheel_speeds.front_right_16b_wheel_speed;
+static int16_t get_voltage_limited_torque(int16_t pedal_torque) {
+  if (cell_readings.cell_min_cV > control_settings.volt_lim_min_voltage) {
+    return pedal_torque;
+  }
+  int32_t gain;
+  if (cell_readings.cell_min_cV > MIN_VOLTAGE) {
+    gain = limiter(control_settings.volt_lim_min_voltage, MIN_VOLTAGE, control_settings.volt_lim_min_gain, cell_readings.cell_min_cV);
   } else {
-    right_front_speed = wheel_speeds.front_right_32b_wheel_speed;
+    gain = control_settings.volt_lim_min_gain;
   }
-
-  uint32_t avg_wheel_speed = left_front_speed/2 + right_front_speed/2;
-  return avg_wheel_speed;
+  return gain * pedal_torque / 100;
 }
 
-static bool any_lc_faults() {
-  if (pedalbox_min(accel) < LC_ACCEL_BEGIN) {
-    printf("[LAUNCH CONTROL ERROR] Accel min (%d) too low\r\n", pedalbox_min(accel));
-    return true;
-  } else if (pedalbox.brake_2 > LC_BRAKE_BEGIN) {
-    printf("[LAUNCH CONTROL ERROR] Brake min (%d) too low\r\n", pedalbox.brake_2);
-    return true;
-  } else if (mc_readings.speed > LC_BACKWARDS_CUTOFF) {
-    printf("[LAUNCH CONTROL ERROR] MC reading (%d) is great than cutoff (%d)\r\n", mc_readings.speed, LC_BACKWARDS_CUTOFF);
-    return true;
-  }
-    return false;
-}
-
-void set_lc_state_before() {
-  lc_state = BEFORE;
-}
-
-void set_lc_zero_torque() {
-  lc_state = ZERO_TORQUE;
+static int16_t limiter(uint16_t threshold, uint16_t absolute, uint16_t min_gain, uint16_t reading) {
+  // Explanation:
+  // Desired points: LIMITER(threshold) = 100, LIMITER(absolute) = min_gain
+  // Slope: (LIMITER(threshold) - LIMITER(absolute)) / (threshold - absolute) = (100 - min_gain) / (threshold - absolute)
+  // Intercept: 100 = (100 - min_gain) / (threshold - absolute) * threshold + intercept
+  // --> intercept = 100 - (100 - min_gain) / (threshold - absolute) * threshold
+  // Add them together and factor out a (threshold - absolute)
+  return (100*(threshold - absolute) - (100 - min_gain) * threshold + reading * (100 - min_gain)) / (threshold - absolute);
 }
