@@ -45,7 +45,7 @@
 
 
 void Thermo_Init(void);
-int8_t Thermo_Read(void);
+int16_t Thermo_Read(void);
 void Thermo_Shutdown(void);
 
 #endif
