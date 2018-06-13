@@ -361,7 +361,7 @@ void draw_manual_limp_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     carstats_t *stats = pm->stats;
 
     if (stats->buttons.B.rising_edge) {
-        stats->controls.limp_factor += 1;
+        stats->controls.limp_factor += 10;
     }
 
     stats->controls.volt_lim_min_gain = LOOPOVER(stats->controls.volt_lim_min_gain, 25, 100);
@@ -370,11 +370,13 @@ void draw_manual_limp_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_set_pos(oled, 1, 0);
     oled_print(oled, "MANUAL LIMP: ");
     if (stats->controls.limp_factor != -1) {
-        oled_print_num_dec(oled, stats->controls.limp_factor, 100, 2);
+        oled_print_num_dec(oled, stats->controls.limp_factor, 100, 1);
     }
     else {
         oled_print(oled, DATA_UNKNOWN);
     }
+
+    stats->controls.limp_factor = LOOPOVER(stats->controls.limp_factor, 10, 100);
 }
 
 void draw_fault_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
