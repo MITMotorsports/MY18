@@ -5,11 +5,12 @@
 #include <SD.h>
 #include <TimeLib.h>
 
+#include "buffer.h"
+#include "listener.h"
+
 #ifndef __MK66FX1M0__
   # error "Only a Teensy 3.6 with a dual CAN bus is worthy of being DAQBOI."
 #endif // ifndef __MK66FX1M0__
-
-#define BUILTIN_LED 13
 
 #define DEBUG_UART false
 
@@ -18,64 +19,35 @@
 
 String dir_name;
 String log_name;
+File log_file;
 
 void set_failover_filename(String& filename) {
   filename = "failover.tsv";
 }
 
-class CommonListener : public CANListener {
-public:
-
-  const uint8_t port_num;
-
-  CommonListener(uint8_t port_num) : port_num{port_num} {}
-
-  void printFrame(Stream& out, CAN_message_t& frame, int mailbox);
-
-  void gotFrame(CAN_message_t& frame, int mailbox);
-};
-
-void CommonListener::printFrame(Stream& out, CAN_message_t& frame, int mailbox) {
-  out.print(millis());
+void printLoggedFrame(Stream &out, const LoggedFrame &loggedframe) {
+  out.print(loggedframe.time);
   out.write('\t');
 
-  out.print(this->port_num);
+  out.print(loggedframe.port);
   out.write('\t');
 
-  out.print(frame.id, HEX);
+  out.print(loggedframe.frame.id, HEX);
   out.write('\t');
 
   // Length is implicitly defined by number of chars in data field
   // out.print(frame.len, HEX);
   // out.write('\t');
 
-  for (size_t c = 0; c < frame.len; ++c) {
-    if (frame.buf[c] < 16) out.write('0');
-    out.print(frame.buf[c], HEX);
+  for (size_t c = 0; c < loggedframe.frame.len; ++c) {
+    if (loggedframe.frame.buf[c] < 16) out.write('0');
+    out.print(loggedframe.frame.buf[c], HEX);
   }
 
-  out.write('\r');
   out.write('\n');
 }
 
-void CommonListener::gotFrame(CAN_message_t& frame, int mailbox) {
-  #if DEBUG_UART
-    printFrame(Serial, frame, mailbox);
-  #else
-    File log_file = SD.open(log_name.c_str(), FILE_WRITE);
-
-    if (log_file) {
-      printFrame(log_file, frame, mailbox);
-      log_file.close();
-    }
-    else {
-      Serial.println("[ERROR] Can't open log_file.");
-    }
-  #endif
-}
-
-CommonListener CANListener0(0);
-CommonListener CANListener1(1);
+CommonListener CANListener[] = {CommonListener(0), CommonListener(1)};
 
 void setup(void) {
   Serial.begin(115200);
@@ -85,9 +57,6 @@ void setup(void) {
   #endif
 
   Serial.println(F("DAQBOI v0.1"));
-
-  Can0.begin(500000);
-  Can1.begin(500000);
 
   // GPIO
 
@@ -99,8 +68,8 @@ void setup(void) {
   digitalWrite(5,  LOW);
 
   /// LED
-  pinMode(BUILTIN_LED, OUTPUT);
-  digitalWrite(BUILTIN_LED, HIGH);
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH);
 
   // Set up current time from RTC
   setSyncProvider(getTeensy3Time);
@@ -135,8 +104,9 @@ void setup(void) {
     set_failover_filename(log_name);
   }
 
+  // Open the main log_file
   // Write datetime string at the beginning of file
-  File log_file = SD.open(log_name.c_str(), FILE_WRITE);
+  log_file = SD.open(log_name.c_str(), FILE_WRITE);
 
   if (log_file) {
     // New log begin delimiter
@@ -153,16 +123,21 @@ void setup(void) {
   else {
     Serial.println("[ERROR] Can't open log_file.");
   }
-  log_file.close();
 
   // Attach interrupted listeners
-  Can0.attachObj(&CANListener0);
-  CANListener0.attachGeneralHandler();
+  Can0.attachObj(&CANListener[0]);
+  Can1.attachObj(&CANListener[1]);
 
-  Can1.attachObj(&CANListener1);
-  CANListener1.attachGeneralHandler();
+  for (auto &listener : CANListener) {
+    listener.attachGeneralHandler();
+  }
 
   Serial.println(F("listeners initialized"));
+
+  Can0.begin(500000);
+  Can1.begin(500000);
+
+  Serial.println(F("buses initialized"));
 }
 
 time_t getTeensy3Time() {
@@ -178,11 +153,31 @@ String time_string() {
 }
 
 void loop(void) {
+  LoggedFrame temp;
+
+  for (auto &listener : CANListener) {
+    if (listener.buffer.full()) {
+      log_file.print(millis());
+      log_file.write(' ');
+
+      log_file.print(listener.port);
+      log_file.write(' ');
+
+      log_file.println("FULL");
+    }
+
+    while(listener.buffer.remove(&temp)) {
+      printLoggedFrame(log_file, temp);
+    }
+  }
+
+  log_file.flush();
+
   static bool led_state = false;
   static uint32_t last_flip = millis();
 
-  if (millis() - last_flip > 1000) {
-    digitalWrite(BUILTIN_LED, led_state);
+  if (millis() - last_flip > 500) {
+    digitalWrite(LED_BUILTIN, led_state);
 
     led_state = !led_state;
     last_flip = millis();
