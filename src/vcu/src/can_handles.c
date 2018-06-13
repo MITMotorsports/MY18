@@ -162,10 +162,7 @@ void handleCellVoltagesMsg(Frame *msg) {
 
   unpack_can0_CellVoltages(msg, &unpacked_msg);
 
-  // So we take the cell voltage of the minimum cell and use that
-  // to estimate the lower bound on the back voltage
-  // (12 per cell, 6 cells, millivolts to decivolts)
-  voltages.pack = unpacked_msg.sum;
+  voltages.pack = unpacked_msg.sum / 100;  // mV -> dV
 
   cell_readings.cell_min_cV = unpacked_msg.min / 10;
 }
