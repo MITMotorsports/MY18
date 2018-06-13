@@ -1,5 +1,4 @@
-#ifndef _BUFFER_H
-#define _BUFFER_H
+#pragma once
 
 #include <iterator>
 
@@ -7,6 +6,7 @@ template<typename T>
 class FIFOCircBuffer {
   // Modified version of https://gist.github.com/xstherrera1987/3196485
 
+private:
   // don't use default ctor
   FIFOCircBuffer();
 
@@ -69,5 +69,3 @@ bool FIFOCircBuffer<T>::remove(T *t) {
     return true;
   }
 }
-
-#endif

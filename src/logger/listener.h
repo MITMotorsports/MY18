@@ -1,6 +1,4 @@
-#ifndef _LISTENER_H
-#define _LISTENER_H
-
+#pragma once
 #include "buffer.h"
 
 // #define LOG_BUFFER_SIZE 256
@@ -29,5 +27,3 @@ void CommonListener::gotFrame(CAN_message_t &frame, int mailbox) {
 
   buffer.add(loggedframe);
 }
-
-#endif
