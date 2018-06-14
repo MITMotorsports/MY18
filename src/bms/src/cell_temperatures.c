@@ -8,9 +8,14 @@
 // lpc11cx4-library
 #include "lpc_types.h"
 
-/**************************************************************************************
- * Public Functions
- * ***********************************************************************************/
+bool CellTemperatures_IgnoreCell(uint16_t cell_id) {
+  switch (cell_id) {
+  case 96:
+    return true;
+  }
+
+  return false;
+}
 
 void CellTemperatures_UpdateCellTemperaturesArray(uint32_t *gpioVoltages,
                                                   uint8_t currentThermistor,
@@ -45,9 +50,7 @@ void CellTemperatures_UpdateMaxMinAvgCellTemperatures(BMS_PACK_STATUS_T *pack_st
     uint16_t start = module * MAX_THERMISTORS_PER_MODULE;
 
     for (uint16_t idx = start; idx < start + MAX_THERMISTORS_PER_MODULE; idx++) {
-      // Ignore specific cells
-      switch (idx) {
-      case 96:
+      if (CellTemperatures_IgnoreCell(idx)) {
         ignorecnt++;
         continue;
       }
@@ -74,6 +77,19 @@ void CellTemperatures_UpdateMaxMinAvgCellTemperatures(BMS_PACK_STATUS_T *pack_st
       cellTemperaturesSum / (num_modules * MAX_THERMISTORS_PER_MODULE - ignorecnt);
   pack_status->max_cell_temp_position = maxCellTemperaturePosition;
   pack_status->min_cell_temp_position = minCellTemperaturePosition;
+
+  pack_status->variance_cell_temp_dC = 0;
+  for (uint8_t module = 0; module < num_modules; module++) {
+    // 255 * 24 < UINT16_MAX so this is safe
+    uint16_t start = module * MAX_THERMISTORS_PER_MODULE;
+
+    for (uint16_t idx = start; idx < start + MAX_THERMISTORS_PER_MODULE; idx++) {
+      if (CellTemperatures_IgnoreCell(idx)) continue;
+
+      int16_t diff = pack_status->cell_temperatures_dC[idx] - pack_status->avg_cell_temp_dC;
+      pack_status->variance_cell_temp_dC += diff * diff;
+    }
+  }
 
   // Error checks for cell temperatures
   if (pack_status->max_cell_temp_dC > MAX_CELL_TEMP_dC) {

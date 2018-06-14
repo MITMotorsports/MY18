@@ -43,8 +43,9 @@ boards:
     publish:
       can0:
         - BMSHeartbeat
-        - CellVoltages
-        - CellTemperatures
+        - CellVoltageRange
+        - CellTemperatureRange
+        - CellTemperatureVariance
   button_bank:
     arch: arm
     publish:
@@ -172,7 +173,7 @@ buses:
             c_type: uint32_t
             signed: false
             unit: mRPM
-      CellTemperatures:
+      CellTemperatureRange:
         can_id: 0x0F1
         period: 0.5s
         is_big_endian: true
@@ -181,25 +182,59 @@ buses:
             position: 0
             length: 10
             c_type: int16_t
-            signed: false
+            signed: true
             unit: decidegC
           argmin:
             position: 10
-            length: 9
-            c_type: uint16_t
+            length: 8
+            c_type: uint8_t
             signed: false
-          max:
-            position: 19
+          max1:
+            position: 18
             length: 10
             c_type: int16_t
-            signed: false
+            signed: true
             unit: decidegC
-          argmax:
-            position: 29
-            length: 9
+          argmax1:
+            position: 28
+            length: 8
+            c_type: uint8_t
+            signed: false
+          max2:
+            position: 36
+            length: 10
+            c_type: int16_t
+            signed: true
+            unit: decidegC
+          argmax2:
+            position: 46
+            length: 8
+            c_type: uint8_t
+            signed: false
+          max3:
+            position: 54
+            length: 10
+            c_type: int16_t
+            signed: true
+            unit: decidegC
+      CellTemperatureVariance:
+        can_id: 0x0F0
+        period: 0.5s
+        is_big_endian: true
+        segments:
+          mean:
+            position: 0
+            length: 10
+            c_type: int16_t
+            signed: true
+            unit: decidegC
+          variance:
+            position: 10
+            length: 16
             c_type: uint16_t
             signed: false
-      CellVoltages:
+            unit: decidegC ** 2
+      CellVoltageRange:
         can_id: 0x0F2
         period: 31ms
         is_big_endian: true

@@ -46,6 +46,10 @@ int main(void) {
         Board_PrintNum(pack_status.min_cell_temp_dC, 10);
         Board_Print_BLOCKING("\nmax: ");
         Board_PrintNum(pack_status.max_cell_temp_dC, 10);
+        Board_Print_BLOCKING("\navg: ");
+        Board_PrintNum(pack_status.avg_cell_temp_dC, 10);
+        Board_Print_BLOCKING("\nvar: ");
+        Board_PrintNum(pack_status.variance_cell_temp_dC, 10);
 
         Board_Print_BLOCKING("\ntemps: {");
 
@@ -60,45 +64,14 @@ int main(void) {
         last_print = msTicks;
       }
     }
-// #define TEMP_OFFSET_TARGET 185
-#ifndef TEMP_OFFSET_TARGET
+
+    // Uncomment to get new offset array for a given target temperature in dC.
+    // Find_Offsets(185);
+
     if (Error_Should_Fault()) {
       Board_Println("Requesting Halt..");
       break;
     }
-#else
-    static uint32_t last_print = 0;
-    if (msTicks - last_print > 1000) {
-      Board_Print_BLOCKING("\nbefore;min: ");
-      Board_PrintNum(pack_status.min_cell_temp_dC, 10);
-      Board_Print_BLOCKING("\nbefore;max: ");
-      Board_PrintNum(pack_status.max_cell_temp_dC, 10);
-      memset(cell_temperature_offsets, 0, sizeof(cell_temperature_offsets));
-      CellTemperatures_GetOffsets(TEMP_OFFSET_TARGET,
-                                  pack_status.cell_temperatures_dC,
-                                  cell_temperature_offsets);
-      Board_Print_BLOCKING("\ntemps: {");
-      for (uint8_t module = 0; module < NUM_MODULES; module++) {
-        uint16_t start = module * MAX_THERMISTORS_PER_MODULE;
-        for (uint16_t idx = start; idx < start + MAX_THERMISTORS_PER_MODULE; idx++) {
-          Board_PrintNum(pack_status.cell_temperatures_dC[idx], 10);
-          Board_Print_BLOCKING(", ");
-        }
-      }
-      Board_Print_BLOCKING("}\n");
-
-      Board_Print_BLOCKING("\noffsets: {");
-      for (uint16_t idx = 0; idx < MAX_NUM_MODULES * MAX_THERMISTORS_PER_MODULE; idx++) {
-        Board_PrintNum(cell_temperature_offsets[idx], 10);
-        Board_Print_BLOCKING(", ");
-      }
-
-      Board_Print_BLOCKING("}\n\n");
-
-      memset(cell_temperature_offsets, 0, sizeof(cell_temperature_offsets));
-      last_print = msTicks;
-    }
-#endif
   }
 
   Board_Pin_Set(PIN_BMS_FAULT, false);
@@ -254,6 +227,40 @@ void Init_BMS_Structs(void) {
   pack_status.avg_cell_temp_dC       = 0;
   pack_status.min_cell_temp_position = 0;
   pack_status.max_cell_temp_position = 0;
+}
+
+void Find_Offsets(int16_t target) {
+  static uint32_t last_print = 0;
+  if (msTicks - last_print > 1000) {
+    Board_Print_BLOCKING("\nbefore;min: ");
+    Board_PrintNum(pack_status.min_cell_temp_dC, 10);
+    Board_Print_BLOCKING("\nbefore;max: ");
+    Board_PrintNum(pack_status.max_cell_temp_dC, 10);
+    memset(cell_temperature_offsets, 0, sizeof(cell_temperature_offsets));
+    CellTemperatures_GetOffsets(target,
+                                pack_status.cell_temperatures_dC,
+                                cell_temperature_offsets);
+    Board_Print_BLOCKING("\ntemps: {");
+    for (uint8_t module = 0; module < NUM_MODULES; module++) {
+      uint16_t start = module * MAX_THERMISTORS_PER_MODULE;
+      for (uint16_t idx = start; idx < start + MAX_THERMISTORS_PER_MODULE; idx++) {
+        Board_PrintNum(pack_status.cell_temperatures_dC[idx], 10);
+        Board_Print_BLOCKING(", ");
+      }
+    }
+    Board_Print_BLOCKING("}\n");
+
+    Board_Print_BLOCKING("\noffsets: {");
+    for (uint16_t idx = 0; idx < MAX_NUM_MODULES * MAX_THERMISTORS_PER_MODULE; idx++) {
+      Board_PrintNum(cell_temperature_offsets[idx], 10);
+      Board_Print_BLOCKING(", ");
+    }
+
+    Board_Print_BLOCKING("}\n\n");
+
+    memset(cell_temperature_offsets, 0, sizeof(cell_temperature_offsets));
+    last_print = msTicks;
+  }
 }
 
 // You can tell me that I could've initialized this in the declaration.

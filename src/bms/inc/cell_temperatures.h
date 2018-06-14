@@ -61,6 +61,8 @@ void CellTemperatures_UpdateCellTemperaturesArray(uint32_t *gpioVoltages,
 void CellTemperatures_UpdateMaxMinAvgCellTemperatures(BMS_PACK_STATUS_T *pack_status,
                                                       uint8_t num_modules);
 
+bool CellTemperatures_IgnoreCell(uint16_t cell_id);
+
 void CellTemperatures_GetOffsets(int16_t target, int16_t *input, int16_t *output);
 
 /****************************************************************************************

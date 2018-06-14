@@ -65,18 +65,17 @@ typedef struct BMS_PACK_STATUS {
                               // (milliamps)
   uint32_t pack_voltage_mV;   // charging pack voltage reported by BRUSA
                               // (millivolts)
-  int16_t max_cell_temp_dC;   // maximum cell temperature (decicelsius)
   int16_t pack_energy_wH;     // energy used in watthours
 
   // FSAE specific pack status variables
-  int16_t min_cell_temp_dC;         // minimum cell temperature (decicelsius)
-  int16_t avg_cell_temp_dC;         // average cell temperature (decicelsius)
+  int16_t max_cell_temp_dC;         // maximum cell temperature (decicelsius)
   uint16_t max_cell_temp_position;  // index of the cell with maximum temperature
-                                    // range:
                                     // 0-MAX_NUM_MODULES*MAX_THERMISTORS_PER_MODULE
+  int16_t min_cell_temp_dC;         // minimum cell temperature (decicelsius)
   uint16_t min_cell_temp_position;  // index of the cell with minimum temperature
-                                    // range:
                                     // 0-MAX_NUM_MODULES*MAX_THERMISTORS_PER_MODULE
+  int16_t avg_cell_temp_dC;         // average cell temperature (decicelsius)
+  int16_t variance_cell_temp_dC;    // variance from the mean cell temperature (dC * dC)
   uint8_t state_of_charge;          // range 0 - 100, percentage of charge
 
   uint32_t pack_voltage_sum_mV;  // sum of all the voltages of every cell
