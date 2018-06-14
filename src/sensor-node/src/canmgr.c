@@ -43,6 +43,7 @@ void can_transmit_adc_data3(uint16_t* int_adc_data) {
 }
 
 void can_transmit_wheel_speed(Speed_Input_T* speed_val) {
+  LIMIT(can0_SensorNodeWheelSpeed_period);
     can0_SensorNodeWheelSpeed_T msg;
     msg.right_32b = speed_val->can_node_right_32b_wheel_speed;
     msg.left_32b = speed_val->can_node_left_32b_wheel_speed;
