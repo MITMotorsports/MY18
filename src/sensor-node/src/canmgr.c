@@ -43,13 +43,10 @@ void can_transmit_adc_data3(uint16_t* int_adc_data) {
 }
 
 void can_transmit_wheel_speed(Speed_Input_T* speed_val) {
-    can0_SensorNodeRightWheelSpeed_T msg_right;
-    msg_right.right_32b = speed_val->can_node_right_32b_wheel_speed;
-    handle_can_error(can0_SensorNodeRightWheelSpeed_Write(&msg_right));
-
-    can0_SensorNodeLeftWheelSpeed_T msg_left;
-    msg_left.left_32b = speed_val->can_node_left_32b_wheel_speed;
-    handle_can_error(can0_SensorNodeLeftWheelSpeed_Write(&msg_left));
+    can0_SensorNodeWheelSpeed_T msg;
+    msg.right_32b = speed_val->can_node_right_32b_wheel_speed;
+    msg.left_32b = speed_val->can_node_left_32b_wheel_speed;
+    handle_can_error(can0_SensorNodeWheelSpeed_Write(&msg));
 
 #ifdef DEBUG_PRINT
     Board_Print_BLOCKING("RWS: ");
