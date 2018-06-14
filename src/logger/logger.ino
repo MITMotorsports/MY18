@@ -7,6 +7,7 @@
 
 #include "buffer.h"
 #include "listener.h"
+#include "tickerplant.h"
 
 #ifndef __MK66FX1M0__
   # error "Only a Teensy 3.6 with a dual CAN bus is worthy of being DAQBOI."
@@ -17,13 +18,7 @@
 // Macro for converting and padding (to len 2) a number to a String.
 #define zfc2(num) ((num < 10)? "0" + String(num) : String(num))
 
-String dir_name;
-String log_name;
 File log_file;
-
-void set_failover_filename(String& filename) {
-  filename = "failover.tsv";
-}
 
 CommonListener CANListener[] = {CommonListener(0), CommonListener(1)};
 
@@ -36,34 +31,30 @@ void setup(void) {
 
   Serial.println(F("DAQBOI v0.1"));
 
-  // GPIO
 
-  /// Transceiver Enable
+  /// GPIO
+  // Transceiver Enable
   pinMode(24, OUTPUT);
   pinMode(5,  OUTPUT);
 
   digitalWrite(24, LOW);
   digitalWrite(5,  LOW);
 
-  /// LED
+  // LED
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
 
-  // Set up current time from RTC
-  setSyncProvider(getTeensy3Time);
-  if (timeStatus()  != timeSet) {
-    Serial.println(F("[ERROR] Unable to sync with the RTC."));
 
-    set_failover_filename(log_name);
+  /// RTC
+  setSyncProvider(getTeensy3Time);
+  if (timeStatus() != timeSet) {
+    Serial.println(F("[ERROR] Unable to sync with the RTC."));
   }
   else {
     Serial.print(F("RTC has set the system time to "));
     Serial.print(date_string());
     Serial.write(' ');
     Serial.println(time_string());
-
-    // Set log filename to current datetime
-    log_name = date_string() + "/" + time_string() + ".tsv";
   }
 
   while (!SD.begin(BUILTIN_SDCARD)) {
@@ -73,13 +64,19 @@ void setup(void) {
 
   Serial.println(F("card initialized"));
 
+
+  /// FILE
+  String log_name = "failover.tsv";
+
   // Make log directory
-  dir_name = date_string();
-  if (!SD.mkdir(dir_name.c_str())) {
+  String dir_name = date_string();
+  if (SD.mkdir(dir_name.c_str())) {
+    // Set log filename to current datetime
+    log_name = date_string() + "/" + time_string() + ".tsv";
+  }
+  else {
     Serial.print("[ERROR] failed to make directory with name ");
     Serial.println(dir_name);
-
-    set_failover_filename(log_name);
   }
 
   // Open the main log_file
@@ -130,8 +127,25 @@ String time_string() {
   return zfc2(hour()) + zfc2(minute()) + zfc2(second());
 }
 
+
+void save(const LoggedFrame &lf) {
+  log_file.println(lf);
+}
+
+void print(const LoggedFrame &lf) {
+  Serial.println(lf);
+}
+
 void loop(void) {
-  LoggedFrame loggedframe;
+  #if DEBUG_UART
+    #define PRINT print
+  #else
+    #define PRINT
+  #endif
+
+  static Tickerplant<LoggedFrame> tick({save, PRINT});
+
+  #undef PRINT
 
   for (auto &listener : CANListener) {
     if (listener.buffer.full()) {
@@ -144,8 +158,9 @@ void loop(void) {
       log_file.println("FULL");
     }
 
+    static LoggedFrame loggedframe;
     while (listener.buffer.remove(&loggedframe)) {
-      Serial.println(loggedframe);
+      tick.publish(loggedframe);
     }
   }
 
