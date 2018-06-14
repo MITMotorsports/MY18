@@ -46,7 +46,7 @@ uint32_t Board_Println(const char *str) {
 
 uint32_t Board_PrintNum(uint32_t a, uint8_t base) {
   itoa(a, str, base);
-  return Board_Println_BLOCKING(str);
+  return Board_Print_BLOCKING(str);
 }
 
 uint32_t Board_Write(const char *str, uint32_t count) {

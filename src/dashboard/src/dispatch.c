@@ -102,8 +102,8 @@ void dispatch_init() {
 }
 
 inline void dispatch_update() {
-    update_button_state(&carstats.buttons.left,  (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN));
-    update_button_state(&carstats.buttons.right, (Pin_Read(PIN_BUTTON2) == BUTTON_DOWN));
+    update_button_state(&carstats.buttons.left,  (Pin_Read(PIN_BUTTON_LEFT) == BUTTON_DOWN));
+    update_button_state(&carstats.buttons.right, (Pin_Read(PIN_BUTTON_RIGHT) == BUTTON_DOWN));
     update_button_state(&carstats.buttons.A, carstats.button_bank.A);
     update_button_state(&carstats.buttons.B, carstats.button_bank.B);
 
