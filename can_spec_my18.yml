@@ -57,6 +57,8 @@ boards:
         - ADC_Data1
         - ADC_Data2
         - ADC_Data3
+        - SensorNodeLeftWheelSpeed
+        - SensorNodeRightWheelSpeed
   mc:
     publish:
       can0:

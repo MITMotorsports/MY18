@@ -1,9 +1,12 @@
 #include "canmgr.h"
 
-void can_transmit(uint16_t* ext_adc_data, uint16_t* int_adc_data) {
+//#define DEBUG_PRINT true
+
+void can_transmit(uint16_t* ext_adc_data, uint16_t* int_adc_data, Speed_Input_T* speed_val) {
 	// can_transmit_adc_data1(ext_adc_data);
 	// can_transmit_adc_data2(ext_adc_data);
 	can_transmit_adc_data3(int_adc_data);
+  can_transmit_wheel_speed(speed_val);
 }
 
 // void can_transmit_adc_data1(uint16_t* ext_adc_data) {
@@ -37,6 +40,23 @@ void can_transmit_adc_data3(uint16_t* int_adc_data) {
 	msg.int_adc_ch4 = int_adc_data[2];
 	msg.int_adc_ch5 = int_adc_data[3];
  	handle_can_error(can0_ADC_Data3_Write(&msg));
+}
+
+void can_transmit_wheel_speed(Speed_Input_T* speed_val) {
+    can0_SensorNodeRightWheelSpeed_T msg_right;
+    msg_right.right_32b = speed_val->can_node_right_32b_wheel_speed;
+    handle_can_error(can0_SensorNodeRightWheelSpeed_Write(&msg_right));
+
+    can0_SensorNodeLeftWheelSpeed_T msg_left;
+    msg_left.left_32b = speed_val->can_node_left_32b_wheel_speed;
+    handle_can_error(can0_SensorNodeLeftWheelSpeed_Write(&msg_left));
+
+#ifdef DEBUG_PRINT
+    Board_Print_BLOCKING("RWS: ");
+    Board_PrintNum(msg_right.right_32b, 10);
+    Board_Print_BLOCKING("LWS: ");
+    Board_PrintNum(msg_left.left_32b, 10);
+#endif
 }
 
 void handle_can_error(Can_ErrorID_T error){

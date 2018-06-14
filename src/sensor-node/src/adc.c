@@ -11,10 +11,10 @@ void Init_Internal_ADC(void) {
 	Chip_ADC_Init(LPC_ADC, &adc_setup);
 
   // shock pots
-  init_ADC_by_name(ADC_CH2); // rear left
-  init_ADC_by_name(ADC_CH3); // rear right
-  init_ADC_by_name(ADC_CH4); // front left
-  init_ADC_by_name(ADC_CH5); // front right
+  init_ADC_by_name(ADC_CH2); // rear left$
+  init_ADC_by_name(ADC_CH3); // rear right $
+  init_ADC_by_name(ADC_CH4); // front left $
+  init_ADC_by_name(ADC_CH5); // front right $
 
   Chip_ADC_SetBurstCmd(LPC_ADC, ENABLE);
 }
