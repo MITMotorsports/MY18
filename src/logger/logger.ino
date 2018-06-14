@@ -25,28 +25,6 @@ void set_failover_filename(String& filename) {
   filename = "failover.tsv";
 }
 
-void printLoggedFrame(Stream &out, const LoggedFrame &loggedframe) {
-  out.print(loggedframe.time);
-  out.write('\t');
-
-  out.print(loggedframe.port);
-  out.write('\t');
-
-  out.print(loggedframe.frame.id, HEX);
-  out.write('\t');
-
-  // Length is implicitly defined by number of chars in data field
-  // out.print(frame.len, HEX);
-  // out.write('\t');
-
-  for (size_t c = 0; c < loggedframe.frame.len; ++c) {
-    if (loggedframe.frame.buf[c] < 16) out.write('0');
-    out.print(loggedframe.frame.buf[c], HEX);
-  }
-
-  out.write('\n');
-}
-
 CommonListener CANListener[] = {CommonListener(0), CommonListener(1)};
 
 void setup(void) {
@@ -153,7 +131,7 @@ String time_string() {
 }
 
 void loop(void) {
-  LoggedFrame temp;
+  LoggedFrame loggedframe;
 
   for (auto &listener : CANListener) {
     if (listener.buffer.full()) {
@@ -166,8 +144,8 @@ void loop(void) {
       log_file.println("FULL");
     }
 
-    while (listener.buffer.remove(&temp)) {
-      printLoggedFrame(log_file, temp);
+    while (listener.buffer.remove(&loggedframe)) {
+      Serial.println(loggedframe);
     }
   }
 
