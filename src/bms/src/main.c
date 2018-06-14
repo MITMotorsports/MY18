@@ -72,13 +72,6 @@ int main(void) {
       Board_Println("Requesting Halt..");
       break;
     }
-<<<<<<< HEAD
-    //TODO: charger enable pin for charger
-    Board_Println_BLOCKING("THERM");
-    Board_Println_BLOCKING("Therm: ");
-    Board_PrintNum(Thermo_Read(), 10);
-
-=======
 #else
     static uint32_t last_print = 0;
     if (msTicks - last_print > 1000) {
@@ -112,7 +105,6 @@ int main(void) {
       last_print = msTicks;
     }
 #endif
->>>>>>> roman
   }
 
   Board_Pin_Set(PIN_BMS_FAULT, false);
