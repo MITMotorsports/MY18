@@ -2,7 +2,7 @@
 
 #include "board.h"
 
-#define TAP_HOLD_CUTOFF 300
+#define TAP_HOLD_CUTOFF 1000
 
 void init_button_state(button_state_t *state) {
     state->is_pressed = false;
