@@ -1,7 +1,7 @@
 #pragma once
 #include "buffer.h"
 
-// #define LOG_BUFFER_SIZE 256
+#define LOG_BUFFER_SIZE 256
 
 typedef struct {
   uint32_t time;
@@ -13,8 +13,9 @@ class CommonListener : public CANListener {
 public:
   const uint8_t port;
   FIFOCircBuffer<LoggedFrame> buffer;
+  FIFOCircBuffer<LoggedFrame, LOG_BUFFER_SIZE> buffer;
 
-  CommonListener(uint8_t port) : port(port), buffer(256) {}
+  CommonListener(uint8_t port): port(port) {}
   void gotFrame(CAN_message_t &frame, int mailbox);
 };
 
