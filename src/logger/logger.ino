@@ -18,8 +18,6 @@
 // Macro for converting and padding (to len 2) a number to a String.
 #define zfc2(num) ((num < 10)? "0" + String(num) : String(num))
 
-File log_file;
-
 CommonListener CANListener[] = {CommonListener(0), CommonListener(1)};
 
 void setup(void) {
@@ -66,6 +64,40 @@ void setup(void) {
 
 
   /// FILE
+  init_logfile();
+
+  // Attach interrupted listeners
+  Can0.attachObj(&CANListener[0]);
+  Can1.attachObj(&CANListener[1]);
+
+  for (auto &listener : CANListener) {
+    listener.attachGeneralHandler();
+  }
+
+  Serial.println(F("listeners initialized"));
+
+  Can0.begin(500000);
+  Can1.begin(500000);
+
+  Serial.println(F("buses initialized"));
+}
+
+time_t getTeensy3Time() {
+  return Teensy3Clock.get();
+}
+
+String date_string() {
+  return zfc2(year()) + zfc2(month()) + zfc2(day());
+}
+
+String time_string() {
+  return zfc2(hour()) + zfc2(minute()) + zfc2(second());
+}
+
+
+File log_file;
+
+void init_logfile() {
   String log_name = "failover.tsv";
 
   // Make log directory
@@ -98,38 +130,18 @@ void setup(void) {
   else {
     Serial.println("[ERROR] Can't open log_file.");
   }
-
-  // Attach interrupted listeners
-  Can0.attachObj(&CANListener[0]);
-  Can1.attachObj(&CANListener[1]);
-
-  for (auto &listener : CANListener) {
-    listener.attachGeneralHandler();
-  }
-
-  Serial.println(F("listeners initialized"));
-
-  Can0.begin(500000);
-  Can1.begin(500000);
-
-  Serial.println(F("buses initialized"));
 }
-
-time_t getTeensy3Time() {
-  return Teensy3Clock.get();
-}
-
-String date_string() {
-  return zfc2(year()) + zfc2(month()) + zfc2(day());
-}
-
-String time_string() {
-  return zfc2(hour()) + zfc2(minute()) + zfc2(second());
-}
-
 
 void save(const LoggedFrame &lf) {
-  log_file.println(lf);
+  static size_t saved = 0;
+
+  // If logfile is approaching the limits of FAT32, start a new one
+  if (saved >= UINT32_MAX - 100000) {
+    init_logfile();
+    saved = 0;
+  }
+
+  saved += log_file.println(lf);
 }
 
 void print(const LoggedFrame &lf) {
