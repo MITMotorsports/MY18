@@ -159,6 +159,6 @@ void update_lights(void) {
 }
 
 void send_dash_controls(void) {
-    LIMIT(can0_DashControls_period);
-    handle_can_error(can0_DashControls_Write(&carstats.controls));
+    LIMIT(can0_DashRequest_period);
+    handle_can_error(can0_DashRequest_Write(&carstats.controls));
 }

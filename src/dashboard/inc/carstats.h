@@ -57,7 +57,7 @@ typedef struct {
     can0_VCUErrors_T vcu_errors;
 
     // Values set by dashboard
-    can0_DashControls_T controls;
+    can0_DashRequest_T controls;
 
     Buttons_T buttons;
 } carstats_t;

@@ -86,8 +86,8 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleMCTorque_Timer_Info(&frame);
     break;
 
-  case can0_DashControls:
-    handleDashControls(&frame);
+  case can0_DashRequest:
+    handleDashRequest(&frame);
     break;
 
   default:
@@ -235,10 +235,10 @@ void handleMCTorque_Timer_Info(Frame *msg) {
   mc_readings.torque_feedback = unpacked_msg.torque_feedback;
 }
 
-void handleDashControls(Frame *msg) {
-  can0_DashControls_T unpacked_msg;
+void handleDashRequest(Frame *msg) {
+  can0_DashRequest_T unpacked_msg;
 
-  unpack_can0_DashControls(msg, &unpacked_msg);
+  unpack_can0_DashRequest(msg, &unpacked_msg);
 
   if (unpacked_msg.regen_bias != 65535) {
     control_settings.regen_bias = unpacked_msg.regen_bias;

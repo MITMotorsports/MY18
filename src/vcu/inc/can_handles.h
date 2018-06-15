@@ -28,7 +28,7 @@ void handleButtonRequest(Frame *msg);
 void handleCurrentSensor_Power(Frame *msg);
 void handleMCMotor_Position_Info(Frame *msg);
 void handleSBG_EKF_Velocity(Frame *msg);
-void handleDashControls(Frame *msg);
+void handleDashRequest(Frame *msg);
 
 void send_VCUHeartbeat();
 void send_VCUErrors();

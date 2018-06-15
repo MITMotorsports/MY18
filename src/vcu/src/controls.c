@@ -3,7 +3,7 @@
 static bool enabled = false;
 static int16_t torque_command = 0;
 static int16_t speed_command = 0;
-can0_DashControls_T control_settings = {};
+can0_DashRequest_T control_settings = {};
 
 static int16_t limiter(uint16_t threshold, uint16_t absolute, uint16_t min_gain, uint16_t reading);
 

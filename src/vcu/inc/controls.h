@@ -48,7 +48,7 @@
   uint8_t volt_lim_min_voltage;
 } Controls_Settings_T;*/
 
-extern can0_DashControls_T control_settings;
+extern can0_DashRequest_T control_settings;
 
 // PRIVATE FUNCTIONS
 static int16_t get_torque(void);
