@@ -241,6 +241,7 @@ void draw_temp_lim_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_print(oled, "TEMP LIMITING: ");
     oled_clearline(oled, 1);
     oled_set_pos(oled, 1, 1);
+    oled_print(oled, "TL ");
     oled_print(oled, (stats->controls.using_temp_limiting) ? "ON " : "OFF");
     oled_clearline(oled, 2);
     oled_set_pos(oled, 2, 1);
@@ -301,15 +302,17 @@ void draw_volt_lim_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
       }
     }
 
-    stats->controls.temp_lim_min_gain = LOOPOVER(stats->controls.temp_lim_min_gain, 25, 50);
+    stats->controls.volt_lim_min_gain = LOOPOVER(stats->controls.volt_lim_min_gain, 25, 50);
     stats->controls.volt_lim_min_voltage = LOOPOVER(stats->controls.volt_lim_min_voltage, 250, 325);
 
-
+    // Render
     oled_clearline(oled, 0);
     oled_set_pos(oled, 0, 0);
     oled_print(oled, "VOLTAGE LIMITING: ");
     oled_clearline(oled, 1);
     oled_set_pos(oled, 1, 1);
+
+    oled_print(oled, "VL ");
     oled_print(oled, (stats->controls.using_voltage_limiting) ? "ON " : "OFF");
     oled_clearline(oled, 2);
     oled_set_pos(oled, 2, 1);
@@ -331,7 +334,6 @@ void draw_volt_lim_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
         oled_print(oled, DATA_UNKNOWN);
     }
 
-    // Render
     oled_set_pos(oled, var_toggled, 0);
     oled_print(oled, ">");
 }
