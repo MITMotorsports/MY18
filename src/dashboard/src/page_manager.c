@@ -89,21 +89,103 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
 void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     carstats_t *stats = pm->stats;
+    can0_VCUErrors_T *errs = &stats->vcu_errors;
 
     // Process contextual actions
-    if (stats->buttons.B.rising_edge) stats->controls.using_regen ^= 1;  // NOT
+    if (stats->buttons.B.action == BUTTON_ACTION_TAP) stats->controls.using_regen ^= 1;  // NOT
+    if (stats->buttons.left.action == BUTTON_ACTION_TAP) stats->controls.limp_factor += 25;
 
+    stats->controls.limp_factor = LOOPOVER(stats->controls.limp_factor, 25, 100);
 
     // Render
     oled_clearline(oled, 0);
     oled_set_pos(oled, 0, 0);
+
+    // Limp factor
+    oled_print(oled, "LIMP: ");
+    if (stats->controls.limp_factor != 255) {
+      oled_print_num_dec(oled, stats->controls.limp_factor, 100, 2);
+    } else {
+      oled_print(oled, DATA_UNKNOWN);
+    }
+
+    // Cell voltage
+    oled_rprint_pad(oled, "CELL ", 4);
+    if (pm->stats->min_cell_voltage >= 0) {
+        int cell_mV = pm->stats->min_cell_voltage;
+        oled_print_num_dec(oled, pm->stats->min_cell_voltage, 1000, 2);
+    } else {
+        oled_rprint(oled, DATA_UNKNOWN);
+    }
+
+    oled_set_pos(oled, 1, 0);
+    oled_clearline(oled, 1);
+
+    // Regen
+    oled_print(oled, "REGEN ");
+    oled_print(oled, (stats->controls.using_regen) ? "ON" : "OFF");
+
+    // Bus voltage
+    oled_rprint_pad(oled, "BUS", 6);
+    if (pm->stats->DESIRED_VOLTAGE != -10) {
+        int voltage = pm->stats->DESIRED_VOLTAGE / 10;
+        oled_rprint_num_pad(oled, voltage, 1);
+        oled_rprint(oled, "V");
+    } else {
+        oled_rprint(oled, DATA_UNKNOWN);
+    }
+
+    oled_clearline(oled, 2);
+    oled_set_pos(oled, 2, 0);
+
+    // Error state
+    if (errs->fatal_contactor) {
+      oled_print(oled, "CONTACTOR");
+    } else if (errs->fatal_gate) {
+      oled_print(oled, "GATE");
+      if (errs->gate_bpd) {
+        oled_print(oled, " (BPD)");
+      } else if (errs->gate_bms) {
+        oled_print(oled, " (BMS)");
+      } if (errs->gate_imd) {
+        oled_print(oled, " (IMD)");
+      }
+    } else if (errs->fatal_precharge) {
+      oled_print(oled, "PRECHARGE");
+    } else if (errs->recoverable_conflict) {
+      oled_print(oled, "CONFLICT");
+    } else if (errs->recoverable_gate) {
+      oled_print(oled, "GATE");
+    } else if (errs->recoverable_heartbeat) {
+      oled_print(oled, "HEARTBEAT");
+    } else if (errs->recoverable_contactor) {
+      oled_print(oled, "CONTACTOR");
+    }
+
+    // Cell temp
+    oled_rprint_pad(oled, "TEMP ", 4);
+    if (pm->stats->max_cell_temp >= 0) {
+        oled_print_num_dec(oled, pm->stats->max_cell_temp, 10, 1);
+    } else {
+        oled_rprint(oled, DATA_UNKNOWN);
+    }
+
+    oled_clearline(oled, 3);
+    oled_set_pos(oled, 3, 0);
 
     // Write errors
     if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
         oled_print(oled, "R");
     } else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
         oled_print(oled, "F");
-    }
+    } else oled_print(oled, " ");
+    oled_print(oled, " ");
+    if (pm->stats->controls.using_temp_limiting) {
+      oled_print(oled, "T");
+    } else oled_print(oled, " ");
+    if (pm->stats->controls.using_voltage_limiting) {
+      oled_print(oled, "V");
+    } else oled_print(oled, " ");
 
     // Print state
     if (msTicks > pm->stats->last_vcu_heartbeat + VCU_HEARTBEAT_TIMEOUT) {
@@ -126,43 +208,6 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
                 oled_rprint(oled, "\xFA""DRIVE\xFC");
                 break;
         }
-    }
-
-    oled_set_pos(oled, 1, 0);
-    oled_clearline(oled, 1);
-
-
-    // Bus voltage
-    oled_rprint_pad(oled, "BUS", 6);
-    if (pm->stats->DESIRED_VOLTAGE != -10) {
-        int voltage = pm->stats->DESIRED_VOLTAGE / 10;
-        oled_rprint_num_pad(oled, voltage, 1);
-        oled_rprint(oled, "V");
-    } else {
-        oled_rprint(oled, DATA_UNKNOWN);
-    }
-
-    oled_clearline(oled, 2);
-    oled_set_pos(oled, 2, 0);
-
-    // Cell voltage
-    oled_rprint_pad(oled, "CELL ", 4);
-    if (pm->stats->min_cell_voltage >= 0) {
-        int cell_mV = pm->stats->min_cell_voltage;
-        oled_print_num_dec(oled, pm->stats->min_cell_voltage, 1000, 2);
-    } else {
-        oled_rprint(oled, DATA_UNKNOWN);
-    }
-
-    oled_clearline(oled, 3);
-    oled_set_pos(oled, 3, 0);
-
-    // Cell temp
-    oled_rprint_pad(oled, "TEMP ", 4);
-    if (pm->stats->max_cell_temp >= 0) {
-        oled_print_num_dec(oled, pm->stats->max_cell_temp, 10, 1);
-    } else {
-        oled_rprint(oled, DATA_UNKNOWN);
     }
 }
 
