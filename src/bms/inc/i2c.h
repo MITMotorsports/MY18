@@ -10,7 +10,7 @@ void I2C_Init();
 
 //Master read = Slave address + 1, write s= Slave address + 0
 //data is MSB first
-void I2C_Write(uint16_t* content);
+void I2C_Write(uint8_t* content);
 
 uint8_t* I2C_Read(uint8_t pointer_byte, uint8_t len);
 

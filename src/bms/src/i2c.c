@@ -36,7 +36,7 @@ void I2C_Set_Address(uint8_t addr) {
 	xfer.slaveAddr = addr;
 }
 
-void I2C_Write(uint16_t* content) {
+void I2C_Write(uint8_t* content) {
 
 	int i;
 	for (i = 0; i < sizeof(content)/sizeof(content[0]); i++) {

@@ -138,6 +138,7 @@ void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
   msg.argmin = ps->min_cell_temp_position;
   msg.max = ps->max_cell_temp_dC;
   msg.argmax = ps->max_cell_temp_position;
+  msg.ambient = ps->ambient_temp;
 
   handle_can_error(can0_CellTemperatures_Write(&msg));
 }

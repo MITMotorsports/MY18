@@ -199,6 +199,12 @@ buses:
             length: 9
             c_type: uint16_t
             signed: false
+          ambient:
+            position: 38
+            length: 10
+            c_type: int16_t
+            signed: true
+            unit: decidegC
       CellVoltages:
         can_id: 0x0F2
         period: 31ms

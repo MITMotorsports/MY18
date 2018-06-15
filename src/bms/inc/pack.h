@@ -80,6 +80,8 @@ typedef struct BMS_PACK_STATUS {
   uint8_t state_of_charge;          // range 0 - 100, percentage of charge
 
   uint32_t pack_voltage_sum_mV;  // sum of all the voltages of every cell
+
+  int16_t ambient_temp;          //ambient temperature from thermostat
 } BMS_PACK_STATUS_T;
 
 const uint16_t Pack_Config_Total_Cell_Count(BMS_PACK_CONFIG_T *config);

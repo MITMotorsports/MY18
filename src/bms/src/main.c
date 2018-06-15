@@ -41,10 +41,9 @@ int main(void) {
     Board_Pin_Set(PIN_BMS_FAULT, GPIO_HIGH);
 
     Process_Keyboard();
-    Board_Println_BLOCKING("BEFORE INPUT");
     Process_Input(&bms_input, &bms_output);
-    Board_Println_BLOCKING("BEFORE OUTPUT");
     Process_Output(&bms_input, &bms_output, &bms_state);
+
     if(false){
       static uint32_t last_print = 0;
       if (msTicks - last_print > 1000) {
@@ -175,6 +174,10 @@ void Process_Input(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
     lastpr = msTicks;
   }
 #endif /* ifdef DEBUG_PRINT */
+
+
+  //Thermostat readings
+  bms_input->pack_status->ambient_temp = Thermo_Read();
 }
 
 void Process_Output(BMS_INPUT_T  *bms_input,
@@ -260,6 +263,7 @@ void Init_BMS_Structs(void) {
   pack_status.avg_cell_temp_dC       = 0;
   pack_status.min_cell_temp_position = 0;
   pack_status.max_cell_temp_position = 0;
+  pack_status.ambient_temp           = 0;
 }
 
 // You can tell me that I could've initialized this in the declaration.
