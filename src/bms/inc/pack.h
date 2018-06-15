@@ -34,7 +34,8 @@ typedef struct CellCircBuf {
 } CellCircBuf;
 
 void pushCircBuf(CellCircBuf*, CellValue);
-#define B_FRONT(buf) ((buf).data[(buf).front])
+#define B_ACC(buf, i) ((buf).data[((buf).front + i) % LEN((buf).data)])
+#define B_FRONT(buf) B_ACC(buf, 0)
 
 typedef struct BMS_PACK_CONFIG {
   uint32_t cell_min_mV;              // minimum cell voltage (millivolts)
