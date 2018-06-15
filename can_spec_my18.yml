@@ -614,6 +614,10 @@ buses:
             length: 16
             c_type: uint16_t
             signed: false
+          active_aero_enabled:
+            position: 59
+            length: 1
+            c_type: bool
       ButtonRequest:
         can_id: 0x0D8
         period: 73ms

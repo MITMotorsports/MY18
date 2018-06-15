@@ -53,6 +53,8 @@ void draw_traction_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 void draw_fault_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 
 void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
+    // Make sure that active aero is disable if we are not on the critical page
+    pm->stats->controls.active_aero_enabled = false;
     switch (pm->page) {
         case DASH_PAGE_CRITICAL:
             draw_critical_page(pm, oled);
@@ -94,8 +96,10 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     // Process contextual actions
     if (stats->buttons.B.action == BUTTON_ACTION_TAP) stats->controls.using_regen ^= 1;  // NOT
     if (stats->buttons.left.action == BUTTON_ACTION_TAP) stats->controls.limp_factor += 25;
-
     stats->controls.limp_factor = LOOPOVER(stats->controls.limp_factor, 25, 100);
+    // Using BUTTON_ACTION_HOLD introduces a delay, but there's no reason to do
+    // that since there is no tap action
+    stats->controls.active_aero_enabled = stats->buttons.right.is_pressed;
 
     // Render
     oled_clearline(oled, 0);

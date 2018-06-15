@@ -248,6 +248,8 @@ void handleDashControls(Frame *msg) {
   if (unpacked_msg.limp_factor != 65535) {
     control_settings.limp_factor = unpacked_msg.limp_factor;
   }
+
+  control_settings.active_aero_enabled = unpacked_msg.active_aero_enabled;
 }
 
 void send_VCUHeartbeat() {

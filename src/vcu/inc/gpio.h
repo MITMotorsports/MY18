@@ -105,3 +105,7 @@
 
 #define BRAKE_VALVE_PIN               GPIO_PIN_8
 #define BRAKE_VALVE_PORT              GPIOA
+
+
+#define ACTIVE_AERO_PIN               GPIO_PIN_11
+#define ACTIVE_AERO_PORT              GPIOB

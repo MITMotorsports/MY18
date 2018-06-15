@@ -9,6 +9,8 @@ static Time_T rtd_last;
 
 static bool stall_until_safe = true;
 
+static void set_active_aero(bool state);
+
 void enter_vcu_state_driving() {
   printf("[VCU FSM : DRIVING] ENTERED!\r\n");
 
@@ -39,6 +41,7 @@ void update_vcu_state_driving() {
     enable_controls();
   }
   execute_controls();
+  set_active_aero(control_settings.active_aero_enabled);
 
   if (buttons.RTD) {
     if (rtd_started) {
@@ -54,4 +57,20 @@ void update_vcu_state_driving() {
   }
 
   rtd_started = buttons.RTD;
+}
+
+static void set_active_aero(bool state) {
+  static bool last_state;
+  static uint32_t last_edge_ms;
+
+  if (state != last_state) {
+    last_edge_ms = HAL_GetTick();
+  } else {
+    if (state && HAL_GetTick() - last_edge_ms > AA_SETUP) {
+      HAL_GPIO_WritePin(GPIO(ACTIVE_AERO), GPIO_PIN_SET);
+    } else if (HAL_GetTick() - last_edge_ms > AA_HOLD){
+      HAL_GPIO_WritePin(GPIO(ACTIVE_AERO), GPIO_PIN_RESET);
+    }
+  }
+  last_state = state;
 }
