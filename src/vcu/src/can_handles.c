@@ -42,11 +42,11 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleBMSHeartbeatMsg(&frame);
     break;
 
-  case can0_CellVoltages:
+  case can0_CellVoltageRange:
     handleCellVoltagesMsg(&frame);
     break;
 
-  case can0_CellTemperatures:
+  case can0_CellTemperatureRange:
     handleCellTemperatures(&frame);
     break;
 
@@ -158,9 +158,9 @@ void handleCurrentSensorVoltageMsg(Frame *msg) {
 }
 
 void handleCellVoltagesMsg(Frame *msg) {
-  can0_CellVoltages_T unpacked_msg;
+  can0_CellVoltageRange_T unpacked_msg;
 
-  unpack_can0_CellVoltages(msg, &unpacked_msg);
+  unpack_can0_CellVoltageRange(msg, &unpacked_msg);
 
   voltages.pack = unpacked_msg.sum / 100;  // mV -> dV
 
@@ -168,11 +168,11 @@ void handleCellVoltagesMsg(Frame *msg) {
 }
 
 void handleCellTemperatures(Frame *msg) {
-  can0_CellTemperatures_T unpacked_msg;
+  can0_CellTemperatureRange_T unpacked_msg;
 
-  unpack_can0_CellTemperatures(msg, &unpacked_msg);
+  unpack_can0_CellTemperatureRange(msg, &unpacked_msg);
 
-  cell_readings.cell_max_temp = unpacked_msg.max;
+  cell_readings.cell_max_temp = unpacked_msg.max0;
 }
 
 void handleButtonRequest(Frame *msg) {
