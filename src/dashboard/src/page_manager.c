@@ -95,10 +95,10 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     // Process contextual actions
     if (stats->buttons.B.action == BUTTON_ACTION_TAP) stats->controls.using_regen ^= 1;  // NOT
-    if (stats->buttons.left.action == BUTTON_ACTION_TAP) stats->controls.limp_factor += 25;
+    if (stats->buttons.left.hold_edge) stats->controls.limp_factor += 25;
     stats->controls.limp_factor = LOOPOVER(stats->controls.limp_factor, 25, 100);
-    // Using BUTTON_ACTION_HOLD introduces a delay, but there's no reason to do
-    // that since there is no tap action
+
+    stats->buttons.right.setup_time = 0;  // Instant response
     stats->controls.active_aero_enabled = stats->buttons.right.is_pressed;
 
     // Render

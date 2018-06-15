@@ -2,6 +2,7 @@
 #define _BUTTON_LISTENER_H_
 
 #include <stdbool.h>
+#include <stdint.h>
 
 // tap: brief button press
 // hold: extended button press
@@ -18,11 +19,15 @@ typedef enum {
 typedef struct {
     bool is_pressed;
     btn_action_t action;
-    int last_edge_ms;
+    uint32_t last_edge_ms;
 
     bool edge;
     bool rising_edge;
     bool falling_edge;
+    bool hold_edge;
+
+    uint16_t setup_time;
+    uint16_t hold_time;
 } button_state_t;
 
 void init_button_state(button_state_t *state);
