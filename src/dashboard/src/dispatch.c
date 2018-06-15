@@ -102,19 +102,20 @@ void dispatch_init() {
 }
 
 inline void dispatch_update() {
-    update_button_state(&carstats.buttons.left,  (Pin_Read(PIN_BUTTON1) == BUTTON_DOWN));
-    update_button_state(&carstats.buttons.right, (Pin_Read(PIN_BUTTON2) == BUTTON_DOWN));
+    update_button_state(&carstats.buttons.left,  (Pin_Read(PIN_BUTTON_LEFT) == BUTTON_DOWN));
+    update_button_state(&carstats.buttons.right, (Pin_Read(PIN_BUTTON_RIGHT) == BUTTON_DOWN));
     update_button_state(&carstats.buttons.A, carstats.button_bank.A);
     update_button_state(&carstats.buttons.B, carstats.button_bank.B);
 
     can_update_carstats(&carstats);
-    static int32_t A_held_time;
-    if (carstats.buttons.A.rising_edge) {
+
+    switch (carstats.buttons.A.action) {
+      case BUTTON_ACTION_TAP:
         page_manager_next_page(&page_manager);
         oled_clear(&oled);
-        A_held_time = msTicks;
-    } else if (carstats.buttons.A.is_pressed) {
-       if (msTicks - A_held_time > 1000) page_manager.page = DASH_PAGE_CRITICAL;
+        break;
+      /*case BUTTON_ACTION_HOLD:
+        page_manager.page  = DASH_PAGE_CRITICAL;*/
     }
 
     update_lights();

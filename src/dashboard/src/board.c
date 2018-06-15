@@ -53,8 +53,8 @@ void Board_GPIO_Init(void) {
     Pin_Init_Out(PIN_LED_IMD);
     Pin_Init_Out(PIN_LED_AMS);
 
-    Pin_Init_In(PIN_BUTTON1);
-    Pin_Init_In(PIN_BUTTON2);
+    Pin_Init_In(PIN_BUTTON_LEFT);
+    Pin_Init_In(PIN_BUTTON_RIGHT);
 
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIN_OLED_SCLK, IOCON_FUNC1);
     Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIN_OLED_SDI,  IOCON_FUNC1);

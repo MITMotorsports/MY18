@@ -17,9 +17,8 @@ typedef enum {
 // every time you update.
 typedef struct {
     bool is_pressed;
-    bool lockout;
     btn_action_t action;
-    int press_start_ms;
+    int last_edge_ms;
 
     bool edge;
     bool rising_edge;

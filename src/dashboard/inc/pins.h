@@ -17,8 +17,8 @@
 #define PIN_LED_IMD     2, 10
 #define PIN_LED_AMS     2, 2
 
-#define PIN_BUTTON1     2, 9
-#define PIN_BUTTON2     1, 4
+#define PIN_BUTTON_LEFT      2, 9
+#define PIN_BUTTON_RIGHT     1, 4
 
 #define IOCON_BUTTON1 IOCON_PIO2_9
 #define IOCON_BUTTON2 IOCON_PIO1_4
