@@ -127,7 +127,7 @@ void can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
   handle_can_error(can0_CellVoltageRange_Write(&msg));
 }
 
-void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
+void can_transmit_cell_temperature_range(BMS_INPUT_T *bms_input) {
   LIMIT(can0_CellTemperatureRange_period);
 
   const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
@@ -152,8 +152,24 @@ void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
   #undef minT
 
   handle_can_error(can0_CellTemperatureRange_Write(&msg));
+}
 
-  // can0_CellTemperatureVariance_T msg;
+void can_transmit_cell_temperature_variance(BMS_INPUT_T *bms_input) {
+  LIMIT(can0_CellTemperatureVariance_period);
+
+  const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
+
+  can0_CellTemperatureVariance_T msg;
+
+  msg.mean = ps->avg_cell_temp_dC;
+  msg.variance = ps->variance_cell_temp;
+
+  handle_can_error(can0_CellTemperatureVariance_Write(&msg));
+}
+
+void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
+  can_transmit_cell_temperature_range(bms_input);
+  can_transmit_cell_temperature_variance(bms_input);
 }
 
 void handle_can_error(Can_ErrorID_T error) {
