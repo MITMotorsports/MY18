@@ -37,46 +37,57 @@ void CellTemperatures_UpdateCellTemperaturesArray(uint32_t *gpioVoltages,
 
 void CellTemperatures_UpdateMaxMinAvgCellTemperatures(BMS_PACK_STATUS_T *pack_status,
                                                       uint8_t num_modules) {
-  int16_t maxCellTemperature          = INT16_MIN;
-  int16_t minCellTemperature          = INT16_MAX;
   int32_t cellTemperaturesSum         = 0;
-  uint16_t maxCellTemperaturePosition = 0;
-  uint16_t minCellTemperaturePosition = 0;
+  unsigned cnt = 0;
 
-  unsigned ignorecnt = 0;
+  #define max_cell_temp (pack_status->max_cell_temp_dC)
+  #define min_cell_temp (pack_status->min_cell_temp_dC)
+
+  max_cell_temp.front = -1;
+  memset(max_cell_temp.data, INT16_MIN, sizeof(max_cell_temp.data));
+  min_cell_temp.front = -1;
+  memset(min_cell_temp.data, INT16_MAX, sizeof(min_cell_temp.data));
+
 
   for (uint8_t module = 0; module < num_modules; module++) {
     // 255 * 24 < UINT16_MAX so this is safe
     uint16_t start = module * MAX_THERMISTORS_PER_MODULE;
 
     for (uint16_t idx = start; idx < start + MAX_THERMISTORS_PER_MODULE; idx++) {
-      if (CellTemperatures_IgnoreCell(idx)) {
-        ignorecnt++;
-        continue;
-      }
+      if (CellTemperatures_IgnoreCell(idx)) continue;
+      cnt++;
 
       cellTemperaturesSum += pack_status->cell_temperatures_dC[idx];
 
-      if (pack_status->cell_temperatures_dC[idx] > maxCellTemperature) {
-        maxCellTemperature         = pack_status->cell_temperatures_dC[idx];
-        maxCellTemperaturePosition = idx;
+      if (pack_status->cell_temperatures_dC[idx] > B_FRONT(max_cell_temp).val) {
+        CellValue m;
+        m.val = pack_status->cell_temperatures_dC[idx];
+        m.idx = idx;
+
+        pushCircBuf(&max_cell_temp, m);
       }
 
-      if (pack_status->cell_temperatures_dC[idx] < minCellTemperature) {
-        minCellTemperature         = pack_status->cell_temperatures_dC[idx];
-        minCellTemperaturePosition = idx;
+      if (pack_status->cell_temperatures_dC[idx] < B_FRONT(min_cell_temp).val) {
+        CellValue m;
+        m.val = pack_status->cell_temperatures_dC[idx];
+        m.idx = idx;
+
+        pushCircBuf(&min_cell_temp, m);
       }
     }
   }
 
-  // update pack_status
-  pack_status->max_cell_temp_dC = maxCellTemperature;
-  pack_status->min_cell_temp_dC = minCellTemperature;
+  // Error checks for cell temperatures
+  if (B_FRONT(max_cell_temp).val > MAX_CELL_TEMP_dC) {
+    Error_Present(ERROR_CELL_OVER_TEMP);
+  } else {
+    Error_Clear(ERROR_CELL_OVER_TEMP);
+  }
 
-  pack_status->avg_cell_temp_dC =
-      cellTemperaturesSum / (num_modules * MAX_THERMISTORS_PER_MODULE - ignorecnt);
-  pack_status->max_cell_temp_position = maxCellTemperaturePosition;
-  pack_status->min_cell_temp_position = minCellTemperaturePosition;
+  #undef max_cell_temp
+  #undef min_cell_temp
+
+  pack_status->avg_cell_temp_dC = cellTemperaturesSum / cnt;
 
   pack_status->variance_cell_temp_dC = 0;
   for (uint8_t module = 0; module < num_modules; module++) {
@@ -89,13 +100,6 @@ void CellTemperatures_UpdateMaxMinAvgCellTemperatures(BMS_PACK_STATUS_T *pack_st
       int16_t diff = pack_status->cell_temperatures_dC[idx] - pack_status->avg_cell_temp_dC;
       pack_status->variance_cell_temp_dC += diff * diff;
     }
-  }
-
-  // Error checks for cell temperatures
-  if (pack_status->max_cell_temp_dC > MAX_CELL_TEMP_dC) {
-    Error_Present(ERROR_CELL_OVER_TEMP);
-  } else {
-    Error_Clear(ERROR_CELL_OVER_TEMP);
   }
 }
 

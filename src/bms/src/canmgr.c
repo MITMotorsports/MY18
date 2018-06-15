@@ -133,10 +133,10 @@ void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
   const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
   can0_CellTemperatureRange_T msg;
-  msg.min = ps->min_cell_temp_dC;
-  msg.argmin = ps->min_cell_temp_position;
-  msg.max1 = ps->max_cell_temp_dC;
-  msg.argmax1 = ps->max_cell_temp_position;
+  // msg.min = B_FRONT(ps->min_cell_temp_dC).val;
+  // msg.argmin = B_FRONT(ps->min_cell_temp_dC).val;
+  // msg.max1 = ps->max_cell_temp_dC;
+  // msg.argmax1 = ps->max_cell_temp_position;
 
   handle_can_error(can0_CellTemperatureRange_Write(&msg));
 

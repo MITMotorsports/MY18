@@ -1,5 +1,10 @@
 #include "pack.h"
 
+void pushCircBuf(CellCircBuf* buf, CellValue data) {
+  buf->front = (buf->front + 1) % LEN(buf->data);
+  buf->data[buf->front] = data;
+}
+
 const uint16_t Pack_Config_Total_Cell_Count(BMS_PACK_CONFIG_T *config) {
   uint16_t total = 0;
 

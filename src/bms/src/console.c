@@ -137,8 +137,8 @@ static void get(const char *const *argv) {
       break;
 
     case RWL_max_cell_temp_dC:
-      utoa(bms_state->pack_config->max_cell_temp_dC, tempstr, 10);
-      Board_Println(tempstr);
+      // utoa(B_FRONT(bms_state->pack_config->max_cell_temp_dC).val, tempstr, 10);
+      // Board_Println(tempstr);
       break;
     case RWL_soc:
       break;
@@ -207,8 +207,8 @@ static void get(const char *const *argv) {
         break;
 
       case ROL_max_cell_temp_dC:
-        utoa(bms_input->pack_status->max_cell_temp_dC, tempstr, 10);
-        Board_Println(tempstr);
+        // utoa(B_FRONT(bms_state->pack_config->max_cell_temp_dC).val, tempstr, 10);
+        // Board_Println(tempstr);
         break;
 
       case ROL_soc:

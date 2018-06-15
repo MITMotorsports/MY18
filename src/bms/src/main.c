@@ -43,9 +43,9 @@ int main(void) {
       static uint32_t last_print = 0;
       if (msTicks - last_print > 1000) {
         Board_Print_BLOCKING("min: ");
-        Board_PrintNum(pack_status.min_cell_temp_dC, 10);
+        Board_PrintNum(B_FRONT(pack_status.min_cell_temp_dC).val, 10);
         Board_Print_BLOCKING("\nmax: ");
-        Board_PrintNum(pack_status.max_cell_temp_dC, 10);
+        Board_PrintNum(B_FRONT(pack_status.max_cell_temp_dC).val, 10);
         Board_Print_BLOCKING("\navg: ");
         Board_PrintNum(pack_status.avg_cell_temp_dC, 10);
         Board_Print_BLOCKING("\nvar: ");
@@ -211,9 +211,7 @@ void Init_BMS_Structs(void) {
 
   bms_output.attempt_ltc_init = true;
   bms_output.balance_req = balance_reqs;
-  memset(balance_reqs,
-         0,
-         sizeof(balance_reqs));
+  memset(balance_reqs, 0, sizeof(balance_reqs));
 
   pack_status.cell_voltages_mV     = cell_voltages;
   pack_status.cell_temperatures_dC = cell_temperatures;
@@ -222,20 +220,21 @@ void Init_BMS_Structs(void) {
   pack_status.pack_current_mA      = 0;
   pack_status.pack_voltage_mV      = 0;
 
-  pack_status.max_cell_temp_dC       = INT16_MIN;
-  pack_status.min_cell_temp_dC       = INT16_MAX;
-  pack_status.avg_cell_temp_dC       = 0;
-  pack_status.min_cell_temp_position = 0;
-  pack_status.max_cell_temp_position = 0;
+  pack_status.max_cell_temp_dC.front = -1;
+  memset(pack_status.max_cell_temp_dC.data, INT16_MIN, sizeof(pack_status.max_cell_temp_dC.data));
+  pack_status.min_cell_temp_dC.front = -1;
+  memset(pack_status.min_cell_temp_dC.data, INT16_MAX, sizeof(pack_status.min_cell_temp_dC.data));
+
+  pack_status.avg_cell_temp_dC = 0;
 }
 
 void Find_Offsets(int16_t target) {
   static uint32_t last_print = 0;
   if (msTicks - last_print > 1000) {
     Board_Print_BLOCKING("\nbefore;min: ");
-    Board_PrintNum(pack_status.min_cell_temp_dC, 10);
+    Board_PrintNum(B_FRONT(pack_status.min_cell_temp_dC).val, 10);
     Board_Print_BLOCKING("\nbefore;max: ");
-    Board_PrintNum(pack_status.max_cell_temp_dC, 10);
+    Board_PrintNum(B_FRONT(pack_status.max_cell_temp_dC).val, 10);
     memset(cell_temperature_offsets, 0, sizeof(cell_temperature_offsets));
     CellTemperatures_GetOffsets(target,
                                 pack_status.cell_temperatures_dC,
