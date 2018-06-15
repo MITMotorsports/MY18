@@ -43,11 +43,13 @@ void CellTemperatures_UpdateMaxMinAvgCellTemperatures(BMS_PACK_STATUS_T *pack_st
   #define max_cell_temp (pack_status->max_cell_temp_dC)
   #define min_cell_temp (pack_status->min_cell_temp_dC)
 
-  max_cell_temp.front = -1;
-  memset(max_cell_temp.data, INT16_MIN, sizeof(max_cell_temp.data));
-  min_cell_temp.front = -1;
-  memset(min_cell_temp.data, INT16_MAX, sizeof(min_cell_temp.data));
+  for (int i = 0; i < LEN(max_cell_temp); ++i) {
+    max_cell_temp[i].val = INT16_MIN;
+  }
 
+  for (int i = 0; i < LEN(min_cell_temp); ++i) {
+    min_cell_temp[i].val = INT16_MAX;
+  }
 
   for (uint8_t module = 0; module < num_modules; module++) {
     // 255 * 24 < UINT16_MAX so this is safe
@@ -55,30 +57,21 @@ void CellTemperatures_UpdateMaxMinAvgCellTemperatures(BMS_PACK_STATUS_T *pack_st
 
     for (uint16_t idx = start; idx < start + MAX_THERMISTORS_PER_MODULE; idx++) {
       if (CellTemperatures_IgnoreCell(idx)) continue;
-      cnt++;
 
       cellTemperaturesSum += pack_status->cell_temperatures_dC[idx];
+      cnt++;
 
-      if (pack_status->cell_temperatures_dC[idx] > B_FRONT(max_cell_temp).val) {
-        CellValue m;
-        m.val = pack_status->cell_temperatures_dC[idx];
-        m.idx = idx;
+      CellValue m;
+      m.val = pack_status->cell_temperatures_dC[idx];
+      m.idx = idx;
 
-        pushCircBuf(&max_cell_temp, m);
-      }
-
-      if (pack_status->cell_temperatures_dC[idx] < B_FRONT(min_cell_temp).val) {
-        CellValue m;
-        m.val = pack_status->cell_temperatures_dC[idx];
-        m.idx = idx;
-
-        pushCircBuf(&min_cell_temp, m);
-      }
+      insert_sort(LEN(max_cell_temp), max_cell_temp, m, true);
+      insert_sort(LEN(min_cell_temp), min_cell_temp, m, false);
     }
   }
 
   // Error checks for cell temperatures
-  if (B_FRONT(max_cell_temp).val > MAX_CELL_TEMP_dC) {
+  if (max_cell_temp[0].val > MAX_CELL_TEMP_dC) {
     Error_Present(ERROR_CELL_OVER_TEMP);
   } else {
     Error_Clear(ERROR_CELL_OVER_TEMP);
@@ -89,7 +82,7 @@ void CellTemperatures_UpdateMaxMinAvgCellTemperatures(BMS_PACK_STATUS_T *pack_st
 
   pack_status->avg_cell_temp_dC = cellTemperaturesSum / cnt;
 
-  pack_status->variance_cell_temp_dC = 0;
+  pack_status->variance_cell_temp = 0;
   for (uint8_t module = 0; module < num_modules; module++) {
     // 255 * 24 < UINT16_MAX so this is safe
     uint16_t start = module * MAX_THERMISTORS_PER_MODULE;
@@ -98,9 +91,12 @@ void CellTemperatures_UpdateMaxMinAvgCellTemperatures(BMS_PACK_STATUS_T *pack_st
       if (CellTemperatures_IgnoreCell(idx)) continue;
 
       int16_t diff = pack_status->cell_temperatures_dC[idx] - pack_status->avg_cell_temp_dC;
-      pack_status->variance_cell_temp_dC += diff * diff;
+      pack_status->variance_cell_temp += diff * diff;
     }
   }
+
+  pack_status->variance_cell_temp *= 1000;
+  pack_status->variance_cell_temp /= cnt;
 }
 
 void CellTemperatures_GetOffsets(int16_t target, int16_t *input, int16_t *output) {

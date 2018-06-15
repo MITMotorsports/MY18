@@ -2,6 +2,7 @@
 #define _PACK_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 // Default Pack Configuration
 #define CELL_MIN_mV 2500  // from datasheet, contact elliot
@@ -28,14 +29,7 @@ typedef struct CellValue {
   int16_t  val;
 } CellValue;
 
-typedef struct CellCircBuf {
-  uint16_t front;
-  CellValue data[3];
-} CellCircBuf;
-
-void pushCircBuf(CellCircBuf*, CellValue);
-#define B_ACC(buf, i) ((buf).data[((buf).front + i) % LEN((buf).data)])
-#define B_FRONT(buf) B_ACC(buf, 0)
+bool insert_sort(int n, CellValue arr[n], CellValue data, bool max);
 
 typedef struct BMS_PACK_CONFIG {
   uint32_t cell_min_mV;              // minimum cell voltage (millivolts)
@@ -83,10 +77,10 @@ typedef struct BMS_PACK_STATUS {
   int16_t pack_energy_wH;     // energy used in watthours
 
   // FSAE specific pack status variables
-  CellCircBuf max_cell_temp_dC;     // maximum cell temperature (decicelsius)
-  CellCircBuf min_cell_temp_dC;     // minimum cell temperature (decicelsius)
+  CellValue max_cell_temp_dC[3];     // maximum cell temperature (decicelsius)
+  CellValue min_cell_temp_dC[3];     // minimum cell temperature (decicelsius)
   int16_t avg_cell_temp_dC;         // average cell temperature (decicelsius)
-  int16_t variance_cell_temp_dC;    // variance from the mean cell temperature (dC * dC)
+  uint16_t variance_cell_temp;    // variance from the mean cell temperature (dC * dC)
   uint8_t state_of_charge;          // range 0 - 100, percentage of charge
 
   uint32_t pack_voltage_sum_mV;  // sum of all the voltages of every cell

@@ -137,16 +137,16 @@ void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
   #define maxT (ps->max_cell_temp_dC)
   #define minT (ps->min_cell_temp_dC)
 
-  msg.min = B_FRONT(minT).val;
-  msg.argmin = B_FRONT(minT).idx;
+  msg.min     = minT[0].val;
+  msg.argmin  = minT[0].idx;
 
-  msg.max0 = B_ACC(maxT, 0).val;
-  msg.argmax0 = B_ACC(maxT, 0).idx;
+  msg.max0    = maxT[0].val;
+  msg.argmax0 = maxT[0].idx;
 
-  msg.max1 = B_ACC(maxT, 1).val;
-  msg.argmax1 = B_ACC(maxT, 1).idx;
+  msg.max1    = maxT[1].val;
+  msg.argmax1 = maxT[1].idx;
 
-  msg.max2 = B_ACC(maxT, 2).val;
+  msg.max2    = maxT[2].val;
 
   #undef maxT
   #undef minT
