@@ -136,7 +136,7 @@ void save(const LoggedFrame &lf) {
   static size_t saved = 0;
 
   // If logfile is approaching the limits of FAT32, start a new one
-  if (saved >= UINT32_MAX - 100000) {
+  if (saved >= 4294967296 - 100000) {
     init_logfile();
     saved = 0;
   }
