@@ -4,6 +4,7 @@
 
 #include <string.h>
 
+//#define DEBUG_UART
 
 #define DATA_BLOCK_SIZE sizeof(BMS_PACK_CONFIG_T) + ERROR_BYTESIZE + \
   CHECKSUM_BYTESIZE + VERSION_BYTESIZE + MAX_NUM_MODULES
@@ -74,7 +75,9 @@ void EEPROM_LoadCCPage(uint32_t *cc) {
 
 // idx should be from 0-63 inclusive
 void EEPROM_WriteCCPage_Num(uint8_t idx, uint32_t val) {
+#ifdef DEBUG_UART
   Board_Println_BLOCKING("Writing CC Num to EEPROM...");
+#endif
 
   LC1024_WriteEnable();
   LC1024_WriteEnable();
@@ -89,19 +92,25 @@ void EEPROM_WriteCCPage_Num(uint8_t idx, uint32_t val) {
   LC1024_WriteEnable();
   LC1024_WriteEnable();
   LC1024_WriteMem(eeprom_data_addr_cc, eeprom_data_buf, CC_PAGE_SZ);
-  Board_BlockingDelay(150);
 
+#ifdef DEBUG_UART
+  Board_BlockingDelay(150);
   Board_Println_BLOCKING("Done writing CC Num to EEPROM...");
+#endif
 }
 
 // idx should be from 0-63 inclusive
 uint32_t EEPROM_LoadCCPage_Num(uint8_t idx) {
+#ifdef DEBUG_UART
   Board_Println_BLOCKING("Loading CC Num from EEPROM...");
+#endif
   LC1024_WriteEnable();
   LC1024_WriteEnable();
   LC1024_ReadMem(eeprom_data_addr_cc, eeprom_data_buf, CC_PAGE_SZ);
+#ifdef DEBUG_UART
   Board_BlockingDelay(150);
   Board_Println_BLOCKING("Done loading CC Num from EEPROM...");
+#endif
   return (eeprom_data_buf[idx << 2] << 24)
          + (eeprom_data_buf[(idx << 2) + 1] << 16)
          + (eeprom_data_buf[(idx << 2) + 2] << 8)
