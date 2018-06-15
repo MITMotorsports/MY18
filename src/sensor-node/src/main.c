@@ -1,160 +1,221 @@
-#include "chip.h"
-#include "sensor-node.h"
+#include "main.h"
+
+//#define DEBUG_UART true
 
 const uint32_t OscRateIn = 12000000;
 volatile uint32_t msTicks;
+
+// ADC Data Containers
+uint16_t ext_adc_data[8];
+uint16_t int_adc_data[4];
 
 void SysTick_Handler(void) {
   msTicks++;
 }
 
-//15 0
-#define SERIAL_BAUDRATE 57600
+Speed_Input_T speed_val;
 
-#define SSP_MODE_TEST       1	/*1: Master, 0: Slave */
-#define BUFFER_SIZE                         (0x100)
-#define SSP_DATA_BITS                       (SSP_BITS_16)
-#define SSP_DATA_BIT_NUM(databits)          (databits + 1)
-#define SSP_DATA_BYTES(databits)            (((databits) > SSP_BITS_8) ? 2 : 1)
-#define SSP_LO_BYTE_MSK(databits)           ((SSP_DATA_BYTES(databits) > 1) ? 0xFF : (0xFF >> \
-																					  (8 - SSP_DATA_BIT_NUM(databits))))
-#define SSP_HI_BYTE_MSK(databits)           ((SSP_DATA_BYTES(databits) > 1) ? (0xFF >> \
-																			   (16 - SSP_DATA_BIT_NUM(databits))) : 0)
-#define LPC_SSP           LPC_SSP0
-#define SSP_IRQ           SSP0_IRQn
-#define SSPIRQHANDLER     SSP0_IRQHandler
+#define ADC_UPDATE_PERIOD 100
+#define WHEEL_SPEED_TIMEOUT_MS 100
+#define WHEEL_SPEED_READ_PERIOD_MS 10
 
+int main(void) {
+    SystemCoreClockUpdate();
+    if (SysTick_Config (SystemCoreClock / 1000)) while(1);  // Hang on error
 
-#define LED_PIN 5
+    Board_UART_Init(57600);
 
+    GPIO_Init();
 
-#define CS 2, 11
-#define V_A 5
+    // Init_SPI_ADC();
+    // Init_Internal_ADC();
 
-/* Tx buffer */
-static uint8_t Tx_Buf[BUFFER_SIZE];
+    Timer_Init();
+    Set_Interrupt_Priorities();
+    Timer_Start();
 
-/* Rx buffer */
-static uint16_t Rx_Buf[BUFFER_SIZE];
-
-static SSP_ConfigFormat ssp_format;
-static Chip_SSP_DATA_SETUP_T xf_setup;
-static volatile uint8_t  isXferCompleted = 0;
-
-static char* num_buffer[100];
-
-#define print(str) {Chip_UART_SendBlocking(LPC_USART, str, strlen(str));}
-#define println(str) {print(str); print("\r\n");}
-#define printNum(num, base) {itoa(num, num_buffer, base); print(num_buffer)}
-
-static void Init_SSP_PinMux(void) {
-	Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_8, (IOCON_FUNC1 | IOCON_MODE_INACT));	/* MISO0 */
-	Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_9, (IOCON_FUNC1 | IOCON_MODE_INACT));	/* MOSI0 */
-	Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_2, (IOCON_FUNC1 | IOCON_MODE_INACT));	/* SSEL0 */
-	Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_10, (IOCON_FUNC2 | IOCON_MODE_INACT));	/* SCK0 */
-	Chip_IOCON_PinLocSel(LPC_IOCON, IOCON_SCKLOC_PIO2_11);
-}
-
-static void Buffer_Init(void)
-{
-	uint16_t i;
-	uint8_t ch = 0;
-	for (i = 0; i < BUFFER_SIZE; i++) {
-		Tx_Buf[i] = CH6;
-		Rx_Buf[i] = 0x0;
-	}
-}
-
-static void GPIO_Config(void) {
-	Chip_GPIO_Init(LPC_GPIO);
-
-}
-
-static void LED_Config(void) {
-	Chip_GPIO_WriteDirBit(LPC_GPIO, 2, LED_PIN, true);
-
-}
-
-static void LED_On(void) {
-	Chip_GPIO_SetPinState(LPC_GPIO, 2, LED_PIN, true);
-	Chip_UART_SendBlocking(LPC_USART, "LED_ON", 6);
-}
-
-static void LED_Off(void) {
-	Chip_GPIO_SetPinState(LPC_GPIO, 2, LED_PIN, false);
-}
-
-void Serial_Init(uint32_t baudrate) {
-  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_6, (IOCON_FUNC1 | IOCON_MODE_INACT)); /* RXD */
-  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_7, (IOCON_FUNC1 | IOCON_MODE_INACT)); /* TXD */
-
-  Chip_UART_Init(LPC_USART);
-  Chip_UART_SetBaud(LPC_USART, baudrate);
-  // Configure data width, parity, and stop bits
-  Chip_UART_ConfigData(LPC_USART, (UART_LCR_WLEN8 | UART_LCR_SBS_1BIT | UART_LCR_PARITY_DIS));
-  Chip_UART_SetupFIFOS(LPC_USART, (UART_FCR_FIFO_EN | UART_FCR_TRG_LEV2));
-  Chip_UART_TXEnable(LPC_USART);
-}
-
-/**
- * @brief	Main routine for SSP example
- * @return	Nothing
- */
-int main(void)
-{
-	SystemCoreClockUpdate();
-  	Serial_Init(SERIAL_BAUDRATE);
-
-	if (SysTick_Config (SystemCoreClock / 1000)) {
-		//Error
-		while(1);
-	}
-
-  // Chip_UART_SendBlocking(LPC_USART, "Y0YOyo", 6);
-
-	/* LED Initialization */
-	GPIO_Config();
-	LED_Config();
-	LED_On();
+    init_can0_sensor_node();
 
 
-
-	/* SSP initialization */
-	Init_SSP_PinMux();
-	Chip_SSP_Init(LPC_SSP);
-	Chip_SSP_SetBitRate(LPC_SSP, 30000);
-	ssp_format.frameFormat = SSP_FRAMEFORMAT_SPI;
-	ssp_format.bits = SSP_DATA_BITS;
-	ssp_format.clockMode = SSP_CLOCK_MODE0;
-	Chip_SSP_SetFormat(LPC_SSP, ssp_format.bits, ssp_format.frameFormat, ssp_format.clockMode);
-	Chip_SSP_SetMaster(LPC_SSP, SSP_MODE_TEST);
-	Chip_SSP_Enable(LPC_SSP);
-	Buffer_Init();
-	LED_On();
-	int i;
+    uint32_t adc_update = 0;
 
 	while (1) {
-		// println("looping");
+#ifdef DEBUG_UART
+        //Board_Print("Speed: ");
+        //Board_PrintNum(speed_val.can_node_left_32b_wheel_speed, 10);
+        //Board_Print(" / ");
+        //Board_PrintNum(speed_val.can_node_left_32b_wheel_speed, 10);
+        //Board_Println(""); 
+#endif
 
-		//4.730 volts == 2038
-		//4.571 volts == 1970
-		//2.879 volts == 1240
-		//3.58 volts == 1542
-		//2.127 volts = 916
-		// 1.337 volts == 575
-		//0.826 volts == 355
-		//0 = 0
-		Chip_SSP_WriteFrames_Blocking(LPC_SSP, Tx_Buf, BUFFER_SIZE);
-		Chip_GPIO_SetPinState(LPC_GPIO, CS, true);
-		Chip_SSP_ReadFrames_Blocking(LPC_SSP, Rx_Buf, BUFFER_SIZE);
-		// for (i = 0; i < BUFFER_SIZE; i++) {
-		// 	printNum(i,10);
-		// 	print(",");
-		// 	printNum(Rx_Buf[i],10);
-		// 	println("");
-		// }
-		printNum(Rx_Buf[0],10);
-		println("");
+        if (speed_val.last_speed_read_ms + WHEEL_SPEED_READ_PERIOD_MS < msTicks) {
+            update_wheel_speed();
+        }
+
+
+#if DEBUG_UART
+        Board_Print_BLOCKING("CH2: ");
+        Board_PrintNum(Read_Internal_ADC(ADC_CH2), 10);
+        Board_Println_BLOCKING("");
+        Board_Print_BLOCKING("CH3: ");
+        Board_PrintNum(Read_Internal_ADC(ADC_CH3), 10);
+        Board_Println_BLOCKING("");
+        Board_Print_BLOCKING("CH4: ");
+        Board_PrintNum(Read_Internal_ADC(ADC_CH4), 10);
+        Board_Println_BLOCKING("");
+        Board_Print_BLOCKING("CH5: ");
+        Board_PrintNum(Read_Internal_ADC(ADC_CH5), 10);
+        Board_Println_BLOCKING("");
+#endif
+
+        Read_Internal_ADC_Range(int_adc_data, 0, 4, 1);
+        can_transmit(ext_adc_data, int_adc_data, &speed_val);
+        
+        adc_update = msTicks + ADC_UPDATE_PERIOD;
 	}
+
 	return 0;
 }
+
+// wheel speed code very sloppily copied from can node
+
+
+
+void Input_handle_interrupt(uint32_t msTicks, uint32_t curr_tick, Wheel_T wheel);
+
+void handle_interrupt(LPC_TIMER_T* timer, Wheel_T wheel) {
+  // Reset the timer immediately
+  Chip_TIMER_Reset(timer);
+  // Clear the capture
+  Chip_TIMER_ClearCapture(timer, 0);
+  const uint32_t curr_tick = Chip_TIMER_ReadCapture(timer, 0) / CYCLES_PER_MICROSECOND;
+  Input_handle_interrupt(msTicks, curr_tick, wheel);
+}
+
+// Interrupt handlers. These function get called automatically on
+// a rising edge or falling edge of the signal going into the timer capture pin
+void TIMER32_0_IRQHandler(void) {
+  handle_interrupt(LPC_TIMER32_0, LEFT_32);
+  //Board_Println("left wheel?");
+}
+
+void TIMER32_1_IRQHandler(void) {
+  handle_interrupt(LPC_TIMER32_1, RIGHT_32);
+  //Board_Println("right wheel?");
+}
+
+void Set_Interrupt_Priorities(void) {
+  // Give 32 bit interrupts the higher priority
+  NVIC_SetPriority(TIMER_32_0_IRQn, 0);
+  NVIC_SetPriority(TIMER_32_1_IRQn, 0);
+  // Give the SysTick function a lower priority
+  NVIC_SetPriority(SysTick_IRQn, 2);
+}
+
+void Input_handle_interrupt(uint32_t msTicks, uint32_t curr_tick, Wheel_T wheel) {
+  Speed_Input_T *speed = &speed_val;
+  if (false && speed->wheel_stopped[wheel]) {
+    speed->num_ticks[wheel] = 0;
+    speed->big_sum[wheel] = 0;
+    speed->little_sum[wheel] = 0;
+    speed->last_updated[wheel] = msTicks;
+    return;
+  }
+
+  const uint32_t count = speed->num_ticks[wheel];
+  const uint8_t idx = count % NUM_TEETH;
+  const uint32_t this_tooth_last_rev =
+    count < NUM_TEETH ? 0 : speed->last_tick[wheel][idx];
+
+  // Register tick
+  speed->last_tick[wheel][idx] = curr_tick;
+  speed->num_ticks[wheel]++;
+
+  // Update big sum
+  speed->big_sum[wheel] += NUM_TEETH * curr_tick;
+  speed->big_sum[wheel] -= speed->little_sum[wheel];
+
+  // Update little sum
+  speed->little_sum[wheel] += curr_tick;
+  speed->little_sum[wheel] -= this_tooth_last_rev;
+
+  // Update timestamp
+  speed->last_updated[wheel] = msTicks;
+}
+//
+// Microsecond = 1 millionth of a second
+#define MICROSECONDS_PER_SECOND_F 1000000.0
+// 1000 millirevs = 1 rev
+#define MILLIREVS_PER_REV_F 1000.0
+#define SECONDS_PER_MINUTE 60
+
+uint32_t click_time_to_mRPM(uint32_t us_per_click) {
+  if (us_per_click == 0) {
+    return 0;
+  }
+  // Convert milliseconds per click to milli rpm
+  const float us_per_rev = us_per_click * 1.0 * NUM_TEETH * 2;
+
+  const float s_per_rev = us_per_rev / MICROSECONDS_PER_SECOND_F;
+
+  const float mrev_per_s = MILLIREVS_PER_REV_F / s_per_rev;
+
+  const float mrev_per_min = mrev_per_s * SECONDS_PER_MINUTE;
+  return mrev_per_min;
+}
+
+void update_wheel_speed() {
+  Speed_Input_T* speed = &speed_val;
+  if (speed->last_speed_read_ms + WHEEL_SPEED_READ_PERIOD_MS < msTicks) {
+    // Capture values
+    speed->last_speed_read_ms = msTicks;
+    uint8_t wheel;
+    for(wheel = 0; wheel < NUM_WHEELS; wheel++) {
+      const uint32_t count = speed->num_ticks[wheel];
+      uint8_t idx;
+      if (count > 0) {
+        // If there are x ticks so far, the last tick is index (x - 1)
+        idx = (count - 1) % NUM_TEETH;
+      } else {
+        idx = 0;
+      }
+
+      uint32_t moving_avg;
+      if (count < NUM_TEETH) {
+        moving_avg = 0;
+      } else {
+        const uint32_t avg = speed->big_sum[wheel] / SUM_ALL_TEETH;
+        moving_avg = avg;
+      }
+      const bool timeout =
+        speed->last_updated[wheel] + WHEEL_SPEED_TIMEOUT_MS < msTicks;
+
+      uint32_t calculated_speed;
+      speed->wheel_stopped[wheel] = timeout;
+      if (speed->wheel_stopped[wheel]) {
+        calculated_speed = 0;
+      } else {
+        if (count < NUM_TEETH) {
+          calculated_speed = click_time_to_mRPM(speed->last_tick[wheel][idx]);
+        } else {
+          calculated_speed = click_time_to_mRPM(moving_avg);
+        }
+      }
+
+      // 32 bit timer speeds are first in the enum, so it's safe to look back at
+      // their values
+      switch (wheel) {
+        case LEFT_32:
+          speed->can_node_left_32b_wheel_speed = calculated_speed;
+          break;
+        case RIGHT_32:
+          speed->can_node_right_32b_wheel_speed = calculated_speed;
+          break;
+        default:
+          continue;
+      }
+    }
+  }
+}
+
+

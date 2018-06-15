@@ -1,0 +1,7 @@
+#include "gpio.h"
+
+void GPIO_Init(void) {
+	Chip_GPIO_Init(LPC_GPIO);
+	Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_0, IOCON_FUNC1 | IOCON_DIGMODE_EN | IOCON_MODE_PULLUP); // speed 1
+	Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO1_5, IOCON_FUNC0 | IOCON_DIGMODE_EN | IOCON_MODE_PULLUP); // speed 2
+}
