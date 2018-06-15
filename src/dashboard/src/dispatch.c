@@ -114,8 +114,8 @@ inline void dispatch_update() {
         page_manager_next_page(&page_manager);
         oled_clear(&oled);
         break;
-      /*case BUTTON_ACTION_HOLD:
-        page_manager.page  = DASH_PAGE_CRITICAL;*/
+      case BUTTON_ACTION_HOLD:
+        page_manager.page  = DASH_PAGE_CRITICAL;
     }
 
     update_lights();
