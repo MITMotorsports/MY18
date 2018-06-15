@@ -128,11 +128,6 @@ inline void dispatch_update() {
     }
 
     send_dash_controls();
-
-    Board_Print_BLOCKING("A: ");
-    Board_PrintNum(carstats.button_bank.A, 10);
-    Board_Print_BLOCKING("b: ");
-    Board_PrintNum(carstats.button_bank.B, 10);
 }
 
 void update_lights(void) {
