@@ -605,7 +605,7 @@ buses:
       DashRequest:
         can_id: 0x0D2
         is_big_endian: true
-        period: 200ms
+        period: 69ms
         segments:
           using_regen:
             position: 0
