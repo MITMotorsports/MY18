@@ -149,15 +149,15 @@ void print(const LoggedFrame &lf) {
 }
 
 void loop(void) {
-  #if DEBUG_UART
-    #define PRINT print
-  #else
-    #define PRINT
-  #endif
-
-  static Tickerplant<LoggedFrame> tick({save, PRINT});
-
-  #undef PRINT
+  // http://harmful.cat-v.org/software/c++/linus
+  // #if DEBUG_UART
+  //   #define PRINT print
+  // #else
+  //   #define PRINT
+  // #endif
+  // static Tickerplant<LoggedFrame> tick({save, PRINT});
+  //
+  // #undef PRINT
 
   for (auto &listener : CANListener) {
     if (listener.buffer.full()) {
@@ -170,9 +170,14 @@ void loop(void) {
       log_file.println("FULL");
     }
 
-    static LoggedFrame loggedframe;
-    while (listener.buffer.remove(&loggedframe)) {
-      tick.publish(loggedframe);
+    static LoggedFrame lf;
+    while (listener.buffer.remove(&lf)) {
+      // tick.publish(loggedframe);
+
+      save(lf);
+      #if DEBUG_UART
+        print(lf);
+      #endif
     }
   }
 
