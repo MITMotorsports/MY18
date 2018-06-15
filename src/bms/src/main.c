@@ -180,6 +180,7 @@ void Process_Input(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
   bms_input->pack_status->ambient_temp = Thermo_Read();
 }
 
+
 void Process_Output(BMS_INPUT_T  *bms_input,
                     BMS_OUTPUT_T *bms_output,
                     BMS_STATE_T  *bms_state) {
