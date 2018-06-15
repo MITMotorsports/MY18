@@ -113,33 +113,63 @@ void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
 
 
 void can_transmit_cell_voltages(BMS_INPUT_T *bms_input) {
-  LIMIT(can0_CellVoltages_period);
+  LIMIT(can0_CellVoltageRange_period);
 
   const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
   // TODO: Get info about argmin/argmax.
-  can0_CellVoltages_T msg = {};
+  can0_CellVoltageRange_T msg = {};
 
   msg.min = ps->pack_cell_min_mV;
   msg.max = ps->pack_cell_max_mV;
   msg.sum = ps->pack_voltage_sum_mV;
 
-  handle_can_error(can0_CellVoltages_Write(&msg));
+  handle_can_error(can0_CellVoltageRange_Write(&msg));
 }
 
-void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
-
-  LIMIT(can0_CellTemperatures_period);
+void can_transmit_cell_temperature_range(BMS_INPUT_T *bms_input) {
+  LIMIT(can0_CellTemperatureRange_period);
 
   const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
 
-  can0_CellTemperatures_T msg;
-  msg.min = ps->min_cell_temp_dC;
-  msg.argmin = ps->min_cell_temp_position;
-  msg.max = ps->max_cell_temp_dC;
-  msg.argmax = ps->max_cell_temp_position;
+  can0_CellTemperatureRange_T msg;
 
-  handle_can_error(can0_CellTemperatures_Write(&msg));
+  #define maxT (ps->max_cell_temp_dC)
+  #define minT (ps->min_cell_temp_dC)
+
+  msg.min     = minT[0].val;
+  msg.argmin  = minT[0].idx;
+
+  msg.max0    = maxT[0].val;
+  msg.argmax0 = maxT[0].idx;
+
+  msg.max1    = maxT[1].val;
+  msg.argmax1 = maxT[1].idx;
+
+  msg.max2    = maxT[2].val;
+
+  #undef maxT
+  #undef minT
+
+  handle_can_error(can0_CellTemperatureRange_Write(&msg));
+}
+
+void can_transmit_cell_temperature_variance(BMS_INPUT_T *bms_input) {
+  LIMIT(can0_CellTemperatureVariance_period);
+
+  const BMS_PACK_STATUS_T *ps = bms_input->pack_status;
+
+  can0_CellTemperatureVariance_T msg;
+
+  msg.mean = ps->avg_cell_temp_dC;
+  msg.variance = ps->variance_cell_temp;
+
+  handle_can_error(can0_CellTemperatureVariance_Write(&msg));
+}
+
+void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
+  can_transmit_cell_temperature_range(bms_input);
+  can_transmit_cell_temperature_variance(bms_input);
 }
 
 void handle_can_error(Can_ErrorID_T error) {
