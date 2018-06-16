@@ -128,9 +128,10 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_set_pos(oled, 1, 0);
     oled_clearline(oled, 1);
 
-    // Regen
-    oled_print(oled, "REGEN ");
-    oled_print(oled, (stats->controls.using_regen) ? "ON" : "OFF");
+    // Controls modes
+    oled_print(oled, (stats->controls.using_temp_limiting) ? "TL " : "   ");
+    oled_print(oled, (stats->controls.using_voltage_limiting) ? "VL " : "   ");
+    oled_print(oled, (stats->controls.using_regen) ? "RG " : "   ");
 
     // Bus voltage
     oled_rprint_pad(oled, "BUS", 6);
@@ -180,20 +181,16 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_clearline(oled, 3);
     oled_set_pos(oled, 3, 0);
 
-    // Write errors
+    // F/R, TSMS, ESTOP
     if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
         oled_print(oled, "R");
     } else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
         oled_print(oled, "F");
     } else oled_print(oled, " ");
     oled_print(oled, " ");
-    if (pm->stats->controls.using_temp_limiting) {
-      oled_print(oled, "T");
-    } else oled_print(oled, " ");
-    if (pm->stats->controls.using_voltage_limiting) {
-      oled_print(oled, "V");
-    } else oled_print(oled, " ");
-
+    if (pm->stats->estop_hit) {
+      oled_print(oled, "ESTOP");
+    }
     // Print state
     if (msTicks > pm->stats->last_vcu_heartbeat + VCU_HEARTBEAT_TIMEOUT) {
         oled_rprint(oled, "\xFAVCU DEAD\xFC");
