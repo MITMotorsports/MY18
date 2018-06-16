@@ -96,9 +96,12 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     // Process contextual actions
     if (stats->buttons.B.action == BUTTON_ACTION_TAP) stats->controls.using_regen ^= 1;  // NOT
     if (stats->buttons.left.hold_edge) stats->controls.limp_factor += 25;
-    stats->controls.limp_factor = LOOPOVER(stats->controls.limp_factor, 25, 100);
 
     stats->buttons.right.setup_time = 0;  // Instant response
+
+    if (stats->controls.limp_factor != 255) {
+      stats->controls.limp_factor = LOOPOVER(stats->controls.limp_factor, 25, 100);
+    }
     stats->controls.active_aero_enabled = stats->buttons.right.is_pressed;
 
     // Render
@@ -229,8 +232,9 @@ void draw_regen_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     if (stats->buttons.right.action == BUTTON_ACTION_TAP) {
         stats->controls.regen_bias += 1;
     }
-    stats->controls.regen_bias = LOOPOVER(stats->controls.regen_bias, 25, 75);
-
+    if (stats->controls.regen_bias != 255) {
+      stats->controls.regen_bias = LOOPOVER(stats->controls.regen_bias, 25, 75);
+    }
 
     // Render
     oled_clearline(oled, 1);
@@ -238,7 +242,7 @@ void draw_regen_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_print(oled, "REGEN ");
     oled_print(oled, (stats->controls.using_regen) ? "ON" : "OFF");
     oled_rprint_pad(oled, "BIAS ", 4);
-    if (stats->controls.regen_bias != -1) {
+    if (stats->controls.regen_bias != 255) {
         oled_print_num(oled, stats->controls.regen_bias);
     }
     else {
@@ -281,8 +285,12 @@ void draw_temp_lim_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
       }
     }
 
-    stats->controls.temp_lim_min_gain = LOOPOVER(stats->controls.temp_lim_min_gain, 25, 50);
-    stats->controls.temp_lim_thresh_temp = LOOPOVER(stats->controls.temp_lim_thresh_temp, 45, 60);
+    if (stats->controls.temp_lim_min_gain != 255) {
+      stats->controls.temp_lim_min_gain = LOOPOVER(stats->controls.temp_lim_min_gain, 25, 50);
+    }
+    if (stats->controls.temp_lim_min_gain != 255) {
+      stats->controls.temp_lim_thresh_temp = LOOPOVER(stats->controls.temp_lim_thresh_temp, 45, 60);
+    }
 
     // Render
     oled_clearline(oled, 0);
@@ -304,7 +312,7 @@ void draw_temp_lim_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_clearline(oled, 3);
     oled_set_pos(oled, 3, 1);
     oled_print(oled, "THRESH TEMP: ");
-    if (stats->controls.temp_lim_thresh_temp != -1) {
+    if (stats->controls.temp_lim_thresh_temp != 255) {
         oled_print_num(oled, stats->controls.temp_lim_thresh_temp);
         oled_print(oled, " C");
     }
@@ -351,8 +359,12 @@ void draw_volt_lim_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
       }
     }
 
-    stats->controls.volt_lim_min_gain = LOOPOVER(stats->controls.volt_lim_min_gain, 25, 50);
-    stats->controls.volt_lim_min_voltage = LOOPOVER(stats->controls.volt_lim_min_voltage, 250, 325);
+    if (stats->controls.volt_lim_min_gain != 255) {
+      stats->controls.volt_lim_min_gain = LOOPOVER(stats->controls.volt_lim_min_gain, 25, 50);
+    }
+    if (stats->controls.volt_lim_min_voltage != 65535) {
+      stats->controls.volt_lim_min_voltage = LOOPOVER(stats->controls.volt_lim_min_voltage, 250, 325);
+    }
 
     // Render
     oled_clearline(oled, 0);
@@ -375,7 +387,7 @@ void draw_volt_lim_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_clearline(oled, 3);
     oled_set_pos(oled, 3, 1);
     oled_print(oled, "THRESH VOLT: ");
-    if (stats->controls.volt_lim_min_voltage != -1) {
+    if (stats->controls.volt_lim_min_voltage != 65535) {
         oled_print_num_dec(oled, stats->controls.volt_lim_min_voltage, 100, 2);
         oled_print(oled, " V");
     }

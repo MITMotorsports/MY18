@@ -112,6 +112,11 @@ void can_handle_brake_throttle(carstats_t *cs) {
     cs->brake_2 = msg.brake_2;
 }
 
+void can_handle_vcu_controls(carstats_t *cs) {
+    unpack_can0_VCUControlsParams(&frame, &cs->vcu_controls);
+    cs->vcu_controls_received = true;
+}
+
 void can_update_carstats(carstats_t *cs) {
     handle_can_error(Can_RawRead(&frame));
 
@@ -155,6 +160,8 @@ void can_update_carstats(carstats_t *cs) {
         case can0_VCUErrors:
             can_handle_vcu_errors(cs);
             break;
+        case can0_VCUControlsParams:
+            can_handle_vcu_controls(cs);
         default:
             // do nothing
             break;
