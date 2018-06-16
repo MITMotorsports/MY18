@@ -113,13 +113,18 @@ inline void dispatch_update() {
 
     can_update_carstats(&carstats);
 
-    switch (carstats.buttons.A.action) {
-      case BUTTON_ACTION_TAP:
+    // switch (carstats.buttons.A.action) {
+    //   case BUTTON_ACTION_TAP:
+    //     page_manager_next_page(&page_manager);
+    //     oled_clear(&oled);
+    //     break;
+    //   case BUTTON_ACTION_HOLD:
+    //     page_manager.page  = DASH_PAGE_CRITICAL;
+    // }
+
+    if (carstats.buttons.A.rising_edge) {
         page_manager_next_page(&page_manager);
         oled_clear(&oled);
-        break;
-      case BUTTON_ACTION_HOLD:
-        page_manager.page  = DASH_PAGE_CRITICAL;
     }
 
     update_lights();

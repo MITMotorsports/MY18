@@ -29,6 +29,8 @@ void setup(void) {
 
   Serial.println(F("DAQBOI v0.1"));
 
+  /// TELEMETRY
+  init_telemetry();
 
   /// GPIO
   // Transceiver Enable
@@ -178,6 +180,7 @@ void loop(void) {
       #if DEBUG_UART
         print(lf);
       #endif
+      transmit(lf);
     }
   }
 

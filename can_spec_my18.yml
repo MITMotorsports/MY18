@@ -200,7 +200,7 @@ buses:
             unit: mRPM
       CellTemperatureRange:
         can_id: 0x0F1
-        period: 0.5s
+        period: 101ms
         is_big_endian: true
         segments:
           min:
@@ -244,7 +244,7 @@ buses:
             unit: decidegC
       CellTemperatureVariance:
         can_id: 0x0F0
-        period: 0.5s
+        period: 103ms
         is_big_endian: true
         segments:
           mean:
