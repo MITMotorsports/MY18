@@ -27,8 +27,8 @@ int main(void) {
 
     GPIO_Init();
 
-    // Init_SPI_ADC();
-    // Init_Internal_ADC();
+    Init_SPI_ADC();
+    Init_Internal_ADC();
 
     Timer_Init();
     Set_Interrupt_Priorities();
