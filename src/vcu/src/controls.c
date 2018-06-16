@@ -3,7 +3,7 @@
 static bool enabled = false;
 static int16_t torque_command = 0;
 static int16_t speed_command = 0;
-can0_DashRequest_T control_settings = {};
+can0_VCUControlsParams_T control_settings = {};
 
 static int16_t limiter(uint16_t threshold, uint16_t absolute, uint16_t min_gain, uint16_t reading);
 
@@ -15,6 +15,7 @@ void init_controls_defaults(void) {
   control_settings.temp_lim_thresh_temp = 55;
   control_settings.volt_lim_min_gain = 35;
   control_settings.volt_lim_min_voltage = 300;
+  control_settings.torque_temp_limited = true;
 }
 
 void enable_controls(void) {
@@ -72,6 +73,8 @@ void execute_controls(void) {
     } else {
       temp_limited_torque = torque_command;
     }
+
+    control_settings.torque_temp_limited = temp_limited_torque < torque_command;
 
     int16_t min_sensor_torque = MIN_DE(voltage_limited_torque, temp_limited_torque);
 

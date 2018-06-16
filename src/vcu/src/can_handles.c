@@ -306,19 +306,7 @@ void send_VCUErrors() {
 void send_VCUControlsParams() {
   LIMIT(can0_VCUControlsParams);
 
-  can0_VCUControlsParams_T msg = {};
-
-  msg.using_regen = control_settings.using_regen;
-  msg.using_voltage_limiting = control_settings.using_voltage_limiting;
-  msg.using_temp_limiting = control_settings.using_temp_limiting;
-  msg.regen_bias = control_settings.regen_bias;
-  msg.limp_factor = control_settings.limp_factor;
-  msg.temp_lim_min_gain = control_settings.temp_lim_min_gain;
-  msg.temp_lim_thresh_temp = control_settings.temp_lim_thresh_temp;
-  msg.volt_lim_min_gain = control_settings.volt_lim_min_gain;
-  msg.volt_lim_min_voltage = control_settings.volt_lim_min_voltage;
-
-  can0_VCUControlsParams_Write(&msg);
+  can0_VCUControlsParams_Write(&control_settings);
 }
 
 void send_VCU() {

@@ -36,19 +36,7 @@
 // VL = (under)voltage limiting
 #define MIN_VOLTAGE 250
 
-/*typedef struct {
-  bool using_regen;
-  bool using_voltage_limiting;
-  bool using_temp_limiting;
-  uint8_t regen_bias; // Electric front brake bias * 100
-  uint8_t limp_factor; // Limp facotr * 100
-  uint8_t temp_lim_min_gain; // Min temp limiter gain * 100
-  uint8_t temp_lim_thresh_temp;
-  uint8_t volt_lim_min_gain; // Min voltage limiter gain * 100
-  uint8_t volt_lim_min_voltage;
-} Controls_Settings_T;*/
-
-extern can0_DashRequest_T control_settings;
+extern can0_VCUControlsParams_T control_settings;
 
 // PRIVATE FUNCTIONS
 static int16_t get_torque(void);

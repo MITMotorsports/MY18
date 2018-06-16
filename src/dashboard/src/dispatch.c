@@ -197,6 +197,10 @@ void vcu_controls_update(void) {
         if (carstats.controls.volt_lim_min_voltage == 65535) {
           carstats.controls.volt_lim_min_voltage = carstats.vcu_controls.volt_lim_min_voltage;
         }
+
+        if (carstats.vcu_controls.torque_temp_limited) {
+          carstats.controls.using_regen = false;
+        }
     }
 
 }

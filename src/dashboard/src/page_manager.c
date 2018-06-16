@@ -94,7 +94,9 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     can0_VCUErrors_T *errs = &stats->vcu_errors;
 
     // Process contextual actions
-    if (stats->buttons.B.action == BUTTON_ACTION_TAP) stats->controls.using_regen ^= 1;  // NOT
+    if (stats->buttons.B.action == BUTTON_ACTION_TAP  && !stats->vcu_controls.torque_temp_limited) {
+      stats->controls.using_regen ^= 1;  // NOT
+    }
     if (stats->buttons.left.hold_edge) stats->controls.limp_factor += 25;
 
     stats->buttons.right.setup_time = 0;  // Instant response
@@ -220,7 +222,7 @@ void draw_regen_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     carstats_t *stats = pm->stats;
 
     // Process contextual actions
-    if (stats->buttons.B.action == BUTTON_ACTION_TAP) {
+    if (stats->buttons.B.action == BUTTON_ACTION_TAP && !stats->vcu_controls.torque_temp_limited) {
       stats->controls.using_regen ^= 1;
     }
     if (stats->buttons.left.action == BUTTON_ACTION_TAP) {
