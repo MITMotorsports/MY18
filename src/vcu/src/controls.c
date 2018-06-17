@@ -43,6 +43,7 @@ void execute_controls(void) {
   if (!enabled) return;
 
   torque_command = get_torque();
+  can_raw_torque.torque = torque_command;
 
   // Control regen brake valve:
   bool brake_valve_state = control_settings.using_regen && get_pascals(pedalbox.REAR_BRAKE) < RG_REAR_BRAKE_THRESH;

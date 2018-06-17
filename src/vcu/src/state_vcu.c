@@ -9,6 +9,7 @@ volatile CSReadings_T cs_readings = {};
 volatile IMUVelocity_T imu_velocity = {};
 volatile Wheel_Speeds_T wheel_speeds = {};
 volatile Cell_Readings_T cell_readings = {};
+can0_RawTorque_T can_raw_torque;
 
 void init_vcu_state(void) {
   // BOARD HEARTBEATS
@@ -43,6 +44,8 @@ void init_vcu_state(void) {
   for (uint8_t i = 0; i < TEMP_LOG_LENGTH; i++) {
     cell_readings.temp_log[i] = 0;
   }
+
+  can_raw_torque.torque = 0;
 
   init_controls_defaults();
 

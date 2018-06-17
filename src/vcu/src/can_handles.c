@@ -313,10 +313,17 @@ void send_VCUControlsParams() {
   can0_VCUControlsParams_Write(&control_settings);
 }
 
+void send_RawTorque() {
+  LIMIT(can0_RawTorque);
+
+  can0_RawTorque_Write(&can_raw_torque);
+}
+
 void send_VCU() {
   send_VCUHeartbeat();
   send_VCUErrors();
   send_VCUControlsParams();
+  send_RawTorque();
 }
 
 void sendTorqueCmdMsg(int16_t torque) {
