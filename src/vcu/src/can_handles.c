@@ -172,7 +172,7 @@ void handleCellTemperatures(Frame *msg) {
 
   unpack_can0_CellTemperatureRange(msg, &unpacked_msg);
 
-  cell_readings.cell_max_temp = unpacked_msg.max0;
+  cell_readings.cell_max_temp = unpacked_msg.max0 / 10;
 }
 
 void handleButtonRequest(Frame *msg) {
