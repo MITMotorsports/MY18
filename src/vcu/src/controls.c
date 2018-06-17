@@ -15,7 +15,7 @@ void init_controls_defaults(void) {
   control_settings.temp_lim_thresh_temp = 55;
   control_settings.volt_lim_min_gain = 35;
   control_settings.volt_lim_min_voltage = 300;
-  control_settings.torque_temp_limited = true;
+  control_settings.torque_temp_limited = false;
 }
 
 void enable_controls(void) {

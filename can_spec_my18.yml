@@ -1487,7 +1487,7 @@ buses:
             length: 16
             c_type: int16_t
       RawTorque:
-        can_id: 600
+        can_id: 0x600
         is_big_endian: false
         period: 10 ms
         segments:
