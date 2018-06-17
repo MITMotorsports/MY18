@@ -82,9 +82,6 @@ void execute_controls(void) {
 
     int16_t limited_torque = MIN_DE(min_sensor_torque, dash_limited_torque);
 
-    printf("TEMP: %d, VOLTAGE:%d\r\nRAW_TORQUE: %d\r\nVL TORQUE: %d\r\nTL TORQUE:%d\r\nDL TORQUE: %d\r\n COMMANDED TORQUE: %d\r\n\r\n", cell_readings.cell_max_temp, cell_readings.cell_min_cV,
-      torque_command, voltage_limited_torque, temp_limited_torque, dash_limited_torque, limited_torque);
-
     torque_command = limited_torque;
   }
 
@@ -131,12 +128,19 @@ static int32_t get_regen_torque() {
 }
 
 static int16_t get_temp_limited_torque(int16_t pedal_torque) {
-  if (cell_readings.cell_max_temp < control_settings.temp_lim_thresh_temp) {
+  uint16_t temp;
+  if (cell_readings.temp_index < TEMP_LOG_LENGTH) {
+    temp = cell_readings.temp_log[cell_readings.temp_index];
+  } else {
+    temp = cell_readings.temp_sum / TEMP_LOG_LENGTH;
+  }
+
+  if (temp < control_settings.temp_lim_thresh_temp) {
     return pedal_torque;
   }
   int32_t gain;
-  if (cell_readings.cell_max_temp < MAX_TEMP) {
-    gain = limiter(control_settings.temp_lim_thresh_temp, MAX_TEMP, control_settings.temp_lim_min_gain, cell_readings.cell_max_temp);
+  if (temp < MAX_TEMP) {
+    gain = limiter(control_settings.temp_lim_thresh_temp, MAX_TEMP, control_settings.temp_lim_min_gain, temp);
   } else {
     gain = control_settings.temp_lim_min_gain;
   }
@@ -144,11 +148,13 @@ static int16_t get_temp_limited_torque(int16_t pedal_torque) {
 }
 
 static int16_t get_voltage_limited_torque(int16_t pedal_torque) {
-  if (cell_readings.cell_min_cV > control_settings.volt_lim_min_voltage) {
+  int16_t voltage = cs_readings.V_bus / (720); // 72 cells, and we want cV
+
+  if (voltage > control_settings.volt_lim_min_voltage) {
     return pedal_torque;
   }
   int32_t gain;
-  if (cell_readings.cell_min_cV > MIN_VOLTAGE) {
+  if (voltage > MIN_VOLTAGE) {
     gain = limiter(control_settings.volt_lim_min_voltage, MIN_VOLTAGE, control_settings.volt_lim_min_gain, cell_readings.cell_min_cV);
   } else {
     gain = control_settings.volt_lim_min_gain;

@@ -40,6 +40,10 @@ void init_vcu_state(void) {
   buttons.MasterReset  = 0;
   buttons.DriverReset  = 0;
 
+  for (uint8_t i = 0; i < TEMP_LOG_LENGTH; i++) {
+    cell_readings.temp_log[i] = 0;
+  }
+
   init_controls_defaults();
 
   // CAR Mode

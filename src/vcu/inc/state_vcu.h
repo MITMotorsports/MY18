@@ -10,6 +10,7 @@
 #include "state_vcu_rtd.h"
 #include "state_vcu_driving.h"
 
+#define TEMP_LOG_LENGTH 200
 
 // DEFINITION OF CAR STATES
 typedef enum {
@@ -55,7 +56,9 @@ typedef struct {
 
 typedef struct {
   uint16_t cell_min_cV;
-  uint16_t cell_max_temp; // C
+  uint16_t temp_index;
+  uint16_t temp_log[TEMP_LOG_LENGTH];
+  uint16_t  temp_sum;
 } Cell_Readings_T;
 
 typedef struct {

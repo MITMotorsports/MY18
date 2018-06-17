@@ -36,6 +36,8 @@
 // VL = (under)voltage limiting
 #define MIN_VOLTAGE 250
 
+#define TEMP_LOG_LENGTH 200
+
 extern can0_VCUControlsParams_T control_settings;
 
 // PRIVATE FUNCTIONS

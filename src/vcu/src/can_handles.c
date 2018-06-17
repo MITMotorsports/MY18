@@ -169,10 +169,14 @@ void handleCellVoltagesMsg(Frame *msg) {
 
 void handleCellTemperatures(Frame *msg) {
   can0_CellTemperatureRange_T unpacked_msg;
-
   unpack_can0_CellTemperatureRange(msg, &unpacked_msg);
 
-  cell_readings.cell_max_temp = unpacked_msg.max0 / 10;
+  if (cell_readings.temp_index != 0) {
+    cell_readings.temp_index++;
+  }
+  cell_readings.temp_sum -= cell_readings.temp_log[cell_readings.temp_index];
+  cell_readings.temp_log[cell_readings.temp_index] = unpacked_msg.max0 / 10;
+  cell_readings.temp_sum += cell_readings.temp_log[cell_readings.temp_index];
 }
 
 void handleButtonRequest(Frame *msg) {
