@@ -78,8 +78,6 @@ int main(void) {
     if (HAL_GetTick() - lastt > 1000) {
       HAL_GPIO_TogglePin(GPIO(LED));
 
-      //printf("CONTROLS PARAMS:\r\n  USING REGEN: %d\r\n  regen_bias: %d\r\n LIMP FACTOR: %d\r\n", control_settings.using_regen, control_settings.regen_bias, control_settings.limp_factor);
-
       lastt = HAL_GetTick();
     }
   }

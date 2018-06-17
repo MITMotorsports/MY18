@@ -24,6 +24,7 @@ boards:
         - VCUHeartbeat
         - BMSRequest
         - MCCommand
+        - VCUControlsParams
     subscribe:
       can0:
         - FrontCanNodeBrakeThrottle
@@ -200,7 +201,7 @@ buses:
             unit: mRPM
       CellTemperatureRange:
         can_id: 0x0F1
-        period: 0.5s
+        period: 101ms
         is_big_endian: true
         segments:
           min:
@@ -244,7 +245,7 @@ buses:
             unit: decidegC
       CellTemperatureVariance:
         can_id: 0x0F0
-        period: 0.5s
+        period: 103ms
         is_big_endian: true
         segments:
           mean:
@@ -682,6 +683,53 @@ buses:
             position: 60
             length: 1
             c_type: bool
+      VCUControlsParams:
+        can_id: 0x0D4
+        is_big_endian: true
+        period: 200ms
+        segments:
+          using_regen:
+            position: 0
+            length: 1
+            c_type: bool
+          using_voltage_limiting:
+            position: 1
+            length: 1
+            c_type: bool
+          using_temp_limiting:
+            position: 2
+            length: 1
+            c_type: bool
+          regen_bias: # Ranges from 0 to 100
+            position: 3
+            length: 8
+            c_type: uint8_t
+            signed: false
+          limp_factor: # Ranges from 0 to 100
+            position: 11
+            length: 8
+            c_type: uint8_t
+            signed: false
+          temp_lim_min_gain:
+            position: 19
+            length: 8
+            c_type: uint8_t
+            signed: false
+          temp_lim_thresh_temp:
+            position: 27
+            length: 8
+            c_type: uint8_t
+            signed: false
+          volt_lim_min_gain:
+            position: 35
+            length: 8
+            c_type: uint8_t
+            signed: false
+          volt_lim_min_voltage:
+            position: 43
+            length: 16
+            c_type: uint16_t
+            signed: false
       ButtonRequest:
         can_id: 0x0D8
         period: 73ms

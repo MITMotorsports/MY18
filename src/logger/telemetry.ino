@@ -33,10 +33,36 @@ void init_telemetry() {
   if (millis() - last_sent < period) return;                \
   last_sent = millis();
 
-void send(const LoggedFrame &lf) {
-  LIMIT(400);
+void transmit(const LoggedFrame &lf) {
+  switch (lf.frame.id) {
+    case 0x0F2:  // CellVoltageRange
+    case 0x0F1:  // CellTemperatureRange
+    case 0x0F0:  // CellTemperatureVariance
+    case 0x00C:  // Test
+      break;
+    default:
+      return;
+  }
 
-  Tx16Request tx = Tx16Request(0xFFFF, (uint8_t*) &lf, sizeof(lf));
+  LIMIT(200);
+
+  Serial.print("[XBEE TX] ");
+  Serial.println(lf);
+
+  uint8_t data[] = {
+    lf.frame.id,
+    lf.frame.len,
+    lf.frame.buf[0],
+    lf.frame.buf[1],
+    lf.frame.buf[2],
+    lf.frame.buf[3],
+    lf.frame.buf[4],
+    lf.frame.buf[5],
+    lf.frame.buf[6],
+    lf.frame.buf[7],
+  };
+
+  Tx16Request tx = Tx16Request(0xFFFF, data, sizeof(data));
 
   xbee.send(tx);
 }

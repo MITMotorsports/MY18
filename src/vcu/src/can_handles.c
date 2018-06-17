@@ -240,13 +240,29 @@ void handleDashRequest(Frame *msg) {
 
   unpack_can0_DashRequest(msg, &unpacked_msg);
 
-  if (unpacked_msg.regen_bias != 65535) {
+  control_settings.using_regen = unpacked_msg.using_regen;
+  control_settings.using_temp_limiting = unpacked_msg.using_temp_limiting;
+  control_settings.using_voltage_limiting = unpacked_msg.using_voltage_limiting;
+
+
+  if (unpacked_msg.regen_bias != 255) {
     control_settings.regen_bias = unpacked_msg.regen_bias;
     control_settings.using_regen = unpacked_msg.using_regen;
   }
 
-  if (unpacked_msg.limp_factor != 65535) {
+  if (unpacked_msg.limp_factor != 255) {
     control_settings.limp_factor = unpacked_msg.limp_factor;
+  }
+
+
+  if (unpacked_msg.temp_lim_min_gain != 255 && unpacked_msg.temp_lim_thresh_temp != 255) {
+    control_settings.temp_lim_min_gain = unpacked_msg.temp_lim_min_gain;
+    control_settings.temp_lim_thresh_temp = unpacked_msg.temp_lim_thresh_temp;
+  }
+
+  if (unpacked_msg.volt_lim_min_gain != 255 && unpacked_msg.volt_lim_min_voltage != 65535) {
+    control_settings.volt_lim_min_gain = unpacked_msg.volt_lim_min_gain;
+    control_settings.volt_lim_min_voltage = unpacked_msg.volt_lim_min_voltage;
   }
 
   control_settings.active_aero_enabled = unpacked_msg.active_aero_enabled;
@@ -287,9 +303,28 @@ void send_VCUErrors() {
   can0_VCUErrors_Write(&msg);
 }
 
+void send_VCUControlsParams() {
+  LIMIT(can0_VCUControlsParams);
+
+  can0_VCUControlsParams_T msg = {};
+
+  msg.using_regen = control_settings.using_regen;
+  msg.using_voltage_limiting = control_settings.using_voltage_limiting;
+  msg.using_temp_limiting = control_settings.using_temp_limiting;
+  msg.regen_bias = control_settings.regen_bias;
+  msg.limp_factor = control_settings.limp_factor;
+  msg.temp_lim_min_gain = control_settings.temp_lim_min_gain;
+  msg.temp_lim_thresh_temp = control_settings.temp_lim_thresh_temp;
+  msg.volt_lim_min_gain = control_settings.volt_lim_min_gain;
+  msg.volt_lim_min_voltage = control_settings.volt_lim_min_voltage;
+
+  can0_VCUControlsParams_Write(&msg);
+}
+
 void send_VCU() {
   send_VCUHeartbeat();
   send_VCUErrors();
+  send_VCUControlsParams();
 }
 
 void sendTorqueCmdMsg(int16_t torque) {

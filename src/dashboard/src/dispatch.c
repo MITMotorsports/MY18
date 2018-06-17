@@ -99,6 +99,8 @@ void dispatch_init() {
     carstats.controls.using_voltage_limiting = false;
     carstats.controls.active_aero_enabled    = false;
 
+    carstats.vcu_controls_received = false;
+
     init_button_state(&carstats.buttons.left);
     init_button_state(&carstats.buttons.right);
     init_button_state(&carstats.buttons.A);
@@ -112,14 +114,20 @@ inline void dispatch_update() {
     update_button_state(&carstats.buttons.B, carstats.button_bank.B);
 
     can_update_carstats(&carstats);
+    vcu_controls_update();
 
-    switch (carstats.buttons.A.action) {
-      case BUTTON_ACTION_TAP:
+    // switch (carstats.buttons.A.action) {
+    //   case BUTTON_ACTION_TAP:
+    //     page_manager_next_page(&page_manager);
+    //     oled_clear(&oled);
+    //     break;
+    //   case BUTTON_ACTION_HOLD:
+    //     page_manager.page  = DASH_PAGE_CRITICAL;
+    // }
+
+    if (carstats.buttons.A.rising_edge) {
         page_manager_next_page(&page_manager);
         oled_clear(&oled);
-        break;
-      case BUTTON_ACTION_HOLD:
-        page_manager.page  = DASH_PAGE_CRITICAL;
     }
 
     update_lights();
@@ -161,4 +169,34 @@ void update_lights(void) {
 void send_dash_controls(void) {
     LIMIT(can0_DashRequest_period);
     handle_can_error(can0_DashRequest_Write(&carstats.controls));
+}
+
+void vcu_controls_update(void) {
+    if (carstats.vcu_controls_received) {
+        if (carstats.controls.regen_bias == 255) {
+            carstats.controls.regen_bias = carstats.vcu_controls.regen_bias;
+            carstats.controls.using_regen = carstats.vcu_controls.using_regen;
+        }
+
+        if (carstats.controls.limp_factor == 255) {
+          carstats.controls.limp_factor = carstats.vcu_controls.limp_factor;
+        }
+
+        if (carstats.controls.temp_lim_min_gain == 255) {
+          carstats.controls.temp_lim_min_gain = carstats.vcu_controls.temp_lim_min_gain;
+          carstats.controls.using_temp_limiting = carstats.vcu_controls.using_temp_limiting;
+        }
+        if (carstats.controls.temp_lim_thresh_temp == 255) {
+          carstats.controls.temp_lim_thresh_temp = carstats.controls.temp_lim_thresh_temp;
+          carstats.controls.using_temp_limiting = carstats.controls.using_temp_limiting;
+        }
+
+        if (carstats.controls.volt_lim_min_gain == 255) {
+          carstats.controls.volt_lim_min_gain = carstats.vcu_controls.volt_lim_min_gain;
+        }
+        if (carstats.controls.volt_lim_min_voltage == 65535) {
+          carstats.controls.volt_lim_min_voltage = carstats.vcu_controls.volt_lim_min_voltage;
+        }
+    }
+
 }
