@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <XBee.h>
 
 #include "buffer.h"
@@ -16,8 +17,7 @@ void init_telemetry() {
 #define ONES(len) \
   ((1ULL << (len)) - 1)
 
-#define START_IDX(start, len) \
-  (64 - (start) - (len))
+#define START_IDX(start, len) (start)
 
 #define ZEROES_MASK(start, len) \
   (~(ONES(len) << START_IDX(start, len)))
@@ -28,30 +28,34 @@ void init_telemetry() {
 #define INSERT(input, output, start, len) \
   (((output) & (ZEROES_MASK(start, len))) | INPUT_MASK(input, start, len))
 
-#define LIMIT(period)                                       \
-  static uint32_t last_sent = 0;                            \
-  if (millis() - last_sent < period) return;                \
-  last_sent = millis();
+#define EXTRACT(input, start, len) \
+  (((input) >> START_IDX(start, len)) & ONES(len))
+
+#define LIMIT(period)                                         \
+  { static uint32_t last_sent = 0;                            \
+    if (millis() - last_sent < period) return;                \
+    last_sent = millis(); }
 
 void transmit(const LoggedFrame &lf) {
   switch (lf.frame.id) {
-    case 0x0F2:  // CellVoltageRange
-    case 0x0F1:  // CellTemperatureRange
-    case 0x0F0:  // CellTemperatureVariance
-    case 0x00C:  // Test
-      break;
-    default:
-      return;
+  case 0x0F2:  // CellVoltageRange
+    LIMIT(100);
+  case 0x0F1:  // CellTemperatureRange
+    LIMIT(100);
+  case 0x0F0:  // CellTemperatureVariance
+    LIMIT(100);
+  case 0x1aC:  // Test
+    break;
+  default:
+    return;
   }
 
-  LIMIT(200);
-
-  Serial.print("[XBEE TX] ");
-  Serial.println(lf);
+  // Serial.print("[XBEE TX] ");
+  // Serial.println(lf);
 
   uint8_t data[] = {
-    lf.frame.id,
-    lf.frame.len,
+    (uint8_t) EXTRACT(lf.frame.id, 8, 3),
+    (uint8_t) EXTRACT(lf.frame.id, 0, 8),
     lf.frame.buf[0],
     lf.frame.buf[1],
     lf.frame.buf[2],
@@ -62,7 +66,8 @@ void transmit(const LoggedFrame &lf) {
     lf.frame.buf[7],
   };
 
-  Tx16Request tx = Tx16Request(0xFFFF, data, sizeof(data));
+  size_t size = sizeof(data[0]) * (2 + lf.frame.len);
+  Tx16Request tx = Tx16Request(0xFFFF, data, size);
 
   xbee.send(tx);
 }

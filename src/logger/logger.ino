@@ -192,6 +192,14 @@ void loop(void) {
   if (millis() - last_flip > 500) {
     digitalWrite(LED_BUILTIN, led_state);
 
+    // LoggedFrame lf;
+    // lf.time = millis();
+    // lf.frame.id = 0x1ac;
+    // lf.frame.buf[0] = 0xAC;
+    // lf.frame.buf[1] = 0xDC;
+    // lf.frame.len = 2;
+    // transmit(lf);
+
     led_state = !led_state;
     last_flip = millis();
   }
