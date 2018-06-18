@@ -25,7 +25,7 @@ boards:
         - BMSRequest
         - MCCommand
         - VCUControlsParams
-        - RawTorque
+        - VCUControlsMonitoring
     subscribe:
       can0:
         - FrontCanNodeBrakeThrottle
@@ -1486,12 +1486,28 @@ buses:
             position: 32
             length: 16
             c_type: int16_t
-      RawTorque:
+      VCUControlsMonitoring:
         can_id: 0x600
-        is_big_endian: false
+        is_big_endian: true
         period: 10 ms
         segments:
-          torque:
+          raw_torque:
             position: 0
             length: 16
             c_type: int16_t
+            signed: true
+          vl_gain:
+            position: 16
+            length: 8
+            c_type: uint8_t
+            signed: false
+          tl_gain:
+            position: 24
+            length: 8
+            c_type: uint8_t
+            signed: false
+          filtered_temp:
+            position: 32
+            length: 8
+            c_type: uint8_t
+            signed: false

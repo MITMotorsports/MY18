@@ -43,7 +43,7 @@ void execute_controls(void) {
   if (!enabled) return;
 
   torque_command = get_torque();
-  can_raw_torque.torque = torque_command;
+  controls_monitoring.raw_torque = torque_command;
 
   // Control regen brake valve:
   bool brake_valve_state = control_settings.using_regen && get_pascals(pedalbox.REAR_BRAKE) < RG_REAR_BRAKE_THRESH;
@@ -135,6 +135,7 @@ static int16_t get_temp_limited_torque(int16_t pedal_torque) {
   } else {
     temp = cell_readings.temp_sum / TEMP_LOG_LENGTH;
   }
+  controls_monitoring.filtered_temp = temp;
 
   if (temp < control_settings.temp_lim_thresh_temp) {
     return pedal_torque;
@@ -145,6 +146,7 @@ static int16_t get_temp_limited_torque(int16_t pedal_torque) {
   } else {
     gain = control_settings.temp_lim_min_gain;
   }
+    controls_monitoring.tl_gain = gain;
     return gain * pedal_torque / 100;
 }
 
@@ -160,6 +162,7 @@ static int16_t get_voltage_limited_torque(int16_t pedal_torque) {
   } else {
     gain = control_settings.volt_lim_min_gain;
   }
+  controls_monitoring.vl_gain = gain;
   return gain * pedal_torque / 100;
 }
 

@@ -77,7 +77,7 @@ extern volatile CSReadings_T cs_readings;
 extern volatile IMUVelocity_T imu_velocity;
 extern volatile Wheel_Speeds_T wheel_speeds;
 extern volatile Cell_Readings_T cell_readings;
-extern can0_RawTorque_T can_raw_torque;
+extern can0_VCUControlsMonitoring_T controls_monitoring;
 
 // INTERACTION FUNCTIONS
 void        init_vcu_state(void);
