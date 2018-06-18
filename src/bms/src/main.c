@@ -124,9 +124,9 @@ void Process_Input(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
   Error_Clear(ERROR_H_CONTACTOR_WELD);
 
   if(bms_input->L_contactor_welded != bms_input->L_contactor_closed) {
-    Error_Present(ERROR_L_CONTACTOR_ERROR);
+    // Error_Present(ERROR_L_CONTACTOR_ERROR);
     if(bms_input->L_contactor_welded) {
-      Error_Present(ERROR_L_CONTACTOR_WELD);
+      // Error_Present(ERROR_L_CONTACTOR_WELD);
     }
   } else {
     Error_Clear(ERROR_L_CONTACTOR_ERROR);
