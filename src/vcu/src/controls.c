@@ -11,9 +11,9 @@ void init_controls_defaults(void) {
   control_settings.using_regen = false;
   control_settings.regen_bias = 56;
   control_settings.limp_factor = 100;
-  control_settings.temp_lim_min_gain = 35;
-  control_settings.temp_lim_thresh_temp = 55;
-  control_settings.volt_lim_min_gain = 35;
+  control_settings.temp_lim_min_gain = 25;
+  control_settings.temp_lim_thresh_temp = 50;
+  control_settings.volt_lim_min_gain = 0;
   control_settings.volt_lim_min_voltage = 300;
   control_settings.torque_temp_limited = false;
 }
