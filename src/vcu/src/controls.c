@@ -77,11 +77,21 @@ void execute_controls(void) {
 
     control_settings.torque_temp_limited = temp_limited_torque < torque_command;
 
-    int16_t min_sensor_torque = MIN_DE(voltage_limited_torque, temp_limited_torque);
+    int16_t min_sensor_torque;
+    if (voltage_limited_torque < temp_limited_torque) {
+      min_sensor_torque = voltage_limited_torque;
+    } else {
+      min_sensor_torque = temp_limited_torque;
+    }
 
     int16_t dash_limited_torque = torque_command * control_settings.limp_factor / 100;
 
-    int16_t limited_torque = MIN_DE(min_sensor_torque, dash_limited_torque);
+    int16_t limited_torque;
+    if (dash_limited_torque < min_sensor_torque) {
+      limited_torque = dash_limited_torque;
+    } else {
+      limited_torque = min_sensor_torque;
+    }
 
     torque_command = limited_torque;
   }
