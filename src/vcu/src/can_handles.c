@@ -173,6 +173,7 @@ void handleCellTemperatures(Frame *msg) {
 
   if (cell_readings.temp_index != 0) {
     cell_readings.temp_index++;
+    cell_readings.temp_index %= TEMP_LOG_LENGTH;
   }
   cell_readings.temp_sum -= cell_readings.temp_log[cell_readings.temp_index];
   cell_readings.temp_log[cell_readings.temp_index] = unpacked_msg.max0 / 10;
