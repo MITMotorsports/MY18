@@ -72,6 +72,8 @@ int main(void) {
     HAL_GPIO_WritePin(GPIO(BRAKE_LIGHT),
                       pedalbox.brake_2 > PEDALBOX_BRAKE_BEGIN);
 
+    HAL_GPIO_WritePin(GPIO(ACTIVE_AERO), control_settings.active_aero_enabled);
+
     static uint32_t lastt = 0;
 
     print_gate_faults(false);
