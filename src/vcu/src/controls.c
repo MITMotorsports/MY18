@@ -139,31 +139,37 @@ static int32_t get_regen_torque() {
 }
 
 static int16_t get_temp_limited_torque(int16_t pedal_torque) {
-  uint16_t temp;
-  if (cell_readings.temp_index < TEMP_LOG_LENGTH) {
-    temp = cell_readings.temp_log[cell_readings.temp_index];
-  } else {
-    temp = cell_readings.temp_sum / TEMP_LOG_LENGTH;
+  uint32_t temp_sum;
+  for (uint16_t i = 0; i < TEMP_LOG_LENGTH; i++) {
+    temp_sum += temp_log[i];
   }
-  controls_monitoring.filtered_temp = temp;
 
-  if (temp < control_settings.temp_lim_thresh_temp) {
+  // For higher accuracy (to centi-Celsius) multiply by 10 before dividing
+  uint16_t temp_cC = temp_sum * 10 / TEMP_LOG_LENGTH;
+  control_settings.filtered_temp = temp_cC;
+
+  // Thresh was in degrees, so multiply it by 100
+  uint8_t thresh_cC = control_settings.temp_lim_thresh_temp * 100;
+
+  if (temp_cC < thresh_cC) {
+    controls_monitoring.tl_gain = 100;
     return pedal_torque;
   }
   int32_t gain;
-  if (temp < MAX_TEMP) {
-    gain = limiter(control_settings.temp_lim_thresh_temp, MAX_TEMP, control_settings.temp_lim_min_gain, temp);
+  if (temp_cC < MAX_TEMP) {
+    gain = limiter(thresh_cC, MAX_TEMP, control_settings.temp_lim_min_gain, temp_cC);
   } else {
     gain = control_settings.temp_lim_min_gain;
   }
-    controls_monitoring.tl_gain = gain;
-    return gain * pedal_torque / 100;
+  controls_monitoring.tl_gain = gain;
+  return gain * pedal_torque / 100;
 }
 
 static int16_t get_voltage_limited_torque(int16_t pedal_torque) {
   int16_t voltage = cs_readings.V_bus / (720); // 72 cells, and we want cV
 
   if (voltage > control_settings.volt_lim_min_voltage) {
+    controls_monitoring.vl_gain = 100;
     return pedal_torque;
   }
   int32_t gain;

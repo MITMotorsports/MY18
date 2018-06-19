@@ -1508,6 +1508,6 @@ buses:
             signed: false
           filtered_temp:
             position: 32
-            length: 8
-            c_type: uint8_t
+            length: 16
+            c_type: uint16_t
             signed: false

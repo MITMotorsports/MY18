@@ -171,10 +171,12 @@ void handleCellTemperatures(Frame *msg) {
   can0_CellTemperatureRange_T unpacked_msg;
   unpack_can0_CellTemperatureRange(msg, &unpacked_msg);
 
-  cell_readings.temp_sum -= cell_readings.temp_log[cell_readings.temp_index % TEMP_LOG_LENGTH];
-  cell_readings.temp_log[cell_readings.temp_index  % TEMP_LOG_LENGTH] = unpacked_msg.max0 / 10;
-  cell_readings.temp_sum += cell_readings.temp_log[cell_readings.temp_index % TEMP_LOG_LENGTH];
-  cell_readings.temp_index++;
+  // Shift all values
+  for (uint16_t i = 0; i < TEMP_LOG_LENGTH - 1; i++) {
+    temp_log[i] = temp_log[i+1];
+  }
+
+  temp_log[TEMP_LOG_LENGTH-1] = unpacked_msg.max0;
 }
 
 void handleButtonRequest(Frame *msg) {

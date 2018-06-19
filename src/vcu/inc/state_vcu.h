@@ -56,9 +56,7 @@ typedef struct {
 
 typedef struct {
   uint16_t cell_min_cV;
-  uint16_t temp_index;
   uint16_t temp_log[TEMP_LOG_LENGTH];
-  uint16_t  temp_sum;
 } Cell_Readings_T;
 
 typedef struct {
