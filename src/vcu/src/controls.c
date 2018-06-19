@@ -141,12 +141,12 @@ static int32_t get_regen_torque() {
 static int16_t get_temp_limited_torque(int16_t pedal_torque) {
   uint32_t temp_sum;
   for (uint16_t i = 0; i < TEMP_LOG_LENGTH; i++) {
-    temp_sum += temp_log[i];
+    temp_sum += cell_readings.temp_log[i];
   }
 
   // For higher accuracy (to centi-Celsius) multiply by 10 before dividing
   uint16_t temp_cC = temp_sum * 10 / TEMP_LOG_LENGTH;
-  control_settings.filtered_temp = temp_cC;
+  controls_monitoring.filtered_temp = temp_cC;
 
   // Thresh was in degrees, so multiply it by 100
   uint8_t thresh_cC = control_settings.temp_lim_thresh_temp * 100;
@@ -166,7 +166,11 @@ static int16_t get_temp_limited_torque(int16_t pedal_torque) {
 }
 
 static int16_t get_voltage_limited_torque(int16_t pedal_torque) {
-  int16_t voltage = cs_readings.V_bus / (720); // 72 cells, and we want cV
+  // We want cs_readings.V_bus/72 - 0.1 because of empirical differences
+  // We also want centivolts instead of milivolts, so this gives us:
+  // (cs_readings.V_bus/72)/10 - 1/10 = (cs_readings.V_bus - 72)/720
+  int16_t voltage = (cs_readings.V_bus - 72)/720;
+  controls_monitoring.voltage_used = voltage;
 
   if (voltage > control_settings.volt_lim_min_voltage) {
     controls_monitoring.vl_gain = 100;

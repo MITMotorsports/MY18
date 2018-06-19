@@ -472,7 +472,7 @@ buses:
             unit: mA
       CurrentSensor_Voltage1:
         can_id: 0x522
-        period: 50ms
+        period: 10ms
         is_big_endian: true
         segments:
           mux_id:
@@ -1507,7 +1507,14 @@ buses:
             c_type: uint8_t
             signed: false
           filtered_temp:
+            unit: centidegC
             position: 32
             length: 16
             c_type: uint16_t
             signed: false
+          voltage_used:
+            unit: cV
+            position: 48
+            length: 16
+            c_type: int16_t
+            signed: true
