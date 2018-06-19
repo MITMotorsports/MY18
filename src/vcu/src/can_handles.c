@@ -272,7 +272,7 @@ void handleDashRequest(Frame *msg) {
   control_settings.active_aero_enabled = unpacked_msg.active_aero_enabled;
 }
 
-void send_VCUHeartbeat() {
+void send_VCUHeartbeat(void) {
   LIMIT(can0_VCUHeartbeat);
 
   can0_VCUHeartbeat_T msg = {};
@@ -284,7 +284,7 @@ void send_VCUHeartbeat() {
   can0_VCUHeartbeat_Write(&msg);
 }
 
-void send_VCUErrors() {
+void send_VCUErrors(void) {
   LIMIT(can0_VCUErrors);
 
   can0_VCUErrors_T msg = {};
@@ -307,19 +307,19 @@ void send_VCUErrors() {
   can0_VCUErrors_Write(&msg);
 }
 
-void send_VCUControlsParams() {
+void send_VCUControlsParams(void) {
   LIMIT(can0_VCUControlsParams);
 
   can0_VCUControlsParams_Write(&control_settings);
 }
 
-void send_VCUControlsMonitoring() {
+void send_VCUControlsMonitoring(void) {
   LIMIT(can0_VCUControlsMonitoring);
 
   can0_VCUControlsMonitoring_Write(&controls_monitoring);
 }
 
-void send_VCU() {
+void send_VCU(void) {
   send_VCUHeartbeat();
   send_VCUErrors();
   send_VCUControlsParams();
@@ -359,7 +359,7 @@ void sendSpeedCmdMsg(int16_t speed, int16_t torque_limit) {
   can0_MCCommand_Write(&msg);
 }
 
-void sendMotorOffCmdMsg() {
+void sendMotorOffCmdMsg(void) {
   LIMIT(can0_MCCommand);
 
   can0_MCCommand_T msg;
@@ -375,7 +375,7 @@ void sendMotorOffCmdMsg() {
   can0_MCCommand_Write(&msg);
 }
 
-void send_mc_fault_clear() {
+void send_mc_fault_clear(void) {
   can0_MCParameterRequest_T msg;
 
   // RMS CAN protocol page 34

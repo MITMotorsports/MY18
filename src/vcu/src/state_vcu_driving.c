@@ -9,7 +9,7 @@ static Time_T rtd_last;
 
 static bool stall_until_safe = true;
 
-void enter_vcu_state_driving() {
+void enter_vcu_state_driving(void) {
   printf("[VCU FSM : DRIVING] ENTERED!\r\n");
 
   stall_until_safe = true;
@@ -23,7 +23,7 @@ void enter_vcu_state_driving() {
   enable_controls();
 }
 
-void update_vcu_state_driving() {
+void update_vcu_state_driving(void) {
   if (stall_until_safe) {
     sendMotorOffCmdMsg();
 

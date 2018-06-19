@@ -6,7 +6,7 @@
 
 #include "fault_pedalbox.h"
 
-void enter_vcu_state_rtd();
-void update_vcu_state_rtd();
+void enter_vcu_state_rtd(void);
+void update_vcu_state_rtd(void);
 
 #endif // ifndef __READY_TO_DRIVE_H

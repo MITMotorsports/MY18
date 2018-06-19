@@ -5,7 +5,7 @@ const Time_T RTD_HOLD = 1000;
 static bool   rtd_started;
 static Time_T rtd_last;
 
-void enter_vcu_state_rtd() {
+void enter_vcu_state_rtd(void) {
   printf("[VCU FSM : RTD] ENTERED!\r\n");
   printf("[VCU FSM : RTD] Hold RTD button for %dms and press brake.\r\n", RTD_HOLD);
   rtd_started = false;
@@ -21,7 +21,7 @@ void enter_vcu_state_rtd() {
   HAL_GPIO_WritePin(GPIO(BFAN), GPIO_PIN_SET);
 }
 
-void update_vcu_state_rtd() {
+void update_vcu_state_rtd(void) {
   // Keep the motor clear of faults
   sendMotorOffCmdMsg();
 

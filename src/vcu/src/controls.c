@@ -7,6 +7,12 @@ can0_VCUControlsParams_T control_settings = {};
 
 static int16_t limiter(uint16_t threshold, uint16_t absolute, uint16_t min_gain, uint16_t reading);
 
+// PRIVATE FUNCTIONS
+static int16_t get_torque(void);
+static int32_t get_regen_torque(void);
+static int16_t get_temp_limited_torque(int16_t pedal_torque);
+static int16_t get_voltage_limited_torque(int16_t pedal_torque);
+
 void init_controls_defaults(void) {
   control_settings.using_regen = false;
   control_settings.regen_bias = 56;
@@ -100,7 +106,7 @@ void execute_controls(void) {
 }
 
 static int16_t get_torque(void) {
-  auto accel = pedalbox_avg(accel);
+  int16_t accel = pedalbox_avg(accel);
 
   if (accel < PEDALBOX_ACCEL_RELEASE) return 0;
 

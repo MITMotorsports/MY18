@@ -5,7 +5,7 @@ static Time_T driver_rst_timer;
 
 const Time_T DRIVER_RST_LATCH_TIME = 50;
 
-void enter_vcu_state_lv() {
+void enter_vcu_state_lv(void) {
   printf("[VCU FSM : LV] ENTERED!\r\n");
   printf("[VCU FSM : LV] Currently waiting for DRIVER RESET press.\r\n");
 
@@ -13,7 +13,7 @@ void enter_vcu_state_lv() {
   driver_rst_timer = HAL_GetTick();
 }
 
-void update_vcu_state_lv() {
+void update_vcu_state_lv(void) {
   if (latch_driver_rst) {
     if (HAL_GetTick() - driver_rst_timer > DRIVER_RST_LATCH_TIME) {
       HAL_GPIO_WritePin(GPIO(DRIVER_RST), GPIO_PIN_SET);

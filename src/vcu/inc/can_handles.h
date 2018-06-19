@@ -30,9 +30,9 @@ void handleMCMotor_Position_Info(Frame *msg);
 void handleSBG_EKF_Velocity(Frame *msg);
 void handleDashRequest(Frame *msg);
 
-void send_VCUHeartbeat();
-void send_VCUErrors();
-void send_VCU();
+void send_VCUHeartbeat(void);
+void send_VCUErrors(void);
+void send_VCU(void);
 
 void sendTorqueCmdMsg(int16_t torque);
 void sendSpeedCmdMsg(int16_t speed, int16_t torque_limit);
