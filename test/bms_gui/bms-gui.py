@@ -13,13 +13,16 @@ class GUI:
 
     def update_table(self, can_msg):
         '''
-        call in a loop to update gui
-        takes in can_msg as dit
+        call in a loop to update bms tabnle values
+        takes in can_msg as dict
         '''
 
         self.table.update(can_msg)
 
     def update(self):
+        '''
+        call in loop to update gui for new can msg vals and fault button press
+        '''
         self.root.update_idletasks()
         self.root.update()
 
@@ -51,7 +54,7 @@ class BMS_TABLE():
         name = list(can_msg.keys())[0]
 
         for sgmt_name, val in can_msg[name].items():
-            self.msg_vals[name+"_"+sgmt_name].set(val)
+            self.msg_vals[name+"_"+sgmt_name].set(str(val))
         print(self.msg_vals)
 
     def make_rows(self,msg_names, root):
