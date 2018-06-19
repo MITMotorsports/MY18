@@ -1239,13 +1239,13 @@ buses:
             signed: true
             c_type: int16_t
             unit: dA
-          Iq_command:
+          Id_command:
             position: 32
             length: 16
             signed: true
             c_type: int16_t
             unit: dA
-          Id_command:
+          Iq_command:
             position: 48
             length: 16
             signed: true
