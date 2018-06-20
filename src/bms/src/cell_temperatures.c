@@ -35,7 +35,8 @@ void CellTemperatures_UpdateCellTemperaturesArray(uint32_t *gpioVoltages,
   }
 }
 
-void CellTemperatures_UpdateMaxMinAvgCellTemperatures(BMS_PACK_STATUS_T *pack_status,
+void CellTemperatures_UpdateMaxMinAvgCellTemperatures(BMS_PACK_CONFIG_T *pack_config,
+                                                      BMS_PACK_STATUS_T *pack_status,
                                                       uint8_t num_modules) {
   int32_t cellTemperaturesSum         = 0;
   unsigned cnt = 0;
@@ -71,7 +72,7 @@ void CellTemperatures_UpdateMaxMinAvgCellTemperatures(BMS_PACK_STATUS_T *pack_st
   }
 
   // Error checks for cell temperatures
-  if (max_cell_temp[0].val > MAX_CELL_TEMP_dC) {
+  if (max_cell_temp[0].val > pack_config->max_cell_temp_dC) {
     Error_Present(ERROR_CELL_OVER_TEMP);
   } else {
     Error_Clear(ERROR_CELL_OVER_TEMP);

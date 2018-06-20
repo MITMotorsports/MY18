@@ -292,10 +292,33 @@ static void set(const char *const *argv) {
 
   if (foundloc) {
     // uint8_t ret;
-    if(rwloc == RWL_soc) {
+    switch (rwloc) {
+    case RWL_soc:
       bms_input->pack_status->state_of_charge = 100;
       SOC_Max(bms_input->pack_status);
-      Board_Println("Set state of charge to 100%");
+      Board_Println("Set state of charge to 100");
+      break;
+    case RWL_cell_min_mV:
+      bms_state->pack_config->cell_min_mV = my_atou(argv[2]);
+      Board_Print("Set min cell voltage to ");
+      Board_PrintNum(bms_state->pack_config->cell_min_mV, 10);
+      Board_Print(" mV\n");
+      break;
+    case RWL_cell_max_mV:
+      bms_state->pack_config->cell_max_mV = my_atou(argv[2]);
+      Board_Print("Set max cell voltage to ");
+      Board_PrintNum(bms_state->pack_config->cell_max_mV, 10);
+      Board_Print(" mV\n");
+      break;
+    case RWL_max_cell_temp_dC:
+      bms_state->pack_config->max_cell_temp_dC = my_atou(argv[2]);
+      Board_Print("Set max cell temperature to ");
+      Board_PrintNum(bms_state->pack_config->max_cell_temp_dC, 10);
+      Board_Print(" dC\n");
+      break;
+    default:
+      Board_Println("Set failed (command not yet implemented?)!");
+      break;
     }
     // ret = EEPROM_ChangeConfig(rwloc,my_atou(argv[2]));
     // if (ret != 0) {

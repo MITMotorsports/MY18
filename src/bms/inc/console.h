@@ -29,8 +29,8 @@ static const BMS_COMMAND_T commands[] = {
 };
 
 static const char *const locstring[] =  {
-  "cell_min_mV",
-  "cell_max_mV",
+  "cell_volt_min",
+  "cell_volt_max",
   "cell_capacity_cAh",
   "num_modules",
   "module_cell_count",
@@ -42,7 +42,7 @@ static const char *const locstring[] =  {
   "cv_min_current_ms",
   "cc_cell_voltage_mV",
   "cell_discharge_c_rating_cC",
-  "max_cell_temp_param",
+  "cell_temp_max",
   "soc",
   "force_fault",
 

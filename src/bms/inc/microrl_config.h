@@ -44,7 +44,7 @@ if you are not going to use it - disable this define.*/
 /*Define it, if you wanna use history. It s work's like bash history, and
 set stored value to cmdline, if UP and DOWN key pressed. Using history add
 memory consuming, depends from _RING_HISTORY_LEN parametr */
-#define _USE_HISTORY true
+#define _USE_HISTORY
 
 /*
 History ring buffer length, define static buffer size.

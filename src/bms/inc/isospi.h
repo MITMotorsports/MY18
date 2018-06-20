@@ -38,7 +38,7 @@ void Board_LTC6804_ProcessInputs(BMS_PACK_CONFIG_T *pack_config,
 // Updates Balancing Parameters
 void Board_LTC6804_UpdateBalanceStates(bool *balance_req);
 
-void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status);
+void Board_LTC6804_GetCellVoltages(BMS_PACK_CONFIG_T *pack_config, BMS_PACK_STATUS_T *pack_status);
 
 void Board_LTC6804_GetCellTemperatures(BMS_PACK_CONFIG_T *pack_config,
                                        BMS_PACK_STATUS_T *pack_status,
