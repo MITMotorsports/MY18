@@ -62,9 +62,6 @@ boards:
         - ADC_Data3
         - SensorNodeWheelSpeed
   mc:
-    publish:
-      can0:
-        - MC_MotorPositionInformation
     subscribe:
       can0:
         - MCCommand
@@ -201,7 +198,7 @@ buses:
             signed: false
             unit: mRPM
       CellTemperatureRange:
-        can_id: 0x0F1
+        can_id: 0x016
         period: 101ms
         is_big_endian: true
         segments:
@@ -262,7 +259,7 @@ buses:
             signed: false
             unit: decidegC ** 2
       CellVoltageRange:
-        can_id: 0x0F2
+        can_id: 0x017
         period: 31ms
         is_big_endian: true
         segments:
