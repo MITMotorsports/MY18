@@ -232,7 +232,7 @@ void handle_can_error(Can_ErrorID_T error) {
       break;
 
     case Can_Error_TX_BUFFER_FULL:
-      Board_Print("Can_Error_TX_BUFFER_FULL\n");
+      // Board_Print("Can_Error_TX_BUFFER_FULL\n");
       CAN_Flush_Tx();
       CAN_Clear_Error();
       CAN_ResetPeripheral();
@@ -240,7 +240,7 @@ void handle_can_error(Can_ErrorID_T error) {
       break;
 
     case Can_Error_RX_BUFFER_FULL:
-      Board_Print("Can_Error_RX_BUFFER_FULL\n");
+      // Board_Print("Can_Error_RX_BUFFER_FULL\n");
       CAN_Flush_Tx();
       CAN_Clear_Error();
       CAN_ResetPeripheral();
