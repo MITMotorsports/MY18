@@ -49,6 +49,11 @@ uint32_t Board_PrintNum_BLOCKING(uint32_t a, uint8_t base) {
   return Board_Print_BLOCKING(str);
 }
 
+uint32_t Board_PrintNum(uint32_t a, uint8_t base) {
+  itoa(a, str, base);
+  return Board_Print(str);
+}
+
 uint32_t Board_Write(const char *str, uint32_t count) {
   return Chip_UART_SendRB(LPC_USART, &uart_tx_ring, str, count);
 }

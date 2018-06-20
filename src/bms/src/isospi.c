@@ -110,7 +110,7 @@ bool Board_LTC6804_OpenWireTest(void) {
     return false;
 
   case LTC6804_PASS:
-    Board_Println("OWT PASS");
+    // Board_Println("OWT PASS");
     _ltc6804_owt      = false;
     _ltc6804_last_owt = msTicks;
     Error_Clear(ERROR_LTC_OWT);

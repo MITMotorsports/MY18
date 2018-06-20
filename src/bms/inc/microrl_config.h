@@ -10,13 +10,13 @@ Autor: Eugene Samoylov aka Helius (ghelius@gmail.com)
 /*********** CONFIG SECTION **************/
 /*
 Command line length, define cmdline buffer size. Set max number of chars + 1,
-because last byte of buffer need to contain '\0' - NULL terminator, and 
+because last byte of buffer need to contain '\0' - NULL terminator, and
 not use for storing inputed char.
 If user input chars more then it parametrs-1, chars not added to command line.*/
 #define _COMMAND_LINE_LEN (1+50)                                    // for 32 chars
 
 /*
-Command token number, define max token it command line, if number of token 
+Command token number, define max token it command line, if number of token
 typed in command line exceed this value, then prints message about it and
 command line not to be parced and 'execute' callback will not calls.
 Token is word separate by white space, for example 3 token line:
@@ -33,11 +33,11 @@ for example this prompt will green color (if you terminal supports color)*/
 /*
 Define prompt text (without ESC sequence, only text) prompt length, it needs because if you use
 ESC sequence, it's not possible detect only text length*/
-#define _PROMPT_LEN      3 
+#define _PROMPT_LEN      3
 
 /*Define it, if you wanna use completion functional, also set completion callback in you code,
-now if user press TAB calls 'copmlitetion' callback. If you no need it, you can just set 
-NULL to callback ptr and do not use it, but for memory saving tune, 
+now if user press TAB calls 'copmlitetion' callback. If you no need it, you can just set
+NULL to callback ptr and do not use it, but for memory saving tune,
 if you are not going to use it - disable this define.*/
 // #define _USE_COMPLETE
 
@@ -72,9 +72,9 @@ Enable 'interrupt signal' callback, if user press Ctrl+C */
 // #define _USE_CTLR_C
 
 /*
-Print prompt at 'microrl_init', if enable, prompt will print at startup, 
+Print prompt at 'microrl_init', if enable, prompt will print at startup,
 otherwise first prompt will print after first press Enter in terminal
-NOTE!: Enable it, if you call 'microrl_init' after your communication subsystem 
+NOTE!: Enable it, if you call 'microrl_init' after your communication subsystem
 already initialize and ready to print message */
 #define _ENABLE_INIT_PROMPT
 
