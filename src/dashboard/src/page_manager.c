@@ -94,15 +94,15 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     can0_VCUErrors_T *errs = &stats->vcu_errors;
 
     // Process contextual actions
-    if (stats->buttons.B.action == BUTTON_ACTION_TAP  && !stats->vcu_controls.torque_temp_limited) {
-      stats->controls.using_regen ^= 1;  // NOT
+    if (stats->buttons.B.action == BUTTON_ACTION_TAP && !stats->vcu_controls.torque_temp_limited) {
+        stats->controls.using_regen = !stats->controls.using_regen;
     }
     if (stats->buttons.left.hold_edge) stats->controls.limp_factor += 25;
 
     stats->buttons.right.setup_time = 0;  // Instant response
 
     if (stats->controls.limp_factor != 255) {
-      stats->controls.limp_factor = LOOPOVER(stats->controls.limp_factor, 25, 100);
+        stats->controls.limp_factor = LOOPOVER(stats->controls.limp_factor, 25, 100);
     }
     stats->controls.active_aero_enabled = stats->buttons.right.is_pressed;
 
@@ -150,26 +150,31 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     // Error state
     if (errs->fatal_contactor) {
-      oled_print(oled, "CONTACTOR");
-    } else if (errs->fatal_gate) {
+      oled_print(oled, "TSMS");
+    }
+    else if (errs->fatal_gate) {
       oled_print(oled, "GATE");
       if (errs->gate_bpd) {
         oled_print(oled, " (BPD)");
-      } else if (errs->gate_bms) {
+      }
+      else if (errs->gate_bms) {
         oled_print(oled, " (BMS)");
-      } if (errs->gate_imd) {
+      }
+      if (errs->gate_imd) {
         oled_print(oled, " (IMD)");
       }
-    } else if (errs->fatal_precharge) {
+    }
+    else if (errs->fatal_precharge) {
       oled_print(oled, "PRECHARGE");
-    } else if (errs->recoverable_conflict) {
+    }
+    else if (errs->recoverable_conflict) {
       oled_print(oled, "CONFLICT");
-    } else if (errs->recoverable_gate) {
+    }
+    else if (errs->recoverable_gate) {
       oled_print(oled, "GATE");
-    } else if (errs->recoverable_heartbeat) {
+    }
+    else if (errs->recoverable_heartbeat) {
       oled_print(oled, "HEARTBEAT");
-    } else if (errs->recoverable_contactor) {
-      oled_print(oled, "CONTACTOR");
     }
 
     // Cell temp
