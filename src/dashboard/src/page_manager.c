@@ -135,6 +135,7 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_print(oled, (stats->controls.using_voltage_limiting) ? "VL " : "   ");
     oled_print(oled, (stats->controls.using_regen) ? "RG " : "   ");
 
+
     // Bus voltage
     oled_rprint_pad(oled, "BUS", 6);
     if (pm->stats->DESIRED_VOLTAGE != -10) {
@@ -218,7 +219,7 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
                 oled_rprint(oled, "\xFARTD\xFC");
                 break;
             case can0_VCUHeartbeat_vcu_state_VCU_STATE_DRIVING:
-                oled_rprint(oled, "\xFADRIVE\xFC");
+                oled_rprint(oled, "\xFA""DRIVE\xFC");
                 break;
         }
     }

@@ -41,7 +41,7 @@ void can_handle_mc_voltage(carstats_t *cs) {
     can0_MCVoltage_T msg;
     unpack_can0_MCVoltage(&frame, &msg);
 
-    cs->mc_voltage = msg.bus;  // convert from dV to dV
+    cs->mc_voltage = msg.bus - 25;  // convert from dV to dV
 }
 
 void can_handle_current_sensor_power(carstats_t *cs) {

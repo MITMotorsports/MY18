@@ -149,7 +149,7 @@ void update_lights(void) {
     else
         LED_RTD_off();
 
-    if (carstats.cs_voltage / 10 > 60)
+    if (carstats.mc_voltage / 10 > 60)
         LED_HV_on();
     else
         LED_HV_off();
