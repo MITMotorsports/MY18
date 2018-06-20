@@ -19,8 +19,8 @@ int main(void) {
   microrl_set_execute_callback(&rl, executerl);
   console_init(&bms_input, &bms_state, &console_output);
 
-  Board_Println("Currently running: "HASH);
-  Board_Println("Flashed by: "AUTHOR);
+  Board_Println_BLOCKING("Currently running: "HASH);
+  Board_Println_BLOCKING("Flashed by: "AUTHOR);
 
   // Start with fault line high
   Board_Pin_Set(PIN_BMS_FAULT, true);

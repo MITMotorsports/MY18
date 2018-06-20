@@ -177,7 +177,7 @@ static void get(const char *const *argv) {
         idx = 0;
 
         for (i = 0; i < bms_state->pack_config->num_modules; i++) {
-          Board_Print_BLOCKING("Module ");
+          Board_Print_BLOCKING("\nModule ");
           Board_PrintNum_BLOCKING(i, 10);
           Board_Println_BLOCKING(":");
           for (j = 0; j < bms_state->pack_config->module_cell_count[i]; j++) {
@@ -185,7 +185,7 @@ static void get(const char *const *argv) {
             Board_Print_BLOCKING("\n");
             idx++;
           }
-        Board_Print_BLOCKING("\n");
+          Board_Print_BLOCKING("\n");
         }
         Board_Print_BLOCKING("\n");
         break;
@@ -241,8 +241,9 @@ static void get(const char *const *argv) {
             Board_PrintNum_BLOCKING(bms_input->pack_status->cell_temperatures_dC[idx], 10);
             Board_Print_BLOCKING("\n");
           }
+          Board_Print_BLOCKING("\n");
         }
-        Board_Print_BLOCKING("}\n");
+        Board_Print_BLOCKING("\n");
         break;
 
       case ROL_soc:
