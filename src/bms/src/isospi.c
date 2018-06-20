@@ -287,11 +287,11 @@ void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status) {
 
 #if false
     Board_Print_BLOCKING("MIN voltage: ");
-    Board_PrintNum(pack_status->pack_cell_min_mV, 10);
+    Board_PrintNum_BLOCKING(pack_status->pack_cell_min_mV, 10);
     Board_Print_BLOCKING("MAX voltage: ");
-    Board_PrintNum(pack_status->pack_cell_max_mV, 10);
+    Board_PrintNum_BLOCKING(pack_status->pack_cell_max_mV, 10);
     Board_Print_BLOCKING("SUM Voltage: ");
-    Board_PrintNum(pack_status->pack_voltage_sum_mV, 10);
+    Board_PrintNum_BLOCKING(pack_status->pack_voltage_sum_mV, 10);
 #endif
 
     // TODO: Use this to your advantage.

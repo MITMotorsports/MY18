@@ -119,9 +119,9 @@ void getThermistorTemperatures(uint32_t *gpioVoltages, int16_t *temperatures, ui
 
 #ifdef DEBUG_PRINT
     Board_Print_BLOCKING("Temp at module: ");
-    Board_PrintNum(i, 10);
+    Board_PrintNum_BLOCKING(i, 10);
     Board_Print_BLOCKING(" is ");
-    Board_PrintNum(temperatures[i], 10);
+    Board_PrintNum_BLOCKING(temperatures[i], 10);
     Board_Print_BLOCKING("\n");
 #endif
   }

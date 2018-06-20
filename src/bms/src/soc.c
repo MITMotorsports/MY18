@@ -14,7 +14,7 @@ void SOC_Estimate(BMS_PACK_STATUS_T *ps) {
 	}
 	if(msTicks - count > SOC_WRITE_PERIOD) {
 		SOC_Write(ps);
-		Board_PrintNum(ps->state_of_charge,10);
+		Board_PrintNum_BLOCKING(ps->state_of_charge,10);
 	}
 
 }
@@ -22,7 +22,7 @@ void SOC_Estimate(BMS_PACK_STATUS_T *ps) {
 void SOC_Write(BMS_PACK_STATUS_T* ps) {
 	EEPROM_WriteCCPage_Num(SOC_EEPROM_INDEX, ps->state_of_charge);
 	uint8_t echo = EEPROM_LoadCCPage_Num(SOC_EEPROM_INDEX);
-	Board_PrintNum(echo,10);
+	Board_PrintNum_BLOCKING(echo,10);
 	count = msTicks;
 }
 

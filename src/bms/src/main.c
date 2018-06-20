@@ -44,25 +44,25 @@ int main(void) {
       if (msTicks - last_print > 1000) {
         Board_Print_BLOCKING("min: ");
         for (int i = 0; i < 3; ++i) {
-          Board_PrintNum(pack_status.min_cell_temp_dC[i].val, 10);
+          Board_PrintNum_BLOCKING(pack_status.min_cell_temp_dC[i].val, 10);
           Board_Print_BLOCKING(" ");
         }
         Board_Print_BLOCKING("\nmax: ");
         for (int i = 0; i < 3; ++i) {
-          Board_PrintNum(pack_status.max_cell_temp_dC[i].val, 10);
+          Board_PrintNum_BLOCKING(pack_status.max_cell_temp_dC[i].val, 10);
           Board_Print_BLOCKING(" ");
         }
         Board_Print_BLOCKING("\navg: ");
-        Board_PrintNum(pack_status.avg_cell_temp_dC, 10);
+        Board_PrintNum_BLOCKING(pack_status.avg_cell_temp_dC, 10);
         Board_Print_BLOCKING("\nvar: ");
-        Board_PrintNum(pack_status.variance_cell_temp, 10);
+        Board_PrintNum_BLOCKING(pack_status.variance_cell_temp, 10);
 
         Board_Print_BLOCKING("\ntemps: {");
 
         for (uint8_t module = 0; module < NUM_MODULES; module++) {
           uint16_t start = module * MAX_THERMISTORS_PER_MODULE;
           for (uint16_t idx = start; idx < start + MAX_THERMISTORS_PER_MODULE; idx++) {
-            Board_PrintNum(pack_status.cell_temperatures_dC[idx], 10);
+            Board_PrintNum_BLOCKING(pack_status.cell_temperatures_dC[idx], 10);
             Board_Print_BLOCKING(", ");
           }
         }
@@ -240,7 +240,7 @@ void Find_Offsets(int16_t target) {
     for (uint8_t module = 0; module < NUM_MODULES; module++) {
       uint16_t start = module * MAX_THERMISTORS_PER_MODULE;
       for (uint16_t idx = start; idx < start + MAX_THERMISTORS_PER_MODULE; idx++) {
-        Board_PrintNum(pack_status.cell_temperatures_dC[idx], 10);
+        Board_PrintNum_BLOCKING(pack_status.cell_temperatures_dC[idx], 10);
         Board_Print_BLOCKING(", ");
       }
     }
@@ -248,7 +248,7 @@ void Find_Offsets(int16_t target) {
 
     Board_Print_BLOCKING("\noffsets: {");
     for (uint16_t idx = 0; idx < MAX_NUM_MODULES * MAX_THERMISTORS_PER_MODULE; idx++) {
-      Board_PrintNum(cell_temperature_offsets[idx], 10);
+      Board_PrintNum_BLOCKING(cell_temperature_offsets[idx], 10);
       Board_Print_BLOCKING(", ");
     }
 
