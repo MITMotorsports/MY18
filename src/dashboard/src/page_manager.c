@@ -153,15 +153,15 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
       oled_print(oled, "TSMS");
     }
     else if (errs->fatal_gate) {
-      oled_print(oled, "GATE");
+      oled_print(oled, "FG");
       if (errs->gate_bpd) {
-        oled_print(oled, " (BPD)");
+        oled_print(oled, "-BPD");
       }
       else if (errs->gate_bms) {
-        oled_print(oled, " (BMS)");
+        oled_print(oled, "-BMS");
       }
       if (errs->gate_imd) {
-        oled_print(oled, " (IMD)");
+        oled_print(oled, "-IMD");
       }
     }
     else if (errs->fatal_precharge) {
@@ -174,7 +174,7 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
       oled_print(oled, "GATE");
     }
     else if (errs->recoverable_heartbeat) {
-      oled_print(oled, "HEARTBEAT");
+      oled_print(oled, "HBEAT");
     }
 
     // Cell temp
@@ -191,12 +191,14 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     // F/R, TSMS, ESTOP
     if (pm->stats->error_state == can0_VCUHeartbeat_error_state_RECOVERABLE_ERROR_STATE) {
         oled_print(oled, "R");
-    } else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
+    }
+    else if (pm->stats->error_state == can0_VCUHeartbeat_error_state_FATAL_ERROR_STATE) {
         oled_print(oled, "F");
-    } else oled_print(oled, " ");
+    }
+    else oled_print(oled, " ");
     oled_print(oled, " ");
     if (pm->stats->estop_hit) {
-      oled_print(oled, "ESTOP");
+        oled_print(oled, "ESTOP");
     }
     // Print state
     if (msTicks > pm->stats->last_vcu_heartbeat + VCU_HEARTBEAT_TIMEOUT) {
@@ -210,13 +212,13 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
                 oled_rprint(oled, "\xFALV\xFC");
                 break;
             case can0_VCUHeartbeat_vcu_state_VCU_STATE_PRECHARGING:
-                oled_rprint(oled, "\xFAPRECHARGE\xFC");
+                oled_rprint(oled, "\xFAPRE\xFC");
                 break;
             case can0_VCUHeartbeat_vcu_state_VCU_STATE_RTD:
                 oled_rprint(oled, "\xFARTD\xFC");
                 break;
             case can0_VCUHeartbeat_vcu_state_VCU_STATE_DRIVING:
-                oled_rprint(oled, "\xFA""DRIVE\xFC");
+                oled_rprint(oled, "\xFADRIVE\xFC");
                 break;
         }
     }
