@@ -77,8 +77,12 @@ int main(void) {
     static uint32_t lastt = 0;
 
     print_gate_faults(false);
-    if (HAL_GetTick() - lastt > 1000) {
+    if (HAL_GetTick() - lastt > 100) {
       HAL_GPIO_TogglePin(GPIO(LED));
+
+      if (mc_readings.can_fault) {
+        send_mc_fault_clear();
+      }
 
       lastt = HAL_GetTick();
     }

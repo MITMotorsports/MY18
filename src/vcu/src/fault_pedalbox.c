@@ -7,13 +7,11 @@ volatile Pedalbox_T pedalbox = {};
 bool any_recoverable_conflict_faults(void) {
   update_conflicts();
   update_implausibility();
-  return conflicts.brake_accel;
+  return conflicts.brake_accel || conflicts.accel;
 }
 
 bool any_fatal_conflict_faults(void) {
-  update_conflicts();
-  update_implausibility();
-  return conflicts.accel;
+  return false;
 }
 
 void update_conflicts() {
@@ -38,14 +36,23 @@ void update_conflicts() {
 }
 
 void update_implausibility() {
-  // If there's an implausibility retain it until cleared manually.
-  if (conflicts.accel) return;
+  conflicts.any_errs = conflicts.fcn.accel_1_over  ||
+                      conflicts.fcn.accel_1_under ||
+                      conflicts.fcn.accel_2_over  ||
+                      conflicts.fcn.accel_2_under ||
+                      conflicts.fcn.brake_1_over  ||
+                      conflicts.fcn.brake_1_under ||
+                      conflicts.fcn.brake_2_over  ||
+                      conflicts.fcn.brake_2_under;
 
-  bool implausibility = (pedalbox_max(accel) - pedalbox_min(accel)) >
-                        PEDALBOX_ACCEL_IMPLAUSIBLE;
+  bool implausibility = ((pedalbox_max(accel) - pedalbox_min(accel)) >
+                        PEDALBOX_ACCEL_IMPLAUSIBLE) ||
+                        conflicts.any_errs;
 
   // There is an implausibility if the range of accel meaasurements is above the
   // implausibility threshold.
+
+  static Time_T last_bad = 0;
 
   if (implausibility) {
     if (conflicts.observed_implausibility) {
@@ -56,6 +63,17 @@ void update_implausibility() {
     }
     else {
       conflicts.last_implausibility = HAL_GetTick();
+      last_bad = HAL_GetTick();
+    }
+  }
+  else {
+    if (conflicts.observed_implausibility) {
+      last_bad = HAL_GetTick();
+    }
+    else {
+      if (HAL_GetTick() - last_bad > 1000) {
+        conflicts.accel = false;
+      }
     }
   }
 

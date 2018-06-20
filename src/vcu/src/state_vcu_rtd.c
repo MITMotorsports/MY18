@@ -14,6 +14,7 @@ void enter_vcu_state_rtd(void) {
   // Clear MC faults
   printf("[VCU FSM : RTD] Clearing MC faults...\r\n");
   send_mc_fault_clear();
+  sendMotorOffCmdMsg();
 
   disable_controls();
 

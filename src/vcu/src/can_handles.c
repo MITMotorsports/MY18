@@ -58,6 +58,10 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleMCVoltageMsg(&frame);
     break;
 
+  case can0_MCFaultCodes:
+    handleMCFaultCodesMsg(&frame);
+    break;
+
   case can0_ButtonRequest:
     handleButtonRequest(&frame);
     break;
@@ -96,14 +100,14 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
 }
 
 void handleBrakeThrottleMsg(Frame *msg) {
-  can0_FrontCanNodeBrakeThrottle_T unpacked_msg;
+  // can0_FrontCanNodeBrakeThrottle_T unpacked_msg;
 
-  unpack_can0_FrontCanNodeBrakeThrottle(msg, &unpacked_msg);
+  unpack_can0_FrontCanNodeBrakeThrottle(msg, &conflicts.fcn);
 
-  pedalbox.accel_1 = unpacked_msg.accel_1;
-  pedalbox.accel_2 = unpacked_msg.accel_2;
-  pedalbox.brake_1 = unpacked_msg.brake_1;
-  pedalbox.brake_2 = unpacked_msg.brake_2;
+  pedalbox.accel_1 = conflicts.fcn.accel_1;
+  pedalbox.accel_2 = conflicts.fcn.accel_2;
+  pedalbox.brake_1 = conflicts.fcn.brake_1;
+  pedalbox.brake_2 = conflicts.fcn.brake_2;
 
   heartbeats.fcn = HAL_GetTick();
 }
@@ -117,6 +121,16 @@ void handleMCVoltageMsg(Frame *msg) {
   mc_readings.V_out    = unpacked_msg.out;
   mc_readings.V_VAB_Vd = unpacked_msg.VAB_Vd;
   mc_readings.V_VBC_Vq = unpacked_msg.VBC_Vq;
+
+  heartbeats.mc = HAL_GetTick();
+}
+
+void handleMCFaultCodesMsg(Frame *msg) {
+  can0_MCFaultCodes_T unpacked_msg;
+
+  unpack_can0_MCFaultCodes(msg, &unpacked_msg);
+
+  mc_readings.can_fault = unpacked_msg.can_command_msg_lost_fault;
 
   heartbeats.mc = HAL_GetTick();
 }

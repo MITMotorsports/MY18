@@ -65,6 +65,10 @@ void enter_recoverable_error_state(void) {
 void update_recoverable_error_state(void) {
   TRANSITION_FATAL();
 
+  if (get_vcu_state() == VCU_STATE_DRIVING)
+    if (buttons.RTD)
+      set_vcu_state(VCU_STATE_RTD);
+
   // Command both contactors open to avoid subsequent timeout faults
   if (any_recoverable_gate_fault()) {
     openLowSideContactor();

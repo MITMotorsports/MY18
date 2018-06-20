@@ -10,6 +10,7 @@
 #include "gpio.h"
 #include "extern.h"
 #include "fault_heartbeats.h"
+#include "fault_pedalbox.h"
 
 #define LIMIT(name)                                         \
   static Time_T last_sent = 0;                              \
@@ -21,6 +22,7 @@ void handleCAN(CAN_HandleTypeDef *CanHandle);
 
 void handleBrakeThrottleMsg(Frame *msg);
 void handleMCVoltageMsg(Frame *msg);
+void handleMCFaultCodesMsg(Frame *msg);
 void handleBMSHeartbeatMsg(Frame *msg);
 void handleCurrentSensorVoltageMsg(Frame *msg);
 void handleCellVoltagesMsg(Frame *msg);

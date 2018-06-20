@@ -36,6 +36,8 @@ typedef struct {
   int16_t V_VBC_Vq;
   int16_t speed;
   int16_t torque_feedback;
+
+  bool can_fault;
 } MCReadings_T;
 
 typedef struct {
