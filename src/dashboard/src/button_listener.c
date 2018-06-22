@@ -13,8 +13,8 @@ void init_button_state(button_state_t *state) {
     state->falling_edge = false;
     state->hold_edge    = false;
 
-    state->setup_time   = 100;
-    state->hold_time    = 100;
+    state->setup_time   = 10;
+    state->hold_time    = 10;
 }
 
 void update_button_state(button_state_t *state, bool newval) {
