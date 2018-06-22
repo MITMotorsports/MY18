@@ -258,6 +258,13 @@ void handleDashRequest(Frame *msg) {
 
   unpack_can0_DashRequest(msg, &unpacked_msg);
 
+  // printf("regen_bias: %d\r\n", unpacked_msg.regen_bias);
+  // printf("limp_factor: %d\r\n", unpacked_msg.limp_factor);
+  // printf("volt_lim_min_gain: %d\r\n", unpacked_msg.volt_lim_min_gain);
+  // printf("volt_lim_min_voltage: %d\r\n", unpacked_msg.volt_lim_min_voltage);
+  // printf("temp_lim_min_gain: %d\r\n", unpacked_msg.temp_lim_min_gain);
+  // printf("temp_lim_thresh_temp: %d\r\n", unpacked_msg.temp_lim_thresh_temp);
+
   control_settings.using_regen = unpacked_msg.using_regen;
   control_settings.using_temp_limiting = unpacked_msg.using_temp_limiting;
   control_settings.using_voltage_limiting = unpacked_msg.using_voltage_limiting;

@@ -149,7 +149,14 @@ static int32_t get_temp_limited_torque(int32_t pedal_torque) {
   controls_monitoring.filtered_temp = temp_cC;
 
   // Thresh was in degrees, so multiply it by 100
-  uint8_t thresh_cC = control_settings.temp_lim_thresh_temp * 100;
+  int32_t thresh_cC = control_settings.temp_lim_thresh_temp * 100;
+
+  // static uint32_t lastt = 0;
+  // if (HAL_GetTick() - lastt > 1000) {
+  //   printf("Filtered Temp: %d\tTemp threshold: %d\r\n", temp_cC, thresh_cC);
+  //
+  //   lastt = HAL_GetTick();
+  // }
 
   int32_t gain = hinge_limiter(temp_cC, control_settings.temp_lim_min_gain, thresh_cC, MAX_TEMP);
   controls_monitoring.tl_gain = gain;
@@ -161,8 +168,15 @@ static int32_t get_voltage_limited_torque(int32_t pedal_torque) {
   // We want cs_readings.V_bus/72 - 0.1 because of empirical differences
   // We also want centivolts instead of milivolts, so this gives us:
   // (cs_readings.V_bus/72)/10 - 1/10 = (cs_readings.V_bus - 72)/720
-  int32_t cell_voltage = (cs_readings.V_bus - 72) /720;
+  int32_t cell_voltage = (cs_readings.V_bus - 72) / 720;
   controls_monitoring.voltage_used = cell_voltage;
+
+  // static uint32_t lastt = 0;
+  // if (HAL_GetTick() - lastt > 1000) {
+  //   printf("Voltage: %d\tVoltage threshold: %d\r\n", cell_voltage, control_settings.volt_lim_min_voltage);
+  //
+  //   lastt = HAL_GetTick();
+  // }
 
   int32_t gain = hinge_limiter(cell_voltage, control_settings.volt_lim_min_gain, control_settings.volt_lim_min_voltage, MIN_VOLTAGE);
 
