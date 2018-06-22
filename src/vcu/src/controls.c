@@ -1,17 +1,17 @@
 #include "controls.h"
 
 static bool enabled = false;
-static int16_t torque_command = 0;
-static int16_t speed_command = 0;
+static int32_t torque_command = 0;
+static int32_t speed_command = 0;
 can0_VCUControlsParams_T control_settings = {};
 
 static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
 
 // PRIVATE FUNCTIONS
-static int16_t get_torque(void);
+static int32_t get_torque(void);
 static int32_t get_regen_torque(void);
-static int16_t get_temp_limited_torque(int16_t pedal_torque);
-static int16_t get_voltage_limited_torque(int16_t pedal_torque);
+static int32_t get_temp_limited_torque(int32_t pedal_torque);
+static int32_t get_voltage_limited_torque(int32_t pedal_torque);
 
 void init_controls_defaults(void) {
   control_settings.using_regen = false;
@@ -68,15 +68,15 @@ void execute_controls(void) {
   }
   else {
     // Only use limits when we're not doing regen
-    int16_t voltage_limited_torque = get_voltage_limited_torque(torque_command);
+    int32_t voltage_limited_torque = get_voltage_limited_torque(torque_command);
     if (!control_settings.using_voltage_limiting) voltage_limited_torque = torque_command;
 
-    int16_t temp_limited_torque = get_temp_limited_torque(torque_command);
+    int32_t temp_limited_torque = get_temp_limited_torque(torque_command);
     if (!control_settings.using_temp_limiting) temp_limited_torque = torque_command;
 
     control_settings.torque_temp_limited = temp_limited_torque < torque_command;
 
-    int16_t min_sensor_torque;
+    int32_t min_sensor_torque;
     if (voltage_limited_torque < temp_limited_torque) {
       min_sensor_torque = voltage_limited_torque;
     }
@@ -84,9 +84,9 @@ void execute_controls(void) {
       min_sensor_torque = temp_limited_torque;
     }
 
-    int16_t dash_limited_torque = torque_command * control_settings.limp_factor / 100;
+    int32_t dash_limited_torque = torque_command * control_settings.limp_factor / 100;
 
-    int16_t limited_torque;
+    int32_t limited_torque;
     if (dash_limited_torque < min_sensor_torque) {
       limited_torque = dash_limited_torque;
     }
@@ -100,8 +100,8 @@ void execute_controls(void) {
   sendTorqueCmdMsg(torque_command);
 }
 
-static int16_t get_torque(void) {
-  int16_t accel = pedalbox_avg(accel);
+static int32_t get_torque(void) {
+  int32_t accel = pedalbox_avg(accel);
 
   if (accel < PEDALBOX_ACCEL_RELEASE) return 0;
 
@@ -138,14 +138,14 @@ static int32_t get_regen_torque() {
   return -1 * regen_torque;
 }
 
-static int16_t get_temp_limited_torque(int16_t pedal_torque) {
+static int32_t get_temp_limited_torque(int32_t pedal_torque) {
   uint32_t temp_sum = 0;
-  for (uint16_t i = 0; i < TEMP_LOG_LENGTH; i++) {
+  for (uint32_t i = 0; i < TEMP_LOG_LENGTH; i++) {
     temp_sum += cell_readings.temp_log[i];
   }
 
   // For higher accuracy (to centi-Celsius) multiply by 10 before dividing
-  uint16_t temp_cC = temp_sum * 10 / TEMP_LOG_LENGTH;
+  uint32_t temp_cC = temp_sum * 10 / TEMP_LOG_LENGTH;
   controls_monitoring.filtered_temp = temp_cC;
 
   // Thresh was in degrees, so multiply it by 100
@@ -157,11 +157,11 @@ static int16_t get_temp_limited_torque(int16_t pedal_torque) {
   return gain * pedal_torque / 100;
 }
 
-static int16_t get_voltage_limited_torque(int16_t pedal_torque) {
+static int32_t get_voltage_limited_torque(int32_t pedal_torque) {
   // We want cs_readings.V_bus/72 - 0.1 because of empirical differences
   // We also want centivolts instead of milivolts, so this gives us:
   // (cs_readings.V_bus/72)/10 - 1/10 = (cs_readings.V_bus - 72)/720
-  int16_t cell_voltage = (cs_readings.V_bus - 72) /720;
+  int32_t cell_voltage = (cs_readings.V_bus - 72) /720;
   controls_monitoring.voltage_used = cell_voltage;
 
   int32_t gain = hinge_limiter(cell_voltage, control_settings.volt_lim_min_gain, control_settings.volt_lim_min_voltage, MIN_VOLTAGE);
