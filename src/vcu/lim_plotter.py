@@ -1,7 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-data = np.load("/home/dani/Desktop/Git/Practice/20180621/numpy/164939.npy")
+path = "/home/dani/Desktop/Git/Practice/20180622/numpy/094930.npy"
+
+data = np.load(path)
+print(path)
 
 times = data[0]
 messages = data[1]
@@ -10,6 +13,7 @@ print('Using voltage limiting:', any(messages['VCUControlsParams']['using_voltag
 print('Using temp limiting:', any(messages['VCUControlsParams']['using_temp_limiting']))
 print('Cutoff voltage:', max(messages['VCUControlsParams']['volt_lim_min_voltage']))
 print('Cutoff temp:', max(messages['VCUControlsParams']['temp_lim_thresh_temp']))
+print('Max torque command: ', max(messages['MCCommand']['torque']))
 
 # Load data
 bms_temps = messages['CellTemperatureRange']['max0'] / 10
