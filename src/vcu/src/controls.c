@@ -18,9 +18,9 @@ void init_controls_defaults(void) {
   control_settings.regen_bias = 57;
   control_settings.limp_factor = 100;
   control_settings.temp_lim_min_gain = 25;
-  control_settings.temp_lim_thresh_temp = 50;
+  control_settings.temp_lim_thresh_temp = 25;
   control_settings.volt_lim_min_gain = 0;
-  control_settings.volt_lim_min_voltage = 300;
+  control_settings.volt_lim_min_voltage = 375;
   control_settings.torque_temp_limited = false;
 }
 
@@ -62,6 +62,10 @@ void execute_controls(void) {
     regen_torque = 0;
   }
 
+  // Calculate commands to set gain values
+  (void) get_voltage_limited_torque(torque_command);
+  (void) get_temp_limited_torque(torque_command);
+
   // Extra check to ensure we are only sending regen torque when allowed
   if (torque_command == 0) {
     torque_command = regen_torque;
@@ -69,9 +73,21 @@ void execute_controls(void) {
   else {
     // Only use limits when we're not doing regen
     int32_t voltage_limited_torque = get_voltage_limited_torque(torque_command);
+    // static uint32_t last_vt = 0;
+    // if (HAL_GetTick() - last_vt > 10) {
+    //   printf("VT: %d\r\n", voltage_limited_torque);
+    //
+    //   last_vt = HAL_GetTick();
+    // }
     if (!control_settings.using_voltage_limiting) voltage_limited_torque = torque_command;
 
     int32_t temp_limited_torque = get_temp_limited_torque(torque_command);
+    // static uint32_t last_tt = 0;
+    // if (HAL_GetTick() - last_tt > 10) {
+    //   printf("TT: %d\r\n", temp_limited_torque);
+    //
+    //   last_tt = HAL_GetTick();
+    // }
     if (!control_settings.using_temp_limiting) temp_limited_torque = torque_command;
 
     control_settings.torque_temp_limited = temp_limited_torque < torque_command;
@@ -152,7 +168,7 @@ static int32_t get_temp_limited_torque(int32_t pedal_torque) {
   int32_t thresh_cC = control_settings.temp_lim_thresh_temp * 100;
 
   // static uint32_t lastt = 0;
-  // if (HAL_GetTick() - lastt > 1000) {
+  // if (HAL_GetTick() - lastt > 100) {
   //   printf("Filtered Temp: %d\tTemp threshold: %d\r\n", temp_cC, thresh_cC);
   //
   //   lastt = HAL_GetTick();
@@ -172,7 +188,7 @@ static int32_t get_voltage_limited_torque(int32_t pedal_torque) {
   controls_monitoring.voltage_used = cell_voltage;
 
   // static uint32_t lastt = 0;
-  // if (HAL_GetTick() - lastt > 1000) {
+  // if (HAL_GetTick() - lastt > 100) {
   //   printf("Voltage: %d\tVoltage threshold: %d\r\n", cell_voltage, control_settings.volt_lim_min_voltage);
   //
   //   lastt = HAL_GetTick();
