@@ -84,6 +84,10 @@ int main(void) {
         send_mc_fault_clear();
       }
 
+      // printf("CONTROLS PARAMS:\r\n  using_regen: %d\r\n  using_voltage_limiting: %d\r\n  using_temp_limiting: %d\r\n  regen_bias: %d\r\n  limp_factor: %d\r\n  temp_lim_min_gain: %d\r\n  temp_lim_thresh_temp: %d\r\n  volt_lim_min_gain: %d\r\n  volt_lim_min_voltage: %d\r\n\r\n",
+      // control_settings.using_regen, control_settings.using_voltage_limiting, control_settings.using_temp_limiting, control_settings.regen_bias, control_settings.limp_factor, control_settings.temp_lim_min_gain, control_settings.temp_lim_thresh_temp, control_settings.volt_lim_min_gain, control_settings.volt_lim_min_voltage);
+
+
       lastt = HAL_GetTick();
     }
   }

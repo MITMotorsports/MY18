@@ -46,6 +46,7 @@ bool get_controls_enabled(void) {
 }
 
 void execute_controls(void) {
+  control_settings.limp_factor = 100;  //TODO: COMP REMOVE
   if (!enabled) return;
 
   torque_command = get_torque();
