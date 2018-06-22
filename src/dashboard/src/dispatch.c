@@ -90,10 +90,10 @@ void dispatch_init() {
 
     carstats.controls.regen_bias             = -1;
     carstats.controls.limp_factor            = -1;
-    carstats.controls.temp_lim_min_gain      = -1;
-    carstats.controls.temp_lim_thresh_temp   = -1;
-    carstats.controls.volt_lim_min_gain      = -1;
-    carstats.controls.volt_lim_min_voltage   = -1;
+    carstats.controls.temp_lim_min_gain      = 25;
+    carstats.controls.temp_lim_thresh_temp   = 25;
+    carstats.controls.volt_lim_min_gain      = 0;
+    carstats.controls.volt_lim_min_voltage   = 375;
     carstats.controls.using_regen            = false;
     carstats.controls.using_temp_limiting    = false;
     carstats.controls.using_voltage_limiting = false;
