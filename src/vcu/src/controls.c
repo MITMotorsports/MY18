@@ -65,28 +65,22 @@ void execute_controls(void) {
   // Extra check to ensure we are only sending regen torque when allowed
   if (torque_command == 0) {
     torque_command = regen_torque;
-  } else {
+  }
+  else {
     // Only use limits when we're not doing regen
-    int16_t voltage_limited_torque;
-    if (control_settings.using_voltage_limiting) {
-      voltage_limited_torque = get_voltage_limited_torque(torque_command);
-    } else {
-      voltage_limited_torque = torque_command;
-    }
+    int16_t voltage_limited_torque = get_voltage_limited_torque(torque_command);
+    if (!control_settings.using_voltage_limiting) voltage_limited_torque = torque_command;
 
-    int16_t temp_limited_torque;
-    if (control_settings.using_temp_limiting) {
-      temp_limited_torque = get_temp_limited_torque(torque_command);
-    } else {
-      temp_limited_torque = torque_command;
-    }
+    int16_t temp_limited_torque = get_temp_limited_torque(torque_command);
+    if (!control_settings.using_temp_limiting) temp_limited_torque = torque_command;
 
     control_settings.torque_temp_limited = temp_limited_torque < torque_command;
 
     int16_t min_sensor_torque;
     if (voltage_limited_torque < temp_limited_torque) {
       min_sensor_torque = voltage_limited_torque;
-    } else {
+    }
+    else {
       min_sensor_torque = temp_limited_torque;
     }
 
@@ -95,7 +89,8 @@ void execute_controls(void) {
     int16_t limited_torque;
     if (dash_limited_torque < min_sensor_torque) {
       limited_torque = dash_limited_torque;
-    } else {
+    }
+    else {
       limited_torque = min_sensor_torque;
     }
 
