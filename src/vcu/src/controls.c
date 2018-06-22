@@ -5,7 +5,7 @@ static int16_t torque_command = 0;
 static int16_t speed_command = 0;
 can0_VCUControlsParams_T control_settings = {};
 
-static int16_t limiter(uint16_t threshold, uint16_t absolute, uint16_t min_gain, uint16_t reading);
+static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
 
 // PRIVATE FUNCTIONS
 static int16_t get_torque(void);
@@ -156,17 +156,9 @@ static int16_t get_temp_limited_torque(int16_t pedal_torque) {
   // Thresh was in degrees, so multiply it by 100
   uint8_t thresh_cC = control_settings.temp_lim_thresh_temp * 100;
 
-  if (temp_cC < thresh_cC) {
-    controls_monitoring.tl_gain = 100;
-    return pedal_torque;
-  }
-  int32_t gain;
-  if (temp_cC < MAX_TEMP) {
-    gain = limiter(thresh_cC, MAX_TEMP, control_settings.temp_lim_min_gain, temp_cC);
-  } else {
-    gain = control_settings.temp_lim_min_gain;
-  }
+  int32_t gain = hinge_limiter(temp_cC, control_settings.temp_lim_min_gain, thresh_cC, MAX_TEMP);
   controls_monitoring.tl_gain = gain;
+
   return gain * pedal_torque / 100;
 }
 
@@ -174,30 +166,31 @@ static int16_t get_voltage_limited_torque(int16_t pedal_torque) {
   // We want cs_readings.V_bus/72 - 0.1 because of empirical differences
   // We also want centivolts instead of milivolts, so this gives us:
   // (cs_readings.V_bus/72)/10 - 1/10 = (cs_readings.V_bus - 72)/720
-  int16_t voltage = (cs_readings.V_bus - 72)/720;
-  controls_monitoring.voltage_used = voltage;
+  int16_t cell_voltage = (cs_readings.V_bus - 72) /720;
+  controls_monitoring.voltage_used = cell_voltage;
 
-  if (voltage > control_settings.volt_lim_min_voltage) {
-    controls_monitoring.vl_gain = 100;
-    return pedal_torque;
-  }
-  int32_t gain;
-  if (voltage > MIN_VOLTAGE) {
-    // gain = limiter(control_settings.volt_lim_min_voltage, MIN_VOLTAGE, control_settings.volt_lim_min_gain, cell_readings.cell_min_cV);
-    gain = limiter(control_settings.volt_lim_min_voltage, MIN_VOLTAGE, control_settings.volt_lim_min_gain, voltage);
-  } else {
-    gain = control_settings.volt_lim_min_gain;
-  }
+  int32_t gain = hinge_limiter(cell_voltage, control_settings.volt_lim_min_gain, control_settings.volt_lim_min_voltage, MIN_VOLTAGE);
+
   controls_monitoring.vl_gain = gain;
   return gain * pedal_torque / 100;
 }
 
-static int16_t limiter(uint16_t threshold, uint16_t absolute, uint16_t min_gain, uint16_t reading) {
-  // Explanation:
-  // Desired points: LIMITER(threshold) = 100, LIMITER(absolute) = min_gain
-  // Slope: (LIMITER(threshold) - LIMITER(absolute)) / (threshold - absolute) = (100 - min_gain) / (threshold - absolute)
-  // Intercept: 100 = (100 - min_gain) / (threshold - absolute) * threshold + intercept
-  // --> intercept = 100 - (100 - min_gain) / (threshold - absolute) * threshold
-  // Add them together and factor out a (threshold - absolute)
-  return (100*(threshold - absolute) - (100 - min_gain) * threshold + reading * (100 - min_gain)) / (threshold - absolute);
+
+// Returns the output of a linear hinge.
+// It is a continuous function.
+// `m` is the minimum output of this function.
+// `c` is the `x` threshold above which the function returns `m`.
+// for `m` < `x` < `c` the output is linearly decreasing.
+int32_t positive_hinge(int32_t x, int32_t m, int32_t c) {
+  if (x < 0) return 100;
+  if (x > c) return m;
+
+  return (x * (m - 100) / c) + 100;
+}
+
+
+// Returns the output of a bidirectional linear hinge limiter.
+int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c) {
+  if (c > e) return positive_hinge(x - e, m, c - e);
+  else       return positive_hinge(e - x, m, e - c);
 }
