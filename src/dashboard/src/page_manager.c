@@ -228,33 +228,57 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
 void draw_regen_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     carstats_t *stats = pm->stats;
+    static int var_toggled = 1;
 
     // Process contextual actions
-    if (stats->buttons.B.rising_edge && !stats->vcu_controls.torque_temp_limited) {
-      stats->controls.using_regen ^= 1;
-    }
+    if (stats->buttons.B.rising_edge) var_toggled++;
+    var_toggled = LOOPOVER(var_toggled, 1, 2);
+
     if (stats->buttons.left.action == BUTTON_ACTION_TAP) {
-        stats->controls.regen_bias -= 1;
+      switch (var_toggled) {
+        case 1:
+          stats->controls.using_regen ^= 1;
+          break;
+        case 2:
+          stats->controls.regen_bias -= 1;
+          break;
+      }
     }
+
     if (stats->buttons.right.action == BUTTON_ACTION_TAP) {
-        stats->controls.regen_bias += 1;
+      switch (var_toggled) {
+        case 1:
+          stats->controls.using_regen ^= 1;
+          break;
+        case 2:
+          stats->controls.regen_bias += 1;
+          break;
+      }
     }
+
     if (stats->controls.regen_bias != 255) {
       stats->controls.regen_bias = LOOPOVER(stats->controls.regen_bias, 25, 75);
     }
 
     // Render
+    oled_clearline(oled, 0);
+    oled_set_pos(oled, 0, 0);
+    oled_print(oled, "REGEN: ");
     oled_clearline(oled, 1);
-    oled_set_pos(oled, 1, 0);
-    oled_print(oled, "REGEN ");
+    oled_set_pos(oled, 1, 1);
+    oled_print(oled, "TOGGLE RG: ");
     oled_print(oled, (stats->controls.using_regen) ? "ON" : "OFF");
-    oled_rprint_pad(oled, "BIAS ", 4);
+    oled_clearline(oled, 2);
+    oled_set_pos(oled, 2, 1);
+    oled_print(oled, "BIAS: ");
     if (stats->controls.regen_bias != 255) {
         oled_print_num(oled, stats->controls.regen_bias);
     }
     else {
         oled_print(oled, DATA_UNKNOWN);
     }
+    oled_set_pos(oled, var_toggled, 0);
+    oled_print(oled, ">");
 }
 
 void draw_temp_lim_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
