@@ -97,7 +97,7 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     if (stats->buttons.B.action == BUTTON_ACTION_TAP && !stats->vcu_controls.torque_temp_limited) {
         stats->controls.using_regen = !stats->controls.using_regen;
     }
-    if (stats->buttons.left.hold_edge) stats->controls.limp_factor += 25;
+    if (stats->buttons.left.action == BUTTON_ACTION_TAP) stats->controls.limp_factor += 25;
 
     stats->buttons.right.setup_time = 0;  // Instant response
 
@@ -296,7 +296,7 @@ void draw_temp_lim_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
       stats->controls.temp_lim_min_gain = LOOPOVER(stats->controls.temp_lim_min_gain, 25, 50);
     }
     if (stats->controls.temp_lim_min_gain != 255) {
-      stats->controls.temp_lim_thresh_temp = LOOPOVER(stats->controls.temp_lim_thresh_temp, 45, 60);
+      stats->controls.temp_lim_thresh_temp = LOOPOVER(stats->controls.temp_lim_thresh_temp, 15, 60);
     }
 
     // Render
@@ -370,7 +370,7 @@ void draw_volt_lim_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
       stats->controls.volt_lim_min_gain = LOOPOVER(stats->controls.volt_lim_min_gain, 0, 50);
     }
     if (stats->controls.volt_lim_min_voltage != 65535) {
-      stats->controls.volt_lim_min_voltage = LOOPOVER(stats->controls.volt_lim_min_voltage, 250, 325);
+      stats->controls.volt_lim_min_voltage = LOOPOVER(stats->controls.volt_lim_min_voltage, 250, 400);
     }
 
     // Render
