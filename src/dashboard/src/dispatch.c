@@ -187,8 +187,8 @@ void vcu_controls_update(void) {
           carstats.controls.using_temp_limiting = carstats.vcu_controls.using_temp_limiting;
         }
         if (carstats.controls.temp_lim_thresh_temp == 255) {
-          carstats.controls.temp_lim_thresh_temp = carstats.controls.temp_lim_thresh_temp;
-          carstats.controls.using_temp_limiting = carstats.controls.using_temp_limiting;
+          carstats.controls.temp_lim_thresh_temp = carstats.vcu_controls.temp_lim_thresh_temp;
+          carstats.controls.using_temp_limiting = carstats.vcu_controls.using_temp_limiting;
         }
 
         if (carstats.controls.volt_lim_min_gain == 255) {
