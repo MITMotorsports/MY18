@@ -101,7 +101,6 @@ void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     stats->buttons.right.setup_time = 0;  // Instant response
 
-    stats->controls.limp_factor = 100;
     if (stats->controls.limp_factor != 255) {
         stats->controls.limp_factor = LOOPOVER(stats->controls.limp_factor, 25, 100);
     }
