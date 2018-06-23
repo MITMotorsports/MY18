@@ -276,7 +276,7 @@ void handleDashRequest(Frame *msg) {
   }
 
   if (unpacked_msg.limp_factor != 255) {
-    //control_settings.limp_factor = unpacked_msg.limp_factor; // TODO: COMP READD
+    control_settings.limp_factor = unpacked_msg.limp_factor;
   }
 
 
