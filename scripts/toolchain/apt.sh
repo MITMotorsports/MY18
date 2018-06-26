@@ -9,13 +9,13 @@ apt-get install -y \
   gcc-arm-none-eabi \
   git \
   make \
-  open-ocd \
+  openocd \
   picocom \
   python3 \
   python3-pip \
 
 
 
-if [ $1 = "clean" ]; then
+if [ "$1" = "clean" ]; then
   rm -rf /var/lib/apt
 fi
