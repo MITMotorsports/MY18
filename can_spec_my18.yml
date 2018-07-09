@@ -1503,7 +1503,7 @@ buses:
             position: 0
             length: 32
             c_type: uint32_t
-            unit: s
+            unit: ms
           timeofweek:
             position: 32
             length: 32
