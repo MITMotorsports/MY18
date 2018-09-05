@@ -294,13 +294,13 @@ void handleDashRequest(Frame *msg) {
 }
 
 void handle_DashRequestLC(Frame *msg) {
-  can0_DashRequestLC unpacked_msg;
+  can0_DashRequestLC_T unpacked_msg;
 
   unpack_can0_DashRequestLC(msg, &unpacked_msg);
 
   if (unpacked_msg.launch_ctrl_slip_ratio != 65535) {
     lc_settings.slip_ratio = unpacked_msg.launch_ctrl_slip_ratio;
-    lc_settings.using_launch_control = unpacked_msg.using_launch_ctrl;
+    lc_settings.using_launch_ctrl = unpacked_msg.using_launch_ctrl;
   }
 }
 
@@ -344,8 +344,6 @@ void send_VCUControlsParams(void) {
 
   can0_VCUControlsParams_Write(&control_settings);
 }
-
-void send_VCU
 
 void send_VCUControlsMonitoring(void) {
   LIMIT(can0_VCUControlsMonitoring);

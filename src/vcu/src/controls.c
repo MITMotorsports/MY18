@@ -4,6 +4,7 @@ static bool enabled = false;
 static int32_t torque_command = 0;
 static int32_t speed_command = 0;
 can0_VCUControlsParams_T control_settings = {};
+can0_VCUParamsLC_T lc_settings = {};
 static Launch_Control_State_T lc_state = BEFORE;
 
 static uint32_t get_front_wheel_speed(void);
@@ -29,7 +30,7 @@ void init_controls_defaults(void) {
   control_settings.torque_temp_limited = false;
 
   lc_settings.using_launch_ctrl = false;
-  lc_settings.launch_ctrl_slip_ratio = 112;
+  lc_settings.slip_ratio = 112;
 }
 
 void enable_controls(void) {
@@ -101,7 +102,7 @@ void execute_controls(void) {
     // }
     if (!control_settings.using_temp_limiting) temp_limited_torque = torque_command;
 
-    torque_temp_limited = temp_limited_torque < torque_command;
+    uint32_t torque_temp_limited = temp_limited_torque < torque_command;
     // Whether torque is temp limited needs to be sent out over CAN so the dash knows not to allow regen
     control_settings.torque_temp_limited = temp_limited_torque < torque_command;
 
@@ -124,7 +125,7 @@ void execute_controls(void) {
     torque_command = limited_torque;
     bool torque_limited = limited_torque < controls_monitoring.raw_torque;
   
-    if (control_settings.using_launch_control && lc_state != DONE && !torque_limited) {
+    if (lc_settings.using_launch_ctrl && lc_state != DONE && !torque_limited) {
       launch_ctrl_entered = true;
 
       // We shouldn't be braking in launch control, so reset regen valve
@@ -226,7 +227,7 @@ static int32_t get_launch_control_speed(uint32_t front_wheel_speed) {
 uint32_t front_wheel_speedRPM = front_wheel_speed / 1000;
   // Divide 100 because slip ratio is times 100, divide by 100 again because
   // gear ratio is also multiplied by 100
-  int32_t target_speed = front_wheel_speedRPM * control_settings.slip_ratio * LC_cGR / (100 * 100);
+  int32_t target_speed = front_wheel_speedRPM * lc_settings.slip_ratio * LC_cGR / (100 * 100);
   return target_speed;
 }
 
@@ -273,6 +274,8 @@ void set_lc_state_before() {
 
 void set_lc_zero_torque() {
   lc_state = ZERO_TORQUE;
+}
+
 static int32_t get_temp_limited_torque(int32_t pedal_torque) {
   uint32_t temp_sum = 0;
   for (uint32_t i = 0; i < TEMP_LOG_LENGTH; i++) {

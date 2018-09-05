@@ -65,6 +65,6 @@ void disable_controls(void);
 bool get_controls_enabled(void);
 void execute_controls(void);
 void set_lc_done(void);
-void set_lc_state_before();
+void set_lc_state_before(void);
 
 #endif // ifndef __TORQUE_CALC
