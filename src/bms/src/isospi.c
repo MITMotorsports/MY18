@@ -110,7 +110,7 @@ bool Board_LTC6804_OpenWireTest(void) {
     return false;
 
   case LTC6804_PASS:
-    Board_Println("OWT PASS");
+    // Board_Println("OWT PASS");
     _ltc6804_owt      = false;
     _ltc6804_last_owt = msTicks;
     Error_Clear(ERROR_LTC_OWT);
@@ -227,12 +227,12 @@ void Board_LTC6804_DeInit(void) {
 void Board_LTC6804_ProcessInputs(BMS_PACK_CONFIG_T *pack_config,
                                  BMS_PACK_STATUS_T *pack_status,
                                  BMS_STATE_T *bms_state) {
-  Board_LTC6804_GetCellVoltages(pack_status);
+  Board_LTC6804_GetCellVoltages(pack_config, pack_status);
   Board_LTC6804_GetCellTemperatures(pack_config, pack_status, bms_state->pack_config->num_modules);
   Board_LTC6804_OpenWireTest();
 }
 
-void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status) {
+void Board_LTC6804_GetCellVoltages(BMS_PACK_CONFIG_T *pack_config, BMS_PACK_STATUS_T *pack_status) {
 #ifdef TEST_HARDWARE_LTC_TEST
   UNUSED(pack_status);
   return;
@@ -268,12 +268,12 @@ void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status) {
     pack_status->cell_voltages_mV = ltc6804_adc_res.cell_voltages_mV;
 
     // Error checks for under/over voltage
-    if (pack_status->pack_cell_min_mV < CELL_MIN_mV) {
+    if (pack_status->pack_cell_min_mV < pack_config->cell_min_mV) {
       Error_Present(ERROR_CELL_UNDER_VOLTAGE);
     } else {
       Error_Clear(ERROR_CELL_UNDER_VOLTAGE);
     }
-    if (pack_status->pack_cell_max_mV > CELL_MAX_mV) {
+    if (pack_status->pack_cell_max_mV > pack_config->cell_max_mV) {
       Error_Present(ERROR_CELL_OVER_VOLTAGE);
     } else {
       Error_Clear(ERROR_CELL_OVER_VOLTAGE);
@@ -287,11 +287,11 @@ void Board_LTC6804_GetCellVoltages(BMS_PACK_STATUS_T *pack_status) {
 
 #if false
     Board_Print_BLOCKING("MIN voltage: ");
-    Board_PrintNum(pack_status->pack_cell_min_mV, 10);
+    Board_PrintNum_BLOCKING(pack_status->pack_cell_min_mV, 10);
     Board_Print_BLOCKING("MAX voltage: ");
-    Board_PrintNum(pack_status->pack_cell_max_mV, 10);
+    Board_PrintNum_BLOCKING(pack_status->pack_cell_max_mV, 10);
     Board_Print_BLOCKING("SUM Voltage: ");
-    Board_PrintNum(pack_status->pack_voltage_sum_mV, 10);
+    Board_PrintNum_BLOCKING(pack_status->pack_voltage_sum_mV, 10);
 #endif
 
     // TODO: Use this to your advantage.
@@ -434,7 +434,7 @@ void Board_LTC6804_GetCellTemperatures(BMS_PACK_CONFIG_T *pack_config,
   ltc6804_getThermistorVoltagesFlag = false;
 
   if (currentThermistor == THERMISTOR_GROUP_THREE_END) {
-    CellTemperatures_UpdateMaxMinAvgCellTemperatures(pack_status, num_modules);
+    CellTemperatures_UpdateMaxMinAvgCellTemperatures(pack_config, pack_status, num_modules);
   }
 
 #else   /* ifndef TEST_HARDWARE_LTC_TEST */

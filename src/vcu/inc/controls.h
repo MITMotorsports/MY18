@@ -7,6 +7,7 @@
 
 #include "can_handles.h"
 #include "fault_pedalbox.h"
+#include "fault_brakes.h"
 
 // TODO: Extract MAX_TORQUE from RMS EEPROM (over CAN?)
 #define MAX_TORQUE    2400 // unit: dNm
@@ -27,7 +28,7 @@
 #define RG_CAR_SPEED_THRESH 5                // kph
 #define RG_REAR_BRAKE_THRESH 827370          // Pa
 #define RG_FRONT_BRAKE_THRESH 827370         // Pa
-#define RG_BATTERY_VOLTAGE_MAX_THRESH 299000 // mV
+#define RG_BATTERY_VOLTAGE_MAX_THRESH 295000 // mV
 #define RG_TORQUE_COMMAND_MAX 2000           // 10 * Nm
 
 // K = mu_padrotor * 2 * r_rotoreffective * A_Cf / GR
@@ -39,14 +40,6 @@
 #define FRONT_BRAKE brake_1
 #define REAR_BRAKE brake_2
 
-typedef struct {
-  bool using_regen;
-  bool using_launch_control;
-  uint16_t cBB_ef; // Electric front brake bias * 100
-  uint16_t slip_ratio; // Slip ratio * 100
-  uint16_t limp_factor; // Limp facotr * 100
-} Controls_Settings_T;
-
 typedef enum {
   BEFORE,
   SPEEDING_UP,
@@ -55,12 +48,16 @@ typedef enum {
   DONE,
 } Launch_Control_State_T;
 
-extern Controls_Settings_T control_settings;
+// TL = temp limiting
+#define MAX_TEMP 5800 // centiCelsius
 
-// PRIVATE FUNCTIONS
-static int16_t get_torque(void);
-static int32_t get_regen_torque(void);
-static int32_t get_launch_control_speed(uint32_t front_wheel_speed);
+// VL = (under)voltage limiting
+#define MIN_VOLTAGE 250
+
+#define TEMP_LOG_LENGTH 200
+
+extern can0_VCUControlsParams_T control_settings;
+extern can0_VCUParamsLC_T lc_settings;
 
 // INTERACTION FUNCTIONS
 void enable_controls(void);

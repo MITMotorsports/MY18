@@ -9,6 +9,10 @@ indent_style = space
 indent_size = 2
 end_of_line = lf
 
+[*.py]
+indent_style = space
+indent_size = 4
+
 # Globs for future changes:
 # [Makefile]
 # [*.{c,h,cpp,hpp}]

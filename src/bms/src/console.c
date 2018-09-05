@@ -137,7 +137,7 @@ static void get(const char *const *argv) {
       break;
 
     case RWL_max_cell_temp_dC:
-      utoa(bms_state->pack_config->max_cell_temp_dC, tempstr, 10);
+      utoa(bms_input->pack_status->max_cell_temp_dC[0].val, tempstr, 10);
       Board_Println(tempstr);
       break;
     case RWL_soc:
@@ -177,13 +177,17 @@ static void get(const char *const *argv) {
         idx = 0;
 
         for (i = 0; i < bms_state->pack_config->num_modules; i++) {
+          Board_Print_BLOCKING("\nModule ");
+          Board_PrintNum_BLOCKING(i, 10);
+          Board_Println_BLOCKING(":");
           for (j = 0; j < bms_state->pack_config->module_cell_count[i]; j++) {
-            utoa(bms_input->pack_status->cell_voltages_mV[idx], tempstr, 10);
-            Board_Println_BLOCKING(tempstr);
+            Board_PrintNum_BLOCKING(bms_input->pack_status->cell_voltages_mV[idx], 10);
+            Board_Print_BLOCKING("\n");
             idx++;
           }
-          Board_Println_BLOCKING("----");
+          Board_Print_BLOCKING("\n");
         }
+        Board_Print_BLOCKING("\n");
         break;
 
       case ROL_pack_cell_max_mV:
@@ -196,19 +200,50 @@ static void get(const char *const *argv) {
         Board_Println(tempstr);
         break;
 
-      case ROL_pack_current_mA:
-        utoa(bms_input->pack_status->pack_current_mA, tempstr, 10);
+      // case ROL_pack_current_mA:
+      //   utoa(bms_input->pack_status->pack_current_mA, tempstr, 10);
+      //   Board_Println(tempstr);
+      //   break;
+
+      case ROL_p_cell_volt_sum:
+        utoa(bms_input->pack_status->pack_voltage_sum_mV, tempstr, 10);
         Board_Println(tempstr);
         break;
 
-      case ROL_pack_voltage_mV:
-        utoa(bms_input->pack_status->pack_voltage_mV, tempstr, 10);
+      case ROL_p_cell_temp_max:
+        utoa(bms_input->pack_status->max_cell_temp_dC[0].val, tempstr, 10);
         Board_Println(tempstr);
         break;
 
-      case ROL_max_cell_temp_dC:
-        utoa(bms_input->pack_status->max_cell_temp_dC, tempstr, 10);
+      case ROL_p_cell_temp_min:
+        utoa(bms_input->pack_status->min_cell_temp_dC[0].val, tempstr, 10);
         Board_Println(tempstr);
+        break;
+
+      case ROL_p_cell_temp_avg:
+        utoa(bms_input->pack_status->avg_cell_temp_dC, tempstr, 10);
+        Board_Println(tempstr);
+        break;
+
+      case ROL_p_cell_temp_var:
+        utoa(bms_input->pack_status->variance_cell_temp, tempstr, 10);
+        Board_Println(tempstr);
+        break;
+
+      case ROL_p_cell_temp:
+        for (uint8_t module = 0; module < bms_state->pack_config->num_modules; module++) {
+          Board_Print_BLOCKING("Module ");
+          Board_PrintNum_BLOCKING(module, 10);
+          Board_Println_BLOCKING(":");
+
+          uint16_t start = module * MAX_THERMISTORS_PER_MODULE;
+          for (uint16_t idx = start; idx < start + MAX_THERMISTORS_PER_MODULE; idx++) {
+            Board_PrintNum_BLOCKING(bms_input->pack_status->cell_temperatures_dC[idx], 10);
+            Board_Print_BLOCKING("\n");
+          }
+          Board_Print_BLOCKING("\n");
+        }
+        Board_Print_BLOCKING("\n");
         break;
 
       case ROL_soc:
@@ -257,10 +292,33 @@ static void set(const char *const *argv) {
 
   if (foundloc) {
     // uint8_t ret;
-    if(rwloc == RWL_soc) {
+    switch (rwloc) {
+    case RWL_soc:
       bms_input->pack_status->state_of_charge = 100;
       SOC_Max(bms_input->pack_status);
-      Board_Println("Set state of charge to 100%");
+      Board_Println("Set state of charge to 100");
+      break;
+    case RWL_cell_min_mV:
+      bms_state->pack_config->cell_min_mV = my_atou(argv[2]);
+      Board_Print("Set min cell voltage to ");
+      Board_PrintNum(bms_state->pack_config->cell_min_mV, 10);
+      Board_Print(" mV\n");
+      break;
+    case RWL_cell_max_mV:
+      bms_state->pack_config->cell_max_mV = my_atou(argv[2]);
+      Board_Print("Set max cell voltage to ");
+      Board_PrintNum(bms_state->pack_config->cell_max_mV, 10);
+      Board_Print(" mV\n");
+      break;
+    case RWL_max_cell_temp_dC:
+      bms_state->pack_config->max_cell_temp_dC = my_atou(argv[2]);
+      Board_Print("Set max cell temperature to ");
+      Board_PrintNum(bms_state->pack_config->max_cell_temp_dC, 10);
+      Board_Print(" dC\n");
+      break;
+    default:
+      Board_Println("Set failed (command not yet implemented?)!");
+      break;
     }
     // ret = EEPROM_ChangeConfig(rwloc,my_atou(argv[2]));
     // if (ret != 0) {

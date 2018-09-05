@@ -8,9 +8,14 @@
 // lpc11cx4-library
 #include "lpc_types.h"
 
-/**************************************************************************************
- * Public Functions
- * ***********************************************************************************/
+bool CellTemperatures_IgnoreCell(uint16_t cell_id) {
+  switch (cell_id) {
+  case 96:
+    return true;
+  }
+
+  return false;
+}
 
 void CellTemperatures_UpdateCellTemperaturesArray(uint32_t *gpioVoltages,
                                                   uint8_t currentThermistor,
@@ -30,57 +35,69 @@ void CellTemperatures_UpdateCellTemperaturesArray(uint32_t *gpioVoltages,
   }
 }
 
-void CellTemperatures_UpdateMaxMinAvgCellTemperatures(BMS_PACK_STATUS_T *pack_status,
+void CellTemperatures_UpdateMaxMinAvgCellTemperatures(BMS_PACK_CONFIG_T *pack_config,
+                                                      BMS_PACK_STATUS_T *pack_status,
                                                       uint8_t num_modules) {
-  int16_t maxCellTemperature          = INT16_MIN;
-  int16_t minCellTemperature          = INT16_MAX;
   int32_t cellTemperaturesSum         = 0;
-  uint16_t maxCellTemperaturePosition = 0;
-  uint16_t minCellTemperaturePosition = 0;
+  unsigned cnt = 0;
 
-  unsigned ignorecnt = 0;
+  #define max_cell_temp (pack_status->max_cell_temp_dC)
+  #define min_cell_temp (pack_status->min_cell_temp_dC)
+
+  for (int i = 0; i < LEN(max_cell_temp); ++i) {
+    max_cell_temp[i].val = INT16_MIN;
+  }
+
+  for (int i = 0; i < LEN(min_cell_temp); ++i) {
+    min_cell_temp[i].val = INT16_MAX;
+  }
 
   for (uint8_t module = 0; module < num_modules; module++) {
     // 255 * 24 < UINT16_MAX so this is safe
     uint16_t start = module * MAX_THERMISTORS_PER_MODULE;
 
     for (uint16_t idx = start; idx < start + MAX_THERMISTORS_PER_MODULE; idx++) {
-      // Ignore specific cells
-      switch (idx) {
-      case 96:
-        ignorecnt++;
-        continue;
-      }
+      if (CellTemperatures_IgnoreCell(idx)) continue;
 
       cellTemperaturesSum += pack_status->cell_temperatures_dC[idx];
+      cnt++;
 
-      if (pack_status->cell_temperatures_dC[idx] > maxCellTemperature) {
-        maxCellTemperature         = pack_status->cell_temperatures_dC[idx];
-        maxCellTemperaturePosition = idx;
-      }
+      CellValue m;
+      m.val = pack_status->cell_temperatures_dC[idx];
+      m.idx = idx;
 
-      if (pack_status->cell_temperatures_dC[idx] < minCellTemperature) {
-        minCellTemperature         = pack_status->cell_temperatures_dC[idx];
-        minCellTemperaturePosition = idx;
-      }
+      insert_sort(LEN(max_cell_temp), max_cell_temp, m, true);
+      insert_sort(LEN(min_cell_temp), min_cell_temp, m, false);
     }
   }
 
-  // update pack_status
-  pack_status->max_cell_temp_dC = maxCellTemperature;
-  pack_status->min_cell_temp_dC = minCellTemperature;
-
-  pack_status->avg_cell_temp_dC =
-      cellTemperaturesSum / (num_modules * MAX_THERMISTORS_PER_MODULE - ignorecnt);
-  pack_status->max_cell_temp_position = maxCellTemperaturePosition;
-  pack_status->min_cell_temp_position = minCellTemperaturePosition;
-
   // Error checks for cell temperatures
-  if (pack_status->max_cell_temp_dC > MAX_CELL_TEMP_dC) {
+  if (max_cell_temp[0].val > pack_config->max_cell_temp_dC) {
     Error_Present(ERROR_CELL_OVER_TEMP);
   } else {
     Error_Clear(ERROR_CELL_OVER_TEMP);
   }
+
+  #undef max_cell_temp
+  #undef min_cell_temp
+
+  pack_status->avg_cell_temp_dC = cellTemperaturesSum / cnt;
+
+  pack_status->variance_cell_temp = 0;
+  for (uint8_t module = 0; module < num_modules; module++) {
+    // 255 * 24 < UINT16_MAX so this is safe
+    uint16_t start = module * MAX_THERMISTORS_PER_MODULE;
+
+    for (uint16_t idx = start; idx < start + MAX_THERMISTORS_PER_MODULE; idx++) {
+      if (CellTemperatures_IgnoreCell(idx)) continue;
+
+      int16_t diff = pack_status->cell_temperatures_dC[idx] - pack_status->avg_cell_temp_dC;
+      pack_status->variance_cell_temp += diff * diff;
+    }
+  }
+
+  pack_status->variance_cell_temp *= 1000;
+  pack_status->variance_cell_temp /= cnt;
 }
 
 void CellTemperatures_GetOffsets(int16_t target, int16_t *input, int16_t *output) {
@@ -103,9 +120,9 @@ void getThermistorTemperatures(uint32_t *gpioVoltages, int16_t *temperatures, ui
 
 #ifdef DEBUG_PRINT
     Board_Print_BLOCKING("Temp at module: ");
-    Board_PrintNum(i, 10);
+    Board_PrintNum_BLOCKING(i, 10);
     Board_Print_BLOCKING(" is ");
-    Board_PrintNum(temperatures[i], 10);
+    Board_PrintNum_BLOCKING(temperatures[i], 10);
     Board_Print_BLOCKING("\n");
 #endif
   }

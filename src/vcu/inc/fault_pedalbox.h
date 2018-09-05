@@ -6,6 +6,8 @@
 #include "state.h"
 #include "extern.h"
 
+#include "CANlib.h"
+
 #define pedalbox_max(name) MAX_DE(pedalbox.name ## _1, pedalbox.name ## _2)
 #define pedalbox_min(name) MIN_DE(pedalbox.name ## _1, pedalbox.name ## _2)
 #define pedalbox_avg(name) AVG(pedalbox.name ## _1, pedalbox.name ## _2)
@@ -36,6 +38,9 @@ typedef struct {
   bool   accel;
   bool   observed_implausibility;
   Time_T last_implausibility;
+
+  can0_FrontCanNodeBrakeThrottle_T fcn;
+  bool any_errs;
 } Conflicts_T;
 
 typedef struct {

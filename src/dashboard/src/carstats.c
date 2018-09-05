@@ -8,16 +8,16 @@
 Frame frame;
 
 void can_handle_cell_temps(carstats_t *cs) {
-    can0_CellTemperatures_T msg;
-    unpack_can0_CellTemperatures(&frame, &msg);
+    can0_CellTemperatureRange_T msg;
+    unpack_can0_CellTemperatureRange(&frame, &msg);
 
-    cs->max_cell_temp = msg.max;
+    cs->max_cell_temp = msg.max0;
     cs->min_cell_temp = msg.min;
 }
 
 void can_handle_cell_voltages(carstats_t *cs) {
-    can0_CellVoltages_T msg;
-    unpack_can0_CellVoltages(&frame, &msg);
+    can0_CellVoltageRange_T msg;
+    unpack_can0_CellVoltageRange(&frame, &msg);
 
     cs->max_cell_voltage = msg.max;
     cs->min_cell_voltage = msg.min;
@@ -41,7 +41,7 @@ void can_handle_mc_voltage(carstats_t *cs) {
     can0_MCVoltage_T msg;
     unpack_can0_MCVoltage(&frame, &msg);
 
-    cs->mc_voltage = msg.bus;  // convert from dV to dV
+    cs->mc_voltage = msg.bus - 25;  // convert from dV to dV
 }
 
 void can_handle_current_sensor_power(carstats_t *cs) {
@@ -112,6 +112,11 @@ void can_handle_brake_throttle(carstats_t *cs) {
     cs->brake_2 = msg.brake_2;
 }
 
+void can_handle_vcu_controls(carstats_t *cs) {
+    unpack_can0_VCUControlsParams(&frame, &cs->vcu_controls);
+    cs->vcu_controls_received = true;
+}
+
 void can_update_carstats(carstats_t *cs) {
     handle_can_error(Can_RawRead(&frame));
 
@@ -122,10 +127,10 @@ void can_update_carstats(carstats_t *cs) {
         case can0_FrontCanNodeBrakeThrottle:
             can_handle_brake_throttle(cs);
             break;
-        case can0_CellTemperatures:
+        case can0_CellTemperatureRange:
             can_handle_cell_temps(cs);
             break;
-        case can0_CellVoltages:
+        case can0_CellVoltageRange:
             can_handle_cell_voltages(cs);
             break;
         case can0_CurrentSensor_Voltage1:
@@ -155,6 +160,8 @@ void can_update_carstats(carstats_t *cs) {
         case can0_VCUErrors:
             can_handle_vcu_errors(cs);
             break;
+        case can0_VCUControlsParams:
+            can_handle_vcu_controls(cs);
         default:
             // do nothing
             break;

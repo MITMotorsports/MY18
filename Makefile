@@ -14,4 +14,4 @@ upgrade:
 	scripts/upgrade.sh
 
 toolchain:
-	scripts/toolchain.sh
+	scripts/toolchain/all.sh

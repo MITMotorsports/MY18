@@ -9,7 +9,10 @@ apt-get install -y \
   gcc-arm-none-eabi \
   git \
   make \
+  open-ocd \
+  picocom \
   python3 \
+  python3-pip \
 
 
 

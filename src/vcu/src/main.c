@@ -48,6 +48,8 @@ int main(void) {
   // Driver Reset GPIO output for when Driver Reset is pressed
   DGPIO_INIT_OUT( DRIVER_RST, GPIO_PIN_SET);
 
+  DGPIO_INIT_OUT(ACTIVE_AERO, GPIO_PIN_RESET);
+
   // SETUP THE CONTACTOR GPIOS
   DGPIO_INIT_OUT(L_CONTACTOR, GPIO_PIN_RESET);
   DGPIO_INIT_OUT(H_CONTACTOR, GPIO_PIN_RESET);
@@ -70,13 +72,21 @@ int main(void) {
     HAL_GPIO_WritePin(GPIO(BRAKE_LIGHT),
                       pedalbox.brake_2 > PEDALBOX_BRAKE_BEGIN);
 
+    HAL_GPIO_WritePin(GPIO(ACTIVE_AERO), control_settings.active_aero_enabled);
+
     static uint32_t lastt = 0;
 
     print_gate_faults(false);
-    if (HAL_GetTick() - lastt > 1000) {
+    if (HAL_GetTick() - lastt > 100) {
       HAL_GPIO_TogglePin(GPIO(LED));
 
-      printf("CONTROLS PARAMS:\r\n  USING REGEN: %d\r\n  USING LAUNCH CONTROL: %d\r\n  cBB_ef: %d\r\n  SLIP RATIO: %d\r\n  LIMP FACTOR: %d\r\n", control_settings.using_regen, control_settings.using_launch_control, control_settings.cBB_ef, control_settings.slip_ratio, control_settings.limp_factor);
+      if (mc_readings.can_fault) {
+        send_mc_fault_clear();
+      }
+
+      // printf("CONTROLS PARAMS:\r\n  using_regen: %d\r\n  using_voltage_limiting: %d\r\n  using_temp_limiting: %d\r\n  regen_bias: %d\r\n  limp_factor: %d\r\n  temp_lim_min_gain: %d\r\n  temp_lim_thresh_temp: %d\r\n  temp_abs_thesh: %d\r\n  volt_lim_min_gain: %d\r\n  volt_lim_min_voltage: %d\r\n  volt_abs_thresh: %d\r\n\r\n",
+      // control_settings.using_regen, control_settings.using_voltage_limiting, control_settings.using_temp_limiting, control_settings.regen_bias, control_settings.limp_factor, control_settings.temp_lim_min_gain, control_settings.temp_lim_thresh_temp, MAX_TEMP, control_settings.volt_lim_min_gain, control_settings.volt_lim_min_voltage, MIN_VOLTAGE);
+
 
       lastt = HAL_GetTick();
     }

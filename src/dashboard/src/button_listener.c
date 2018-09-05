@@ -2,50 +2,53 @@
 
 #include "board.h"
 
-// debouncing
-#define MIN_PRESS_DURATION 10
-
-#define BUTTON_HOLD_DURATION 350
+#define TAP_HOLD_CUTOFF 400
 
 void init_button_state(button_state_t *state) {
     state->is_pressed = false;
-    state->lockout    = false;
     state->action     = BUTTON_ACTION_NONE;
 
     state->edge         = false;
     state->rising_edge  = false;
     state->falling_edge = false;
+    state->hold_edge    = false;
+
+    state->setup_time   = 10;
+    state->hold_time    = 10;
 }
 
 void update_button_state(button_state_t *state, bool newval) {
+    // Initialization
+    btn_action_t prev_action = state->action;
+
     state->action = BUTTON_ACTION_NONE;
-
-    int duration = msTicks - state->press_start_ms;
-
-    state->edge = state->is_pressed != newval;
-
-    // on button down
     state->rising_edge = false;
     state->falling_edge = false;
-    if (!state->is_pressed && newval) {
-        state->is_pressed = true;
-        state->press_start_ms = msTicks;
-        state->lockout = false;
-        state->rising_edge = true;
-        duration = 0;
+    int duration = msTicks - state->last_edge_ms;
 
-    // on button up
-    } else if (state->is_pressed && !newval) {
-        state->is_pressed = false;
+    // Debounce newval
+    if (duration < (newval ? state->setup_time : state->hold_time))
+        newval = state->is_pressed;
 
-        if (!state->lockout && duration > MIN_PRESS_DURATION) {
-           state->action = BUTTON_ACTION_TAP;
-        }
-
-        state->falling_edge = true;
+    state->edge = state->is_pressed != newval;
+    if (state->edge) {
+        state->rising_edge = newval;
+        state->falling_edge = !newval;
+        state->last_edge_ms = msTicks;
     }
-    if (state->is_pressed && duration > BUTTON_HOLD_DURATION && !state->lockout) {
-        state->lockout = true;
+
+    state->is_pressed = newval;
+
+    // Set actions
+    state->hold_edge = false;
+    if (state->is_pressed && duration > TAP_HOLD_CUTOFF) {
         state->action = BUTTON_ACTION_HOLD;
+        if (prev_action != BUTTON_ACTION_HOLD) {
+            state->hold_edge = true;
+        }
+    }
+
+    if (duration < TAP_HOLD_CUTOFF && state->falling_edge) {
+        state->action = BUTTON_ACTION_TAP;
     }
 }

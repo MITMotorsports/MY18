@@ -5,6 +5,7 @@
 #include "util.h"
 #include "console_types.h"
 #include "eeprom_config.h"
+#include "uart.h"
 
 #ifndef _CONSOLE_H
 # define _CONSOLE_H
@@ -28,8 +29,8 @@ static const BMS_COMMAND_T commands[] = {
 };
 
 static const char *const locstring[] =  {
-  "cell_min_mV",
-  "cell_max_mV",
+  "cell_volt_min",
+  "cell_volt_max",
   "cell_capacity_cAh",
   "num_modules",
   "module_cell_count",
@@ -41,17 +42,21 @@ static const char *const locstring[] =  {
   "cv_min_current_ms",
   "cc_cell_voltage_mV",
   "cell_discharge_c_rating_cC",
-  "max_cell_temp_param",
+  "cell_temp_max",
   "soc",
+  "force_fault",
 
   // can't write to the follwing
   "state",
-  "cvm",
-  "pack_cell_max_mV",
-  "pack_cell_min_mV",
-  "pack_current_mA",
-  "pack_voltage_mV",
-  "max_cell_temp_dC",
+  "p_cell_volt",
+  "p_cell_volt_max",
+  "p_cell_volt_min",
+  "p_cell_volt_sum",
+  "p_cell_temp_max",
+  "p_cell_temp_min",
+  "p_cell_temp_avg",
+  "p_cell_temp_var",
+  "p_cell_temp",
   "soc",
   "error"
 };
@@ -72,14 +77,18 @@ static const uint32_t locparam[ARRAY_SIZE(locstring)][3] = {
   {  1, 0, UINT32_MAX }, // "cell_discharge_c_rating_cC",
   {  1, 0, UINT32_MAX }, // "max_cell_temp_dC",
   // can't write to the follwing
-  {  0, 0,          0 }, // "state",
-  {  0, 0,          0 }, // "*cell_voltages_mV",
-  {  0, 0,          0 }, // "pack_cell_max_mV",
-  {  0, 0,          0 }, // "pack_cell_min_mV",
-  {  0, 0,          0 }, // "pack_current_mA",
-  {  0, 0,          0 }, // "pack_voltage_mV",
-  {  0, 0,          0 }, // "max_cell_temp_dC"
-  {  0, 0,          0 }  // "error"
+  {  0, 0,          0 },
+  {  0, 0,          0 },
+  {  0, 0,          0 },
+  {  0, 0,          0 },
+  {  0, 0,          0 },
+  {  0, 0,          0 },
+  {  0, 0,          0 },
+  {  0, 0,          0 },
+  {  0, 0,          0 },
+  {  0, 0,          0 },
+  {  0, 0,          0 },
+  {  0, 0,          0 },
 };
 
 typedef void (*const COMMAND_EXECUTE_HANDLER)(const char *const *);

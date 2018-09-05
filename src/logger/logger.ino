@@ -5,77 +5,20 @@
 #include <SD.h>
 #include <TimeLib.h>
 
+#include "buffer.h"
+#include "listener.h"
+#include "tickerplant.h"
+
 #ifndef __MK66FX1M0__
   # error "Only a Teensy 3.6 with a dual CAN bus is worthy of being DAQBOI."
 #endif // ifndef __MK66FX1M0__
-
-#define BUILTIN_LED 13
 
 #define DEBUG_UART false
 
 // Macro for converting and padding (to len 2) a number to a String.
 #define zfc2(num) ((num < 10)? "0" + String(num) : String(num))
 
-String dir_name;
-String log_name;
-
-void set_failover_filename(String& filename) {
-  filename = "failover.tsv";
-}
-
-class CommonListener : public CANListener {
-public:
-
-  const uint8_t port_num;
-
-  CommonListener(uint8_t port_num) : port_num{port_num} {}
-
-  void printFrame(Stream& out, CAN_message_t& frame, int mailbox);
-
-  void gotFrame(CAN_message_t& frame, int mailbox);
-};
-
-void CommonListener::printFrame(Stream& out, CAN_message_t& frame, int mailbox) {
-  out.print(millis());
-  out.write('\t');
-
-  out.print(this->port_num);
-  out.write('\t');
-
-  out.print(frame.id, HEX);
-  out.write('\t');
-
-  // Length is implicitly defined by number of chars in data field
-  // out.print(frame.len, HEX);
-  // out.write('\t');
-
-  for (size_t c = 0; c < frame.len; ++c) {
-    if (frame.buf[c] < 16) out.write('0');
-    out.print(frame.buf[c], HEX);
-  }
-
-  out.write('\r');
-  out.write('\n');
-}
-
-void CommonListener::gotFrame(CAN_message_t& frame, int mailbox) {
-  #if DEBUG_UART
-    printFrame(Serial, frame, mailbox);
-  #else
-    File log_file = SD.open(log_name.c_str(), FILE_WRITE);
-
-    if (log_file) {
-      printFrame(log_file, frame, mailbox);
-      log_file.close();
-    }
-    else {
-      Serial.println("[ERROR] Can't open log_file.");
-    }
-  #endif
-}
-
-CommonListener CANListener0(0);
-CommonListener CANListener1(1);
+CommonListener CANListener[] = {CommonListener(0), CommonListener(1)};
 
 void setup(void) {
   Serial.begin(115200);
@@ -86,37 +29,32 @@ void setup(void) {
 
   Serial.println(F("DAQBOI v0.1"));
 
-  Can0.begin(500000);
-  Can1.begin(500000);
+  /// TELEMETRY
+  init_telemetry();
 
-  // GPIO
-
-  /// Transceiver Enable
+  /// GPIO
+  // Transceiver Enable
   pinMode(24, OUTPUT);
   pinMode(5,  OUTPUT);
 
   digitalWrite(24, LOW);
   digitalWrite(5,  LOW);
 
-  /// LED
-  pinMode(BUILTIN_LED, OUTPUT);
-  digitalWrite(BUILTIN_LED, HIGH);
+  // LED
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH);
 
-  // Set up current time from RTC
+
+  /// RTC
   setSyncProvider(getTeensy3Time);
-  if (timeStatus()  != timeSet) {
+  if (timeStatus() != timeSet) {
     Serial.println(F("[ERROR] Unable to sync with the RTC."));
-
-    set_failover_filename(log_name);
   }
   else {
     Serial.print(F("RTC has set the system time to "));
     Serial.print(date_string());
     Serial.write(' ');
     Serial.println(time_string());
-
-    // Set log filename to current datetime
-    log_name = date_string() + "/" + time_string() + ".tsv";
   }
 
   while (!SD.begin(BUILTIN_SDCARD)) {
@@ -126,17 +64,58 @@ void setup(void) {
 
   Serial.println(F("card initialized"));
 
-  // Make log directory
-  dir_name = date_string();
-  if (!SD.mkdir(dir_name.c_str())) {
-    Serial.print("[ERROR] failed to make directory with name ");
-    Serial.println(dir_name);
 
-    set_failover_filename(log_name);
+  /// FILE
+  init_logfile();
+
+  // Attach interrupted listeners
+  Can0.attachObj(&CANListener[0]);
+  Can1.attachObj(&CANListener[1]);
+
+  for (auto &listener : CANListener) {
+    listener.attachGeneralHandler();
   }
 
+  Serial.println(F("listeners initialized"));
+
+  Can0.begin(500000);
+  Can1.begin(500000);
+
+  Serial.println(F("buses initialized"));
+}
+
+time_t getTeensy3Time() {
+  return Teensy3Clock.get();
+}
+
+String date_string() {
+  return zfc2(year()) + zfc2(month()) + zfc2(day());
+}
+
+String time_string() {
+  return zfc2(hour()) + zfc2(minute()) + zfc2(second());
+}
+
+
+File log_file;
+
+void init_logfile() {
+  String log_name = "failover.tsv";
+
+  // Make log directory
+  String dir_name = date_string();
+  if (SD.mkdir(dir_name.c_str())) {
+    // Set log filename to current datetime
+    log_name = date_string() + "/" + time_string() + ".tsv";
+  }
+  else {
+    Serial.print("[ERROR] failed to make directory with name ");
+    Serial.println(dir_name);
+  }
+
+  // Open the main log_file
   // Write datetime string at the beginning of file
-  File log_file = SD.open(log_name.c_str(), FILE_WRITE);
+  log_file = SD.open(log_name.c_str(), FILE_WRITE);
 
   if (log_file) {
     // New log begin delimiter
@@ -153,36 +132,73 @@ void setup(void) {
   else {
     Serial.println("[ERROR] Can't open log_file.");
   }
-  log_file.close();
-
-  // Attach interrupted listeners
-  Can0.attachObj(&CANListener0);
-  CANListener0.attachGeneralHandler();
-
-  Can1.attachObj(&CANListener1);
-  CANListener1.attachGeneralHandler();
-
-  Serial.println(F("listeners initialized"));
 }
 
-time_t getTeensy3Time() {
-  return Teensy3Clock.get();
+void save(const LoggedFrame &lf) {
+  static size_t saved = 0;
+
+  // If logfile is approaching the limits of FAT32, start a new one
+  if (saved >= 4294967296 - 100000) {
+    init_logfile();
+    saved = 0;
+  }
+
+  saved += log_file.println(lf);
 }
 
-String date_string() {
-  return zfc2(year()) + zfc2(month()) + zfc2(day());
-}
-
-String time_string() {
-  return zfc2(hour()) + zfc2(minute()) + zfc2(second());
+void print(const LoggedFrame &lf) {
+  Serial.println(lf);
 }
 
 void loop(void) {
+  // http://harmful.cat-v.org/software/c++/linus
+  // #if DEBUG_UART
+  //   #define PRINT print
+  // #else
+  //   #define PRINT
+  // #endif
+  // static Tickerplant<LoggedFrame> tick({save, PRINT});
+  //
+  // #undef PRINT
+
+  for (auto &listener : CANListener) {
+    if (listener.buffer.full()) {
+      log_file.print(millis());
+      log_file.write(' ');
+
+      log_file.print(listener.port);
+      log_file.write(' ');
+
+      log_file.println("FULL");
+    }
+
+    static LoggedFrame lf;
+    while (listener.buffer.remove(&lf)) {
+      // tick.publish(loggedframe);
+
+      save(lf);
+      #if DEBUG_UART
+        print(lf);
+      #endif
+      transmit(lf);
+    }
+  }
+
+  log_file.flush();
+
   static bool led_state = false;
   static uint32_t last_flip = millis();
 
-  if (millis() - last_flip > 1000) {
-    digitalWrite(BUILTIN_LED, led_state);
+  if (millis() - last_flip > 500) {
+    digitalWrite(LED_BUILTIN, led_state);
+
+    // LoggedFrame lf;
+    // lf.time = millis();
+    // lf.frame.id = 0x1ac;
+    // lf.frame.buf[0] = 0xAC;
+    // lf.frame.buf[1] = 0xDC;
+    // lf.frame.len = 2;
+    // transmit(lf);
 
     led_state = !led_state;
     last_flip = millis();

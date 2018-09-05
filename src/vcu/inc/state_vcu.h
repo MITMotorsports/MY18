@@ -10,6 +10,7 @@
 #include "state_vcu_rtd.h"
 #include "state_vcu_driving.h"
 
+#define TEMP_LOG_LENGTH 200
 
 // DEFINITION OF CAR STATES
 typedef enum {
@@ -35,6 +36,8 @@ typedef struct {
   int16_t V_VBC_Vq;
   int16_t speed;
   int16_t torque_feedback;
+
+  bool can_fault;
 } MCReadings_T;
 
 typedef struct {
@@ -54,6 +57,11 @@ typedef struct {
 } IMUVelocity_T;
 
 typedef struct {
+  uint16_t cell_min_cV;
+  uint16_t temp_log[TEMP_LOG_LENGTH];
+} Cell_Readings_T;
+
+typedef struct {
   uint32_t front_left_32b_wheel_speed;
   uint32_t front_left_16b_wheel_speed;
   uint32_t front_right_32b_wheel_speed;
@@ -68,6 +76,8 @@ extern volatile MCReadings_T mc_readings;
 extern volatile CSReadings_T cs_readings;
 extern volatile IMUVelocity_T imu_velocity;
 extern volatile Wheel_Speeds_T wheel_speeds;
+extern volatile Cell_Readings_T cell_readings;
+extern can0_VCUControlsMonitoring_T controls_monitoring;
 
 // INTERACTION FUNCTIONS
 void        init_vcu_state(void);

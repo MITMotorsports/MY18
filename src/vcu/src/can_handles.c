@@ -42,8 +42,12 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleBMSHeartbeatMsg(&frame);
     break;
 
-  case can0_CellVoltages:
+  case can0_CellVoltageRange:
     handleCellVoltagesMsg(&frame);
+    break;
+
+  case can0_CellTemperatureRange:
+    handleCellTemperatures(&frame);
     break;
 
   case can0_CurrentSensor_Voltage1:
@@ -52,6 +56,10 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
 
   case can0_MCVoltage:
     handleMCVoltageMsg(&frame);
+    break;
+
+  case can0_MCFaultCodes:
+    handleMCFaultCodesMsg(&frame);
     break;
 
   case can0_ButtonRequest:
@@ -82,8 +90,8 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleMCTorque_Timer_Info(&frame);
     break;
 
-  case can0_DashControls:
-    handleDashControls(&frame);
+  case can0_DashRequest:
+    handleDashRequest(&frame);
     break;
 
   default:
@@ -92,14 +100,14 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
 }
 
 void handleBrakeThrottleMsg(Frame *msg) {
-  can0_FrontCanNodeBrakeThrottle_T unpacked_msg;
+  // can0_FrontCanNodeBrakeThrottle_T unpacked_msg;
 
-  unpack_can0_FrontCanNodeBrakeThrottle(msg, &unpacked_msg);
+  unpack_can0_FrontCanNodeBrakeThrottle(msg, &conflicts.fcn);
 
-  pedalbox.accel_1 = unpacked_msg.accel_1;
-  pedalbox.accel_2 = unpacked_msg.accel_2;
-  pedalbox.brake_1 = unpacked_msg.brake_1;
-  pedalbox.brake_2 = unpacked_msg.brake_2;
+  pedalbox.accel_1 = conflicts.fcn.accel_1;
+  pedalbox.accel_2 = conflicts.fcn.accel_2;
+  pedalbox.brake_1 = conflicts.fcn.brake_1;
+  pedalbox.brake_2 = conflicts.fcn.brake_2;
 
   heartbeats.fcn = HAL_GetTick();
 }
@@ -113,6 +121,16 @@ void handleMCVoltageMsg(Frame *msg) {
   mc_readings.V_out    = unpacked_msg.out;
   mc_readings.V_VAB_Vd = unpacked_msg.VAB_Vd;
   mc_readings.V_VBC_Vq = unpacked_msg.VBC_Vq;
+
+  heartbeats.mc = HAL_GetTick();
+}
+
+void handleMCFaultCodesMsg(Frame *msg) {
+  can0_MCFaultCodes_T unpacked_msg;
+
+  unpack_can0_MCFaultCodes(msg, &unpacked_msg);
+
+  mc_readings.can_fault = unpacked_msg.can_command_msg_lost_fault;
 
   heartbeats.mc = HAL_GetTick();
 }
@@ -154,14 +172,25 @@ void handleCurrentSensorVoltageMsg(Frame *msg) {
 }
 
 void handleCellVoltagesMsg(Frame *msg) {
-  can0_CellVoltages_T unpacked_msg;
+  can0_CellVoltageRange_T unpacked_msg;
 
-  unpack_can0_CellVoltages(msg, &unpacked_msg);
+  unpack_can0_CellVoltageRange(msg, &unpacked_msg);
 
-  // So we take the cell voltage of the minimum cell and use that
-  // to estimate the lower bound on the back voltage
-  // (12 per cell, 6 cells, millivolts to decivolts)
-  voltages.pack = unpacked_msg.max * 12 * 6 / 100;
+  voltages.pack = unpacked_msg.sum / 100;  // mV -> dV
+
+  cell_readings.cell_min_cV = unpacked_msg.min / 10;
+}
+
+void handleCellTemperatures(Frame *msg) {
+  can0_CellTemperatureRange_T unpacked_msg;
+  unpack_can0_CellTemperatureRange(msg, &unpacked_msg);
+
+  // Shift all values
+  for (uint16_t i = 0; i < TEMP_LOG_LENGTH - 1; i++) {
+    cell_readings.temp_log[i] = cell_readings.temp_log[i+1];
+  }
+
+  cell_readings.temp_log[TEMP_LOG_LENGTH-1] = unpacked_msg.max0;
 }
 
 void handleButtonRequest(Frame *msg) {
@@ -224,27 +253,58 @@ void handleMCTorque_Timer_Info(Frame *msg) {
   mc_readings.torque_feedback = unpacked_msg.torque_feedback;
 }
 
-void handleDashControls(Frame *msg) {
-  can0_DashControls_T unpacked_msg;
+void handleDashRequest(Frame *msg) {
+  can0_DashRequest_T unpacked_msg;
 
-  unpack_can0_DashControls(msg, &unpacked_msg);
+  unpack_can0_DashRequest(msg, &unpacked_msg);
 
-  if (unpacked_msg.regen_bias != 65535) {
-    control_settings.cBB_ef = unpacked_msg.regen_bias;
+  // printf("regen_bias: %d\r\n", unpacked_msg.regen_bias);
+  // printf("limp_factor: %d\r\n", unpacked_msg.limp_factor);
+  // printf("volt_lim_min_gain: %d\r\n", unpacked_msg.volt_lim_min_gain);
+  // printf("volt_lim_min_voltage: %d\r\n", unpacked_msg.volt_lim_min_voltage);
+  // printf("temp_lim_min_gain: %d\r\n", unpacked_msg.temp_lim_min_gain);
+  // printf("temp_lim_thresh_temp: %d\r\n", unpacked_msg.temp_lim_thresh_temp);
+
+  control_settings.using_regen = unpacked_msg.using_regen;
+  control_settings.using_temp_limiting = unpacked_msg.using_temp_limiting;
+  control_settings.using_voltage_limiting = unpacked_msg.using_voltage_limiting;
+
+
+  if (unpacked_msg.regen_bias != 255) {
+    control_settings.regen_bias = unpacked_msg.regen_bias;
     control_settings.using_regen = unpacked_msg.using_regen;
   }
 
-  if (unpacked_msg.launch_ctrl_slip_ratio != 65535) {
-    control_settings.slip_ratio = unpacked_msg.launch_ctrl_slip_ratio;
-    control_settings.using_launch_control = unpacked_msg.using_launch_ctrl;
+  if (unpacked_msg.limp_factor != 255) {
+    control_settings.limp_factor = unpacked_msg.limp_factor;
   }
 
-  if (unpacked_msg.limp_factor != 65535) {
-    control_settings.limp_factor = unpacked_msg.limp_factor;
+
+  if (unpacked_msg.temp_lim_min_gain != 255 && unpacked_msg.temp_lim_thresh_temp != 255) {
+    control_settings.temp_lim_min_gain = unpacked_msg.temp_lim_min_gain;
+    control_settings.temp_lim_thresh_temp = unpacked_msg.temp_lim_thresh_temp;
+  }
+
+  if (unpacked_msg.volt_lim_min_gain != 255 && unpacked_msg.volt_lim_min_voltage != 65535) {
+    control_settings.volt_lim_min_gain = unpacked_msg.volt_lim_min_gain;
+    control_settings.volt_lim_min_voltage = unpacked_msg.volt_lim_min_voltage;
+  }
+
+  control_settings.active_aero_enabled = unpacked_msg.active_aero_enabled;
+}
+
+void handle_DashRequestLC(Frame *msg) {
+  can0_DashRequestLC unpacked_msg;
+
+  unpack_can0_DashRequestLC(msg, &unpacked_msg);
+
+  if (unpacked_msg.launch_ctrl_slip_ratio != 65535) {
+    lc_settings.slip_ratio = unpacked_msg.launch_ctrl_slip_ratio;
+    lc_settings.using_launch_control = unpacked_msg.using_launch_ctrl;
   }
 }
 
-void send_VCUHeartbeat() {
+void send_VCUHeartbeat(void) {
   LIMIT(can0_VCUHeartbeat);
 
   can0_VCUHeartbeat_T msg = {};
@@ -256,7 +316,7 @@ void send_VCUHeartbeat() {
   can0_VCUHeartbeat_Write(&msg);
 }
 
-void send_VCUErrors() {
+void send_VCUErrors(void) {
   LIMIT(can0_VCUErrors);
 
   can0_VCUErrors_T msg = {};
@@ -279,9 +339,25 @@ void send_VCUErrors() {
   can0_VCUErrors_Write(&msg);
 }
 
-void send_VCU() {
+void send_VCUControlsParams(void) {
+  LIMIT(can0_VCUControlsParams);
+
+  can0_VCUControlsParams_Write(&control_settings);
+}
+
+void send_VCU
+
+void send_VCUControlsMonitoring(void) {
+  LIMIT(can0_VCUControlsMonitoring);
+
+  can0_VCUControlsMonitoring_Write(&controls_monitoring);
+}
+
+void send_VCU(void) {
   send_VCUHeartbeat();
   send_VCUErrors();
+  send_VCUControlsParams();
+  send_VCUControlsMonitoring();
 }
 
 void sendTorqueCmdMsg(int16_t torque) {
@@ -317,7 +393,7 @@ void sendSpeedCmdMsg(int16_t speed, int16_t torque_limit) {
   can0_MCCommand_Write(&msg);
 }
 
-void sendMotorOffCmdMsg() {
+void sendMotorOffCmdMsg(void) {
   LIMIT(can0_MCCommand);
 
   can0_MCCommand_T msg;
@@ -333,7 +409,7 @@ void sendMotorOffCmdMsg() {
   can0_MCCommand_Write(&msg);
 }
 
-void send_mc_fault_clear() {
+void send_mc_fault_clear(void) {
   can0_MCParameterRequest_T msg;
 
   // RMS CAN protocol page 34

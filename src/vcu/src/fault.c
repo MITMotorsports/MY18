@@ -52,7 +52,7 @@ void handle_fatal_fault(void) {
 }
 
 void handle_recoverable_fault(void) {
-  if (recoverable_faults.gate) {
+  if (recoverable_faults.gate || get_vcu_state() != VCU_STATE_DRIVING) {
     sendMotorOffCmdMsg();
   }
   else {

@@ -13,18 +13,4 @@ typedef uint16_t Voltage_T; // in dV
 // These are divided separately for a reason.
 #define AVG(a, b)    (a / 2 + b / 2)
 
-// #define ONEDGE(init, condition, rising, falling) ( \
-//   static last_val = (init);\
-//   bool   curr_val = (condition);\
-//   if (curr_val != last_val) {\
-//     last_val = curr_val;\
-//     if (curr_val) {\
-//       rising\
-//     }\
-//     else {\
-//       falling\
-//     }\
-//   }\
-// }
-
 #endif // ifndef __ERROR_H

@@ -30,13 +30,10 @@ void Board_GPIO_Init(void) {
 
   // SSP for LTC6804
   Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_8,
-                       (IOCON_FUNC1 | IOCON_MODE_PULLUP));                         //
-                                                                                   // MISO0
+                       (IOCON_FUNC1 | IOCON_MODE_PULLUP));                         // MISO0
   Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_9,
-                       (IOCON_FUNC1 | IOCON_MODE_PULLUP));                         //
-                                                                                   // MOSI0
-  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_6, (IOCON_FUNC2 | IOCON_MODE_INACT)); //
-                                                                                   // SCK0
+                       (IOCON_FUNC1 | IOCON_MODE_PULLUP));                         // MOSI0
+  Chip_IOCON_PinMuxSet(LPC_IOCON, IOCON_PIO0_6, (IOCON_FUNC2 | IOCON_MODE_INACT)); // SCK0
   Chip_IOCON_PinLocSel(LPC_IOCON, IOCON_SCKLOC_PIO0_6);
 
   // TODO: is the cs pin supposed to be initialized?

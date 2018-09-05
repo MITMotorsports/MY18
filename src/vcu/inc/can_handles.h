@@ -10,6 +10,7 @@
 #include "gpio.h"
 #include "extern.h"
 #include "fault_heartbeats.h"
+#include "fault_pedalbox.h"
 
 #define LIMIT(name)                                         \
   static Time_T last_sent = 0;                              \
@@ -21,6 +22,7 @@ void handleCAN(CAN_HandleTypeDef *CanHandle);
 
 void handleBrakeThrottleMsg(Frame *msg);
 void handleMCVoltageMsg(Frame *msg);
+void handleMCFaultCodesMsg(Frame *msg);
 void handleBMSHeartbeatMsg(Frame *msg);
 void handleCurrentSensorVoltageMsg(Frame *msg);
 void handleCellVoltagesMsg(Frame *msg);
@@ -28,11 +30,11 @@ void handleButtonRequest(Frame *msg);
 void handleCurrentSensor_Power(Frame *msg);
 void handleMCMotor_Position_Info(Frame *msg);
 void handleSBG_EKF_Velocity(Frame *msg);
-void handleDashControls(Frame *msg);
+void handleDashRequest(Frame *msg);
 
-void send_VCUHeartbeat();
-void send_VCUErrors();
-void send_VCU();
+void send_VCUHeartbeat(void);
+void send_VCUErrors(void);
+void send_VCU(void);
 
 void sendTorqueCmdMsg(int16_t torque);
 void sendSpeedCmdMsg(int16_t speed, int16_t torque_limit);

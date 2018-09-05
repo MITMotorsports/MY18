@@ -8,6 +8,8 @@ volatile MCReadings_T mc_readings = {};
 volatile CSReadings_T cs_readings = {};
 volatile IMUVelocity_T imu_velocity = {};
 volatile Wheel_Speeds_T wheel_speeds = {};
+volatile Cell_Readings_T cell_readings = {};
+can0_VCUControlsMonitoring_T controls_monitoring;
 
 void init_vcu_state(void) {
   // BOARD HEARTBEATS
@@ -38,6 +40,15 @@ void init_vcu_state(void) {
   buttons.RTD          = 0;
   buttons.MasterReset  = 0;
   buttons.DriverReset  = 0;
+
+  for (uint8_t i = 0; i < TEMP_LOG_LENGTH; i++) {
+    cell_readings.temp_log[i] = 0;
+  }
+
+  controls_monitoring.raw_torque = 0;
+  controls_monitoring.vl_gain = 0;
+  controls_monitoring.tl_gain = 0;
+  controls_monitoring.filtered_temp = 0;
 
   init_controls_defaults();
 
