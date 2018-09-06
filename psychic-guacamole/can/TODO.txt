@@ -1,0 +1,7 @@
+1. Create some debug infrastructure using the callbacks: Turn on LED 1 everytime CAN message is sent, LED 2 when CAN message is recieved. Keep LED 0 when no CAN errors exist (from beginning), turn LED 0 off, when CAN error is detected.
+
+2a. When a CAN message is received, print out to UART.
+
+2. Send and recieve a CAN message on two microcontrollers; when some character is pressed, send a CAN message
+
+3. Integrate with your state machine. Have one MCU run a state machine representing states of the car (https://github.com/MITEVT/opel_driver_interface/blob/master/docs/driver-interface-overview-sm.pdf), and the use the other to query the state of the state machine.
