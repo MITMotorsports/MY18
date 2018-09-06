@@ -31,14 +31,14 @@ static char uart_rx_buf[UART_RX_BUFFER_SIZE];
 #define DEBUG_ENABLE
 
 #ifdef DEBUG_ENABLE
-        # define DEBUG_Print(str) Chip_UART_SendBlocking(LPC_USART, str, \
-                                                         strlen(str))
-        # define DEBUG_Write(str, count) Chip_UART_SendBlocking(LPC_USART, \
-                                                                str,       \
-                                                                count)
+# define DEBUG_Print(str) Chip_UART_SendBlocking(LPC_USART, str, \
+                                                 strlen(str))
+# define DEBUG_Write(str, count) Chip_UART_SendBlocking(LPC_USART, \
+                                                        str,       \
+                                                        count)
 #else  /* ifdef DEBUG_ENABLE */
-        # define DEBUG_Print(str)
-        # define DEBUG_Write(str, count)
+# define DEBUG_Print(str)
+# define DEBUG_Write(str, count)
 #endif /* ifdef DEBUG_ENABLE */
 
 /*****************************************************************************

@@ -13,6 +13,11 @@ const uint32_t OscRateIn = 12000000;
 // This variable counts up the milliseconds passed since boot.
 volatile uint32_t millis = 0;
 
+// This is an interrupt handler.
+// It interrupts your code and runs once every millisecond.
+// Here it increments the millis counter.
+// Wherever you use millis, it will be up to date because the interrupt
+// always runs every millisecond, even in between user instructions.
 void SysTick_Handler(void) {
   millis++;
 }
