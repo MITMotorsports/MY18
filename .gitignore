@@ -4,6 +4,8 @@ src/**/bin
 # Annoying ropeproject
 **/.ropeproject
 
+test/**/*.png
+
 # vim
 *.swp
 
