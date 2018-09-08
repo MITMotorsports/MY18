@@ -46,12 +46,20 @@ int main(void) {
   /// CAN
   Can_Init(500000);
 
-  DEBUG_Print("Started up\n\r");
+  UART_Print("Started up!\n");
 
   LED_Init(LED0);
   LED_Init(LED1);
 
   LED_Write(LED0, true);
+
+  // Definition of frame pasted here for convenience
+  // typedef struct {
+  //   uint32_t id;
+  //   uint8_t len;
+  //   uint8_t data[8];
+  //   bool extended;
+  // } Frame;
 
   Frame rx_frame;
 
