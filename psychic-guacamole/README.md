@@ -3,7 +3,7 @@
 Here's a list of commands to get you up and running, along with some challenges to make you learn the ropes.
 
 If you're new to Unix and/or Git, you may find the following basic commands useful to navigate around.
-First, clone (download) this repository to your computer using `git clone https://github.com/MITMotorsports/MY18`. Then switch to the new-members branch using `git checkout new-members`. Plug in the development board you were given to your computer. Finally, `cd` to the respective exercise directory and run `make -j 10` to compile your code and `make flash` to upload it to the microcontroller to run!
+First, clone (download) this repository to your computer using `git clone https://github.com/MITMotorsports/MY18`. Then switch to the new-members branch using `git checkout new-members`. Plug in the development board you were given to your computer. Finally, `cd` to the respective exercise directory and run `make` to compile your code and `make writeflash` to upload it to the microcontroller to run!
 
 This [FAQ](https://github.com/MITEVT/opel_EE/wiki/FAQ-about-LPC11CXX-Microcontrollers) is also good place to read if you're confused or stuck.
 
