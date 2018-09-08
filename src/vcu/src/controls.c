@@ -37,6 +37,7 @@ void enable_controls(void) {
   enabled = true;
   torque_command = 0;
   speed_command = 0;
+  lc_state = BEFORE;
 
   unlock_brake_valve();
 }
@@ -81,7 +82,7 @@ void execute_controls(void) {
   if (torque_command == 0) {
     torque_command = regen_torque;
   } else { // Only use limits and launch control when we're not doing regen
-    // Even if we are doing launch control, calculate limits for loggind also so that we are not doing 
+    // Even if we are doing launch control, calculate limits for loggind also so that we are not doing
     // launch control when we're supposed to be limiting
 
     int32_t voltage_limited_torque = get_voltage_limited_torque(torque_command);
@@ -124,10 +125,8 @@ void execute_controls(void) {
 
     torque_command = limited_torque;
     bool torque_limited = limited_torque < controls_monitoring.raw_torque;
-  
-    if (lc_settings.using_launch_ctrl && lc_state != DONE && !torque_limited) {
-      launch_ctrl_entered = true;
 
+    if (launch_ctrl_entered = (lc_settings.using_launch_ctrl && lc_state != DONE && !torque_limited)) {
       // We shouldn't be braking in launch control, so reset regen valve
       set_brake_valve(false);
       uint32_t front_wheel_speed = get_front_wheel_speed();
@@ -144,7 +143,7 @@ void execute_controls(void) {
           }
           break;
         case SPEEDING_UP:
-          if (1000 > torque_command) sendSpeedCmdMsg(500, torque_command);
+          if (torque_command < 1000) sendSpeedCmdMsg(500, torque_command);
           else sendSpeedCmdMsg(300, 1000);
 
           // Transition
@@ -165,6 +164,7 @@ void execute_controls(void) {
             lc_state = ZERO_TORQUE;
             printf("[LAUNCH CONTROL] ZERO TORQUE STATE ENTERED\r\n");
           }
+          break;
         case ZERO_TORQUE:
           sendTorqueCmdMsg(0);
 
@@ -175,12 +175,11 @@ void execute_controls(void) {
           break;
         default:
           printf("ERROR: NO STATE!\r\n");
+          break;
       }
-    } else {
-      launch_ctrl_entered = false;
     }
   }
-  if (launch_ctrl_entered) {
+  if (!launch_ctrl_entered) {
     // In LC we already sent our command above
     sendTorqueCmdMsg(torque_command);
   }

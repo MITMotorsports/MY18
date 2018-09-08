@@ -70,8 +70,8 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleCurrentSensor_Power(&frame);
     break;
 
-  case can0_MCMotor_Position_Info:
-    handleMCMotor_Position_Info(&frame);
+  case can0_MCMotorPositionInfo:
+    handleMCMotorPositionInfo(&frame);
     break;
 
   case can0_SBG_EKF_Velocity:
@@ -86,8 +86,8 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleFrontCanNodeLeftWheelSpeed(&frame);
     break;
 
-  case can0_MCTorque_Timer_Info:
-    handleMCTorque_Timer_Info(&frame);
+  case can0_MCTorqueTimerInfo:
+    handleMCTorqueTimerInfo(&frame);
     break;
 
   case can0_DashRequest:
@@ -210,10 +210,10 @@ void handleCurrentSensor_Power(Frame *msg) {
   cs_readings.power = unpacked_msg.result;
 }
 
-void handleMCMotor_Position_Info(Frame *msg) {
-  can0_MCMotor_Position_Info_T unpacked_msg;
+void handleMCMotorPositionInfo(Frame *msg) {
+  can0_MCMotorPositionInfo_T unpacked_msg;
 
-  unpack_can0_MCMotor_Position_Info(msg, &unpacked_msg);
+  unpack_can0_MCMotorPositionInfo(msg, &unpacked_msg);
 
   mc_readings.speed = unpacked_msg.motor_speed;
 }
@@ -245,10 +245,10 @@ void handleFrontCanNodeRightWheelSpeed(Frame *msg) {
   wheel_speeds.front_right_16b_wheel_speed = unpacked_msg.right_16b;
 }
 
-void handleMCTorque_Timer_Info(Frame *msg) {
-  can0_MCTorque_Timer_Info_T unpacked_msg;
+void handleMCTorqueTimerInfo(Frame *msg) {
+  can0_MCTorqueTimerInfo_T unpacked_msg;
 
-  unpack_can0_MCTorque_Timer_Info(msg, &unpacked_msg);
+  unpack_can0_MCTorqueTimerInfo(msg, &unpacked_msg);
 
   mc_readings.torque_feedback = unpacked_msg.torque_feedback;
 }
@@ -291,17 +291,6 @@ void handleDashRequest(Frame *msg) {
   }
 
   control_settings.active_aero_enabled = unpacked_msg.active_aero_enabled;
-}
-
-void handle_DashRequestLC(Frame *msg) {
-  can0_DashRequestLC_T unpacked_msg;
-
-  unpack_can0_DashRequestLC(msg, &unpacked_msg);
-
-  if (unpacked_msg.launch_ctrl_slip_ratio != 65535) {
-    lc_settings.slip_ratio = unpacked_msg.launch_ctrl_slip_ratio;
-    lc_settings.using_launch_ctrl = unpacked_msg.using_launch_ctrl;
-  }
 }
 
 void send_VCUHeartbeat(void) {
