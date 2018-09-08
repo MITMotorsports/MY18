@@ -1,9 +1,3 @@
-/**************************
- *      UART Echo Example     *
- *      Echoes out input      *
- ***************************/
-
-
 #include "chip.h"
 
 const uint32_t OscRateIn = 0;

@@ -41,6 +41,17 @@ Very useful Git Cheat Sheet [here](https://services.github.com/on-demand/downloa
 
   If you run `make com` after you `make flash`, a serial I/O connection over UART/USB is set up with the LPC. After you run `make com`, you can't see any of the characters you type, because the chip isn't sending you any characters. Program the LPC to echo input you type back to your terminal input.
 
+  Also write a UART_Print(str) function that takes in a string and prints it to UART, as
+  well as a UART_PrintNum(num, base) function that takes in a number and base,
+  converts it to a string, and uses UART_Print to send it over UART.
+  Copy them over to the CAN Exercise.
+
 3. CAN Exercise
 
   Make two LPC microcontrollers talk to each other over CAN, a differential pair signaling system. For a brief introduction to CAN, a good start the [Wikipedia article](https://en.wikipedia.org/wiki/CAN_bus). Ask questions as necessary.
+
+  You can use Can_Init(baudrate) to initialize the CAN peripheral,
+  Can_RawRead(&frame) to read the last received message into a frame,
+  and Can_RawWrite(&frame) to write the frame onto the CAN bus.
+
+  Information on encoding and sending messages with our CANlib protocol can be found [here](https://github.com/mitmotorsports/canlib).
