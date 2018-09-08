@@ -95,7 +95,7 @@ void execute_controls(void) {
 
     uint32_t torque_temp_limited = temp_limited_torque < torque_command;
     // Whether torque is temp limited needs to be sent out over CAN so the dash knows not to allow regen
-    control_settings.torque_temp_limited = temp_limited_torque < torque_command;
+    control_settings.torque_temp_limited = torque_temp_limited;
 
     int32_t min_sensor_torque;
     if (voltage_limited_torque < temp_limited_torque) {
@@ -133,8 +133,9 @@ void execute_controls(void) {
           }
           break;
         case SPEEDING_UP:
-          if (torque_command < 1000) sendSpeedCmdMsg(500, torque_command);
-          else sendSpeedCmdMsg(300, 1000);
+          // Command max(torque_command, LC_SPEEDING_UP_TORQUE)
+          if (torque_command < LC_SPEEDING_UP_TORQUE) sendSpeedCmdMsg(LC_SPEEDING_UP_SPEED, torque_command);
+          else sendSpeedCmdMsg(LC_SPEEDING_UP_SPEED, LC_SPEEDING_UP_TORQUE);
 
           // Transition
           if (any_lc_faults()) {
@@ -218,7 +219,7 @@ static int32_t get_launch_control_speed(uint32_t front_wheel_speed) {
 uint32_t front_wheel_speedRPM = front_wheel_speed / 1000;
   // Divide 100 because slip ratio is times 100, divide by 100 again because
   // gear ratio is also multiplied by 100
-  int32_t target_speed = front_wheel_speedRPM * lc_settings.slip_ratio * LC_cGR / (100 * 100);
+  int32_t target_speed = front_wheel_speedRPM * lc_settings.slip_ratio * LC_GR / (100 * 100);
   return target_speed;
 }
 
@@ -245,7 +246,7 @@ static uint32_t get_front_wheel_speed() {
   return avg_wheel_speed;
 }
 
-static bool any_lc_faults() {
+static bool any_lc_faults(void) {
   if (pedalbox_min(accel) < LC_ACCEL_BEGIN) {
     printf("[LAUNCH CONTROL ERROR] Accel min (%d) too low\r\n", pedalbox_min(accel));
     return true;
@@ -261,7 +262,11 @@ static bool any_lc_faults() {
     return false;
 }
 
-void set_lc_zero_torque() {
+void set_lc_state_before(void) {
+  lc_state = BEFORE;
+}
+
+void set_lc_zero_torque(void) {
   lc_state = ZERO_TORQUE;
 }
 
