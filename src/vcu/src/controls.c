@@ -122,6 +122,10 @@ void execute_controls(void) {
       uint32_t front_wheel_speed = get_front_wheel_speed();
 
       // Mini FSM
+      if (any_lc_faults() && lc_state != DONE && lc_state != BEFORE) {
+            lc_state = ZERO_TORQUE;
+            printf("[LAUNCH CONTROL] ZERO TORQUE STATE ENTERED\r\n");
+      }
       switch (lc_state) {
         case BEFORE:
           sendSpeedCmdMsg(0, 0);
@@ -138,10 +142,7 @@ void execute_controls(void) {
           else sendSpeedCmdMsg(LC_SPEEDING_UP_SPEED, LC_SPEEDING_UP_TORQUE);
 
           // Transition
-          if (any_lc_faults()) {
-            lc_state = ZERO_TORQUE;
-            printf("[LAUNCH CONTROL] ZERO TORQUE STATE ENTERED\r\n");
-          } else if (front_wheel_speed > LC_WS_THRESH) {
+          if (front_wheel_speed > LC_WS_THRESH) {
             lc_state = SPEED_CONTROLLER;
             printf("[LAUNCH CONTROL] SPEED CONTROLLER STATE ENTERED\r\n");
           }
@@ -149,12 +150,6 @@ void execute_controls(void) {
         case SPEED_CONTROLLER:
           speed_command = get_launch_control_speed(front_wheel_speed);
           sendSpeedCmdMsg(speed_command, torque_command);
-
-          // Transition
-          if (any_lc_faults()) {
-            lc_state = ZERO_TORQUE;
-            printf("[LAUNCH CONTROL] ZERO TORQUE STATE ENTERED\r\n");
-          }
           break;
         case ZERO_TORQUE:
           sendTorqueCmdMsg(0);
