@@ -1,8 +1,14 @@
 # Explicitly get rid of bin folders
 src/**/bin
 
+# Removes png files which cause problems with git always
+# wanting to call them unstaged changes b/c of permissions
+test/**/*.png
+
 # Annoying ropeproject
 **/.ropeproject
+
+test/**/*.png
 
 # vim
 *.swp

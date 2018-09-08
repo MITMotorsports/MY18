@@ -14,6 +14,15 @@
 #define MAX_ACCEL_VAL 1000
 #define MIN_ACCEL_VAL 0
 
+// Launch control contants
+// After wheel speed crosses this threshold, start using slip controller
+#define LC_WS_THRESH 45000
+#define LC_cGR 347 // Gear ratio times 100
+#define LC_ACCEL_BEGIN 950 // 95%
+#define LC_ACCEL_RELEASE 50 // 5%
+#define LC_BRAKE_BEGIN 100 // We want a lower threshold
+#define LC_BACKWARDS_CUTOFF 10
+
 // RG = regen
 #define RG_MOTOR_SPEED_THRESH 250            // RPM
 #define RG_CAR_SPEED_THRESH 5                // kph
@@ -31,6 +40,14 @@
 #define FRONT_BRAKE brake_1
 #define REAR_BRAKE brake_2
 
+typedef enum {
+  BEFORE,
+  SPEEDING_UP,
+  SPEED_CONTROLLER,
+  ZERO_TORQUE,
+  DONE,
+} Launch_Control_State_T;
+
 // TL = temp limiting
 #define MAX_TEMP 5800 // centiCelsius
 
@@ -40,11 +57,14 @@
 #define TEMP_LOG_LENGTH 200
 
 extern can0_VCUControlsParams_T control_settings;
+extern can0_VCUParamsLC_T lc_settings;
 
 // INTERACTION FUNCTIONS
 void enable_controls(void);
 void disable_controls(void);
 bool get_controls_enabled(void);
 void execute_controls(void);
+void set_lc_done(void);
+void set_lc_state_before(void);
 
 #endif // ifndef __TORQUE_CALC
