@@ -4,11 +4,11 @@ units:
   - tick = 3 ms
   - RPM = 360 deg / min
 archs:
-  - avr
-  - arm
+  - lpc11cx4
+  - stm32f205
 boards:
   can_node:
-    arch: arm
+    arch: lpc11cx4
     publish:
       can0:
         - FrontCanNodeBrakeThrottle
@@ -18,7 +18,7 @@ boards:
       can0:
         - VCUHeartbeat
   vcu:
-    arch: avr
+    arch: stm32f205
     publish:
       can0:
         - VCUHeartbeat
@@ -31,7 +31,7 @@ boards:
         - FrontCanNodeBrakeThrottle
         - MCVoltage
   dash:
-    arch: arm
+    arch: lpc11cx4
     publish:
       can0:
         - DashRequest
@@ -41,7 +41,7 @@ boards:
         - BMSHeartbeat
         - FrontCanNodeBrakeThrottle
   bms:
-    arch: arm
+    arch: lpc11cx4
     publish:
       can0:
         - BMSHeartbeat
@@ -49,12 +49,12 @@ boards:
         - CellTemperatureRange
         - CellTemperatureVariance
   button_bank:
-    arch: arm
+    arch: lpc11cx4
     publish:
       can0:
         - ButtonRequest
   sensor_node:
-    arch: arm
+    arch: lpc11cx4
     publish:
       can0:
         - ADC_Data1
@@ -78,8 +78,7 @@ boards:
         - CurrentSensor_Power
     subscribe:
       can0:
-        - Current_Sensor_Config
-
+        - CurrentSensor_Config
 buses:
   can0:
     baudrate: 500000
@@ -94,22 +93,18 @@ buses:
             position: 0
             length: 16
             c_type: uint16_t
-            signed: false
           accel_2:
             position: 16
             length: 16
             c_type: uint16_t
-            signed: false
           brake_1:
             position: 32
             length: 10
             c_type: uint16_t
-            signed: false
           brake_2:
             position: 42
             length: 10
             c_type: uint16_t
-            signed: false
           accel_1_under:
             position: 52
             length: 1
@@ -152,14 +147,12 @@ buses:
             position: 0
             length: 32
             c_type: uint32_t
-            signed: false
             unit: mRPM
           # Wheel speed from 16-bit timer (accurate only at high speeds)
           left_16b:
             position: 32
             length: 32
             c_type: uint32_t
-            signed: false
             unit: mRPM
       FrontCanNodeRightWheelSpeed:
         can_id: 0x0E1
@@ -171,14 +164,12 @@ buses:
             position: 0
             length: 32
             c_type: uint32_t
-            signed: false
             unit: mRPM
           # Wheel speed from 16-bit timer (accurate only at high speeds)
           right_16b:
             position: 32
             length: 32
             c_type: uint32_t
-            signed: false
             unit: mRPM
       SensorNodeWheelSpeed:
         can_id: 0x0E2
@@ -189,13 +180,11 @@ buses:
             position: 0
             length: 32
             c_type: uint32_t
-            signed: false
             unit: mRPM
           right_32b:
             position: 32
             length: 32
             c_type: uint32_t
-            signed: false
             unit: mRPM
       CellTemperatureRange:
         can_id: 0x016
@@ -206,40 +195,33 @@ buses:
             position: 0
             length: 10
             c_type: int16_t
-            signed: true
             unit: decidegC
           argmin:
             position: 10
             length: 8
             c_type: uint8_t
-            signed: false
           max0:
             position: 18
             length: 10
             c_type: int16_t
-            signed: true
             unit: decidegC
           argmax0:
             position: 28
             length: 8
             c_type: uint8_t
-            signed: false
           max1:
             position: 36
             length: 10
             c_type: int16_t
-            signed: true
             unit: decidegC
           argmax1:
             position: 46
             length: 8
             c_type: uint8_t
-            signed: false
           max2:
             position: 54
             length: 10
             c_type: int16_t
-            signed: true
             unit: decidegC
       CellTemperatureVariance:
         can_id: 0x0F0
@@ -250,13 +232,11 @@ buses:
             position: 0
             length: 10
             c_type: int16_t
-            signed: true
             unit: decidegC
           variance:
             position: 10
             length: 16
             c_type: uint16_t
-            signed: false
             unit: decidegC ** 2
       CellVoltageRange:
         can_id: 0x017
@@ -267,19 +247,16 @@ buses:
             position: 0
             length: 14
             c_type: uint16_t
-            signed: false
             unit: mV
           max:
             position: 14
             length: 14
             c_type: uint16_t
-            signed: false
             unit: mV
           sum:
             position: 28
             length: 32
             c_type: uint32_t
-            signed: false
             unit: mV
       BMSHeartbeat:
         can_id: 0x0DF
@@ -451,11 +428,34 @@ buses:
         period: 0.05s
         is_big_endian: true
         segments:
+          mux_id:
+            position: 0
+            length: 8
+            c_type: uint8_t
+          msg_count:
+            position: 8
+            length: 4
+            c_type: uint8_t
+          over_current_signal:
+            position: 12
+            length: 1
+            c_type: bool
+          channel_error:
+            position: 13
+            length: 1
+            c_type: bool
+          measurement_error:
+            position: 14
+            length: 1
+            c_type: bool
+          system_error:
+            position: 15
+            length: 1
+            c_type: bool
           result:
             position: 16
             length: 32
             c_type: int32_t
-            signed: true
             unit: mA
       CurrentSensor_Voltage1:
         can_id: 0x522
@@ -466,12 +466,10 @@ buses:
             position: 0
             length: 8
             c_type: uint8_t
-            signed: false
           msg_count:
             position: 8
             length: 4
             c_type: uint8_t
-            signed: false
           over_current_signal:
             position: 12
             length: 1
@@ -492,7 +490,6 @@ buses:
             position: 16
             length: 32
             c_type: int32_t
-            signed: true
             unit: mV
       CurrentSensor_Voltage2:
         can_id: 0x523
@@ -503,12 +500,10 @@ buses:
             position: 0
             length: 8
             c_type: uint8_t
-            signed: false
           msg_count:
             position: 8
             length: 4
             c_type: uint8_t
-            signed: false
           over_current_signal:
             position: 12
             length: 1
@@ -529,7 +524,6 @@ buses:
             position: 16
             length: 32
             c_type: int32_t
-            signed: true
             unit: mV
       CurrentSensor_Voltage3:
         can_id: 0x524
@@ -540,12 +534,10 @@ buses:
             position: 0
             length: 8
             c_type: uint8_t
-            signed: false
           msg_count:
             position: 8
             length: 4
             c_type: uint8_t
-            signed: false
           over_current_signal:
             position: 12
             length: 1
@@ -566,7 +558,6 @@ buses:
             position: 16
             length: 32
             c_type: int32_t
-            signed: true
             unit: mV
       CurrentSensor_Power:
         can_id: 0x526
@@ -577,12 +568,10 @@ buses:
             position: 0
             length: 8
             c_type: uint8_t
-            signed: false
           msg_count:
             position: 8
             length: 4
             c_type: uint8_t
-            signed: false
           over_current_signal:
             position: 12
             length: 1
@@ -603,18 +592,40 @@ buses:
             position: 16
             length: 32
             c_type: int32_t
-            signed: true
             unit: W
       CurrentSensor_Energy:
         can_id: 0x528
         period: 50ms
         is_big_endian: true
         segments:
-          energy:
+          mux_id:
+            position: 0
+            length: 8
+            c_type: uint8_t
+          msg_count:
+            position: 8
+            length: 4
+            c_type: uint8_t
+          over_current_signal:
+            position: 12
+            length: 1
+            c_type: bool
+          channel_error:
+            position: 13
+            length: 1
+            c_type: bool
+          measurement_error:
+            position: 14
+            length: 1
+            c_type: bool
+          system_error:
+            position: 15
+            length: 1
+            c_type: bool
+          result:
             position: 16
             length: 32
             c_type: int32_t
-            signed: false
             unit: Wh
       DashRequest:
         can_id: 0x0D2
@@ -637,32 +648,26 @@ buses:
             position: 3
             length: 8
             c_type: uint8_t
-            signed: false
           limp_factor: # Ranges from 0 to 100
             position: 11
             length: 8
             c_type: uint8_t
-            signed: false
           temp_lim_min_gain:
             position: 19
             length: 8
             c_type: uint8_t
-            signed: false
           temp_lim_thresh_temp:
             position: 27
             length: 8
             c_type: uint8_t
-            signed: false
           volt_lim_min_gain:
             position: 35
             length: 8
             c_type: uint8_t
-            signed: false
           volt_lim_min_voltage:
             position: 43
             length: 16
             c_type: uint16_t
-            signed: false
           active_aero_enabled:
             position: 59
             length: 1
@@ -705,32 +710,26 @@ buses:
             position: 3
             length: 8
             c_type: uint8_t
-            signed: false
           limp_factor: # Ranges from 0 to 100
             position: 11
             length: 8
             c_type: uint8_t
-            signed: false
           temp_lim_min_gain:
             position: 19
             length: 8
             c_type: uint8_t
-            signed: false
           temp_lim_thresh_temp:
             position: 27
             length: 8
             c_type: uint8_t
-            signed: false
           volt_lim_min_gain:
             position: 35
             length: 8
             c_type: uint8_t
-            signed: false
           volt_lim_min_voltage:
             position: 43
             length: 16
             c_type: uint16_t
-            signed: false
           active_aero_enabled:
             position: 59
             length: 1
@@ -781,22 +780,18 @@ buses:
           shockpot:
             position: 0
             length: 16
-            signed: false
             c_type: uint16_t
           load_cell:
             position: 16
             length: 16
-            signed: false
             c_type: uint16_t
           ext_adc_ch2:
             position: 32
             length: 16
-            signed: false
             c_type: uint16_t
           ext_adc_ch3:
             position: 48
             length: 16
-            signed: false
             c_type: uint16_t
       ADC_Data2:
         can_id: 0xDB
@@ -806,22 +801,18 @@ buses:
           ext_adc_ch4:
             position: 0
             length: 16
-            signed: false
             c_type: uint16_t
           ext_adc_ch5:
             position: 16
             length: 16
-            signed: false
             c_type: uint16_t
           ext_adc_ch6:
             position: 32
             length: 16
-            signed: false
             c_type: uint16_t
           ext_adc_ch7:
             position: 48
             length: 16
-            signed: false
             c_type: uint16_t
       ADC_Data3:
         can_id: 0xDD
@@ -831,22 +822,18 @@ buses:
           int_adc_ch2:
             position: 0
             length: 16
-            signed: false
             c_type: uint16_t
           int_adc_ch3:
             position: 16
             length: 16
-            signed: false
             c_type: uint16_t
           int_adc_ch4:
             position: 32
             length: 16
-            signed: false
             c_type: uint16_t
           int_adc_ch5:
             position: 48
             length: 16
-            signed: false
             c_type: uint16_t
       MCCommand:
         can_id: 0x0C0 # From manual
@@ -857,13 +844,11 @@ buses:
             position: 0
             length: 16
             c_type: int16_t
-            signed: true
             unit: dNm
           angular_vel:
             position: 16
             length: 16
             c_type: int16_t
-            signed: signed
             unit: RPM
           direction_is_counterclockwise: # when viewed from shaft end of motor
             position: 39
@@ -894,13 +879,11 @@ buses:
             position: 0
             length: 16
             c_type: int16_t
-            signed: true
             unit: dNm
           write:  # make an enum {read, write}
             position: 23
             length: 1
             c_type: bool
-            signed: signed
             unit: RPM
           data:
             position: 32
@@ -915,27 +898,23 @@ buses:
             position: 0
             length: 16
             unit: dV
-            signed: true
             c_type: int16_t
           out:
             position: 16
             length: 16
             unit: dV
-            signed: true
             c_type: int16_t
           VAB_Vd:
             position: 32
             length: 16
             unit: dV
-            signed: true
             c_type: int16_t
           VBC_Vq:
             position: 48
             length: 16
             unit: dV
-            signed: true
             c_type: int16_t
-      MCMotor_Position_Info:
+      MCMotorPositionInfo:
         can_id: 0x0A5
         period: 0.01s
         is_big_endian: false
@@ -943,28 +922,24 @@ buses:
           motor_angle:
             position: 0
             length: 16
-            signed: true
             c_type: int16_t
             unit: decideg
           motor_speed:
             position: 16
             length: 16
-            signed: true
             c_type: int16_t
             unit: RPM
           electrical_output_freq:
             position: 32
             length: 16
-            signed: true
             c_type: int16_t
             unit: dHz
           delta_resolved_filter:
             position: 48
             length: 16
-            signed: true
             c_type: int16_t
             unit: decideg
-      MCFlux_Info:
+      MCFluxInfo:
         can_id: 0x0A8
         period: 0.01s
         is_big_endian: false
@@ -972,25 +947,21 @@ buses:
           flux_command:
             position: 0
             length: 16
-            signed: true
             c_type: int16_t
             unit: mWb
           flux_feedback:
             position: 16
             length: 16
-            signed: true
             c_type: int16_t
             unit: mWb
           Iq_feedback:
             position: 32
             length: 16
-            signed: true
             c_type: int16_t
             unit: dA
           Id_feedback:
             position: 48
             length: 16
-            signed: true
             c_type: int16_t
             unit: dA
       MCFaultCodes:
@@ -1213,7 +1184,7 @@ buses:
             position: 63
             length: 1
             c_type: bool
-      MCTorque_Timer_Info:
+      MCTorqueTimerInfo:
         can_id: 0x0AC
         period: 0.01s
         is_big_endian: false
@@ -1221,22 +1192,19 @@ buses:
           commanded_torque:
             position: 0
             length: 16
-            signed: true
             c_type: int16_t
             unit: dNm
           torque_feedback:
             position: 16
             length: 16
-            signed: true
             c_type: int16_t
             unit: dNm
           power_on_timer:
             position: 32
             length: 32
-            signed: true
             c_type: uint32_t
             unit: tick
-      MCModulation_Indx_Flux_Weakening_Info:
+      MCModulationIndxFluxWeakeningInfo:
         can_id: 0x0AD
         period: 0.01s
         is_big_endian: false
@@ -1244,71 +1212,59 @@ buses:
           modulation_index:
             position: 0
             length: 16
-            signed: false # Not actually sure
             c_type: uint16_t
           flux_weakening_output:
             position: 16
             length: 16
-            signed: true
             c_type: int16_t
             unit: dA
           Id_command:
             position: 32
             length: 16
-            signed: true
             c_type: int16_t
             unit: dA
           Iq_command:
             position: 48
             length: 16
-            signed: true
             c_type: int16_t
             unit: dA
-      Current_Sensor_Config:
+      CurrentSensor_Config:
         can_id: 0x411
         is_big_endian: true
         segments:
           muxbyte:
             position: 0
             length: 8
-            signed: false
             c_type: uint8_t
           db1:
             position: 8
             length: 8
-            signed: false
             c_type: uint8_t
           db2:
             position: 16
             length: 8
-            signed: false
             c_type: uint8_t
           db3:
             position: 24
             length: 8
-            signed: false
             c_type: uint8_t
           db4:
             position: 32
             length: 8
-            signed: false
             c_type: uint8_t
           db5:
             position: 40
             length: 8
-            signed: false
             c_type: uint8_t
           db6:
             position: 48
             length: 8
-            signed: false
             c_type: uint8_t
           db7:
             position: 56
             length: 8
-            signed: false
             c_type: uint8_t
-      MCTemperature1:
+      MCTemperature:
         can_id: 0x0A0
         is_big_endian: false
         segments:
@@ -1316,27 +1272,23 @@ buses:
             position: 0
             length: 16
             unit: decidegC
-            signed: true
             c_type: int16_t
           module_b_temp:
             position: 16
             length: 16
             unit: decidegC
-            signed: true
             c_type: int16_t
           module_c_temp:
             position: 32
             length: 16
             unit: decidegC
-            signed: true
             c_type: int16_t
           gate_driver_temp:
             position: 48
             length: 16
             unit: decidegC
-            signed: true
             c_type: int16_t
-      SBG_EKF_VelocityAcceleration:
+      SBG_EKF_Velocity_ACC:
         can_id: 312
         is_big_endian: false
         segments:
@@ -1344,14 +1296,17 @@ buses:
             position: 0
             length: 16
             c_type: int16_t
+            unit: cm / s
           east:
             position: 16
             length: 16
             c_type: int16_t
+            unit: cm / s
           down:
             position: 32
             length: 16
             c_type: int16_t
+            unit: cm / s
       SBG_EKF_Velocity:
         can_id: 311
         is_big_endian: false
@@ -1360,15 +1315,18 @@ buses:
             position: 0
             length: 16
             c_type: int16_t
+            unit: cm / s
           east:
             position: 16
             length: 16
             c_type: int16_t
+            unit: cm / s
           down:
             position: 32
             length: 16
             c_type: int16_t
-      SBG_EKF_PositionAcceleration:
+            unit: cm / s
+      SBG_EKF_Position_ACC:
         can_id: 310
         is_big_endian: false
         segments:
@@ -1376,14 +1334,17 @@ buses:
             position: 0
             length: 16
             c_type: uint16_t
+            unit: cm
           longitude:
             position: 16
             length: 16
             c_type: uint16_t
+            unit: cm
           altitude:
             position: 32
             length: 16
             c_type: uint16_t
+            unit: cm
       SBG_EKF_Position:
         can_id: 308
         is_big_endian: false
@@ -1392,11 +1353,27 @@ buses:
             position: 0
             length: 32
             c_type: int32_t
+            unit: 1e-7 deg
           longitude:
             position: 32
             length: 32
             c_type: int32_t
-      SBG_EKF_OrientationAcceleration:
+            unit: 1e-7 deg
+      SBG_EKF_Altitude:
+        can_id: 309
+        is_big_endian: false
+        segments:
+          altitude:
+            position: 0
+            length: 32
+            c_type: int32_t
+            unit: mm
+          undulation:
+            position: 32
+            length: 16
+            c_type: int16_t
+            unit: 5 mm
+      SBG_EKF_Orientation_ACC:
         can_id: 307
         is_big_endian: false
         segments:
@@ -1404,18 +1381,37 @@ buses:
             position: 0
             length: 16
             c_type: uint16_t
-            unit: rad
+            unit: 0.1 mrad
           roll:
             position: 16
             length: 16
             c_type: uint16_t
-            unit: rad
+            unit: 0.1 mrad
           yaw:
             position: 32
             length: 16
             c_type: uint16_t
-            unit: rad
-      SBG_EKF_Quaternions:
+            unit: 0.1 mrad
+      SBG_EKF_Euler:
+        can_id: 306
+        is_big_endian: false
+        segments:
+          roll:
+            position: 0
+            length: 16
+            c_type: int16_t
+            unit: 0.1 mrad
+          pitch:
+            position: 16
+            length: 16
+            c_type: int16_t
+            unit: 0.1 mrad
+          yaw:
+            position: 32
+            length: 16
+            c_type: int16_t
+            unit: 0.1 mrad
+      SBG_EKF_Quaternion:
         can_id: 305
         is_big_endian: false
         segments:
@@ -1423,18 +1419,22 @@ buses:
             position: 0
             length: 16
             c_type: int16_t
+            unit: 3.0517578125e-5
           q1:
             position: 16
             length: 16
             c_type: int16_t
+            unit: 3.0517578125e-5
           q2:
             position: 32
             length: 16
             c_type: int16_t
+            unit: 3.0517578125e-5
           q3:
             position: 48
             length: 16
             c_type: int16_t
+            unit: 3.0517578125e-5
       SBG_IMU_DeltaAngle:
         can_id: 292
         is_big_endian: false
@@ -1443,14 +1443,17 @@ buses:
             position: 0
             length: 16
             c_type: int16_t
+            unit: mrad / s
           y:
             position: 16
             length: 16
             c_type: int16_t
+            unit: mrad / s
           z:
             position: 32
             length: 16
             c_type: int16_t
+            unit: mrad / s
       SBG_IMU_DeltaVelocity:
         can_id: 291
         is_big_endian: false
@@ -1459,14 +1462,17 @@ buses:
             position: 0
             length: 16
             c_type: int16_t
+            unit: cm / (s ** 2)
           y:
             position: 16
             length: 16
             c_type: int16_t
+            unit: cm / (s ** 2)
           z:
             position: 32
             length: 16
             c_type: int16_t
+            unit: cm / (s ** 2)
       SBG_IMU_Gyroscope:
         can_id: 290
         is_big_endian: false
@@ -1475,14 +1481,17 @@ buses:
             position: 0
             length: 16
             c_type: int16_t
+            unit: mrad / s
           y:
             position: 16
             length: 16
             c_type: int16_t
+            unit: mrad / s
           z:
             position: 32
             length: 16
             c_type: int16_t
+            unit: mrad / s
       SBG_IMU_Accelerometer:
         can_id: 289
         is_big_endian: false
@@ -1491,14 +1500,31 @@ buses:
             position: 0
             length: 16
             c_type: int16_t
+            unit: cm / (s ** 2)
           y:
             position: 16
             length: 16
             c_type: int16_t
+            unit: cm / (s ** 2)
           z:
             position: 32
             length: 16
             c_type: int16_t
+            unit: cm / (s ** 2)
+      SBG_LOG_UTC:
+        can_id: 272
+        is_big_endian: false
+        segments:
+          timestamp:
+            position: 0
+            length: 32
+            c_type: uint32_t
+            unit: ms
+          timeofweek:
+            position: 32
+            length: 32
+            c_type: uint32_t
+            unit: ms
       VCUControlsMonitoring:
         can_id: 0x600
         is_big_endian: true
@@ -1508,26 +1534,21 @@ buses:
             position: 0
             length: 16
             c_type: int16_t
-            signed: true
           vl_gain:
             position: 16
             length: 8
             c_type: uint8_t
-            signed: false
           tl_gain:
             position: 24
             length: 8
             c_type: uint8_t
-            signed: false
           filtered_temp:
             unit: centidegC
             position: 32
             length: 16
             c_type: uint16_t
-            signed: false
           voltage_used:
             unit: cV
             position: 48
             length: 16
             c_type: int16_t
-            signed: true
