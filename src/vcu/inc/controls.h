@@ -14,7 +14,7 @@
 #define MAX_ACCEL_VAL 1000
 #define MIN_ACCEL_VAL 0
 
-// Launch control contants
+// Launch control constants
 // After wheel speed crosses this threshold, start using slip controller
 #define LC_WS_THRESH 45000
 #define LC_cGR 347 // Gear ratio times 100
@@ -22,6 +22,7 @@
 #define LC_ACCEL_RELEASE 50 // 5%
 #define LC_BRAKE_BEGIN 100 // We want a lower threshold
 #define LC_BACKWARDS_CUTOFF 10
+#define LC_DEFAULT_SLIP_RATIO 112
 
 // RG = regen
 #define RG_MOTOR_SPEED_THRESH 250            // RPM
@@ -64,7 +65,6 @@ void enable_controls(void);
 void disable_controls(void);
 bool get_controls_enabled(void);
 void execute_controls(void);
-void set_lc_done(void);
-void set_lc_state_before(void);
+void set_lc_zero_torque(void);
 
 #endif // ifndef __TORQUE_CALC

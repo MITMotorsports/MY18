@@ -30,7 +30,7 @@ void init_controls_defaults(void) {
   control_settings.torque_temp_limited = false;
 
   lc_settings.using_launch_ctrl = false;
-  lc_settings.slip_ratio = 112;
+  lc_settings.slip_ratio = LC_DEFAULT_SLIP_RATIO;
 }
 
 void enable_controls(void) {
@@ -82,25 +82,15 @@ void execute_controls(void) {
   if (torque_command == 0) {
     torque_command = regen_torque;
   } else { // Only use limits and launch control when we're not doing regen
-    // Even if we are doing launch control, calculate limits for loggind also so that we are not doing
+    // Even if we are doing launch control, calculate limits for logging also so that we are not doing
     // launch control when we're supposed to be limiting
 
     int32_t voltage_limited_torque = get_voltage_limited_torque(torque_command);
-    // static uint32_t last_vt = 0;
-    // if (HAL_GetTick() - last_vt > 10) {
-    //   printf("VT: %d\r\n", voltage_limited_torque);
-    //
-    //   last_vt = HAL_GetTick();
-    // }
+   
     if (!control_settings.using_voltage_limiting) voltage_limited_torque = torque_command;
 
     int32_t temp_limited_torque = get_temp_limited_torque(torque_command);
-    // static uint32_t last_tt = 0;
-    // if (HAL_GetTick() - last_tt > 10) {
-    //   printf("TT: %d\r\n", temp_limited_torque);
-    //
-    //   last_tt = HAL_GetTick();
-    // }
+
     if (!control_settings.using_temp_limiting) temp_limited_torque = torque_command;
 
     uint32_t torque_temp_limited = temp_limited_torque < torque_command;
@@ -174,6 +164,8 @@ void execute_controls(void) {
           }
           break;
         default:
+          sendTorqueCmdMsg(0);
+
           printf("ERROR: NO STATE!\r\n");
           break;
       }
@@ -258,6 +250,8 @@ static bool any_lc_faults() {
     printf("[LAUNCH CONTROL ERROR] Accel min (%d) too low\r\n", pedalbox_min(accel));
     return true;
   } else if (pedalbox.brake_2 > LC_BRAKE_BEGIN) {
+    // In this test, we only need to check brake_2 because it is the only brake line
+    // that is indicative of driver braking intent. The other brake is for regen.
     printf("[LAUNCH CONTROL ERROR] Brake min (%d) too low\r\n", pedalbox.brake_2);
     return true;
   } else if (mc_readings.speed > LC_BACKWARDS_CUTOFF) {
@@ -265,10 +259,6 @@ static bool any_lc_faults() {
     return true;
   }
     return false;
-}
-
-void set_lc_state_before() {
-  lc_state = BEFORE;
 }
 
 void set_lc_zero_torque() {
@@ -288,13 +278,6 @@ static int32_t get_temp_limited_torque(int32_t pedal_torque) {
   // Thresh was in degrees, so multiply it by 100
   int32_t thresh_cC = control_settings.temp_lim_thresh_temp * 100;
 
-  // static uint32_t lastt = 0;
-  // if (HAL_GetTick() - lastt > 100) {
-  //   printf("Filtered Temp: %d\tTemp threshold: %d\r\n", temp_cC, thresh_cC);
-  //
-  //   lastt = HAL_GetTick();
-  // }
-
   int32_t gain = hinge_limiter(temp_cC, control_settings.temp_lim_min_gain, thresh_cC, MAX_TEMP);
   controls_monitoring.tl_gain = gain;
 
@@ -307,13 +290,6 @@ static int32_t get_voltage_limited_torque(int32_t pedal_torque) {
   // (cs_readings.V_bus/72)/10 - 1/10 = (cs_readings.V_bus - 72)/720
   int32_t cell_voltage = (cs_readings.V_bus - 72) / 720;
   controls_monitoring.voltage_used = cell_voltage;
-
-  // static uint32_t lastt = 0;
-  // if (HAL_GetTick() - lastt > 100) {
-  //   printf("Voltage: %d\tVoltage threshold: %d\r\n", cell_voltage, control_settings.volt_lim_min_voltage);
-  //
-  //   lastt = HAL_GetTick();
-  // }
 
   int32_t gain = hinge_limiter(cell_voltage, control_settings.volt_lim_min_gain, control_settings.volt_lim_min_voltage, MIN_VOLTAGE);
 
