@@ -16,15 +16,15 @@
 
 // Launch control constants
 // After wheel speed crosses this threshold, start using slip controller
-#define LC_WS_THRESH 45000
+#define LC_DEFAULT_WS_THRESH 45 // rpm
 #define LC_GR 347 // Gear ratio times 100
 #define LC_ACCEL_BEGIN 950 // 95%
 #define LC_ACCEL_RELEASE 50 // 5%
 #define LC_BRAKE_BEGIN 100 // We want a lower threshold than normal to make it super easy to exit LC
 #define LC_BACKWARDS_CUTOFF 10
 #define LC_DEFAULT_SLIP_RATIO 112
-#define LC_SPEEDING_UP_TORQUE 1000
-#define LC_SPEEDING_UP_SPEED 500
+#define LC_DEFAULT_SPEEDING_UP_TORQUE 1000
+#define LC_DEFAULT_SPEEDING_UP_SPEED 500
 
 // RG = regen
 #define RG_MOTOR_SPEED_THRESH 250            // RPM

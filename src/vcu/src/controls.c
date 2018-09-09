@@ -7,7 +7,7 @@ can0_VCUControlsParams_T control_settings = {};
 can0_VCUControlsParamsLC_T lc_settings = {};
 static Launch_Control_State_T lc_state = BEFORE;
 
-static uint32_t get_front_wheel_speed(void);
+uint32_t get_front_wheel_speed(void);
 static bool any_lc_faults();
 
 static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
@@ -31,9 +31,9 @@ void init_controls_defaults(void) {
 
   lc_settings.using_launch_ctrl = false;
   lc_settings.launch_ctrl_slip_ratio = LC_DEFAULT_SLIP_RATIO;
-  lc_settings.speeding_up_torque = 1000;
-  lc_settings.speeding_up_speed = 2000;
-  lc_settings.ws_thresh = 300;
+  lc_settings.speeding_up_torque = LC_DEFAULT_SPEEDING_UP_TORQUE;
+  lc_settings.speeding_up_speed = LC_DEFAULT_SPEEDING_UP_SPEED;
+  lc_settings.ws_thresh = LC_DEFAULT_WS_THRESH;
 }
 
 void enable_controls(void) {
@@ -140,12 +140,12 @@ void execute_controls(void) {
           }
           break;
         case SPEEDING_UP:
-          // Command max(torque_command, LC_SPEEDING_UP_TORQUE)
-          if (torque_command < LC_SPEEDING_UP_TORQUE) sendSpeedCmdMsg(LC_SPEEDING_UP_SPEED, torque_command);
-          else sendSpeedCmdMsg(LC_SPEEDING_UP_SPEED, LC_SPEEDING_UP_TORQUE);
+          // Command max(torque_command, lc_settings.speeding_up_torque)
+          if (torque_command < lc_settings.speeding_up_torque) sendSpeedCmdMsg(lc_settings.speeding_up_speed, torque_command);
+          else sendSpeedCmdMsg(lc_settings.speeding_up_speed, lc_settings.speeding_up_torque);
 
           // Transition
-          if (front_wheel_speed > LC_WS_THRESH) {
+          if (front_wheel_speed > lc_settings.ws_thresh * 1000) { // 
             lc_state = SPEED_CONTROLLER;
             printf("[LAUNCH CONTROL] SPEED CONTROLLER STATE ENTERED\r\n");
           }
@@ -221,7 +221,7 @@ uint32_t front_wheel_speedRPM = front_wheel_speed / 1000;
   return target_speed;
 }
 
-static uint32_t get_front_wheel_speed() {
+uint32_t get_front_wheel_speed() {
   uint32_t left_front_speed;
   uint32_t right_front_speed;
 
@@ -241,7 +241,7 @@ static uint32_t get_front_wheel_speed() {
   }
 
   uint32_t avg_wheel_speed = left_front_speed/2 + right_front_speed/2;
-  return avg_wheel_speed;
+  return left_front_speed;
 }
 
 static bool any_lc_faults(void) {
@@ -251,7 +251,7 @@ static bool any_lc_faults(void) {
   } else if (pedalbox.brake_2 > LC_BRAKE_BEGIN) {
     // In this test, we only need to check brake_2 because it is the only brake line
     // that is indicative of driver braking intent. The other brake is for regen.
-    printf("[LAUNCH CONTROL ERROR] Brake min (%d) too low\r\n", pedalbox.brake_2);
+    printf("[LAUNCH CONTROL ERROR] Brake (%d) too high\r\n", pedalbox.brake_2);
     return true;
   } else if (mc_readings.speed > LC_BACKWARDS_CUTOFF) {
     printf("[LAUNCH CONTROL ERROR] MC reading (%d) is great than cutoff (%d)\r\n", mc_readings.speed, LC_BACKWARDS_CUTOFF);
@@ -266,6 +266,10 @@ void set_lc_state_before(void) {
 
 void set_lc_zero_torque(void) {
   lc_state = ZERO_TORQUE;
+}
+
+Launch_Control_State_T get_lc_state() {
+  return lc_state;
 }
 
 static int32_t get_temp_limited_torque(int32_t pedal_torque) {

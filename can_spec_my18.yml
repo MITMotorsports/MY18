@@ -775,6 +775,16 @@ buses:
             position: 56
             length: 1
             c_type: bool
+          lc_state:
+            position: 57
+            length: 3
+            c_type: enum
+            enum:
+              BEFORE: 0
+              SPEEDING_UP: 1
+              SPEED_CONTROLLER: 2
+              ZERO_TORQUE: 3
+              DONE: 4
       ButtonRequest:
         can_id: 0x0D8
         period: 73ms

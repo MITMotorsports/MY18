@@ -370,8 +370,9 @@ void send_VCUControlsParams(void) {
 
 void send_VCUControlsParamsLC(void) {
   LIMIT(can0_VCUControlsParamsLC);
+  lc_settings.lc_state = get_lc_state();
 
-  can0_VCUControlsParamsLC_Write(&control_settings);
+  can0_VCUControlsParamsLC_Write(&lc_settings);
 }
 
 void send_VCUControlsMonitoring(void) {

@@ -117,7 +117,7 @@ void can_handle_vcu_controls(carstats_t *cs) {
     cs->vcu_controls_received = true;
 }
 
-void can_handle_vcu_lc_controls(carstats_t *cs) {
+void can_handle_vcu_controls_lc(carstats_t *cs) {
     unpack_can0_VCUControlsParamsLC(&frame, &cs->vcu_lc_controls);
     cs->vcu_lc_controls_received = true;
 }
@@ -169,7 +169,7 @@ void can_update_carstats(carstats_t *cs) {
             can_handle_vcu_controls(cs);
             break;
         case can0_VCUControlsParamsLC:
-            can_handle_vcu_controls(cs);
+            can_handle_vcu_controls_lc(cs);
             break;
         default:
             // do nothing

@@ -454,7 +454,7 @@ void draw_launch_control_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
           stats->lc_controls.speeding_up_torque -= 100;
           break;
         case 4:
-          stats->lc_controls.speeding_up_speed -= 100;
+          stats->lc_controls.speeding_up_speed -= 200;
           break;
         case 5:
           stats->lc_controls.ws_thresh -= 100;
@@ -474,12 +474,32 @@ void draw_launch_control_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
           stats->lc_controls.speeding_up_torque += 100;
           break;
         case 4:
-          stats->lc_controls.speeding_up_speed += 500;
+          stats->lc_controls.speeding_up_speed += 200;
           break;
         case 5:
           stats->lc_controls.ws_thresh += 100;
           break;
       }
+    }
+
+    oled_clearline(oled, 0);
+    oled_set_pos(oled, 0, 0);
+    switch (stats->vcu_lc_controls.lc_state) {
+        case 0:
+          oled_print(oled, "BEFORE");
+          break;
+        case 1:
+          oled_print(oled, "SPEEDING UP");
+          break;
+        case 2:
+          oled_print(oled, "SPEED CONTROLLER");
+          break;
+        case 3:
+          oled_print(oled, "ZERO TORQUE");
+          break;
+        case 4:
+          oled_print(oled, "DONE");
+          break;
     }
 
     oled_clearline(oled, 1);

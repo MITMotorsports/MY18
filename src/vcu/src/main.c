@@ -75,6 +75,7 @@ int main(void) {
     HAL_GPIO_WritePin(GPIO(ACTIVE_AERO), control_settings.active_aero_enabled);
 
     static uint32_t lastt = 0;
+    static uint32_t lastt2 = 0;
 
     print_gate_faults(false);
     if (HAL_GetTick() - lastt > 100) {
@@ -84,11 +85,30 @@ int main(void) {
         send_mc_fault_clear();
       }
 
-      // printf("CONTROLS PARAMS:\r\n  speeding_up_torque: %d\r\n  speeding_up_speed: %d\r\n  ws_thresh: %d\r\n  launch_ctrl_slip_ratio: %d\r\n  using_launch_ctrl: %d\r\n\r\n",
-      //  lc_settings.speeding_up_torque, lc_settings.speeding_up_speed, lc_settings.ws_thresh, lc_settings.launch_ctrl_slip_ratio, lc_settings.using_launch_ctrl);
-
-
       lastt = HAL_GetTick();
+    }
+    if (HAL_GetTick() - lastt2 > 100) {
+      // printf("CONTROLS PARAMS:\r\n  speeding_up_torque: %d\r\n  speeding_up_speed: %d\r\n  ws_thresh: %d\r\n  launch_ctrl_slip_ratio: %d\r\n  using_launch_ctrl: %d\r\n  accel: %d\r\n  wheel speed: %d\r\n",
+      // lc_settings.speeding_up_torque, lc_settings.speeding_up_speed, lc_settings.ws_thresh, lc_settings.launch_ctrl_slip_ratio, lc_settings.using_launch_ctrl, pedalbox_min(accel), get_front_wheel_speed());
+      // switch (get_lc_state()) {
+      //   case BEFORE:
+      //     printf("BEFORE\r\n");
+      //     break;
+      //   case SPEEDING_UP:
+      //     printf("SPEEDING_UP\r\n");
+      //     break;
+      //   case SPEED_CONTROLLER:
+      //     printf("SPEED_CONTROLLER\r\n");
+      //     break;
+      //   case ZERO_TORQUE:
+      //     printf("SPEEDING_UP\r\n");
+      //     break;
+      //   case DONE:
+      //     printf("DONE\r\n");
+      //     break;
+      // }
+      // printf("\r\n");
+      lastt2 = HAL_GetTick();
     }
   }
 }
