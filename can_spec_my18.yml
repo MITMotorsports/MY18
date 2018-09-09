@@ -681,14 +681,26 @@ buses:
         is_big_endian: true
         period: 69ms
         segments:
-          using_launch_ctrl:
+          speeding_up_torque:
             position: 0
-            length: 1
-            c_type: bool
-          launch_ctrl_slip_ratio: # Ranges from 105 to 115
+            length: 16
+            c_type: uint16_t
+          speeding_up_speed:
             position: 16
             length: 16
             c_type: uint16_t
+          ws_thresh:
+            position: 32
+            length: 16
+            c_type: uint16_t
+          launch_ctrl_slip_ratio: # Ranges from 105 to 115
+            position: 48
+            length: 8
+            c_type: uint16_t
+          using_launch_ctrl:
+            position: 56
+            length: 1
+            c_type: bool
       VCUControlsParams:
         can_id: 0x0D4
         is_big_endian: true
@@ -738,7 +750,7 @@ buses:
             position: 60
             length: 1
             c_type: bool
-      VCUParamsLC:
+      VCUControlsParamsLC:
         can_id: 0x0D6
         is_big_endian: true
         period: 200ms
