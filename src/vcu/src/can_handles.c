@@ -93,6 +93,9 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
   case can0_DashRequest:
     handleDashRequest(&frame);
     break;
+  
+  case can0_DashRequestLC:
+    handleDashRequestLC(&frame);
 
   default:
     break;
@@ -293,6 +296,37 @@ void handleDashRequest(Frame *msg) {
   control_settings.active_aero_enabled = unpacked_msg.active_aero_enabled;
 }
 
+void handleDashRequestLC(Frame *msg) {
+  can0_DashRequestLC_T unpacked_msg;
+
+  unpack_can0_DashRequestLC(msg, &unpacked_msg);
+
+  // printf("speeding_up_torque: %d\r\n", unpacked_msg.speeding_up_torque);
+  // printf("speeding_up_speed: %d\r\n", unpacked_msg.speeding_up_speed);
+  // printf("ws_thresh: %d\r\n", unpacked_msg.ws_thresh);
+  // printf("launch_ctrl_slip_ratio: %d\r\n", unpacked_msg.launch_ctrl_slip_ratio);
+  // printf("using_launch_ctrl: %d\r\n", unpacked_msg.using_launch_ctrl);
+
+  lc_settings.using_launch_ctrl = unpacked_msg.using_launch_ctrl;
+
+
+  if (unpacked_msg.speeding_up_torque != 65535) {
+    lc_settings.speeding_up_torque = unpacked_msg.speeding_up_torque;
+  }
+
+  if (unpacked_msg.speeding_up_speed != 65535) {
+    lc_settings.speeding_up_speed = unpacked_msg.speeding_up_speed;
+  }
+
+  if (unpacked_msg.ws_thresh != 65535) {
+    lc_settings.ws_thresh = unpacked_msg.ws_thresh;
+  }
+
+  if (unpacked_msg.launch_ctrl_slip_ratio != 255) {
+    lc_settings.launch_ctrl_slip_ratio = unpacked_msg.launch_ctrl_slip_ratio;
+  }
+}
+
 void send_VCUHeartbeat(void) {
   LIMIT(can0_VCUHeartbeat);
 
@@ -334,6 +368,12 @@ void send_VCUControlsParams(void) {
   can0_VCUControlsParams_Write(&control_settings);
 }
 
+void send_VCUControlsParamsLC(void) {
+  LIMIT(can0_VCUControlsParamsLC);
+
+  can0_VCUControlsParamsLC_Write(&control_settings);
+}
+
 void send_VCUControlsMonitoring(void) {
   LIMIT(can0_VCUControlsMonitoring);
 
@@ -344,6 +384,7 @@ void send_VCU(void) {
   send_VCUHeartbeat();
   send_VCUErrors();
   send_VCUControlsParams();
+  send_VCUControlsParamsLC();
   send_VCUControlsMonitoring();
 }
 

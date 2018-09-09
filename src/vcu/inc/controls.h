@@ -60,7 +60,7 @@ typedef enum {
 #define TEMP_LOG_LENGTH 200
 
 extern can0_VCUControlsParams_T control_settings;
-extern can0_VCUParamsLC_T lc_settings;
+extern can0_VCUControlsParamsLC_T lc_settings;
 
 // INTERACTION FUNCTIONS
 void enable_controls(void);

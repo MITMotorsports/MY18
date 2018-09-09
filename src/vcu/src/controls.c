@@ -4,7 +4,7 @@ static bool enabled = false;
 static int32_t torque_command = 0;
 static int32_t speed_command = 0;
 can0_VCUControlsParams_T control_settings = {};
-can0_VCUParamsLC_T lc_settings = {};
+can0_VCUControlsParamsLC_T lc_settings = {};
 static Launch_Control_State_T lc_state = BEFORE;
 
 static uint32_t get_front_wheel_speed(void);
@@ -30,7 +30,10 @@ void init_controls_defaults(void) {
   control_settings.torque_temp_limited = false;
 
   lc_settings.using_launch_ctrl = false;
-  lc_settings.slip_ratio = LC_DEFAULT_SLIP_RATIO;
+  lc_settings.launch_ctrl_slip_ratio = LC_DEFAULT_SLIP_RATIO;
+  lc_settings.speeding_up_torque = 1000;
+  lc_settings.speeding_up_speed = 2000;
+  lc_settings.ws_thresh = 300;
 }
 
 void enable_controls(void) {
@@ -214,7 +217,7 @@ static int32_t get_launch_control_speed(uint32_t front_wheel_speed) {
 uint32_t front_wheel_speedRPM = front_wheel_speed / 1000;
   // Divide 100 because slip ratio is times 100, divide by 100 again because
   // gear ratio is also multiplied by 100
-  int32_t target_speed = front_wheel_speedRPM * lc_settings.slip_ratio * LC_GR / (100 * 100);
+  int32_t target_speed = front_wheel_speedRPM * lc_settings.launch_ctrl_slip_ratio * LC_GR / (100 * 100);
   return target_speed;
 }
 
