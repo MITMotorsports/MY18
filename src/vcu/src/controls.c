@@ -131,7 +131,7 @@ void execute_controls(void) {
       }
       switch (lc_state) {
         case BEFORE:
-          sendSpeedCmdMsg(0, 0);
+          sendTorqueCmdMsg(0);
 
           // Transition
           if (pedalbox_min(accel) > LC_ACCEL_BEGIN) {
@@ -140,9 +140,10 @@ void execute_controls(void) {
           }
           break;
         case SPEEDING_UP:
-          // Command max(torque_command, lc_settings.speeding_up_torque)
-          if (torque_command < lc_settings.speeding_up_torque) sendSpeedCmdMsg(lc_settings.speeding_up_speed, torque_command);
-          else sendSpeedCmdMsg(lc_settings.speeding_up_speed, lc_settings.speeding_up_torque);
+           // Command max(torque_command, lc_settings.speeding_up_torque)
+          // if (torque_command < lc_settings.speeding_up_torque) sendSpeedCmdMsg(lc_settings.speeding_up_speed, torque_command);
+          // else sendSpeedCmdMsg(lc_settings.speeding_up_speed, lc_settings.speeding_up_torque);
+          sendTorqueCmdMsg(lc_settings.speeding_up_torque);
 
           // Transition
           if (front_wheel_speed > lc_settings.ws_thresh * 1000) { // 
