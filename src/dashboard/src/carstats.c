@@ -78,9 +78,9 @@ void can_handle_bms_heartbeat(carstats_t *cs) {
     cs->soc = msg.soc;
 }
 
-void can_handle_mc_temperature1(carstats_t *cs) {
-    can0_MCTemperature1_T msg;
-    unpack_can0_MCTemperature1(&frame, &msg);
+void can_handle_mc_temperature(carstats_t *cs) {
+    can0_MCTemperature_T msg;
+    unpack_can0_MCTemperature(&frame, &msg);
 
     int16_t max = msg.module_a_temp;
     if (msg.module_b_temp > max)
@@ -117,6 +117,23 @@ void can_handle_vcu_controls(carstats_t *cs) {
     cs->vcu_controls_received = true;
 }
 
+void can_handle_git_hash() {
+  can0_GitHash_T msg;
+  unpack_can0_GitHash(&frame, &msg);
+  char hash[6];
+  hash[0] = msg.hash0;
+  hash[1] = msg.hash1;
+  hash[2] = msg.hash2;
+  hash[3] = msg.hash3;
+  hash[4] = msg.hash4;
+  hash[5] = msg.hash5;
+  char board[1];
+  board[0] = msg.board + '0';
+  Board_Println(hash);
+  Board_Println(board);
+  Board_Println("Hello world");
+}
+
 void can_update_carstats(carstats_t *cs) {
     handle_can_error(Can_RawRead(&frame));
 
@@ -151,8 +168,8 @@ void can_update_carstats(carstats_t *cs) {
         case can0_VCUHeartbeat:
             can_handle_vcu_heartbeat(cs);
             break;
-        case can0_MCTemperature1:
-            can_handle_mc_temperature1(cs);
+        case can0_MCTemperature:
+            can_handle_mc_temperature(cs);
             break;
         case can0_ButtonRequest:
             can_handle_button_request(cs);
@@ -162,6 +179,8 @@ void can_update_carstats(carstats_t *cs) {
             break;
         case can0_VCUControlsParams:
             can_handle_vcu_controls(cs);
+        case can0_GitHash:
+            can_handle_git_hash();
         default:
             // do nothing
             break;
