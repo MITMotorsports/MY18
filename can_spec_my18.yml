@@ -14,6 +14,7 @@ boards:
         - FrontCanNodeBrakeThrottle
         - FrontCanNodeRightWheelSpeed
         - FrontCanNodeLeftWheelSpeed
+        - GitHash
     subscribe:
       can0:
         - VCUHeartbeat
@@ -26,6 +27,7 @@ boards:
         - MCCommand
         - VCUControlsParams
         - VCUControlsMonitoring
+        - GitHash
     subscribe:
       can0:
         - FrontCanNodeBrakeThrottle
@@ -35,11 +37,13 @@ boards:
     publish:
       can0:
         - DashRequest
+        - GitHash
     subscribe:
       can0:
         - VCUHeartbeat
         - BMSHeartbeat
         - FrontCanNodeBrakeThrottle
+        - GitHash
   bms:
     arch: lpc11cx4
     publish:
@@ -48,11 +52,13 @@ boards:
         - CellVoltageRange
         - CellTemperatureRange
         - CellTemperatureVariance
+        - GitHash
   button_bank:
     arch: lpc11cx4
     publish:
       can0:
         - ButtonRequest
+        - GitHash
   sensor_node:
     arch: lpc11cx4
     publish:
@@ -61,6 +67,7 @@ boards:
         - ADC_Data2
         - ADC_Data3
         - SensorNodeWheelSpeed
+        - GitHash
   mc:
     subscribe:
       can0:
@@ -68,6 +75,7 @@ boards:
     publish:
       can0:
         - MCVoltage
+        - GitHash
   current_sensor:
     publish:
       can0:
@@ -76,6 +84,7 @@ boards:
         - CurrentSensor_Voltage2
         - CurrentSensor_Voltage3
         - CurrentSensor_Power
+        - GitHash
     subscribe:
       can0:
         - CurrentSensor_Config
@@ -1536,3 +1545,45 @@ buses:
             position: 48
             length: 16
             c_type: int16_t
+      GitHash:
+        can_id: 0x601
+        is_big_endian: true
+        period: 1000 ms
+        segments:
+          hash0:
+            position: 0
+            length: 8
+            c_type: char
+          hash1:
+            position: 8
+            length: 8
+            c_type: char
+          hash2:
+            position: 16
+            length: 8
+            c_type: char
+          hash3:
+            position: 24
+            length: 8
+            c_type: char
+          hash4:
+            position: 32
+            length: 8
+            c_type: char
+          hash5:
+            position: 40
+            length: 8
+            c_type: char
+          board:
+            position: 48
+            length: 3
+            c_type: enum
+            enum:
+              BMS: 0
+              BUTTON_BANK: 1
+              DASHBOARD: 2
+              FRONTCANNODE: 3
+              LOGGER: 4
+              REARCANNODE: 5
+              SENSOR_NODE: 6
+              VCU: 7
