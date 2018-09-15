@@ -27,6 +27,7 @@ static bool active_aero_enabled = false;
 
 void update_lights(void);
 void send_dash_controls(void);
+void send_git_hash(void);
 
 void dispatch_init() {
     init_button_state(&left_button);
@@ -140,6 +141,7 @@ inline void dispatch_update() {
     }
 
     send_dash_controls();
+    send_git_hash();
 }
 
 void update_lights(void) {
@@ -169,6 +171,20 @@ void update_lights(void) {
 void send_dash_controls(void) {
     LIMIT(can0_DashRequest_period);
     handle_can_error(can0_DashRequest_Write(&carstats.controls));
+}
+
+void send_git_hash(void) {
+  LIMIT(can0_GitHash_period);
+  can0_GitHash_T msg;
+  msg.hash0 = HASH[0];
+  msg.hash1 = HASH[1];
+  msg.hash2 = HASH[2];
+  msg.hash3 = HASH[3];
+  msg.hash4 = HASH[4];
+  msg.hash5 = HASH[5];
+  msg.board = 2;
+
+  handle_can_error(can0_GitHash_Write(&msg));
 }
 
 void vcu_controls_update(void) {
