@@ -12,6 +12,7 @@ extern volatile uint32_t msTicks;
 void write_can_brakethrottle_msg(void);
 void write_can_left_wheel_speed_msg(void);
 void write_can_right_wheel_speed_msg(void);
+void write_can_git_hash(void);
 void handle_can_error(Can_ErrorID_T error);
 bool period_reached(uint32_t start, uint32_t period, uint32_t msTicks);
 
@@ -19,6 +20,7 @@ void Output_process_output() {
   write_can_brakethrottle_msg();
   write_can_left_wheel_speed_msg();
   write_can_right_wheel_speed_msg();
+  write_can_git_hash();
 }
 
 void write_can_brakethrottle_msg() {
@@ -43,7 +45,7 @@ void write_can_brakethrottle_msg() {
 }
 
 void write_can_left_wheel_speed_msg() {
-  LIMIT(can0_FrontCanNodeLeftWheelSpeed_period)
+  LIMIT(can0_FrontCanNodeLeftWheelSpeed_period);
 
   can0_FrontCanNodeLeftWheelSpeed_T msg;
 
@@ -54,7 +56,7 @@ void write_can_left_wheel_speed_msg() {
 }
 
 void write_can_right_wheel_speed_msg() {
-  LIMIT(can0_FrontCanNodeRightWheelSpeed_period)
+  LIMIT(can0_FrontCanNodeRightWheelSpeed_period);
 
   can0_FrontCanNodeRightWheelSpeed_T msg;
 
@@ -63,6 +65,22 @@ void write_can_right_wheel_speed_msg() {
 
   handle_can_error(can0_FrontCanNodeRightWheelSpeed_Write(&msg));
 }
+
+void write_can_git_hash() {
+  LIMIT(can0_GitHash_period);
+
+  can0_GitHash_T msg;
+  msg.hash0 = HASH[0];
+  msg.hash1 = HASH[1];
+  msg.hash2 = HASH[2];
+  msg.hash3 = HASH[3];
+  msg.hash4 = HASH[4];
+  msg.hash5 = HASH[5];
+  msg.board = 3;
+
+  handle_can_error(can0_GitHash_Write(&msg));
+}
+
 void handle_can_error(Can_ErrorID_T error) {
   if ((error != Can_Error_NONE) && (error != Can_Error_NO_RX)) {
     switch (error) {
