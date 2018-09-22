@@ -75,7 +75,6 @@ boards:
     publish:
       can0:
         - MCVoltage
-        - GitHash
   current_sensor:
     publish:
       can0:
@@ -84,7 +83,6 @@ boards:
         - CurrentSensor_Voltage2
         - CurrentSensor_Voltage3
         - CurrentSensor_Power
-        - GitHash
     subscribe:
       can0:
         - CurrentSensor_Config

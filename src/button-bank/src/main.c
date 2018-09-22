@@ -74,6 +74,7 @@ int main(void) {
     can_read();
     buzz();
     button_leds();
+    send_git_hash();
     #if DEBUG_MODE
       print_buttons(button_debounced);
     #endif
@@ -211,6 +212,21 @@ bool send_buttonrequest(bool* bs) {
   }
 
   return false;
+}
+
+void send_git_hash() {
+  LIMIT(can0_GitHash_period);
+
+  can0_GitHash_T msg;
+  msg.hash0 = HASH[0];
+  msg.hash1 = HASH[1];
+  msg.hash2 = HASH[2];
+  msg.hash3 = HASH[3];
+  msg.hash4 = HASH[4];
+  msg.hash5 = HASH[5];
+  msg.board = 1;
+
+  can_error_handler(can0_GitHash_Write(&msg));
 }
 
 void handle_vcu_heartbeat(Frame *frame) {

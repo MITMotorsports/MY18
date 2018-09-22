@@ -129,9 +129,10 @@ void can_handle_git_hash() {
   hash[5] = msg.hash5;
   char board[1];
   board[0] = msg.board + '0';
+  Board_Print_BLOCKING("Hash: ");
   Board_Println_BLOCKING(hash);
+  Board_Print_BLOCKING("Board: ");
   Board_Println_BLOCKING(board);
-  Board_Println_BLOCKING("Hello world");
 }
 
 void can_update_carstats(carstats_t *cs) {

@@ -74,6 +74,12 @@ extern volatile uint32_t msTicks;
 #define READ_PIN(name) Chip_GPIO_GetPinState(LPC_GPIO, name)
 #define SET_PIN(name, val) Chip_GPIO_SetPinState(LPC_GPIO, name, val)
 
+// LIMIT FUNCTION
+#define LIMIT(period)                                       \
+  static uint32_t last_sent = 0;                            \
+  if (msTicks - last_sent < period) return;                 \
+  last_sent = msTicks;
+
 // #define TOGGLE_PIN(name) SET_PIN(name, !READ_PIN(name))
 
 /// BUTTON STATE STRUCTURE

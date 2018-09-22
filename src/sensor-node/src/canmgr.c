@@ -7,6 +7,7 @@ void can_transmit(uint16_t* ext_adc_data, uint16_t* int_adc_data, Speed_Input_T*
 	// can_transmit_adc_data2(ext_adc_data);
 	can_transmit_adc_data3(int_adc_data);
   can_transmit_wheel_speed(speed_val);
+	can_transmit_git_hash();
 }
 
 // void can_transmit_adc_data1(uint16_t* ext_adc_data) {
@@ -55,6 +56,21 @@ void can_transmit_wheel_speed(Speed_Input_T* speed_val) {
     Board_Print_BLOCKING("LWS: ");
     Board_PrintNum(msg_left.left_32b, 10);
 #endif
+}
+
+void can_transmit_git_hash() {
+	LIMIT(can0_GitHash_period);
+
+  can0_GitHash_T msg;
+  msg.hash0 = HASH[0];
+  msg.hash1 = HASH[1];
+  msg.hash2 = HASH[2];
+  msg.hash3 = HASH[3];
+  msg.hash4 = HASH[4];
+  msg.hash5 = HASH[5];
+  msg.board = 6;
+
+  handle_can_error(can0_GitHash_Write(&msg));
 }
 
 void handle_can_error(Can_ErrorID_T error){

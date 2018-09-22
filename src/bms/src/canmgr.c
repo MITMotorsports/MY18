@@ -79,6 +79,7 @@ void Board_CAN_Transmit(BMS_INPUT_T *bms_input, BMS_OUTPUT_T *bms_output) {
   can_transmit_bms_heartbeat(bms_input);
   can_transmit_cell_voltages(bms_input);
   can_transmit_cell_temperatures(bms_input);
+  can_transmit_git_hash();
 }
 
 void can_transmit_bms_heartbeat(BMS_INPUT_T *bms_input) {
@@ -170,6 +171,21 @@ void can_transmit_cell_temperature_variance(BMS_INPUT_T *bms_input) {
 void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
   can_transmit_cell_temperature_range(bms_input);
   can_transmit_cell_temperature_variance(bms_input);
+}
+
+void can_transmit_git_hash() {
+  LIMIT(can0_GitHash_period);
+
+  can0_GitHash_T msg;
+  msg.hash0 = HASH[0];
+  msg.hash1 = HASH[1];
+  msg.hash2 = HASH[2];
+  msg.hash3 = HASH[3];
+  msg.hash4 = HASH[4];
+  msg.hash5 = HASH[5];
+  msg.board = 0;
+
+  handle_can_error(can0_GitHash_Write(&msg));
 }
 
 void handle_can_error(Can_ErrorID_T error) {
