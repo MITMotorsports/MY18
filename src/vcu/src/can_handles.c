@@ -70,7 +70,7 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleCurrentSensor_Power(&frame);
     break;
 
-  case can0_MCMotor_Position_Info:
+  case can0_MCMotorPositionInfo:
     handleMCMotor_Position_Info(&frame);
     break;
 
@@ -86,7 +86,7 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleFrontCanNodeLeftWheelSpeed(&frame);
     break;
 
-  case can0_MCTorque_Timer_Info:
+  case can0_MCTorqueTimerInfo:
     handleMCTorque_Timer_Info(&frame);
     break;
 
@@ -211,9 +211,9 @@ void handleCurrentSensor_Power(Frame *msg) {
 }
 
 void handleMCMotor_Position_Info(Frame *msg) {
-  can0_MCMotor_Position_Info_T unpacked_msg;
+  can0_MCMotorPositionInfo_T unpacked_msg;
 
-  unpack_can0_MCMotor_Position_Info(msg, &unpacked_msg);
+  unpack_can0_MCMotorPositionInfo(msg, &unpacked_msg);
 
   mc_readings.speed = unpacked_msg.motor_speed;
 }
@@ -246,9 +246,9 @@ void handleFrontCanNodeRightWheelSpeed(Frame *msg) {
 }
 
 void handleMCTorque_Timer_Info(Frame *msg) {
-  can0_MCTorque_Timer_Info_T unpacked_msg;
+  can0_MCTorqueTimerInfo_T unpacked_msg;
 
-  unpack_can0_MCTorque_Timer_Info(msg, &unpacked_msg);
+  unpack_can0_MCTorqueTimerInfo(msg, &unpacked_msg);
 
   mc_readings.torque_feedback = unpacked_msg.torque_feedback;
 }
@@ -406,4 +406,19 @@ void send_mc_fault_clear(void) {
   msg.data    = 0;
 
   can0_MCParameterRequest_Write(&msg);
+}
+
+void send_git_hash(void) {
+  LIMIT(can0_GitHash);
+
+  can0_GitHash_T msg;
+  msg.hash0 = HASH[0];
+  msg.hash1 = HASH[1];
+  msg.hash2 = HASH[2];
+  msg.hash3 = HASH[3];
+  msg.hash4 = HASH[4];
+  msg.hash5 = HASH[5];
+  msg.board = 7;
+
+  can0_GitHash_Write(&msg);
 }

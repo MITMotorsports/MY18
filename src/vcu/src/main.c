@@ -66,6 +66,7 @@ int main(void) {
   while (1) {
     advance_states();
     send_VCU();
+    send_git_hash();
 
     // TODO: Find a better location for this.
     // Update brake light all the time.
