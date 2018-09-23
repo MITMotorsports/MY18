@@ -135,24 +135,12 @@ void execute_controls(void) {
 
           // Transition
           if (pedalbox_min(accel) > LC_ACCEL_BEGIN) {
-            lc_state = SPEEDING_UP;
-            printf("[LAUNCH CONTROL] SPEEDING UP STATE ENTERED\r\n");
-          }
-          break;
-        case SPEEDING_UP:
-           // Command max(torque_command, lc_settings.speeding_up_torque)
-          // if (torque_command < lc_settings.speeding_up_torque) sendSpeedCmdMsg(lc_settings.speeding_up_speed, torque_command);
-          // else sendSpeedCmdMsg(lc_settings.speeding_up_speed, lc_settings.speeding_up_torque);
-          sendTorqueCmdMsg(lc_settings.speeding_up_torque);
-
-          // Transition
-          if (front_wheel_speed > lc_settings.ws_thresh * 1000) { // 
             lc_state = SPEED_CONTROLLER;
             printf("[LAUNCH CONTROL] SPEED CONTROLLER STATE ENTERED\r\n");
           }
           break;
         case SPEED_CONTROLLER:
-          speed_command = get_launch_control_speed(front_wheel_speed);
+          speed_command = 500; // get_launch_control_speed(front_wheel_speed);
           sendSpeedCmdMsg(speed_command, torque_command);
           break;
         case ZERO_TORQUE:
@@ -254,10 +242,10 @@ static bool any_lc_faults(void) {
     // that is indicative of driver braking intent. The other brake is for regen.
     printf("[LAUNCH CONTROL ERROR] Brake (%d) too high\r\n", pedalbox.brake_2);
     return true;
-  } else if (mc_readings.speed > LC_BACKWARDS_CUTOFF) {
+  } else /*else if (mc_readings.speed > LC_BACKWARDS_CUTOFF) {m
     printf("[LAUNCH CONTROL ERROR] MC reading (%d) is great than cutoff (%d)\r\n", mc_readings.speed, LC_BACKWARDS_CUTOFF);
     return true;
-  }
+  }*/
     return false;
 }
 
