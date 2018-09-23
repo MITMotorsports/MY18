@@ -140,7 +140,10 @@ void execute_controls(void) {
           }
           break;
         case SPEED_CONTROLLER:
-          speed_command = 500; // get_launch_control_speed(front_wheel_speed);
+          // # 1: 2175;
+          // # 2: 2900;
+          // # 3: 3625;
+          speed_command = 2175;
           sendSpeedCmdMsg(speed_command, torque_command);
           break;
         case ZERO_TORQUE:
