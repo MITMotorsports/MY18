@@ -8,6 +8,8 @@ test/**/*.png
 # Annoying ropeproject
 **/.ropeproject
 
+test/**/*.png
+
 # vim
 *.swp
 

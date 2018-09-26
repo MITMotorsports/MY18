@@ -49,6 +49,7 @@ void draw_nav_line(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
 void draw_critical_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 void draw_regen_page(page_manager_t *pm, NHD_US2066_OLED *oled);
+void draw_launch_control_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 void draw_traction_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 void draw_fault_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 
@@ -60,8 +61,11 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
             draw_critical_page(pm, oled);
             break;
         case DASH_PAGE_REGEN:
-            draw_regen_page(pm, oled);
-            break;
+           draw_regen_page(pm, oled);
+           break;
+        case DASH_PAGE_LAUNCH_CONTROL:
+           draw_launch_control_page(pm, oled);
+           break;
         case DASH_PAGE_TEMP_LIM:
             draw_temp_lim_page(pm, oled);
             break;
@@ -428,6 +432,122 @@ void draw_volt_lim_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     oled_set_pos(oled, var_toggled, 0);
     oled_print(oled, ">");
+}
+
+void draw_launch_control_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+    carstats_t *stats = pm->stats;
+    static int var_toggled = 0;
+
+    // Process contextual actions
+    if (stats->buttons.B.rising_edge) var_toggled++;
+    var_toggled = LOOPOVER(var_toggled, 1, 5);
+
+    if (stats->buttons.left.action == BUTTON_ACTION_TAP) {
+      switch (var_toggled) {
+        case 1:
+          stats->lc_controls.using_launch_ctrl ^= 1;
+          break;
+        case 2:
+          stats->lc_controls.launch_ctrl_slip_ratio -= 1;
+          break;
+        case 3:
+          stats->lc_controls.speeding_up_torque -= 100;
+          break;
+        case 4:
+          stats->lc_controls.speeding_up_speed -= 200;
+          break;
+        case 5:
+          stats->lc_controls.ws_thresh -= 100;
+          break;
+      }
+    }
+
+    if (stats->buttons.right.action == BUTTON_ACTION_TAP) {
+      switch (var_toggled) {
+        case 1:
+          stats->lc_controls.using_launch_ctrl ^= 1;
+          break;
+        case 2:
+          stats->lc_controls.launch_ctrl_slip_ratio += 1;
+          break;
+        case 3:
+          stats->lc_controls.speeding_up_torque += 100;
+          break;
+        case 4:
+          stats->lc_controls.speeding_up_speed += 200;
+          break;
+        case 5:
+          stats->lc_controls.ws_thresh += 100;
+          break;
+      }
+    }
+
+    oled_clearline(oled, 0);
+    oled_set_pos(oled, 0, 0);
+    switch (stats->vcu_lc_controls.lc_state) {
+        case 0:
+          oled_print(oled, "BEFORE");
+          break;
+        case 1:
+          oled_print(oled, "SPEEDING UP");
+          break;
+        case 2:
+          oled_print(oled, "SPEED CONTROLLER");
+          break;
+        case 3:
+          oled_print(oled, "ZERO TORQUE");
+          break;
+        case 4:
+          oled_print(oled, "DONE");
+          break;
+    }
+
+    oled_clearline(oled, 1);
+    oled_set_pos(oled, 1, 0);
+
+    stats->lc_controls.launch_ctrl_slip_ratio = LOOPOVER(stats->lc_controls.launch_ctrl_slip_ratio, 101, 130);
+    stats->lc_controls.speeding_up_torque = LOOPOVER(stats->lc_controls.speeding_up_torque, 0, 2400);
+    stats->lc_controls.speeding_up_speed = LOOPOVER(stats->lc_controls.speeding_up_speed, 0, 5000);
+    stats->lc_controls.ws_thresh = LOOPOVER(stats->lc_controls.ws_thresh, 0, 2500);
+
+    oled_print(oled, "LCTRL ");
+
+    oled_print(oled, (stats->lc_controls.using_launch_ctrl) ? "ON" : "OFF");
+
+    oled_rprint_pad(oled, "SR ", 4);
+
+    if (stats->lc_controls.launch_ctrl_slip_ratio != 255) {
+        oled_print_num(oled, stats->lc_controls.launch_ctrl_slip_ratio);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+
+    oled_clearline(oled, 2);
+    oled_set_pos(oled, 2, 0);
+    
+    oled_print(oled, "TORQ ");
+    if (stats->lc_controls.speeding_up_torque != 65535) {
+        oled_print_num(oled, stats->lc_controls.speeding_up_torque);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+
+    oled_rprint_pad(oled, "SPD ", 4);
+    if (stats->lc_controls.speeding_up_speed != 65535) {
+        oled_print_num(oled, stats->lc_controls.speeding_up_speed);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+
+    oled_clearline(oled, 3);
+    oled_set_pos(oled, 3, 0);
+
+    oled_print(oled, "WS THRESH ");
+    if (stats->lc_controls.ws_thresh != 65535) {
+        oled_print_num(oled, stats->lc_controls.ws_thresh);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
 }
 
 void draw_fault_page(page_manager_t *pm, NHD_US2066_OLED *oled) {

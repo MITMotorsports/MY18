@@ -370,16 +370,6 @@ buses:
             position: 6
             length: 1
             c_type: bool
-          lc_state:
-            position: 7
-            length: 3
-            c_type: enum
-            enum:
-              BEFORE: 0
-              SPEEDING_UP: 1
-              SPEED_CONTROLLER: 2
-              ZERO_TORQUE: 3
-              DONE: 4
       VCUErrors:
         can_id: 0x0F4
         period: 111ms
@@ -686,6 +676,31 @@ buses:
             position: 60
             length: 1
             c_type: bool
+      DashRequestLC:
+        can_id: 0x0D5
+        is_big_endian: true
+        period: 69ms
+        segments:
+          speeding_up_torque:
+            position: 0
+            length: 16
+            c_type: uint16_t
+          speeding_up_speed:
+            position: 16
+            length: 16
+            c_type: uint16_t
+          ws_thresh:
+            position: 32
+            length: 16
+            c_type: uint16_t
+          launch_ctrl_slip_ratio: # Ranges from 105 to 115
+            position: 48
+            length: 8
+            c_type: uint16_t
+          using_launch_ctrl:
+            position: 56
+            length: 1
+            c_type: bool
       VCUControlsParams:
         can_id: 0x0D4
         is_big_endian: true
@@ -735,6 +750,41 @@ buses:
             position: 60
             length: 1
             c_type: bool
+      VCUControlsParamsLC:
+        can_id: 0x0D6
+        is_big_endian: true
+        period: 200ms
+        segments:
+          speeding_up_torque:
+            position: 0
+            length: 16
+            c_type: uint16_t
+          speeding_up_speed:
+            position: 16
+            length: 16
+            c_type: uint16_t
+          ws_thresh:
+            position: 32
+            length: 16
+            c_type: uint16_t
+          launch_ctrl_slip_ratio: # Ranges from 105 to 115
+            position: 48
+            length: 8
+            c_type: uint16_t
+          using_launch_ctrl:
+            position: 56
+            length: 1
+            c_type: bool
+          lc_state:
+            position: 57
+            length: 3
+            c_type: enum
+            enum:
+              BEFORE: 0
+              SPEEDING_UP: 1
+              SPEED_CONTROLLER: 2
+              ZERO_TORQUE: 3
+              DONE: 4
       ButtonRequest:
         can_id: 0x0D8
         period: 73ms

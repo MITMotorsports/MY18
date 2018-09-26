@@ -4,12 +4,18 @@ static bool enabled = false;
 static int32_t torque_command = 0;
 static int32_t speed_command = 0;
 can0_VCUControlsParams_T control_settings = {};
+can0_VCUControlsParamsLC_T lc_settings = {};
+static Launch_Control_State_T lc_state = BEFORE;
+
+uint32_t get_front_wheel_speed(void);
+static bool any_lc_faults();
 
 static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
 
 // PRIVATE FUNCTIONS
 static int32_t get_torque(void);
 static int32_t get_regen_torque(void);
+static int32_t get_launch_control_speed(uint32_t front_wheel_speed);
 static int32_t get_temp_limited_torque(int32_t pedal_torque);
 static int32_t get_voltage_limited_torque(int32_t pedal_torque);
 
@@ -22,12 +28,19 @@ void init_controls_defaults(void) {
   control_settings.volt_lim_min_gain = 0;
   control_settings.volt_lim_min_voltage = 300;
   control_settings.torque_temp_limited = false;
+
+  lc_settings.using_launch_ctrl = false;
+  lc_settings.launch_ctrl_slip_ratio = LC_DEFAULT_SLIP_RATIO;
+  lc_settings.speeding_up_torque = LC_DEFAULT_SPEEDING_UP_TORQUE;
+  lc_settings.speeding_up_speed = LC_DEFAULT_SPEEDING_UP_SPEED;
+  lc_settings.ws_thresh = LC_DEFAULT_WS_THRESH;
 }
 
 void enable_controls(void) {
   enabled = true;
   torque_command = 0;
   speed_command = 0;
+  lc_state = BEFORE;
 
   unlock_brake_valve();
 }
@@ -36,6 +49,7 @@ void disable_controls(void) {
   enabled = false;
   torque_command = 0;
   speed_command = 0;
+  lc_state = DONE;
 
   set_brake_valve(false);
   lock_brake_valve();
@@ -47,6 +61,7 @@ bool get_controls_enabled(void) {
 
 void execute_controls(void) {
   if (!enabled) return;
+  bool launch_ctrl_entered = false;
 
   torque_command = get_torque();
   controls_monitoring.raw_torque = torque_command;
@@ -69,34 +84,26 @@ void execute_controls(void) {
   // Extra check to ensure we are only sending regen torque when allowed
   if (torque_command == 0) {
     torque_command = regen_torque;
-  }
-  else {
-    // Only use limits when we're not doing regen
+  } else { // Only use limits and launch control when we're not doing regen
+    // Even if we are doing launch control, calculate limits for logging also so that we are not doing
+    // launch control when we're supposed to be limiting
+
     int32_t voltage_limited_torque = get_voltage_limited_torque(torque_command);
-    // static uint32_t last_vt = 0;
-    // if (HAL_GetTick() - last_vt > 10) {
-    //   printf("VT: %d\r\n", voltage_limited_torque);
-    //
-    //   last_vt = HAL_GetTick();
-    // }
+   
     if (!control_settings.using_voltage_limiting) voltage_limited_torque = torque_command;
 
     int32_t temp_limited_torque = get_temp_limited_torque(torque_command);
-    // static uint32_t last_tt = 0;
-    // if (HAL_GetTick() - last_tt > 10) {
-    //   printf("TT: %d\r\n", temp_limited_torque);
-    //
-    //   last_tt = HAL_GetTick();
-    // }
+
     if (!control_settings.using_temp_limiting) temp_limited_torque = torque_command;
 
-    control_settings.torque_temp_limited = temp_limited_torque < torque_command;
+    uint32_t torque_temp_limited = temp_limited_torque < torque_command;
+    // Whether torque is temp limited needs to be sent out over CAN so the dash knows not to allow regen
+    control_settings.torque_temp_limited = torque_temp_limited;
 
     int32_t min_sensor_torque;
     if (voltage_limited_torque < temp_limited_torque) {
       min_sensor_torque = voltage_limited_torque;
-    }
-    else {
+    } else {
       min_sensor_torque = temp_limited_torque;
     }
 
@@ -105,15 +112,57 @@ void execute_controls(void) {
     int32_t limited_torque;
     if (dash_limited_torque < min_sensor_torque) {
       limited_torque = dash_limited_torque;
-    }
-    else {
+    } else {
       limited_torque = min_sensor_torque;
     }
 
     torque_command = limited_torque;
-  }
+    bool torque_limited = limited_torque < controls_monitoring.raw_torque;
 
-  sendTorqueCmdMsg(torque_command);
+    if (launch_ctrl_entered = (lc_settings.using_launch_ctrl && lc_state != DONE && !torque_limited)) {
+      // We shouldn't be braking in launch control, so reset regen valve
+      set_brake_valve(false);
+      uint32_t front_wheel_speed = get_front_wheel_speed();
+
+      // Mini FSM
+      if (any_lc_faults() && lc_state != DONE && lc_state != BEFORE) {
+            lc_state = ZERO_TORQUE;
+            printf("[LAUNCH CONTROL] ZERO TORQUE STATE ENTERED\r\n");
+      }
+      switch (lc_state) {
+        case BEFORE:
+          sendTorqueCmdMsg(0);
+
+          // Transition
+          if (pedalbox_min(accel) > LC_ACCEL_BEGIN) {
+            lc_state = SPEED_CONTROLLER;
+            printf("[LAUNCH CONTROL] SPEED CONTROLLER STATE ENTERED\r\n");
+          }
+          break;
+        case SPEED_CONTROLLER:
+          speed_command = 500; // get_launch_control_speed(front_wheel_speed);
+          sendSpeedCmdMsg(speed_command, torque_command);
+          break;
+        case ZERO_TORQUE:
+          sendTorqueCmdMsg(0);
+
+          if (pedalbox_max(accel) < LC_ACCEL_RELEASE) {
+            lc_state = DONE;
+            printf("[LAUNCH CONTROL] DONE STATE ENTERED\r\n");
+          }
+          break;
+        default:
+          sendTorqueCmdMsg(0);
+
+          printf("ERROR: NO STATE!\r\n");
+          break;
+      }
+    }
+  }
+  if (!launch_ctrl_entered) {
+    // In LC we already sent our command above
+    sendTorqueCmdMsg(torque_command);
+  }
 }
 
 static int32_t get_torque(void) {
@@ -150,8 +199,66 @@ static int32_t get_regen_torque() {
     }
   }
 
-  // Regen is negative torque, and we've calculated a positive number so far
   return -1 * regen_torque;
+}
+
+static int32_t get_launch_control_speed(uint32_t front_wheel_speed) {
+uint32_t front_wheel_speedRPM = front_wheel_speed / 1000;
+  // Divide 100 because slip ratio is times 100, divide by 100 again because
+  // gear ratio is also multiplied by 100
+  int32_t target_speed = front_wheel_speedRPM * lc_settings.launch_ctrl_slip_ratio * LC_GR / (100 * 100);
+  return target_speed;
+}
+
+uint32_t get_front_wheel_speed() {
+  uint32_t left_front_speed;
+  uint32_t right_front_speed;
+
+  // If the 32 bit wheel speed is zero, then it's disconnect (in which case we should
+  // use the 16 bit one), or the wheels are actually not moving, so the 16 bit one will
+  // be zero as well
+  if (wheel_speeds.front_left_32b_wheel_speed == 0) {
+    left_front_speed = wheel_speeds.front_left_16b_wheel_speed;
+  } else {
+    left_front_speed = wheel_speeds.front_left_32b_wheel_speed;
+  }
+
+  if (wheel_speeds.front_right_32b_wheel_speed == 0) {
+    right_front_speed = wheel_speeds.front_right_16b_wheel_speed;
+  } else {
+    right_front_speed = wheel_speeds.front_right_32b_wheel_speed;
+  }
+
+  uint32_t avg_wheel_speed = left_front_speed/2 + right_front_speed/2;
+  return left_front_speed;
+}
+
+static bool any_lc_faults(void) {
+  if (pedalbox_min(accel) < LC_ACCEL_BEGIN) {
+    printf("[LAUNCH CONTROL ERROR] Accel min (%d) too low\r\n", pedalbox_min(accel));
+    return true;
+  } else if (pedalbox.brake_2 > LC_BRAKE_BEGIN) {
+    // In this test, we only need to check brake_2 because it is the only brake line
+    // that is indicative of driver braking intent. The other brake is for regen.
+    printf("[LAUNCH CONTROL ERROR] Brake (%d) too high\r\n", pedalbox.brake_2);
+    return true;
+  } else /*else if (mc_readings.speed > LC_BACKWARDS_CUTOFF) {m
+    printf("[LAUNCH CONTROL ERROR] MC reading (%d) is great than cutoff (%d)\r\n", mc_readings.speed, LC_BACKWARDS_CUTOFF);
+    return true;
+  }*/
+    return false;
+}
+
+void set_lc_state_before(void) {
+  lc_state = BEFORE;
+}
+
+void set_lc_zero_torque(void) {
+  lc_state = ZERO_TORQUE;
+}
+
+Launch_Control_State_T get_lc_state() {
+  return lc_state;
 }
 
 static int32_t get_temp_limited_torque(int32_t pedal_torque) {
@@ -167,13 +274,6 @@ static int32_t get_temp_limited_torque(int32_t pedal_torque) {
   // Thresh was in degrees, so multiply it by 100
   int32_t thresh_cC = control_settings.temp_lim_thresh_temp * 100;
 
-  // static uint32_t lastt = 0;
-  // if (HAL_GetTick() - lastt > 100) {
-  //   printf("Filtered Temp: %d\tTemp threshold: %d\r\n", temp_cC, thresh_cC);
-  //
-  //   lastt = HAL_GetTick();
-  // }
-
   int32_t gain = hinge_limiter(temp_cC, control_settings.temp_lim_min_gain, thresh_cC, MAX_TEMP);
   controls_monitoring.tl_gain = gain;
 
@@ -186,13 +286,6 @@ static int32_t get_voltage_limited_torque(int32_t pedal_torque) {
   // (cs_readings.V_bus/72)/10 - 1/10 = (cs_readings.V_bus - 72)/720
   int32_t cell_voltage = (cs_readings.V_bus - 72) / 720;
   controls_monitoring.voltage_used = cell_voltage;
-
-  // static uint32_t lastt = 0;
-  // if (HAL_GetTick() - lastt > 100) {
-  //   printf("Voltage: %d\tVoltage threshold: %d\r\n", cell_voltage, control_settings.volt_lim_min_voltage);
-  //
-  //   lastt = HAL_GetTick();
-  // }
 
   int32_t gain = hinge_limiter(cell_voltage, control_settings.volt_lim_min_gain, control_settings.volt_lim_min_voltage, MIN_VOLTAGE);
 

@@ -58,9 +58,12 @@ typedef struct {
 
     // Controls values
     can0_DashRequest_T controls;
+    can0_DashRequestLC_T lc_controls;
     can0_VCUControlsParams_T vcu_controls;
+    can0_VCUControlsParamsLC_T vcu_lc_controls;
 
     bool vcu_controls_received;
+    bool vcu_lc_controls_received;
 
     Buttons_T buttons;
 } carstats_t;
