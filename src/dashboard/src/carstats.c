@@ -79,8 +79,8 @@ void can_handle_bms_heartbeat(carstats_t *cs) {
 }
 
 void can_handle_mc_temperature1(carstats_t *cs) {
-    can0_MCTemperature1_T msg;
-    unpack_can0_MCTemperature1(&frame, &msg);
+    can0_MCTemperature_T msg;
+    unpack_can0_MCTemperature(&frame, &msg);
 
     int16_t max = msg.module_a_temp;
     if (msg.module_b_temp > max)
@@ -151,7 +151,7 @@ void can_update_carstats(carstats_t *cs) {
         case can0_VCUHeartbeat:
             can_handle_vcu_heartbeat(cs);
             break;
-        case can0_MCTemperature1:
+        case can0_MCTemperature:
             can_handle_mc_temperature1(cs);
             break;
         case can0_ButtonRequest:
