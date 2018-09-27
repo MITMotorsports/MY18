@@ -43,7 +43,6 @@ boards:
         - VCUHeartbeat
         - BMSHeartbeat
         - FrontCanNodeBrakeThrottle
-        - GitHash
   bms:
     arch: lpc11cx4
     publish:

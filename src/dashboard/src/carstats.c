@@ -117,23 +117,24 @@ void can_handle_vcu_controls(carstats_t *cs) {
     cs->vcu_controls_received = true;
 }
 
-void can_handle_git_hash() {
-  can0_GitHash_T msg;
-  unpack_can0_GitHash(&frame, &msg);
-  char hash[6];
-  hash[0] = msg.hash0;
-  hash[1] = msg.hash1;
-  hash[2] = msg.hash2;
-  hash[3] = msg.hash3;
-  hash[4] = msg.hash4;
-  hash[5] = msg.hash5;
-  char board[1];
-  board[0] = msg.board + '0';
-  Board_Print_BLOCKING("Hash: ");
-  Board_Println_BLOCKING(hash);
-  Board_Print_BLOCKING("Board: ");
-  Board_Println_BLOCKING(board);
-}
+// For debugging purposes:
+// void can_handle_git_hash() {
+//   can0_GitHash_T msg;
+//   unpack_can0_GitHash(&frame, &msg);
+//   char hash[6];
+//   hash[0] = msg.hash0;
+//   hash[1] = msg.hash1;
+//   hash[2] = msg.hash2;
+//   hash[3] = msg.hash3;
+//   hash[4] = msg.hash4;
+//   hash[5] = msg.hash5;
+//   char board[1];
+//   board[0] = msg.board + '0';
+//   Board_Print_BLOCKING("Hash: ");
+//   Board_Println_BLOCKING(hash);
+//   Board_Print_BLOCKING("Board: ");
+//   Board_Println_BLOCKING(board);
+// }
 
 void can_update_carstats(carstats_t *cs) {
     handle_can_error(Can_RawRead(&frame));
@@ -180,8 +181,8 @@ void can_update_carstats(carstats_t *cs) {
             break;
         case can0_VCUControlsParams:
             can_handle_vcu_controls(cs);
-        case can0_GitHash:
-            can_handle_git_hash();
+        // case can0_GitHash:
+        //     can_handle_git_hash();
         default:
             // do nothing
             break;
