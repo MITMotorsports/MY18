@@ -173,7 +173,7 @@ void can_transmit_cell_temperatures(BMS_INPUT_T *bms_input) {
   can_transmit_cell_temperature_variance(bms_input);
 }
 
-void can_transmit_git_hash() {
+void can_transmit_git_hash(void) {
   LIMIT(can0_GitHash_period);
 
   can0_GitHash_T msg;
