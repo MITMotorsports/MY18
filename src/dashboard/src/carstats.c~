@@ -171,7 +171,7 @@ void can_update_carstats(carstats_t *cs) {
             can_handle_vcu_heartbeat(cs);
             break;
         case can0_MCTemperature:
-            can_handle_mc_temperature1(cs);
+            can_handle_mc_temperature(cs);
             break;
         case can0_ButtonRequest:
             can_handle_button_request(cs);
