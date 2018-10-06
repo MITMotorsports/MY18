@@ -224,7 +224,7 @@ void send_git_hash() {
   msg.hash3 = HASH[3];
   msg.hash4 = HASH[4];
   msg.hash5 = HASH[5];
-  msg.board = can0_GitHash_board_BUTTON_BANK;
+  msg.board = 1;
 
   can_error_handler(can0_GitHash_Write(&msg));
 }

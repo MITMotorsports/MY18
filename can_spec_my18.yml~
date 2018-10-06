@@ -1547,7 +1547,6 @@ buses:
         is_big_endian: true
         period: 1000 ms
         segments:
-        # First six digits of hash
           hash0:
             position: 0
             length: 8
