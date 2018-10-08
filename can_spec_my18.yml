@@ -137,6 +137,15 @@ buses:
             position: 59
             length: 1
             c_type: bool
+      FrontCanNodeSteering:
+        can_id: 0x0E3
+        is_big_endian: true
+        period: 13ms
+        segments:
+          value:
+            position: 0
+            length: 16
+            c_type: uint16_t
       FrontCanNodeLeftWheelSpeed:
         can_id: 0x0E0
         is_big_endian: true
