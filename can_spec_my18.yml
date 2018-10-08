@@ -1273,7 +1273,7 @@ buses:
             unit: decidegC
             c_type: int16_t
       SBG_EKF_Velocity_ACC:
-        can_id: 312
+        can_id: 138
         is_big_endian: false
         segments:
           north:
@@ -1292,7 +1292,7 @@ buses:
             c_type: int16_t
             unit: cm / s
       SBG_EKF_Velocity:
-        can_id: 311
+        can_id: 137
         is_big_endian: false
         segments:
           north:
@@ -1311,7 +1311,7 @@ buses:
             c_type: int16_t
             unit: cm / s
       SBG_EKF_Position_ACC:
-        can_id: 310
+        can_id: 136
         is_big_endian: false
         segments:
           latitude:
@@ -1330,7 +1330,7 @@ buses:
             c_type: uint16_t
             unit: cm
       SBG_EKF_Position:
-        can_id: 308
+        can_id: 134
         is_big_endian: false
         segments:
           latitude:
@@ -1344,7 +1344,7 @@ buses:
             c_type: int32_t
             unit: 1e-7 deg
       SBG_EKF_Altitude:
-        can_id: 309
+        can_id: 135
         is_big_endian: false
         segments:
           altitude:
@@ -1358,7 +1358,7 @@ buses:
             c_type: int16_t
             unit: 5 mm
       SBG_EKF_Orientation_ACC:
-        can_id: 307
+        can_id: 133
         is_big_endian: false
         segments:
           pitch:
@@ -1377,7 +1377,7 @@ buses:
             c_type: uint16_t
             unit: 0.1 mrad
       SBG_EKF_Euler:
-        can_id: 306
+        can_id: 132
         is_big_endian: false
         segments:
           roll:
@@ -1396,7 +1396,7 @@ buses:
             c_type: int16_t
             unit: 0.1 mrad
       SBG_EKF_Quaternion:
-        can_id: 305
+        can_id: 131
         is_big_endian: false
         segments:
           q0:
@@ -1420,7 +1420,7 @@ buses:
             c_type: int16_t
             unit: 3.0517578125e-5
       SBG_IMU_DeltaAngle:
-        can_id: 292
+        can_id: 124
         is_big_endian: false
         segments:
           x:
@@ -1439,7 +1439,7 @@ buses:
             c_type: int16_t
             unit: mrad / s
       SBG_IMU_DeltaVelocity:
-        can_id: 291
+        can_id: 123
         is_big_endian: false
         segments:
           x:
@@ -1458,7 +1458,7 @@ buses:
             c_type: int16_t
             unit: cm / (s ** 2)
       SBG_IMU_Gyroscope:
-        can_id: 290
+        can_id: 122
         is_big_endian: false
         segments:
           x:
@@ -1477,7 +1477,7 @@ buses:
             c_type: int16_t
             unit: mrad / s
       SBG_IMU_Accelerometer:
-        can_id: 289
+        can_id: 121
         is_big_endian: false
         segments:
           x:
@@ -1496,7 +1496,7 @@ buses:
             c_type: int16_t
             unit: cm / (s ** 2)
       SBG_LOG_UTC:
-        can_id: 272
+        can_id: 110
         is_big_endian: false
         segments:
           timestamp:
