@@ -6,13 +6,6 @@
 #include <stdint.h>
 
 #include "can_handles.h"
-#include "fault_pedalbox.h"
-#include "fault_brakes.h"
-
-// TODO: Extract MAX_TORQUE from RMS EEPROM (over CAN?)
-#define MAX_TORQUE_SPEED_CONTROLLER  2400 // unit: dNm
-#define MAX_ACCEL_VAL_SPEED_CONTROLLER 1000
-#define MIN_ACCEL_VAL_SPEED_CONTROLLER 0
 
 extern can0_VCUSpeedControllerInfo_T controller_info;
 extern can0_VCUSpeedControllerParams_T controller_params;
