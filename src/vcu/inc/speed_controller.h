@@ -69,7 +69,5 @@ void update_speed_controller_error(int32_t actual_rpm,
 	uint32_t actual_rpm_msg_timestamp);
 int32_t get_speed_controller_torque_command(void);
 bool get_speed_controller_enabled(void);
-void send_speed_controller_info_can_msg(void);
-void send_speed_controller_params_can_msg(void);
 
 #endif // ifndef __SPEED_CONTROLLER

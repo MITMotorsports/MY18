@@ -40,7 +40,7 @@ static void reset_internal_vars(void) {
     speed_controller_vars.commanded_torque = 0;
     speed_controller_vars.rpm_error = 0;
     speed_controller_vars.deriv_rpm_error = 0;
-    speed_controller_vars.last_error_update_timestamp = 0;
+    speed_controller_vars.last_error_update_timestamp = HAL_GetTick();
     speed_controller_vars.last_rpm_error = 0;
     speed_controller_vars.rpm_error_accumulated = 0;
 }
