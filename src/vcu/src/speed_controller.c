@@ -30,6 +30,7 @@ can0_VCUSpeedCntrlLastErrorUpdateTimestamp_T last_error_update_timestamp_frame =
 static void reset_internal_vars(void);
 static void update_error_internal(int32_t actual);
 static void update_can_frames(void);
+static void send_speed_controller_can_msgs(void);
 
 static void reset_internal_vars(void) {
     speed_controller_vars.out_of_input_range_throttled = false;
@@ -133,6 +134,7 @@ void update_speed_controller_error(int32_t actual_rpm,
     }
 
     update_can_frames();
+    send_speed_controller_can_msgs();
 }
 
 static void update_error_internal(int32_t actual) {
@@ -231,6 +233,31 @@ static void update_can_frames(void) {
     rpm_error_accumulated_frame.rpm_error_accumulated = speed_controller_vars.rpm_error_accumulated;
     
     last_error_update_timestamp_frame.last_error_update_timestamp = speed_controller_vars.last_error_update_timestamp;
+}
+
+void send_speed_controller_can_msgs(void) {
+    sendVCUSpeedCntrlKpTimes1000Msg();
+    sendVCUSpeedCntrlKiTimes1000Msg();
+    sendVCUSpeedCntrlKdTimes1000Msg();
+    sendVCUSpeedCntrlIWindupMaxMsg();
+    sendVCUSpeedCntrlIWindupMinMsg();
+    sendVCUSpeedCntrlMinOutputValueMsg();
+    sendVCUSpeedCntrlMaxOutputValueMsg();
+    sendVCUSpeedCntrlMinInputValueMsg();
+    sendVCUSpeedCntrlMaxInputValueMsg();
+    sendVCUSpeedCntrlErrorUpdateTimeoutMsg();
+    sendVCUSpeedCntrlDtMsg();
+    sendVCUSpeedCntrlEnabledMsg();
+    sendVCUSpeedCntrlOutOfInputRangeThrottledMsg();
+    sendVCUSpeedCntrlOutOfOutputRangeThrottledMsg();
+    sendVCUSpeedCntrlErrorUpdateTimedOutMsg();
+    sendVCUSpeedCntrlRPMSetpointMsg();
+    sendVCUSpeedCntrlCommandedTorqueMsg();
+    sendVCUSpeedCntrlRPMErrorMsg();
+    sendVCUSpeedCntrlLastRPMErrorMsg();
+    sendVCUSpeedCntrlDerivRPMErrorMsg();
+    sendVCUSpeedCntrlRPMErrorAccumulatedMsg();
+    sendVCUSpeedCntrlLastErrorUpdateTimestampMsg();
 }
 
 bool get_speed_controller_enabled(void) {
