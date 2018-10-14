@@ -53,9 +53,9 @@ void init_speed_controller_defaults(int32_t max_input_speed,
     reset_internal_vars();
 
     // Parameters
-    speed_controller_params.kp_times_1000 = 1500;
-    speed_controller_params.ki_times_1000 = 10;
-    speed_controller_params.kd_times_1000 = 1000;
+    speed_controller_params.kp_times_1000 = 30000;
+    speed_controller_params.ki_times_1000 = 0; //10;
+    speed_controller_params.kd_times_1000 = 0; //1000;
     speed_controller_params.i_windup_max = 100000;
     speed_controller_params.i_windup_min = -100000;
     speed_controller_params.min_output_value = 0;
