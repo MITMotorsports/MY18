@@ -137,6 +137,7 @@ void execute_controls(void) {
       switch (lc_state) {
         case BEFORE:
           sendTorqueCmdMsg(0);
+          disable_speed_controller();
 
           // Transition
           if (pedalbox_min(accel) > LC_ACCEL_BEGIN) {
