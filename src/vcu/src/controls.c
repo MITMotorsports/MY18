@@ -7,6 +7,8 @@ can0_VCUControlsParams_T control_settings = {};
 can0_VCUControlsParamsLC_T lc_settings = {};
 static Launch_Control_State_T lc_state = BEFORE;
 
+uint32_t last_time_step = 0;
+
 uint32_t get_front_wheel_speed(void);
 static bool any_lc_faults();
 
@@ -145,17 +147,23 @@ void execute_controls(void) {
           break;
         case SPEED_CONTROLLER:
           
-          set_speed_controller_setpoint(0); // RPM
+          set_speed_controller_setpoint(1500); // RPM
 
           // Update the internal speed controller with the new speed value
           // TODO: replace HAL_GetTick with the timestamp of the message
           update_speed_controller_error(mc_readings.speed, HAL_GetTick());
                  
+
           // speed_command = 500; // get_launch_control_speed(front_wheel_speed);
           
           int32_t speedControlTorqueOutput = get_speed_controller_torque_command();
           if (speedControlTorqueOutput > torque_command) {
             speedControlTorqueOutput = torque_command;
+          }
+
+          if (HAL_GetTick() - last_time_step > 50) {
+            printf("[SC] ERR: %d, TORQUE: %d\r\n", get_speed_controller_error(), speedControlTorqueOutput);
+            last_time_step = HAL_GetTick();
           }
 
           sendTorqueCmdMsg(speedControlTorqueOutput);

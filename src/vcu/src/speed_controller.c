@@ -53,7 +53,7 @@ void init_speed_controller_defaults(int32_t max_input_speed,
     reset_internal_vars();
 
     // Parameters
-    speed_controller_params.kp_times_1000 = 0; //200
+    speed_controller_params.kp_times_1000 = 1500; //200
     speed_controller_params.ki_times_1000 = 0;
     speed_controller_params.kd_times_1000 = 0;
     speed_controller_params.i_windup_max = 10;
@@ -80,6 +80,7 @@ void enable_speed_controller(void) {
 }
 
 void disable_speed_controller(void) {
+    printf("DISABLE SPEED CONTROL!!!!!!!!!!!\r\n");
     speed_controller_vars.enabled = false;
     reset_internal_vars();
 }
@@ -102,26 +103,30 @@ void set_speed_controller_setpoint(int32_t rpm) {
     speed_controller_vars.rpm_setpoint = rpm;
 }
 
+int32_t get_speed_controller_error(void) {
+    return speed_controller_vars.rpm_error;
+}
+
 void update_speed_controller_error(int32_t actual_rpm, 
     uint32_t actual_rpm_msg_timestamp) {
 
     // Check for function call time-outs
-    uint32_t func_call_dt = HAL_GetTick() - speed_controller_vars.last_error_update_timestamp;
+    // uint32_t func_call_dt = HAL_GetTick() - speed_controller_vars.last_error_update_timestamp;
 
-    if (func_call_dt > speed_controller_params.error_update_timeout) {
-        disable_speed_controller();
-        speed_controller_vars.error_update_timed_out = true;
-        return;
-    }
+    // if (func_call_dt > speed_controller_params.error_update_timeout) {
+    //     disable_speed_controller();
+    //     speed_controller_vars.error_update_timed_out = true;
+    //     return;
+    // }
 
     // Check for CAN based time-outs
-    uint32_t can_msg_dt = HAL_GetTick() - actual_rpm_msg_timestamp;
+    // uint32_t can_msg_dt = HAL_GetTick() - actual_rpm_msg_timestamp;
 
-    if (can_msg_dt > speed_controller_params.error_update_timeout) {
-        disable_speed_controller();
-        speed_controller_vars.error_update_timed_out = true;
-        return;
-    }
+    // if (can_msg_dt > speed_controller_params.error_update_timeout) {
+    //     disable_speed_controller();
+    //     speed_controller_vars.error_update_timed_out = true;
+    //     return;
+    // }
 
     // TODO: Overhead/underhead counter output so we know if we are not consistent w/ dt
     // Check to see if an update can be performed
@@ -142,7 +147,7 @@ static void update_error_internal(int32_t actual) {
     speed_controller_vars.last_rpm_error = speed_controller_vars.rpm_error;
 
     // take error diff
-    speed_controller_vars.rpm_error = speed_controller_vars.rpm_setpoint - actual;
+    speed_controller_vars.rpm_error = speed_controller_vars.rpm_setpoint - (-1.0 * actual); // motor speed is negative
     
     // Multiply by 100 for precision, example: 1234 rpm * 1000 / 12ms = 102833, 1 rpm * 1000 / 12ms = 83    
     speed_controller_vars.deriv_rpm_error = 
