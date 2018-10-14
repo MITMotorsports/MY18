@@ -285,10 +285,12 @@ static bool any_lc_faults(void) {
     // that is indicative of driver braking intent. The other brake is for regen.
     printf("[LAUNCH CONTROL ERROR] Brake (%d) too high\r\n", pedalbox.brake_2);
     return true;
-  } else if (mc_readings.speed > LC_BACKWARDS_CUTOFF) {
-    printf("[LAUNCH CONTROL ERROR] MC reading (%d) is great than cutoff (%d)\r\n", mc_readings.speed, LC_BACKWARDS_CUTOFF);
-    return true;
-  }
+  } 
+
+  // else if (mc_readings.speed > LC_BACKWARDS_CUTOFF) {
+  //   printf("[LAUNCH CONTROL ERROR] MC reading (%d) is great than cutoff (%d)\r\n", mc_readings.speed, LC_BACKWARDS_CUTOFF);
+  //   return true;
+  // }
     return false;
 }
 
