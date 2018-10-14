@@ -154,8 +154,8 @@ void execute_controls(void) {
           // speed_command = 500; // get_launch_control_speed(front_wheel_speed);
           
           int32_t speedControlTorqueOutput = get_speed_controller_torque_command();
-          if (speedControlTorqueOutput >= MAX_TORQUE) {
-            speedControlTorqueOutput = MAX_TORQUE;
+          if (speedControlTorqueOutput > torque_command) {
+            speedControlTorqueOutput = torque_command;
           }
 
           sendTorqueCmdMsg(speedControlTorqueOutput);
