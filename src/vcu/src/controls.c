@@ -140,6 +140,18 @@ void execute_controls(void) {
 
           // Transition
           if (pedalbox_min(accel) > LC_ACCEL_BEGIN) {
+            lc_state = SPEEDING_UP;
+            printf("[LAUNCH CONTROL] SPEEDING UP STATE ENTERED\r\n");
+          }
+          break;
+        case SPEEDING_UP:
+           // Command max(torque_command, lc_settings.speeding_up_torque)
+          // if (torque_command < lc_settings.speeding_up_torque) sendSpeedCmdMsg(lc_settings.speeding_up_speed, torque_command);
+          // else sendSpeedCmdMsg(lc_settings.speeding_up_speed, lc_settings.speeding_up_torque);
+          sendTorqueCmdMsg(lc_settings.speeding_up_torque);
+
+          // Transition
+          if (front_wheel_speed > lc_settings.ws_thresh * 1000) { // 
             lc_state = SPEED_CONTROLLER;
             enable_speed_controller();
             printf("[LAUNCH CONTROL] SPEED CONTROLLER STATE ENTERED\r\n");
@@ -147,23 +159,22 @@ void execute_controls(void) {
           break;
         case SPEED_CONTROLLER:
           
-          set_speed_controller_setpoint(0); // RPM
+          speed_command = get_launch_control_speed(front_wheel_speed);
+
+          set_speed_controller_setpoint(speed_command); // RPM
 
           // Update the internal speed controller with the new speed value
           // TODO: replace HAL_GetTick with the timestamp of the message
           update_speed_controller_error(mc_readings.speed, HAL_GetTick());
-                 
-
-          // speed_command = 500; // get_launch_control_speed(front_wheel_speed);
-          
+                           
           int32_t speedControlTorqueOutput = get_speed_controller_torque_command();
           if (speedControlTorqueOutput > torque_command) {
             speedControlTorqueOutput = torque_command;
           }
 
           if (HAL_GetTick() - last_time_step > 50) {
-            printf("[SC] ERR: %d, TORQUE: %d, ACCUM: %d, DERIV: %d\r\n",
-              get_speed_controller_error(), speedControlTorqueOutput,
+            printf("[SC] SETPOINT: %d, ERR: %d, TORQUE: %d, ACCUM: %d, DERIV: %d\r\n",
+              speed_command, get_speed_controller_error(), speedControlTorqueOutput,
               get_speed_controller_accum(), get_speed_controller_deriv());
 
             last_time_step = HAL_GetTick();
@@ -273,10 +284,10 @@ static bool any_lc_faults(void) {
     // that is indicative of driver braking intent. The other brake is for regen.
     printf("[LAUNCH CONTROL ERROR] Brake (%d) too high\r\n", pedalbox.brake_2);
     return true;
-  } else /*else if (mc_readings.speed > LC_BACKWARDS_CUTOFF) {m
+  } else if (mc_readings.speed > LC_BACKWARDS_CUTOFF) {
     printf("[LAUNCH CONTROL ERROR] MC reading (%d) is great than cutoff (%d)\r\n", mc_readings.speed, LC_BACKWARDS_CUTOFF);
     return true;
-  }*/
+  }
     return false;
 }
 
