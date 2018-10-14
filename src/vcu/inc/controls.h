@@ -14,7 +14,7 @@
 #define SPEED_CONTROLLER_UPDATE_PERIOD_MS  1
 
 // TODO: Extract MAX_TORQUE from RMS EEPROM (over CAN?)
-#define MAX_TORQUE    2400 // unit: dNm
+#define MAX_TORQUE    100//2400 // unit: dNm
 #define MAX_ACCEL_VAL 1000
 #define MIN_ACCEL_VAL 0
 

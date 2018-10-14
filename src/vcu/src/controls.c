@@ -145,7 +145,7 @@ void execute_controls(void) {
           break;
         case SPEED_CONTROLLER:
           
-          set_speed_controller_setpoint(500); // RPM
+          set_speed_controller_setpoint(0); // RPM
 
           // Update the internal speed controller with the new speed value
           // TODO: replace HAL_GetTick with the timestamp of the message
