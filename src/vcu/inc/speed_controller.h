@@ -7,8 +7,28 @@
 
 #include "can_handles.h"
 
-extern can0_VCUSpeedControllerInfo_T controller_info;
-extern can0_VCUSpeedControllerParams_T controller_params;
+extern can0_VCUSpeedCntrlKpTimes1000_T kp_times_1000_frame;
+extern can0_VCUSpeedCntrlKiTimes1000_T ki_times_1000_frame;
+extern can0_VCUSpeedCntrlKdTimes1000_T kd_times_1000_frame;
+extern can0_VCUSpeedCntrlIWindupMax_T i_windup_max_frame;
+extern can0_VCUSpeedCntrlIWindupMin_T i_windup_min_frame;
+extern can0_VCUSpeedCntrlMinOutputValue_T min_output_value_frame;
+extern can0_VCUSpeedCntrlMaxOutputValue_T max_output_value_frame;
+extern can0_VCUSpeedCntrlMinInputValue_T min_input_value_frame;
+extern can0_VCUSpeedCntrlMaxInputValue_T max_input_value_frame;
+extern can0_VCUSpeedCntrlErrorUpdateTimeout_T error_update_timeout_frame;
+extern can0_VCUSpeedCntrlDt_T dt_frame;
+extern can0_VCUSpeedCntrlEnabled_T enabled_frame;
+extern can0_VCUSpeedCntrlOutOfInputRangeThrottled_T out_of_input_range_throttled_frame;
+extern can0_VCUSpeedCntrlOutOfOutputRangeThrottled_T out_of_output_range_throttled_frame;
+extern can0_VCUSpeedCntrlErrorUpdateTimedOut_T error_update_timed_out_frame;
+extern can0_VCUSpeedCntrlRPMSetpoint_T rpm_setpoint_frame;
+extern can0_VCUSpeedCntrlCommandedTorque_T commanded_torque_frame;
+extern can0_VCUSpeedCntrlRPMError_T rpm_error_frame;
+extern can0_VCUSpeedCntrlLastRPMError_T last_rpm_error_frame;
+extern can0_VCUSpeedCntrlDerivRPMError_T deriv_rpm_error_frame;
+extern can0_VCUSpeedCntrlRPMErrorAccumulated_T rpm_error_accumulated_frame;
+extern can0_VCUSpeedCntrlLastErrorUpdateTimestamp_T last_error_update_timestamp_frame;
 
 // PUBLIC STRUCTS
 typedef struct {
@@ -22,6 +42,7 @@ typedef struct {
     int32_t min_input_value;
     int32_t max_input_value;
     int32_t dt;
+   	uint32_t error_update_timeout;
 } SpeedControllerParams;
 
 typedef struct {
@@ -48,7 +69,6 @@ void update_speed_controller_error(int32_t actual_rpm,
 	uint32_t actual_rpm_msg_timestamp);
 int32_t get_speed_controller_torque_command(void);
 bool get_speed_controller_enabled(void);
-void send_speed_controller_info_can_msg(void);
-void send_speed_controller_params_can_msg(void);
+int32_t get_speed_controller_error(void);
 
 #endif // ifndef __SPEED_CONTROLLER

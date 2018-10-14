@@ -7,6 +7,8 @@ can0_VCUControlsParams_T control_settings = {};
 can0_VCUControlsParamsLC_T lc_settings = {};
 static Launch_Control_State_T lc_state = BEFORE;
 
+uint32_t last_time_step = 0;
+
 uint32_t get_front_wheel_speed(void);
 static bool any_lc_faults();
 
@@ -34,6 +36,9 @@ void init_controls_defaults(void) {
   lc_settings.speeding_up_torque = LC_DEFAULT_SPEEDING_UP_TORQUE;
   lc_settings.speeding_up_speed = LC_DEFAULT_SPEEDING_UP_SPEED;
   lc_settings.ws_thresh = LC_DEFAULT_WS_THRESH;
+
+  init_speed_controller_defaults(MAX_INPUT_SPEED, 
+    MAX_TORQUE, SPEED_CONTROLLER_UPDATE_PERIOD_MS);
 }
 
 void enable_controls(void) {
@@ -136,15 +141,37 @@ void execute_controls(void) {
           // Transition
           if (pedalbox_min(accel) > LC_ACCEL_BEGIN) {
             lc_state = SPEED_CONTROLLER;
+            enable_speed_controller();
             printf("[LAUNCH CONTROL] SPEED CONTROLLER STATE ENTERED\r\n");
           }
           break;
         case SPEED_CONTROLLER:
-          speed_command = 500; // get_launch_control_speed(front_wheel_speed);
-          sendSpeedCmdMsg(speed_command, torque_command);
+          
+          set_speed_controller_setpoint(500); // RPM
+
+          // Update the internal speed controller with the new speed value
+          // TODO: replace HAL_GetTick with the timestamp of the message
+          update_speed_controller_error(mc_readings.speed, HAL_GetTick());
+                 
+
+          // speed_command = 500; // get_launch_control_speed(front_wheel_speed);
+          
+          int32_t speedControlTorqueOutput = get_speed_controller_torque_command();
+          if (speedControlTorqueOutput > torque_command) {
+            speedControlTorqueOutput = torque_command;
+          }
+
+          if (HAL_GetTick() - last_time_step > 50) {
+            printf("[SC] ERR: %d, TORQUE: %d\r\n", get_speed_controller_error(), speedControlTorqueOutput);
+            last_time_step = HAL_GetTick();
+          }
+
+          sendTorqueCmdMsg(speedControlTorqueOutput);
+
           break;
         case ZERO_TORQUE:
           sendTorqueCmdMsg(0);
+          disable_speed_controller();
 
           if (pedalbox_max(accel) < LC_ACCEL_RELEASE) {
             lc_state = DONE;
@@ -153,6 +180,7 @@ void execute_controls(void) {
           break;
         default:
           sendTorqueCmdMsg(0);
+          disable_speed_controller();
 
           printf("ERROR: NO STATE!\r\n");
           break;

@@ -26,6 +26,28 @@ boards:
         - MCCommand
         - VCUControlsParams
         - VCUControlsMonitoring
+        - VCUSpeedCntrlKpTimes1000
+        - VCUSpeedCntrlKiTimes1000
+        - VCUSpeedCntrlKdTimes1000
+        - VCUSpeedCntrlIWindupMax
+        - VCUSpeedCntrlIWindupMin
+        - VCUSpeedCntrlMinOutputValue
+        - VCUSpeedCntrlMaxOutputValue
+        - VCUSpeedCntrlMinInputValue
+        - VCUSpeedCntrlMaxInputValue
+        - VCUSpeedCntrlErrorUpdateTimeout
+        - VCUSpeedCntrlDt
+        - VCUSpeedCntrlEnabled
+        - VCUSpeedCntrlOutOfInputRangeThrottled
+        - VCUSpeedCntrlOutOfOutputRangeThrottled
+        - VCUSpeedCntrlErrorUpdateTimedOut
+        - VCUSpeedCntrlRPMSetpoint
+        - VCUSpeedCntrlCommandedTorque
+        - VCUSpeedCntrlRPMError
+        - VCUSpeedCntrlLastRPMError
+        - VCUSpeedCntrlDerivRPMError
+        - VCUSpeedCntrlRPMErrorAccumulated
+        - VCUSpeedCntrlLastErrorUpdateTimestamp
     subscribe:
       can0:
         - FrontCanNodeBrakeThrottle
@@ -869,6 +891,204 @@ buses:
             position: 48
             length: 16
             c_type: uint16_t
+      VCUSpeedCntrlKpTimes1000:
+        can_id:  0x223
+        period: 200ms
+        is_big_endian: true
+        segments:
+          kp_times_1000:
+            position: 0
+            length: 32
+            c_type: int32_t
+      VCUSpeedCntrlKiTimes1000:
+        can_id:  0x225
+        period: 200ms
+        is_big_endian: true
+        segments:
+          ki_times_1000:
+            position: 0
+            length: 32
+            c_type: int32_t
+      VCUSpeedCntrlKdTimes1000:
+        can_id:  0x227
+        period: 200ms
+        is_big_endian: true
+        segments:
+          kd_times_1000:
+            position: 0
+            length: 32
+            c_type: int32_t
+      VCUSpeedCntrlIWindupMax:
+        can_id:  0x229
+        period: 200ms
+        is_big_endian: true
+        segments:
+          i_windup_max:
+            position: 0
+            length: 32
+            c_type: int32_t
+      VCUSpeedCntrlIWindupMin:
+        can_id:  0x22B
+        period: 200ms
+        is_big_endian: true
+        segments:
+          i_windup_min:
+            position: 0
+            length: 32
+            c_type: int32_t
+      VCUSpeedCntrlMinOutputValue:
+        can_id:  0x22D
+        period: 200ms
+        is_big_endian: true
+        segments:
+          min_output_value:
+            position: 0
+            length: 32
+            c_type: int32_t
+      VCUSpeedCntrlMaxOutputValue:
+        can_id:  0x22F
+        period: 200ms
+        is_big_endian: true
+        segments:
+          max_output_value:
+            position: 0
+            length: 32
+            c_type: int32_t
+      VCUSpeedCntrlMinInputValue:
+        can_id:  0x231
+        period: 200ms
+        is_big_endian: true
+        segments:
+          min_input_value:
+            position: 0
+            length: 32
+            c_type: int32_t
+      VCUSpeedCntrlMaxInputValue:
+        can_id:  0x233
+        period: 200ms
+        is_big_endian: true
+        segments:
+          max_input_value:
+            position: 0
+            length: 32
+            c_type: int32_t
+      VCUSpeedCntrlErrorUpdateTimeout:
+        can_id:  0x235
+        period: 200ms
+        is_big_endian: true
+        segments:
+          error_update_timeout:
+            position: 0
+            length: 32
+            c_type: int32_t
+      VCUSpeedCntrlDt:
+        can_id:  0x237
+        period: 200ms
+        is_big_endian: true
+        segments:
+          dt:
+            position: 0
+            length: 32
+            c_type: int32_t
+      VCUSpeedCntrlEnabled:
+        can_id: 0x239
+        period: 200ms
+        is_big_endian: true
+        segments:
+          enabled:
+            position: 0
+            length: 1
+            c_type: bool
+      VCUSpeedCntrlOutOfInputRangeThrottled:
+        can_id: 0x23B
+        period: 200ms
+        is_big_endian: true
+        segments:
+          out_of_input_range_throttled:
+            position: 0
+            length: 1
+            c_type: bool
+      VCUSpeedCntrlOutOfOutputRangeThrottled:
+        can_id: 0x23D
+        period: 200ms
+        is_big_endian: true
+        segments:
+          out_of_output_range_throttled:
+            position: 0
+            length: 1
+            c_type: bool
+      VCUSpeedCntrlErrorUpdateTimedOut:
+        can_id: 0x23F
+        period: 200ms
+        is_big_endian: true
+        segments:
+          error_update_timed_out:
+            position: 0
+            length: 1
+            c_type: bool
+      VCUSpeedCntrlRPMSetpoint:
+        can_id: 0x241
+        period: 200ms
+        is_big_endian: true
+        segments:
+          rpm_setpoint:
+            position: 0
+            length: 32
+            c_type: int32_t
+      VCUSpeedCntrlCommandedTorque:
+        can_id: 0x243
+        period: 200ms
+        is_big_endian: true
+        segments:
+          commanded_torque:
+            position: 0
+            length: 32
+            c_type: int32_t
+      VCUSpeedCntrlRPMError:
+        can_id: 0x245
+        period: 200ms
+        is_big_endian: true
+        segments:
+          rpm_error:
+            position: 0
+            length: 32
+            c_type: int32_t
+      VCUSpeedCntrlLastRPMError:
+        can_id: 0x247
+        period: 200ms
+        is_big_endian: true
+        segments:
+          last_rpm_error:
+            position: 0
+            length: 32
+            c_type: int32_t
+      VCUSpeedCntrlDerivRPMError:
+        can_id: 0x249
+        period: 200ms
+        is_big_endian: true
+        segments:
+          deriv_rpm_error:
+            position: 0
+            length: 32
+            c_type: int32_t
+      VCUSpeedCntrlRPMErrorAccumulated:
+        can_id: 0x24B
+        period: 200ms
+        is_big_endian: true
+        segments:
+          rpm_error_accumulated:
+            position: 0
+            length: 32
+            c_type: int32_t
+      VCUSpeedCntrlLastErrorUpdateTimestamp:
+        can_id: 0x24D
+        period: 200ms
+        is_big_endian: true
+        segments:
+          last_error_update_timestamp:
+            position: 0
+            length: 32
+            c_type: uint32_t
       MCCommand:
         can_id: 0x0C0 # From manual
         period: 9ms  # MC needs a message at 2 Hz or higher

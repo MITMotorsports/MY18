@@ -449,3 +449,136 @@ void send_mc_fault_clear(void) {
 
   can0_MCParameterRequest_Write(&msg);
 }
+
+void sendVCUSpeedCntrlKpTimes1000Msg(void) {
+  LIMIT(can0_VCUSpeedCntrlKpTimes1000)
+
+  can0_VCUSpeedCntrlKpTimes1000_Write(&kp_times_1000_frame);
+}
+
+void sendVCUSpeedCntrlKiTimes1000Msg(void) {
+  LIMIT(can0_VCUSpeedCntrlKiTimes1000)
+
+  can0_VCUSpeedCntrlKiTimes1000_Write(&ki_times_1000_frame);
+}
+
+void sendVCUSpeedCntrlKdTimes1000Msg(void) {
+  LIMIT(can0_VCUSpeedCntrlKdTimes1000)
+
+  can0_VCUSpeedCntrlKdTimes1000_Write(&kd_times_1000_frame);
+}
+
+void sendVCUSpeedCntrlIWindupMaxMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlIWindupMax)
+
+  can0_VCUSpeedCntrlIWindupMax_Write(&i_windup_max_frame);
+}
+
+void sendVCUSpeedCntrlIWindupMinMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlIWindupMin)
+
+  can0_VCUSpeedCntrlIWindupMin_Write(&i_windup_min_frame);
+}
+
+void sendVCUSpeedCntrlMinOutputValueMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlMinOutputValue)
+
+  can0_VCUSpeedCntrlMinOutputValue_Write(&min_output_value_frame);
+}
+
+void sendVCUSpeedCntrlMaxOutputValueMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlMaxOutputValue)
+
+  can0_VCUSpeedCntrlMaxOutputValue_Write(&max_output_value_frame);
+}
+
+void sendVCUSpeedCntrlMinInputValueMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlMinInputValue)
+
+  can0_VCUSpeedCntrlMinInputValue_Write(&min_input_value_frame);
+}
+
+void sendVCUSpeedCntrlMaxInputValueMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlMaxInputValue)
+
+  can0_VCUSpeedCntrlMaxInputValue_Write(&max_input_value_frame);
+}
+
+void sendVCUSpeedCntrlErrorUpdateTimeoutMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlErrorUpdateTimeout)
+
+  can0_VCUSpeedCntrlErrorUpdateTimeout_Write(&dt_frame);
+}
+
+void sendVCUSpeedCntrlDtMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlDt)
+
+  can0_VCUSpeedCntrlDt_Write(&error_update_timeout_frame);
+}
+
+void sendVCUSpeedCntrlEnabledMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlEnabled)
+
+  can0_VCUSpeedCntrlEnabled_Write(&enabled_frame);
+}
+
+void sendVCUSpeedCntrlOutOfInputRangeThrottledMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlOutOfInputRangeThrottled)
+
+  can0_VCUSpeedCntrlOutOfInputRangeThrottled_Write(&out_of_input_range_throttled_frame);
+}
+
+void sendVCUSpeedCntrlOutOfOutputRangeThrottledMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlOutOfOutputRangeThrottled)
+
+  can0_VCUSpeedCntrlOutOfOutputRangeThrottled_Write(&out_of_output_range_throttled_frame);
+}
+
+void sendVCUSpeedCntrlErrorUpdateTimedOutMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlErrorUpdateTimedOut)
+
+  can0_VCUSpeedCntrlErrorUpdateTimedOut_Write(&error_update_timed_out_frame);
+}
+
+void sendVCUSpeedCntrlRPMSetpointMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlRPMSetpoint)
+
+  can0_VCUSpeedCntrlRPMSetpoint_Write(&rpm_setpoint_frame);
+}
+
+void sendVCUSpeedCntrlCommandedTorqueMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlCommandedTorque)
+
+  can0_VCUSpeedCntrlCommandedTorque_Write(&commanded_torque_frame);
+}
+
+void sendVCUSpeedCntrlRPMErrorMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlRPMError)
+
+  can0_VCUSpeedCntrlRPMError_Write(&rpm_error_frame);
+}
+
+void sendVCUSpeedCntrlLastRPMErrorMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlLastRPMError)
+
+  can0_VCUSpeedCntrlLastRPMError_Write(&last_rpm_error_frame);
+}
+
+void sendVCUSpeedCntrlDerivRPMErrorMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlDerivRPMError)
+
+  can0_VCUSpeedCntrlDerivRPMError_Write(&deriv_rpm_error_frame);
+}
+
+void sendVCUSpeedCntrlRPMErrorAccumulatedMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlRPMErrorAccumulated)
+
+  can0_VCUSpeedCntrlRPMErrorAccumulated_Write(&rpm_error_accumulated_frame);
+}
+
+void sendVCUSpeedCntrlLastErrorUpdateTimestampMsg(void) {
+  LIMIT(can0_VCUSpeedCntrlLastErrorUpdateTimestamp)
+
+  can0_VCUSpeedCntrlLastErrorUpdateTimestamp_Write(&last_error_update_timestamp_frame);
+}
+

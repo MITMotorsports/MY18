@@ -9,6 +9,10 @@
 #include "fault_pedalbox.h"
 #include "fault_brakes.h"
 
+// Internal Speed Controller settings for launch control
+#define MAX_INPUT_SPEED 3000
+#define SPEED_CONTROLLER_UPDATE_PERIOD_MS  1
+
 // TODO: Extract MAX_TORQUE from RMS EEPROM (over CAN?)
 #define MAX_TORQUE    2400 // unit: dNm
 #define MAX_ACCEL_VAL 1000
