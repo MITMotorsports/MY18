@@ -71,5 +71,6 @@ int32_t get_speed_controller_torque_command(void);
 bool get_speed_controller_enabled(void);
 int32_t get_speed_controller_error(void);
 int32_t get_speed_controller_accum(void);
+int32_t get_speed_controller_deriv(void);
 
 #endif // ifndef __SPEED_CONTROLLER

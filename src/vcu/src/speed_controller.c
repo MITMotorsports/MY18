@@ -55,7 +55,7 @@ void init_speed_controller_defaults(int32_t max_input_speed,
     // Parameters
     speed_controller_params.kp_times_1000 = 1500;
     speed_controller_params.ki_times_1000 = 10;
-    speed_controller_params.kd_times_1000 = 0;
+    speed_controller_params.kd_times_1000 = 1000;
     speed_controller_params.i_windup_max = 100000;
     speed_controller_params.i_windup_min = -100000;
     speed_controller_params.min_output_value = 0;
@@ -111,6 +111,10 @@ int32_t get_speed_controller_accum(void) {
     return speed_controller_vars.rpm_error_accumulated;
 }
 
+int32_t get_speed_controller_deriv(void) {
+    return speed_controller_vars.deriv_rpm_error;
+}
+
 void update_speed_controller_error(int32_t actual_rpm, 
     uint32_t actual_rpm_msg_timestamp) {
 
@@ -156,7 +160,7 @@ static void update_error_internal(int32_t actual) {
     // Multiply by 100 for precision, example: 1234 rpm * 1000 / 12ms = 102833, 1 rpm * 1000 / 12ms = 83    
     speed_controller_vars.deriv_rpm_error = 
         (speed_controller_vars.rpm_error 
-            - speed_controller_vars.last_rpm_error) * 1000 / speed_controller_params.dt;
+            - speed_controller_vars.last_rpm_error) / speed_controller_params.dt;
 
     int32_t accum = speed_controller_vars.rpm_error_accumulated 
                         + speed_controller_vars.rpm_error * speed_controller_params.dt;
