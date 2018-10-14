@@ -70,5 +70,6 @@ void update_speed_controller_error(int32_t actual_rpm,
 int32_t get_speed_controller_torque_command(void);
 bool get_speed_controller_enabled(void);
 int32_t get_speed_controller_error(void);
+int32_t get_speed_controller_accum(void);
 
 #endif // ifndef __SPEED_CONTROLLER

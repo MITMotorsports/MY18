@@ -53,11 +53,11 @@ void init_speed_controller_defaults(int32_t max_input_speed,
     reset_internal_vars();
 
     // Parameters
-    speed_controller_params.kp_times_1000 = 1500; //200
-    speed_controller_params.ki_times_1000 = 0;
+    speed_controller_params.kp_times_1000 = 1500;
+    speed_controller_params.ki_times_1000 = 10;
     speed_controller_params.kd_times_1000 = 0;
-    speed_controller_params.i_windup_max = 10;
-    speed_controller_params.i_windup_min = -10;
+    speed_controller_params.i_windup_max = 100000;
+    speed_controller_params.i_windup_min = -100000;
     speed_controller_params.min_output_value = 0;
     speed_controller_params.max_output_value = max_output_torque;
     speed_controller_params.min_input_value = 0;
@@ -105,6 +105,10 @@ void set_speed_controller_setpoint(int32_t rpm) {
 
 int32_t get_speed_controller_error(void) {
     return speed_controller_vars.rpm_error;
+}
+
+int32_t get_speed_controller_accum(void) {
+    return speed_controller_vars.rpm_error_accumulated;
 }
 
 void update_speed_controller_error(int32_t actual_rpm, 
@@ -176,7 +180,7 @@ int32_t get_speed_controller_torque_command(void) {
     // CAREFUL! ADDING MORE PRECISION HERE WILL OVERFLOW THE INT32 FOR THE VALUES THE CONTROLLER IS EXPECTING
     // RUN THIS ON SOME PAPER WITH HIGH AND LOW VALUES
     int32_t torque = (speed_controller_params.kp_times_1000 * speed_controller_vars.rpm_error / 1000)
-        + (speed_controller_params.ki_times_1000 * speed_controller_vars.rpm_error_accumulated / 1000)
+        + (speed_controller_params.ki_times_1000 * speed_controller_vars.rpm_error_accumulated / 10000) // divide by one more here for keeping the rate proper
         + (speed_controller_params.kd_times_1000 * speed_controller_vars.deriv_rpm_error / 1000);
 
     if (torque < speed_controller_params.min_output_value) {

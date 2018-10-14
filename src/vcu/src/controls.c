@@ -147,7 +147,7 @@ void execute_controls(void) {
           break;
         case SPEED_CONTROLLER:
           
-          set_speed_controller_setpoint(500); // RPM
+          set_speed_controller_setpoint(2000); // RPM
 
           // Update the internal speed controller with the new speed value
           // TODO: replace HAL_GetTick with the timestamp of the message
@@ -162,7 +162,10 @@ void execute_controls(void) {
           }
 
           if (HAL_GetTick() - last_time_step > 50) {
-            printf("[SC] ERR: %d, TORQUE: %d\r\n", get_speed_controller_error(), speedControlTorqueOutput);
+            printf("[SC] ERR: %d, TORQUE: %d, ACCUM: %d\r\n", 
+              get_speed_controller_error(), speedControlTorqueOutput,
+              get_speed_controller_accum());
+
             last_time_step = HAL_GetTick();
           }
 
