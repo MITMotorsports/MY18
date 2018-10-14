@@ -52,6 +52,7 @@ void draw_regen_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 void draw_launch_control_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 void draw_traction_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 void draw_fault_page(page_manager_t *pm, NHD_US2066_OLED *oled);
+void draw_lc_pid_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 
 void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
     // Make sure that active aero is disable if we are not on the critical page
@@ -80,6 +81,9 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
             break;
         case DASH_PAGE_DEBUG:
             draw_debug_page(pm, oled);
+            break;
+        case DASH_LC_PID_DEBUG:
+            draw_lc_pid_page(pm, oled);
             break;
         default:
             break;
@@ -524,7 +528,7 @@ void draw_launch_control_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     oled_clearline(oled, 2);
     oled_set_pos(oled, 2, 0);
-    
+
     oled_print(oled, "TORQ ");
     if (stats->lc_controls.speeding_up_torque != 65535) {
         oled_print_num(oled, stats->lc_controls.speeding_up_torque);
@@ -728,5 +732,46 @@ void draw_traction_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
         oled_print_num(oled, brake_2);
     } else {
         oled_print(oled, DATA_UNKNOWN);
+    }
+
+
+    void draw_lc_pid_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+
+      carstats_t *stats = pm->stats;
+      static int var_toggled = 1;
+
+      // Process contextual actions
+      if (stats->buttons.B.rising_edge) var_toggled++;
+      var_toggled = LOOPOVER(var_toggled, 1, 4);
+
+      oled_clearline(oled, 0);
+      oled_set_pos(oled, 0, 0);
+      oled_print(oled, "P: ");
+      oled_print(oled, pm->stats->kp);
+
+      oled_clearline(oled, 1);
+      oled_set_pos(oled, 1, 1);
+      oled_print(oled, "I: ");
+      oled_print(oled, pm->stats->ki);
+
+      oled_clearline(oled, 2);
+      oled_set_pos(oled, 2, 1);
+      oled_print(oled, "D ");
+      oled_print(oled, pm->stats->kd);
+
+      oled_clearline(oled, 3);
+      oled_set_pos(oled, 3, 1);
+      oled_print(oled, "Windup: ");
+      oled_print(oled, pm->stats->windup);
+
+      oled_clearline(oled, 4);
+      oled_set_pos(oled, 4, 1);
+      oled_print(oled, "RPM Setpoint: ");
+      oled_print(oled, pm->stats->rpm_setpoint);
+
+
+      oled_set_pos(oled, var_toggled, 0);
+      oled_print(oled, ">");
+
     }
 }
