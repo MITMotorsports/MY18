@@ -108,6 +108,10 @@ void dispatch_init() {
     carstats.vcu_controls_received = false;
     carstats.vcu_lc_controls_received = false;
 
+    carstats.rpm_setpoint.rpm_setpoint = 0;
+    carstats.ki.ki_times_1000 = 1000;
+    carstats.kp.kp_times_1000 = 0;
+
     init_button_state(&carstats.buttons.left);
     init_button_state(&carstats.buttons.right);
     init_button_state(&carstats.buttons.A);
@@ -177,6 +181,9 @@ void send_dash_controls(void) {
     LIMIT(can0_DashRequest_period);
     handle_can_error(can0_DashRequest_Write(&carstats.controls));
     handle_can_error(can0_DashRequestLC_Write(&carstats.lc_controls));
+    handle_can_error(can0_DashSpeedCntrlKpTimes1000_Write(&carstats.kp));
+    handle_can_error(can0_DashSpeedCntrlKiTimes1000_Write(&carstats.ki));
+    handle_can_error(can0_DashSpeedCntrlRPMSetpoint_Write(&carstats.rpm_setpoint));
 }
 
 void vcu_controls_update(void) {

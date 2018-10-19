@@ -65,6 +65,7 @@ typedef enum {
 
 extern can0_VCUControlsParams_T control_settings;
 extern can0_VCUControlsParamsLC_T lc_settings;
+extern can0_DashSpeedCntrlRPMSetpoint_T rpm_setpoint;
 
 // INTERACTION FUNCTIONS
 void enable_controls(void);

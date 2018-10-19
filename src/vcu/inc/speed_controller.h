@@ -72,5 +72,7 @@ bool get_speed_controller_enabled(void);
 int32_t get_speed_controller_error(void);
 int32_t get_speed_controller_accum(void);
 int32_t get_speed_controller_deriv(void);
+void set_kp(int32_t new_kp);
+void set_kp(int32_t new_ki);
 
 #endif // ifndef __SPEED_CONTROLLER

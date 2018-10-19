@@ -5,6 +5,8 @@ static int32_t torque_command = 0;
 static int32_t speed_command = 0;
 can0_VCUControlsParams_T control_settings = {};
 can0_VCUControlsParamsLC_T lc_settings = {};
+can0_DashSpeedCntrlRPMSetpoint_T rpm_setpoint = {};
+
 static Launch_Control_State_T lc_state = BEFORE;
 
 uint32_t last_time_step = 0;
@@ -36,6 +38,8 @@ void init_controls_defaults(void) {
   lc_settings.speeding_up_torque = LC_DEFAULT_SPEEDING_UP_TORQUE;
   lc_settings.speeding_up_speed = LC_DEFAULT_SPEEDING_UP_SPEED;
   lc_settings.ws_thresh = LC_DEFAULT_WS_THRESH;
+
+  rpm_setpoint.rpm_setpoint = 0;
 
   init_speed_controller_defaults(MAX_INPUT_SPEED, 
     MAX_TORQUE, SPEED_CONTROLLER_UPDATE_PERIOD_MS);
@@ -149,9 +153,10 @@ void execute_controls(void) {
         case SPEED_CONTROLLER:
           
           // speed_command = get_launch_control_speed(front_wheel_speed);
-          speed_command = 500;
+          // speed_command = 500;
 
-          set_speed_controller_setpoint(speed_command); // RPM
+
+          set_speed_controller_setpoint(rpm_setpoint.rpm_setpoint); // RPM
 
           // Update the internal speed controller with the new speed value
           // TODO: replace HAL_GetTick with the timestamp of the message

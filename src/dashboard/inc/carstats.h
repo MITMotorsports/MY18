@@ -61,6 +61,9 @@ typedef struct {
     can0_DashRequestLC_T lc_controls;
     can0_VCUControlsParams_T vcu_controls;
     can0_VCUControlsParamsLC_T vcu_lc_controls;
+    can0_DashSpeedCntrlKpTimes1000_T kp;
+    can0_DashSpeedCntrlKiTimes1000_T ki;
+    can0_DashSpeedCntrlRPMSetpoint_T rpm_setpoint;
 
     bool vcu_controls_received;
     bool vcu_lc_controls_received;

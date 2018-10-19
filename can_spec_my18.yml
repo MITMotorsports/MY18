@@ -1089,6 +1089,33 @@ buses:
             position: 0
             length: 32
             c_type: uint32_t
+      DashSpeedCntrlKpTimes1000:
+        can_id:  0x224
+        period: 200ms
+        is_big_endian: true
+        segments:
+          kp_times_1000:
+            position: 0
+            length: 32
+            c_type: int32_t
+      DashSpeedCntrlKiTimes1000:
+        can_id:  0x226
+        period: 200ms
+        is_big_endian: true
+        segments:
+          ki_times_1000:
+            position: 0
+            length: 32
+            c_type: int32_t
+      DashSpeedCntrlRPMSetpoint:
+        can_id: 0x242
+        period: 200ms
+        is_big_endian: true
+        segments:
+          rpm_setpoint:
+            position: 0
+            length: 32
+            c_type: int32_t
       MCCommand:
         can_id: 0x0C0 # From manual
         period: 9ms  # MC needs a message at 2 Hz or higher

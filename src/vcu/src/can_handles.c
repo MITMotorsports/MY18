@@ -93,9 +93,22 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
   case can0_DashRequest:
     handleDashRequest(&frame);
     break;
-  
+
   case can0_DashRequestLC:
     handleDashRequestLC(&frame);
+    break;
+
+  case can0_DashSpeedCntrlKiTimes1000:
+    handleDashSpeedCntrlKiTimes1000(&frame);
+    break;
+
+  case can0_DashSpeedCntrlKpTimes1000:
+    handleDashSpeedCntrlKpTimes1000(&frame);
+    break;
+
+  case can0_DashSpeedCntrlRPMSetpoint:
+    handle_DashSpeedCntrlRPMSetpoint(&frame);
+    break;
 
   default:
     break;
@@ -113,6 +126,22 @@ void handleBrakeThrottleMsg(Frame *msg) {
   pedalbox.brake_2 = conflicts.fcn.brake_2;
 
   heartbeats.fcn = HAL_GetTick();
+}
+
+void handleDashSpeedCntrlKiTimes1000(Frame *msg) {
+  can0_DashSpeedCntrlKiTimes1000_T unpacked_msg;
+  unpack_can0_DashSpeedCntrlKiTimes1000(msg, &unpacked_msg);
+  set_kp(unpacked_msg.ki_times_1000);
+}
+
+void handleDashSpeedCntrlKpTimes1000(Frame *msg) {
+  can0_DashSpeedCntrlKpTimes1000_T unpacked_msg;
+  unpack_can0_DashSpeedCntrlKpTimes1000(msg, &unpacked_msg);
+  set_kp(unpacked_msg.kp_times_1000);
+}
+
+void handle_DashSpeedCntrlRPMSetpoint(Frame *msg) {
+  unpack_can0_DashSpeedCntrlRPMSetpoint(msg, &rpm_setpoint);
 }
 
 void handleMCVoltageMsg(Frame *msg) {

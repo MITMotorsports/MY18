@@ -276,3 +276,17 @@ void send_speed_controller_can_msgs(void) {
 bool get_speed_controller_enabled(void) {
   return speed_controller_vars.enabled;
 }
+
+void set_kp(int32_t new_kp) {
+    //printf("New kp: %d\r\n", new_kp);
+    if (!speed_controller_vars.enabled) {
+        speed_controller_params.kp_times_1000 = new_kp;
+    }
+}
+
+void set_ki(int32_t new_ki) {
+    //printf("New ki: %d\r\n", new_ki);
+    if (!speed_controller_vars.enabled) {
+        speed_controller_params.ki_times_1000 = new_ki;
+    }
+}
