@@ -131,7 +131,7 @@ void handleBrakeThrottleMsg(Frame *msg) {
 void handleDashSpeedCntrlKiTimes1000(Frame *msg) {
   can0_DashSpeedCntrlKiTimes1000_T unpacked_msg;
   unpack_can0_DashSpeedCntrlKiTimes1000(msg, &unpacked_msg);
-  set_kp(unpacked_msg.ki_times_1000);
+  set_ki(unpacked_msg.ki_times_1000);
 }
 
 void handleDashSpeedCntrlKpTimes1000(Frame *msg) {
