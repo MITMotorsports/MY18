@@ -168,9 +168,9 @@ void execute_controls(void) {
           }
 
           if (HAL_GetTick() - last_time_step > 50) {
-            printf("[SC] SETPOINT: %d, ERR: %d, TORQUE: %d, ACCUM: %d, DERIV: %d\r\n",
-              speed_command, get_speed_controller_error(), speedControlTorqueOutput,
-              get_speed_controller_accum(), get_speed_controller_deriv());
+            //printf("[SC] SETPOINT: %d, ERR: %d, TORQUE: %d, ACCUM: %d, DERIV: %d\r\n",
+            //  speed_command, get_speed_controller_error(), speedControlTorqueOutput,
+            //  get_speed_controller_accum(), get_speed_controller_deriv());
 
             last_time_step = HAL_GetTick();
           }
