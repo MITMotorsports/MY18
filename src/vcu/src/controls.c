@@ -145,18 +145,28 @@ void execute_controls(void) {
 
           // Transition
           if (pedalbox_min(accel) > LC_ACCEL_BEGIN) {
+            lc_state = SPEEDING_UP;
+            printf("[LAUNCH CONTROL] SPEEDING UP STATE ENTERED\r\n");
+          }
+          break;
+        case SPEEDING_UP:
+           // Command max(torque_command, lc_settings.speeding_up_torque)
+          // if (torque_command < lc_settings.speeding_up_torque) sendSpeedCmdMsg(lc_settings.speeding_up_speed, torque_command);
+          // else sendSpeedCmdMsg(lc_settings.speeding_up_speed, lc_settings.speeding_up_torque);
+          sendTorqueCmdMsg(lc_settings.speeding_up_torque);
+
+          // Transition
+          if (front_wheel_speed > lc_settings.ws_thresh * 1000) { // 
             lc_state = SPEED_CONTROLLER;
             enable_speed_controller();
-            printf("[LAUNCH CONTROL] SPEEDING UP STATE ENTERED\r\n");
+            printf("[LAUNCH CONTROL] SPEED CONTROLLER STATE ENTERED\r\n");
           }
           break;
         case SPEED_CONTROLLER:
           
-          // speed_command = get_launch_control_speed(front_wheel_speed);
-          // speed_command = 500;
+          speed_command = get_launch_control_speed(front_wheel_speed);
 
-
-          set_speed_controller_setpoint(rpm_setpoint.rpm_setpoint); // RPM
+          set_speed_controller_setpoint(speed_command); // RPM
 
           // Update the internal speed controller with the new speed value
           // TODO: replace HAL_GetTick with the timestamp of the message
@@ -168,9 +178,9 @@ void execute_controls(void) {
           }
 
           if (HAL_GetTick() - last_time_step > 50) {
-            printf("[SC] SETPOINT: %d, ERR: %d, TORQUE: %d, ACCUM: %d, DERIV: %d\r\n",
-              speed_command, get_speed_controller_error(), speedControlTorqueOutput,
-              get_speed_controller_accum(), get_speed_controller_deriv());
+            //printf("[SC] SETPOINT: %d, ERR: %d, TORQUE: %d, ACCUM: %d, DERIV: %d\r\n",
+            //  speed_command, get_speed_controller_error(), speedControlTorqueOutput,
+            //  get_speed_controller_accum(), get_speed_controller_deriv());
 
             last_time_step = HAL_GetTick();
           }
