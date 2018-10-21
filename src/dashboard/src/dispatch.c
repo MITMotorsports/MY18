@@ -109,8 +109,8 @@ void dispatch_init() {
     carstats.vcu_lc_controls_received = false;
 
     carstats.rpm_setpoint.rpm_setpoint = 0;
-    carstats.ki.ki_times_1000 = 1000;
-    carstats.kp.kp_times_1000 = 0;
+    carstats.ki.ki_times_1000 = 15;
+    carstats.kp.kp_times_1000 = 1750;
 
     init_button_state(&carstats.buttons.left);
     init_button_state(&carstats.buttons.right);

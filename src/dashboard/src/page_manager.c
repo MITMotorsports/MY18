@@ -509,7 +509,7 @@ void draw_launch_control_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_clearline(oled, 1);
     oled_set_pos(oled, 1, 0);
 
-    stats->lc_controls.launch_ctrl_slip_ratio = LOOPOVER(stats->lc_controls.launch_ctrl_slip_ratio, 101, 130);
+    stats->lc_controls.launch_ctrl_slip_ratio = LOOPOVER(stats->lc_controls.launch_ctrl_slip_ratio, 101, 300);
     stats->lc_controls.speeding_up_torque = LOOPOVER(stats->lc_controls.speeding_up_torque, 0, 2400);
     stats->lc_controls.speeding_up_speed = LOOPOVER(stats->lc_controls.speeding_up_speed, 0, 5000);
     stats->lc_controls.ws_thresh = LOOPOVER(stats->lc_controls.ws_thresh, 0, 2500);
