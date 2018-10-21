@@ -775,7 +775,7 @@ void draw_lc_pid_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     stats->kp.kp_times_1000 = LOOPOVER(stats->kp.kp_times_1000, 1000, 2000);
     stats->ki.ki_times_1000 = LOOPOVER(stats->ki.ki_times_1000, 0, 25);
-    stats->rpm_setpoint.rpm_setpoint = LOOPOVER(stats->rpm_setpoint.rpm_setpoint, 0, 1000);
+    stats->rpm_setpoint.rpm_setpoint = LOOPOVER(stats->rpm_setpoint.rpm_setpoint, 0, 2500);
 
     oled_clearline(oled, 0);
     oled_set_pos(oled, 0, 1);
