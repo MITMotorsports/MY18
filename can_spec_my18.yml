@@ -717,10 +717,10 @@ buses:
             c_type: uint16_t
           launch_ctrl_slip_ratio: # Ranges from 105 to 115
             position: 48
-            length: 8
+            length: 9
             c_type: uint16_t
           using_launch_ctrl:
-            position: 56
+            position: 57
             length: 1
             c_type: bool
       VCUControlsParams:
