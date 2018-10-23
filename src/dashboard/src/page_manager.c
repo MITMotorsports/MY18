@@ -520,7 +520,7 @@ void draw_launch_control_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     oled_rprint_pad(oled, "SR ", 4);
 
-    if (stats->lc_controls.launch_ctrl_slip_ratio != 255) {
+    if (stats->lc_controls.launch_ctrl_slip_ratio != -1) {
         oled_print_num(oled, stats->lc_controls.launch_ctrl_slip_ratio);
     } else {
         oled_print(oled, DATA_UNKNOWN);
