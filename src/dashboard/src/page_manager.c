@@ -296,7 +296,7 @@ void draw_temp_lim_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
       stats->controls.temp_lim_min_gain = LOOPOVER(stats->controls.temp_lim_min_gain, 25, 50);
     }
     if (stats->controls.temp_lim_min_gain != 255) {
-      stats->controls.temp_lim_thresh_temp = LOOPOVER(stats->controls.temp_lim_thresh_temp, 15, 60);
+      stats->controls.temp_lim_thresh_temp = LOOPOVER(stats->controls.temp_lim_thresh_temp, 45, 60);
     }
 
     // Render
