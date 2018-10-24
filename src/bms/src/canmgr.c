@@ -71,7 +71,7 @@ void can_receive_energy(BMS_INPUT_T *bms_input) {
   can0_CurrentSensor_Energy_T msg;
 
   unpack_can0_CurrentSensor_Energy(&can_input, &msg);
-  bms_input->pack_status->pack_energy_wH = msg.energy;
+  bms_input->pack_status->pack_energy_wH = msg.result;
 }
 
 Frame can_output;

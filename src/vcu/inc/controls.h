@@ -32,7 +32,7 @@
 #define REAR_BRAKE brake_2
 
 // TL = temp limiting
-#define MAX_TEMP 6000 // centiCelsius
+#define MAX_TEMP 5800 // centiCelsius
 
 // VL = (under)voltage limiting
 #define MIN_VOLTAGE 250
