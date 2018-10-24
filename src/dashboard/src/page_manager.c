@@ -394,7 +394,7 @@ void draw_volt_lim_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
       stats->controls.volt_lim_min_gain = LOOPOVER(stats->controls.volt_lim_min_gain, 0, 50);
     }
     if (stats->controls.volt_lim_min_voltage != 65535) {
-      stats->controls.volt_lim_min_voltage = LOOPOVER(stats->controls.volt_lim_min_voltage, 250, 400);
+      stats->controls.volt_lim_min_voltage = LOOPOVER(stats->controls.volt_lim_min_voltage, 250, 350);
     }
 
     // Render
