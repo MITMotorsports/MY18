@@ -162,15 +162,11 @@ void loop(void) {
   // #undef PRINT
 
   for (auto &listener : CANListener) {
-    if (listener.buffer.full()) {
-      log_file.print(millis());
-      log_file.write(' ');
+    listener.printIfFull(log_file);
+    #if DEBUG_UART
+      listener.printIfFull(Serial);
+    #endif
 
-      log_file.print(listener.port);
-      log_file.write(' ');
-
-      log_file.println("FULL");
-    }
 
     static LoggedFrame lf;
     while (listener.buffer.remove(&lf)) {
