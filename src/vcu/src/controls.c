@@ -149,10 +149,14 @@ void execute_controls(void) {
       // Run the slip control loop on a slower interval than the PID loop so that 
       // PID loop can sample the desired speed more quickly
       if (HAL_GetTick() - last_slip_ctrl_exec > SLIP_CONTROLLER_UPDATE_PERIOD_MS) {
+          // Wait until the buffer is filled
+          if (RingBuffer32_free(lc_speed_buf) <= 0) {
+            // Read the oldest value in the buffer as the current speed command
+            speed_command = RingBuffer32_readByte(lc_speed_buf);
+          } 
+
           // Write the newest value in the buffer for a later read
           RingBuffer32_writeByte(lc_speed_buf, get_launch_control_speed(front_wheel_speed));
-          // Read the oldest value in the buffer as the current speed command
-          speed_command = RingBuffer32_readByte(lc_speed_buf);
 
           last_slip_ctrl_exec = HAL_GetTick();
       }
