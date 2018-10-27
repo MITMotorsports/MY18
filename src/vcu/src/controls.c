@@ -4,10 +4,11 @@ static bool enabled = false;
 static int32_t torque_command = 0;
 static int32_t speed_command = 0;
 static uint32_t last_slip_ctrl_exec = 0;
+static uint32_t test_time = 0;
 
 // Ring buffer used to add delay to a set of input signal
 // values for the LC speed calculations
-static RingBuffer32 *lc_speed_buf;
+static RingBuffer32 lc_speed_buf;
 static int32_t __lc_speed_buf[N_RING_BUFFER_SLOTS];
 
 can0_VCUControlsParams_T control_settings = {};
@@ -31,7 +32,7 @@ static int32_t get_temp_limited_torque(int32_t pedal_torque);
 static int32_t get_voltage_limited_torque(int32_t pedal_torque);
 
 void init_controls_defaults(void) {
-  RingBuffer32_init(lc_speed_buf, __lc_speed_buf, N_RING_BUFFER_SLOTS);
+  RingBuffer32_init(&lc_speed_buf, __lc_speed_buf, N_RING_BUFFER_SLOTS);
 
   control_settings.using_regen = false;
   control_settings.regen_bias = 57;
@@ -55,7 +56,7 @@ void init_controls_defaults(void) {
 }
 
 void enable_controls(void) {
-  RingBuffer32_clear(lc_speed_buf);
+  RingBuffer32_clear(&lc_speed_buf);
 
   enabled = true;
   torque_command = 0;
@@ -74,7 +75,7 @@ void disable_controls(void) {
   set_brake_valve(false);
   lock_brake_valve();
 
-  RingBuffer32_clear(lc_speed_buf);
+  RingBuffer32_clear(&lc_speed_buf);
 }
 
 bool get_controls_enabled(void) {
@@ -150,15 +151,22 @@ void execute_controls(void) {
       // PID loop can sample the desired speed more quickly
       if (HAL_GetTick() - last_slip_ctrl_exec > SLIP_CONTROLLER_UPDATE_PERIOD_MS) {
           // Wait until the buffer is filled
-          if (RingBuffer32_free(lc_speed_buf) <= 0) {
+          if (RingBuffer32_free(&lc_speed_buf) <= 0) {
             // Read the oldest value in the buffer as the current speed command
-            speed_command = RingBuffer32_readByte(lc_speed_buf);
+            
+            speed_command = RingBuffer32_readByte(&lc_speed_buf);
           } 
 
           // Write the newest value in the buffer for a later read
-          RingBuffer32_writeByte(lc_speed_buf, get_launch_control_speed(front_wheel_speed));
+          RingBuffer32_writeByte(&lc_speed_buf, get_launch_control_speed(front_wheel_speed));
 
           last_slip_ctrl_exec = HAL_GetTick();
+      }
+
+      if (HAL_GetTick() - test_time > 100) {
+          printf("SPEED_CMD: %d, BUF FREE SPACE: %d, LC SPEED: %d, N_SLOTS: %d\r\n", 
+            speed_command, RingBuffer32_free(&lc_speed_buf), get_launch_control_speed(front_wheel_speed), N_RING_BUFFER_SLOTS);
+          test_time = HAL_GetTick();
       }
 
       // Mini FSM
