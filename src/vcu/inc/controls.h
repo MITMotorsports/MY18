@@ -11,7 +11,7 @@
 #include "fault_brakes.h"
 
 // Internal Speed Controller settings for launch control
-#define MAX_INPUT_SPEED 5500 
+#define MAX_INPUT_SPEED 1500 
 #define SPEED_CONTROLLER_UPDATE_PERIOD_MS  1
 #define SLIP_CONTROLLER_UPDATE_PERIOD_MS 5
 // shift the reading frame of the front and rear wheel speeds
@@ -20,7 +20,7 @@
 #define N_RING_BUFFER_SLOTS (SPEED_CONTROLLER_READING_DELAY_MS / SLIP_CONTROLLER_UPDATE_PERIOD_MS)
 
 // TODO: Extract MAX_TORQUE from RMS EEPROM (over CAN?)
-#define MAX_TORQUE    2400 // unit: dNm
+#define MAX_TORQUE    1200 // 2400 // unit: dNm
 #define MAX_ACCEL_VAL 1000
 #define MIN_ACCEL_VAL 0
 
