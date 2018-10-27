@@ -4,6 +4,7 @@
 #include "stm32f2xx_hal.h"
 #include <stdbool.h>
 #include <stdint.h>
+#include "ring_buffer.h"
 
 #include "can_handles.h"
 #include "fault_pedalbox.h"
@@ -12,6 +13,11 @@
 // Internal Speed Controller settings for launch control
 #define MAX_INPUT_SPEED 5500 
 #define SPEED_CONTROLLER_UPDATE_PERIOD_MS  1
+#define SLIP_CONTROLLER_UPDATE_PERIOD_MS 5
+// shift the reading frame of the front and rear wheel speeds
+// to account for any physical or CAN delays (will affect the final calc'd slip ratio)
+#define SPEED_CONTROLLER_READING_DELAY_MS 20
+#define N_RING_BUFFER_SLOTS (SPEED_CONTROLLER_READING_DELAY_MS / SLIP_CONTROLLER_UPDATE_PERIOD_MS)
 
 // TODO: Extract MAX_TORQUE from RMS EEPROM (over CAN?)
 #define MAX_TORQUE    2400 // unit: dNm

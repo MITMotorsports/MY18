@@ -3,6 +3,13 @@
 static bool enabled = false;
 static int32_t torque_command = 0;
 static int32_t speed_command = 0;
+static uint32_t last_slip_ctrl_exec = 0;
+
+// Ring buffer used to add delay to a set of input signal
+// values for the LC speed calculations
+static RingBuffer32 *lc_speed_buf;
+static int32_t __lc_speed_buf[N_RING_BUFFER_SLOTS];
+
 can0_VCUControlsParams_T control_settings = {};
 can0_VCUControlsParamsLC_T lc_settings = {};
 can0_DashSpeedCntrlRPMSetpoint_T rpm_setpoint = {};
@@ -24,6 +31,8 @@ static int32_t get_temp_limited_torque(int32_t pedal_torque);
 static int32_t get_voltage_limited_torque(int32_t pedal_torque);
 
 void init_controls_defaults(void) {
+  RingBuffer32_init(lc_speed_buf, __lc_speed_buf, N_RING_BUFFER_SLOTS);
+
   control_settings.using_regen = false;
   control_settings.regen_bias = 57;
   control_settings.limp_factor = 100;
@@ -46,6 +55,8 @@ void init_controls_defaults(void) {
 }
 
 void enable_controls(void) {
+  RingBuffer32_clear(lc_speed_buf);
+
   enabled = true;
   torque_command = 0;
   speed_command = 0;
@@ -62,6 +73,8 @@ void disable_controls(void) {
 
   set_brake_valve(false);
   lock_brake_valve();
+
+  RingBuffer32_clear(lc_speed_buf);
 }
 
 bool get_controls_enabled(void) {
@@ -133,6 +146,17 @@ void execute_controls(void) {
       set_brake_valve(false);
       uint32_t front_wheel_speed = get_front_wheel_speed();
 
+      // Run the slip control loop on a slower interval than the PID loop so that 
+      // PID loop can sample the desired speed more quickly
+      if (HAL_GetTick() - last_slip_ctrl_exec > SLIP_CONTROLLER_UPDATE_PERIOD_MS) {
+          // Write the newest value in the buffer for a later read
+          RingBuffer32_writeByte(lc_speed_buf, get_launch_control_speed(front_wheel_speed));
+          // Read the oldest value in the buffer as the current speed command
+          speed_command = RingBuffer32_readByte(lc_speed_buf);
+
+          last_slip_ctrl_exec = HAL_GetTick();
+      }
+
       // Mini FSM
       if (any_lc_faults() && lc_state != DONE && lc_state != BEFORE) {
             lc_state = ZERO_TORQUE;
@@ -163,8 +187,6 @@ void execute_controls(void) {
           }
           break;
         case SPEED_CONTROLLER:
-          
-          speed_command = get_launch_control_speed(front_wheel_speed);
 
           set_speed_controller_setpoint(speed_command); // RPM
 
