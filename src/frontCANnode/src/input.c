@@ -100,16 +100,16 @@ void update_wheel_speed() {
       uint8_t idx;
       if (count > 0) {
         // If there are x ticks so far, the last tick is index (x - 1)
-        idx = (count - 1) % NUM_TEETH;
+        idx = (count - 1) % MOVING_AVG_WINDOW_SIZE;
       } else {
         idx = 0;
       }
 
       uint32_t moving_avg;
-      if (count < NUM_TEETH) {
+      if (count < MOVING_AVG_WINDOW_SIZE) {
         moving_avg = 0;
       } else {
-        const uint32_t avg = speed->big_sum[wheel] / SUM_ALL_TEETH;
+        const uint32_t avg = speed->big_sum[wheel] / SUM_ALL_WINDOW;
         moving_avg = avg;
       }
       const bool timeout =
@@ -120,7 +120,7 @@ void update_wheel_speed() {
       if (speed->wheel_stopped[wheel]) {
         calculated_speed = 0;
       } else {
-        if (count < NUM_TEETH) {
+        if (count < MOVING_AVG_WINDOW_SIZE) {
           calculated_speed = click_time_to_mRPM(speed->last_tick[wheel][idx]);
         } else {
           calculated_speed = click_time_to_mRPM(moving_avg);
@@ -205,16 +205,16 @@ void Input_handle_interrupt(uint32_t msTicks, uint32_t curr_tick, Wheel_T wheel)
   }
 
   const uint32_t count = speed->num_ticks[wheel];
-  const uint8_t idx = count % NUM_TEETH;
+  const uint8_t idx = count % MOVING_AVG_WINDOW_SIZE;
   const uint32_t this_tooth_last_rev =
-    count < NUM_TEETH ? 0 : speed->last_tick[wheel][idx];
+    count < MOVING_AVG_WINDOW_SIZE ? 0 : speed->last_tick[wheel][idx];
 
   // Register tick
   speed->last_tick[wheel][idx] = curr_tick;
   speed->num_ticks[wheel]++;
 
   // Update big sum
-  speed->big_sum[wheel] += NUM_TEETH * curr_tick;
+  speed->big_sum[wheel] += MOVING_AVG_WINDOW_SIZE * curr_tick;
   speed->big_sum[wheel] -= speed->little_sum[wheel];
 
   // Update little sum

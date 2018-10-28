@@ -10,7 +10,8 @@
 
 // Some wheel speed stuff
 #define NUM_TEETH 23
-#define SUM_ALL_TEETH (NUM_TEETH * (NUM_TEETH + 1) / 2)
+#define MOVING_AVG_WINDOW_SIZE 23
+#define SUM_ALL_WINDOW (MOVING_AVG_WINDOW_SIZE * (MOVING_AVG_WINDOW_SIZE + 1) / 2)
 #define CYCLES_PER_MICROSECOND 48
 
 typedef struct {
