@@ -68,7 +68,7 @@ void initialize_input(void) {
     speed.last_updated[i] = 0;
     speed.wheel_stopped[i] = true;
 
-    for (int j = 0; j < NUM_TEETH; j++) {
+    for (int j = 0; j < MOVING_AVG_WINDOW_SIZE; j++) {
       speed.last_tick[i][j] = 0;
     }
   }
@@ -114,6 +114,9 @@ int main(void) {
 
     input.msTicks = msTicks;
     Input_fill_input();
+    // Serial_Print("bigsum: ");
+    // Serial_PrintNumber(speed.big_sum[0], 10);
+    // Serial_Print("\r\n");
     Output_process_output();
   }
 }

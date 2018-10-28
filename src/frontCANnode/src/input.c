@@ -217,6 +217,7 @@ void Input_handle_interrupt(uint32_t msTicks, uint32_t curr_tick, Wheel_T wheel)
   speed->big_sum[wheel] += MOVING_AVG_WINDOW_SIZE * curr_tick;
   speed->big_sum[wheel] -= speed->little_sum[wheel];
 
+
   // Update little sum
   speed->little_sum[wheel] += curr_tick;
   speed->little_sum[wheel] -= this_tooth_last_rev;

@@ -39,7 +39,7 @@ void write_can_brakethrottle_msg() {
   msg.brake_2_under = input.adc->errors->brake_2_under;
   msg.brake_2_over = input.adc->errors->brake_2_over;
 
-  handle_can_error(can0_FrontCanNodeBrakeThrottle_Write(&msg));
+  //handle_can_error(can0_FrontCanNodeBrakeThrottle_Write(&msg));
 }
 
 void write_can_left_wheel_speed_msg() {
@@ -50,12 +50,13 @@ void write_can_left_wheel_speed_msg() {
   msg.left_32b = input.speed->can_node_left_32b_wheel_speed;
   msg.left_16b = input.speed->can_node_left_16b_wheel_speed;
 
-  /*Serial_Print("32l: ");
-  Serial_PrintNumber(msg.left_32b, 10);
-  Serial_Print(", 16l: ");
+  Serial_Print("32l: ");
+  Serial_PrintNumber(msg.left_32b / 1000, 10);
+  Serial_Print("\r\n");
+  /*Serial_Print(", 16l: ");
   Serial_PrintlnNumber(msg.left_16b, 10);*/
 
-  handle_can_error(can0_FrontCanNodeLeftWheelSpeed_Write(&msg));
+  //handle_can_error(can0_FrontCanNodeLeftWheelSpeed_Write(&msg));
 }
 
 void write_can_right_wheel_speed_msg() {
@@ -71,7 +72,7 @@ void write_can_right_wheel_speed_msg() {
   Serial_Print(", 16r: ");
   Serial_PrintlnNumber(msg.right_16b, 10);*/
 
-  handle_can_error(can0_FrontCanNodeRightWheelSpeed_Write(&msg));
+  //handle_can_error(can0_FrontCanNodeRightWheelSpeed_Write(&msg));
 }
 void handle_can_error(Can_ErrorID_T error) {
   if ((error != Can_Error_NONE) && (error != Can_Error_NO_RX)) {

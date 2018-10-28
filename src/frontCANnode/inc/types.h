@@ -60,7 +60,7 @@ typedef struct {
 
   // integers in [0:4294967296] representing the number of clock cycles between
   // ticks from wheel speed sensors
-  volatile uint32_t last_tick[NUM_WHEELS][NUM_TEETH];
+  volatile uint32_t last_tick[NUM_WHEELS][MOVING_AVG_WINDOW_SIZE];
   volatile uint64_t big_sum[NUM_WHEELS];
 
   // Total number of ticks the wheel has had in the past cycle
