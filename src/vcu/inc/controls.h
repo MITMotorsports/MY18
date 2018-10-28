@@ -16,7 +16,7 @@
 #define SLIP_CONTROLLER_UPDATE_PERIOD_MS 5
 // shift the reading frame of the front and rear wheel speeds
 // to account for any physical or CAN delays (will affect the final calc'd slip ratio)
-#define SPEED_CONTROLLER_READING_DELAY_MS 100 
+#define SPEED_CONTROLLER_READING_DELAY_MS 5 
 #define N_RING_BUFFER_SLOTS (SPEED_CONTROLLER_READING_DELAY_MS / SLIP_CONTROLLER_UPDATE_PERIOD_MS)
 
 // TODO: Extract MAX_TORQUE from RMS EEPROM (over CAN?)

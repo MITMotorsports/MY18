@@ -163,11 +163,11 @@ void execute_controls(void) {
           last_slip_ctrl_exec = HAL_GetTick();
       }
 
-      if (HAL_GetTick() - test_time > 100) {
-          printf("SPEED_CMD: %d, BUF FREE SPACE: %d, LC SPEED: %d, N_SLOTS: %d\r\n", 
-            speed_command, RingBuffer32_free(&lc_speed_buf), get_launch_control_speed(front_wheel_speed), N_RING_BUFFER_SLOTS);
-          test_time = HAL_GetTick();
-      }
+      // if (HAL_GetTick() - test_time > 100) {
+      //     printf("SPEED_CMD: %d, BUF FREE SPACE: %d, LC SPEED: %d, N_SLOTS: %d\r\n", 
+      //       speed_command, RingBuffer32_free(&lc_speed_buf), get_launch_control_speed(front_wheel_speed), N_RING_BUFFER_SLOTS);
+      //     test_time = HAL_GetTick();
+      // }
 
       // Mini FSM
       if (any_lc_faults() && lc_state != DONE && lc_state != BEFORE) {
