@@ -249,28 +249,28 @@ static void update_can_frames(void) {
 }
 
 void send_speed_controller_can_msgs(void) {
-    sendVCUSpeedCntrlKpTimes1000Msg();
+    //sendVCUSpeedCntrlKpTimes1000Msg();
     sendVCUSpeedCntrlKiTimes1000Msg();
-    sendVCUSpeedCntrlKdTimes1000Msg();
-    sendVCUSpeedCntrlIWindupMaxMsg();
-    sendVCUSpeedCntrlIWindupMinMsg();
-    sendVCUSpeedCntrlMinOutputValueMsg();
-    sendVCUSpeedCntrlMaxOutputValueMsg();
-    sendVCUSpeedCntrlMinInputValueMsg();
-    sendVCUSpeedCntrlMaxInputValueMsg();
-    sendVCUSpeedCntrlErrorUpdateTimeoutMsg();
-    sendVCUSpeedCntrlDtMsg();
-    sendVCUSpeedCntrlEnabledMsg();
-    sendVCUSpeedCntrlOutOfInputRangeThrottledMsg();
-    sendVCUSpeedCntrlOutOfOutputRangeThrottledMsg();
-    sendVCUSpeedCntrlErrorUpdateTimedOutMsg();
+    //sendVCUSpeedCntrlKdTimes1000Msg();
+    //sendVCUSpeedCntrlIWindupMinMsg();
+    //sendVCUSpeedCntrlMinOutputValueMsg();
+    //sendVCUSpeedCntrlMaxOutputValueMsg();
+    //sendVCUSpeedCntrlMinInputValueMsg();
+    //sendVCUSpeedCntrlMaxInputValueMsg();
+    //sendVCUSpeedCntrlErrorUpdateTimeoutMsg();
+    //sendVCUSpeedCntrlDtMsg();
+    //sendVCUSpeedCntrlEnabledMsg();
+    //sendVCUSpeedCntrlOutOfInputRangeThrottledMsg();
+    //sendVCUSpeedCntrlOutOfOutputRangeThrottledMsg();
+    //sendVCUSpeedCntrlErrorUpdateTimedOutMsg();
     sendVCUSpeedCntrlRPMSetpointMsg();
-    sendVCUSpeedCntrlCommandedTorqueMsg();
-    sendVCUSpeedCntrlRPMErrorMsg();
-    sendVCUSpeedCntrlLastRPMErrorMsg();
-    sendVCUSpeedCntrlDerivRPMErrorMsg();
+    //sendVCUSpeedCntrlCommandedTorqueMsg();
+    //sendVCUSpeedCntrlRPMErrorMsg();
+    //sendVCUSpeedCntrlLastRPMErrorMsg();
+    //sendVCUSpeedCntrlDerivRPMErrorMsg();
     sendVCUSpeedCntrlRPMErrorAccumulatedMsg();
-    sendVCUSpeedCntrlLastErrorUpdateTimestampMsg();
+    //sendVCUSpeedCntrlLastErrorUpdateTimestampMsg();
+    sendVCUSpeedCntrlIWindupMaxMsg();
 }
 
 bool get_speed_controller_enabled(void) {
