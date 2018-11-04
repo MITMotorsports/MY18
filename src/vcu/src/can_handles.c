@@ -167,6 +167,7 @@ void handleCurrentSensorVoltageMsg(Frame *msg) {
   unpack_can0_CurrentSensor_Voltage1(msg, &unpacked_msg);
 
   cs_readings.V_bus = unpacked_msg.result;
+  //printf("%d\r\n", cs_readings.V_bus);
 
   heartbeats.current_sensor = HAL_GetTick();
 }

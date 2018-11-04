@@ -60,7 +60,7 @@ bool check_MC_heartbeat_bad(void) {
     }
   }
 
-  return ret;
+  return false;
 }
 
 // bool check_CS_heartbeat_bad(void) {
