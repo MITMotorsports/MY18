@@ -41,7 +41,7 @@ void init_controls_defaults(void) {
 
   rpm_setpoint.rpm_setpoint = 0;
 
-  init_speed_controller_defaults(MAX_INPUT_SPEED, 
+  init_speed_controller_defaults(MAX_INPUT_SPEED,
     MAX_TORQUE, SPEED_CONTROLLER_UPDATE_PERIOD_MS);
 }
 
@@ -98,7 +98,7 @@ void execute_controls(void) {
     // launch control when we're supposed to be limiting
 
     int32_t voltage_limited_torque = get_voltage_limited_torque(torque_command);
-   
+
     if (!control_settings.using_voltage_limiting) voltage_limited_torque = torque_command;
 
     int32_t temp_limited_torque = get_temp_limited_torque(torque_command);
@@ -156,22 +156,29 @@ void execute_controls(void) {
           sendTorqueCmdMsg(lc_settings.speeding_up_torque);
 
           // Transition
-          if (front_wheel_speed > lc_settings.ws_thresh * 1000) { // 
+          if (front_wheel_speed > lc_settings.ws_thresh * 1000) { //
             lc_state = SPEED_CONTROLLER;
             enable_speed_controller();
             printf("[LAUNCH CONTROL] SPEED CONTROLLER STATE ENTERED\r\n");
           }
           break;
         case SPEED_CONTROLLER:
-          
-          speed_command = get_launch_control_speed(front_wheel_speed);
 
-          set_speed_controller_setpoint(speed_command); // RPM
+          //speed_command = get_launch_control_speed(front_wheel_speed);
+
+          //uint32_t frequency = 500;  //Replace or read in these values
+          //uint32_t carspeed = 1000;
+          //Third value is frequency, fourth is carspeed
+          sin_generator gen = { 0, .001, 500, 1000, &sample_sin};  //start t at 0, step of .001
+
+          set_speed_controller_setpoint(gen.sample_sin(&gen)); // RPM
+
+          //set_speed_controller_setpoint(speed_command); // RPM
 
           // Update the internal speed controller with the new speed value
           // TODO: replace HAL_GetTick with the timestamp of the message
           update_speed_controller_error(mc_readings.speed, HAL_GetTick());
-                           
+
           int32_t speedControlTorqueOutput = get_speed_controller_torque_command();
           if (speedControlTorqueOutput > torque_command) {
             speedControlTorqueOutput = torque_command;
@@ -289,7 +296,7 @@ static bool any_lc_faults(void) {
     // that is indicative of driver braking intent. The other brake is for regen.
     printf("[LAUNCH CONTROL ERROR] Brake (%d) too high\r\n", pedalbox.brake_2);
     return true;
-  } 
+  }
 
   // else if (mc_readings.speed > LC_BACKWARDS_CUTOFF) {
   //   printf("[LAUNCH CONTROL ERROR] MC reading (%d) is great than cutoff (%d)\r\n", mc_readings.speed, LC_BACKWARDS_CUTOFF);
@@ -360,4 +367,26 @@ int32_t positive_hinge(int32_t x, int32_t m, int32_t c) {
 int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c) {
   if (c > e) return positive_hinge(x - e, m, c - e);
   else       return positive_hinge(e - x, m, e - c);
+}
+
+typedef struct _sin_generator {
+  uint32_t t;
+  uint32_t interval;
+  uint32_t frequency;
+  int32_t carspeed;
+  int32_t (* sample_sin) (struct _sin_generator *self);
+} sin_generator;
+
+int32_t sample_sin(sin_generator* self) {
+
+  int32_t n = self->frequency*self->t * self->interval;
+  int32 n3 = n*n*n;
+  int32_t sin_n = 100*(n - n3/6 + n3*n*n/120 - n3*n3*n/5040);
+  //Since sin value is amplified by 100, we divide out the commanded speed by 100
+  uint32_t result = self->carspeed/2 * sin_n + self->carspeed/2/100; // Speed/2 * sin(frequency*time) + speed/2
+  self->t ++;
+  if (self->t > 2 * 3.1415) {  //Cycle only through 2pi, so we don't have to do computation on very large t values
+    self->t -= 2 * 3.1415;
+  }
+  return result;
 }
