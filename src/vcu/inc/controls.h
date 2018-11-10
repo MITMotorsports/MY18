@@ -10,7 +10,7 @@
 #include "fault_brakes.h"
 
 // Internal Speed Controller settings for launch control
-#define MAX_INPUT_SPEED 1100 //5500 
+#define MAX_INPUT_SPEED 1100 //5500
 #define SPEED_CONTROLLER_UPDATE_PERIOD_MS  1
 
 // TODO: Extract MAX_TORQUE from RMS EEPROM (over CAN?)
@@ -67,11 +67,20 @@ extern can0_VCUControlsParams_T control_settings;
 extern can0_VCUControlsParamsLC_T lc_settings;
 extern can0_DashSpeedCntrlRPMSetpoint_T rpm_setpoint;
 
+typedef struct _sin_generator {
+  uint32_t t;
+  uint32_t interval;
+  uint32_t frequency;
+  int32_t carspeed;
+  int32_t (* sample_sin) (struct _sin_generator *self);
+} sin_generator;
+
 // INTERACTION FUNCTIONS
 void enable_controls(void);
 void disable_controls(void);
 bool get_controls_enabled(void);
 void execute_controls(void);
 void set_lc_zero_torque(void);
+int32_t sample_sin(sin_generator* self)
 
 #endif // ifndef __TORQUE_CALC

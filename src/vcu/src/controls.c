@@ -369,13 +369,13 @@ int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c) {
   else       return positive_hinge(e - x, m, e - c);
 }
 
-typedef struct _sin_generator {
+/*typedef struct _sin_generator {
   uint32_t t;
   uint32_t interval;
   uint32_t frequency;
   int32_t carspeed;
   int32_t (* sample_sin) (struct _sin_generator *self);
-} sin_generator;
+} sin_generator; */
 
 int32_t sample_sin(sin_generator* self) {
 
