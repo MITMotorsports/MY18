@@ -1,9 +1,10 @@
-#include "controls.h"
+ #include "controls.h"
 
 static bool enabled = false;
 static int32_t torque_command = 0;
 static int32_t speed_command = 0;
 can0_VCUControlsParams_T control_settings = {};
+static int32_t power_limit = 500;
 
 static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
 
@@ -12,6 +13,9 @@ static int32_t get_torque(void);
 static int32_t get_regen_torque(void);
 static int32_t get_temp_limited_torque(int32_t pedal_torque);
 static int32_t get_voltage_limited_torque(int32_t pedal_torque);
+//*****
+static int32_t get_power_limited_torque(int32_t torque_command);
+//*****
 
 void init_controls_defaults(void) {
   control_settings.using_regen = false;
@@ -22,6 +26,8 @@ void init_controls_defaults(void) {
   control_settings.volt_lim_min_gain = 0;
   control_settings.volt_lim_min_voltage = 300;
   control_settings.torque_temp_limited = false;
+  //control_settings.power_limit = 1000;
+  //
 }
 
 void enable_controls(void) {
@@ -71,6 +77,9 @@ void execute_controls(void) {
     torque_command = regen_torque;
   }
   else {
+    
+    int32_t power_limited_torque = get_power_limited_torque(torque_command);
+    
     // Only use limits when we're not doing regen
     int32_t voltage_limited_torque = get_voltage_limited_torque(torque_command);
     // static uint32_t last_vt = 0;
@@ -98,6 +107,10 @@ void execute_controls(void) {
     }
     else {
       min_sensor_torque = temp_limited_torque;
+    }
+
+    if (power_limited_torque < min_sensor_torque) {
+        min_sensor_torque = power_limited_torque;
     }
 
     int32_t dash_limited_torque = torque_command * control_settings.limp_factor / 100;
@@ -152,6 +165,16 @@ static int32_t get_regen_torque() {
 
   // Regen is negative torque, and we've calculated a positive number so far
   return -1 * regen_torque;
+}
+
+static int32_t get_power_limited_torque(int32_t torque_command) {
+  
+    if (cs_readings.power > power_limit) {
+        enabled = false;
+        return 0;
+    } else {
+        return torque_command;
+    }
 }
 
 static int32_t get_temp_limited_torque(int32_t pedal_torque) {
