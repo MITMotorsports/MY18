@@ -1,4 +1,4 @@
- #include "controls.h"
+#include "controls.h"
 
 static bool enabled = false;
 static int32_t torque_command = 0;
@@ -13,9 +13,7 @@ static int32_t get_torque(void);
 static int32_t get_regen_torque(void);
 static int32_t get_temp_limited_torque(int32_t pedal_torque);
 static int32_t get_voltage_limited_torque(int32_t pedal_torque);
-//*****
 static int32_t get_power_limited_torque(int32_t torque_command);
-//*****
 
 void init_controls_defaults(void) {
   control_settings.using_regen = false;
@@ -26,8 +24,6 @@ void init_controls_defaults(void) {
   control_settings.volt_lim_min_gain = 0;
   control_settings.volt_lim_min_voltage = 300;
   control_settings.torque_temp_limited = false;
-  //control_settings.power_limit = 1000;
-  //
 }
 
 void enable_controls(void) {
@@ -46,6 +42,7 @@ void disable_controls(void) {
   set_brake_valve(false);
   lock_brake_valve();
 }
+
 
 bool get_controls_enabled(void) {
   return enabled;
@@ -167,14 +164,9 @@ static int32_t get_regen_torque() {
   return -1 * regen_torque;
 }
 
-static int32_t get_power_limited_torque(int32_t torque_command) {
-  
-    if (cs_readings.power > power_limit) {
-        enabled = false;
-        return 0;
-    } else {
-        return torque_command;
-    }
+static int32_t get_power_limited_torque(int32_t pdela_torque) {
+    int32_t gain = hinge_limiter(cs_readings.power, 0, 0.5*power_limit, power_limit);
+    return gain * pedal_torque / 100;
 }
 
 static int32_t get_temp_limited_torque(int32_t pedal_torque) {
