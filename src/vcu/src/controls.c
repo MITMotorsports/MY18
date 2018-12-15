@@ -4,7 +4,7 @@ static bool enabled = false;
 static int32_t torque_command = 0;
 static int32_t speed_command = 0;
 can0_VCUControlsParams_T control_settings = {};
-static int32_t power_limit = 500;
+static int32_t power_limit = 500; //Watts
 
 static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
 
@@ -42,7 +42,6 @@ void disable_controls(void) {
   set_brake_valve(false);
   lock_brake_valve();
 }
-
 
 bool get_controls_enabled(void) {
   return enabled;
@@ -164,7 +163,7 @@ static int32_t get_regen_torque() {
   return -1 * regen_torque;
 }
 
-static int32_t get_power_limited_torque(int32_t pdela_torque) {
+static int32_t get_power_limited_torque(int32_t pedal_torque) {
     int32_t gain = hinge_limiter(cs_readings.power, 0, 0.5*power_limit, power_limit);
     return gain * pedal_torque / 100;
 }
@@ -215,7 +214,6 @@ static int32_t get_voltage_limited_torque(int32_t pedal_torque) {
   return gain * pedal_torque / 100;
 }
 
-
 // Returns the output of a linear hinge.
 // It is a continuous function.
 // `m` is the minimum output of this function.
@@ -227,7 +225,6 @@ int32_t positive_hinge(int32_t x, int32_t m, int32_t c) {
 
   return (x * (m - 100) / c) + 100;
 }
-
 
 // Returns the output of a bidirectional linear hinge limiter.
 int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c) {
