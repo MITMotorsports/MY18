@@ -164,8 +164,9 @@ static int32_t get_regen_torque() {
 }
 
 static int32_t get_power_limited_torque(int32_t pedal_torque) {
-    int32_t gain = hinge_limiter(cs_readings.power, 0, 0.5*power_limit, power_limit);
-    return gain * pedal_torque / 100;
+    int32_t tMAX = power_limit/(mc_readings.speed*6.28/60); //convert RPM to rad/s with 2pi/60
+    if (tMAX > 2400) return 2400;
+    return tMAX;
 }
 
 static int32_t get_temp_limited_torque(int32_t pedal_torque) {
