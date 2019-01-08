@@ -75,6 +75,7 @@ void execute_controls(void) {
   else {
     
     int32_t power_limited_torque = get_power_limited_torque(torque_command);
+    printf("Power limited torque: %ld\r\n", power_limited_torque);
     
     // Only use limits when we're not doing regen
     int32_t voltage_limited_torque = get_voltage_limited_torque(torque_command);
@@ -85,7 +86,7 @@ void execute_controls(void) {
     //   last_vt = HAL_GetTick();
     // }
     if (!control_settings.using_voltage_limiting) voltage_limited_torque = torque_command;
-
+  
     int32_t temp_limited_torque = get_temp_limited_torque(torque_command);
     // static uint32_t last_tt = 0;
     // if (HAL_GetTick() - last_tt > 10) {
@@ -164,11 +165,16 @@ static int32_t get_regen_torque() {
 }
 
 static int32_t get_power_limited_torque(int32_t pedal_torque) {
-    if (mc_readings.speed == 0) return pedal_torque; //prevent division by zero
+    if (mc_readings.speed < 0) { //prevent division by zero, make sure we are spinning (negative is forward)
     
-    int32_t tMAX = power_limit/(mc_readings.speed*6.28/60); //convert RPM to rad/s with 2pi/60
-    if (tMAX > 2400) return 2400;
-    return tMAX;
+    int32_t tMAX = power_limit/(abs(mc_readings.speed)*6.28/60); //convert RPM to rad/s with 2pi/60
+    if (tMAX > 2400) tMAX = 2400;
+    if(pedal_torque > tMAX) return tMAX;
+    return pedal_torque;
+    
+    } else {
+      return pedal_torque;
+    }
 }
 
 static int32_t get_temp_limited_torque(int32_t pedal_torque) {
