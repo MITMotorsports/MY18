@@ -4,6 +4,7 @@ static bool enabled = false;
 static int32_t torque_command = 0;
 static int32_t speed_command = 0;
 can0_VCUControlsParams_T control_settings = {};
+can0_PowerLimMonitoring_T power_lim_settings = {};
 static int32_t power_limit = 500; //Watts
 
 static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
@@ -167,10 +168,12 @@ static int32_t get_regen_torque() {
 static int32_t get_power_limited_torque(int32_t pedal_torque) {
     if (mc_readings.speed < 0) { //prevent division by zero, make sure we are spinning (negative is forward)
     
-    int32_t tMAX = power_limit/(abs(mc_readings.speed)*6.28/60); //convert RPM to rad/s with 2pi/60
-    if (tMAX > 2400) tMAX = 2400;
-    if(pedal_torque > tMAX) return tMAX;
-    return pedal_torque;
+      int32_t tMAX = power_limit/(abs(mc_readings.speed)*6.28/60); //convert RPM to rad/s with 2pi/60
+      power_lim_settings.tMAX = tMAX;
+    
+      if (tMAX > 2400) tMAX = 2400;
+      if(pedal_torque > tMAX) return tMAX;
+      return pedal_torque;
     
     } else {
       return pedal_torque;

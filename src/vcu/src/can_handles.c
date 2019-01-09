@@ -94,6 +94,10 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleDashRequest(&frame);
     break;
 
+  case can0_PowerLimMonitoring:
+    handlePowerLimMonitoring(&frame);
+    break;
+
   default:
     break;
   }
@@ -293,6 +297,14 @@ void handleDashRequest(Frame *msg) {
   control_settings.active_aero_enabled = unpacked_msg.active_aero_enabled;
 }
 
+void handlePowerLimMonitoring(Frame *msg) {
+  can0_PowerLimMonitoring_T unpacked_msg;
+
+  unpack_can0_PowerLimMonitoring(msg, &unpacked_msg);
+
+  power_lim_settings.tMAX = unpacked_msg.tMAX;
+}
+
 void send_VCUHeartbeat(void) {
   LIMIT(can0_VCUHeartbeat);
 
@@ -340,11 +352,18 @@ void send_VCUControlsMonitoring(void) {
   can0_VCUControlsMonitoring_Write(&controls_monitoring);
 }
 
+void send_PowerLimMonitoring(void) {
+  LIMIT(can0_PowerLimMonitoring);
+
+  can0_VCUControlsMonitoring_Write(&power_lim_settings);
+}
+
 void send_VCU(void) {
   send_VCUHeartbeat();
   send_VCUErrors();
   send_VCUControlsParams();
   send_VCUControlsMonitoring();
+  send_PowerLimMonitoring();
 }
 
 void sendTorqueCmdMsg(int16_t torque) {

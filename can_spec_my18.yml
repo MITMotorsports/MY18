@@ -1536,3 +1536,13 @@ buses:
             position: 48
             length: 16
             c_type: int16_t
+      PowerLimMonitoring:
+        can_id: 0x700
+        is_big_endian: true
+        period: 25 ms
+        segments:
+          tMAX:
+            unit: Nm
+            position: 0
+            length: 8
+            c_type: uint8_t
