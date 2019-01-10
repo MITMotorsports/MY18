@@ -94,10 +94,6 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleDashRequest(&frame);
     break;
 
-  case can0_PowerLimMonitoring:
-    handlePowerLimMonitoring(&frame);
-    break;
-
   default:
     break;
   }

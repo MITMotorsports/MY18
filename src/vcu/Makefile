@@ -122,7 +122,7 @@ C_STD = gnu99
 
 MOUNT = /Volumes/NODE_F207ZG/
 UART_BAUD = 115200
-COMPORT ?= $(word 1, $(wildcard /dev/tty.usbserial-*) $(wildcard /dev/tty.usbmodem*) $(wildcard /dev/ttyUSB*) $(wildcard /dev/ttyACM*)) #/dev/ttyS4
+COMPORT ?= $(word 1, $(wildcard /dev/tty.usbserial-*) $(wildcard /dev/tty.usbmodem*) $(wildcard /dev/ttyUSB*) $(wildcard /dev/ttyACM*))
 
 #=============================================================================#
 # set the VPATH according to SRCS_DIRS and startup file directory
