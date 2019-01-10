@@ -87,7 +87,6 @@ void execute_controls(void) {
     //   last_vt = HAL_GetTick();
     // }
     if (!control_settings.using_voltage_limiting) voltage_limited_torque = torque_command;
-  
     int32_t temp_limited_torque = get_temp_limited_torque(torque_command);
     // static uint32_t last_tt = 0;
     // if (HAL_GetTick() - last_tt > 10) {
@@ -104,7 +103,7 @@ void execute_controls(void) {
       min_sensor_torque = voltage_limited_torque;
     }
     else {
-      min_sensor_torque = temp_limited_torque;
+   min_sensor_torque = temp_limited_torque;
     }
 
     if (power_limited_torque < min_sensor_torque) {
