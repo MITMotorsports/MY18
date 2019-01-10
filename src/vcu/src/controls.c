@@ -168,7 +168,7 @@ static int32_t get_regen_torque() {
 static int32_t get_power_limited_torque(int32_t pedal_torque) {
     if (mc_readings.speed < 0) { //prevent division by zero, make sure we are spinning (negative is forward)
     
-      int32_t tMAX = power_limit/(abs(mc_readings.speed)*6.28/60); //convert RPM to rad/s with 2pi/60
+      int32_t tMAX = power_limit/(abs(mc_readings.speed)*628/6000)*10; //convert RPM to rad/s with 2pi/60, *10 to dNm
       power_lim_settings.tMAX = tMAX;
     
       if (tMAX > 2400) tMAX = 2400;

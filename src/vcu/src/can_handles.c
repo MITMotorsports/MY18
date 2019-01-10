@@ -297,14 +297,6 @@ void handleDashRequest(Frame *msg) {
   control_settings.active_aero_enabled = unpacked_msg.active_aero_enabled;
 }
 
-void handlePowerLimMonitoring(Frame *msg) {
-  can0_PowerLimMonitoring_T unpacked_msg;
-
-  unpack_can0_PowerLimMonitoring(msg, &unpacked_msg);
-
-  power_lim_settings.tMAX = unpacked_msg.tMAX;
-}
-
 void send_VCUHeartbeat(void) {
   LIMIT(can0_VCUHeartbeat);
 
@@ -355,7 +347,7 @@ void send_VCUControlsMonitoring(void) {
 void send_PowerLimMonitoring(void) {
   LIMIT(can0_PowerLimMonitoring);
 
-  can0_VCUControlsMonitoring_Write(&power_lim_settings);
+  can0_PowerLimMonitoring_Write(&power_lim_settings);
 }
 
 void send_VCU(void) {

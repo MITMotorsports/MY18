@@ -1542,7 +1542,7 @@ buses:
         period: 25 ms
         segments:
           tMAX:
-            unit: Nm
+            unit: dNm
             position: 0
-            length: 8
-            c_type: uint8_t
+            length: 32
+            c_type: int32_t
