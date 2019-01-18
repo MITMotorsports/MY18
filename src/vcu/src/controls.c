@@ -170,7 +170,6 @@ static int32_t get_power_limited_torque(int32_t pedal_torque) {
     
       int32_t tMAX = power_limit/(abs(mc_readings.speed)*628/6000)*10; //convert RPM to rad/s with 2pi/60, *10 to dNm
       
-    
       if (tMAX > 2400) tMAX = 2400;
       if(pedal_torque > tMAX) {
         power_lim_settings.tMAX = tMAX;
