@@ -1546,3 +1546,8 @@ buses:
             position: 0
             length: 32
             c_type: int32_t
+          tCAP:
+            unit: dNm
+            position: 32
+            length: 32
+            c_type: int32_t

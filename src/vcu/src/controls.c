@@ -166,30 +166,32 @@ static int32_t get_regen_torque() {
 }
 
 static int32_t get_power_limited_torque(int32_t pedal_torque) {
-  static int32_t tCAP = 100000; //Set arbitrarily large so that at first calculated tMAX will always be smaller than this
+  static int32_t tCAP = MAX_TORQUE; // Set to max torque so that at first calculated tMAX will always be smaller than this
   
-    if (mc_readings.speed < 0) { //Prevent division by zero, make sure we are spinning (negative is forward)
+  if (mc_readings.speed < 0) { // Prevent division by zero, make sure we are spinning (negative is forward)
       
-      int32_t tMAX = power_limit/(abs(mc_readings.speed)*628/6000)*10; //Convert RPM to rad/s with 2pi/60, *10 to dNm
+    int32_t tMAX = power_limit/(abs(mc_readings.speed)*628/6000)*10; //Convert RPM to rad/s with 2pi/60, *10 to dNm
       
-      if (tMAX > 2400) tMAX = 2400; //Cap the maximum tMAX
+    if (tMAX > MAX_TORQUE) tMAX = MAX_TORQUE; // Cap the maximum tMAX
       
-      //If the wheels slip, calculated tMAX will be higher, but we don't want
-      //sudden increases in tMAX, and so it will be capped by the maximum that
-      //was previously calculated, will be reset once the car's speed goes back to zero
-      if(tMAX < tCAP) tCAP = tMAX;
+    // If the wheels slip, calculated tMAX will be higher, but we don't want
+    // sudden increases in tMAX, and so it will be capped by the maximum that
+    // was previously calculated, will be reset once the car's speed goes back to zero
+    if(tMAX <= tCAP) tCAP = tMAX;
       
-      power_lim_settings.tMAX = tCAP;
+    power_lim_settings.tMAX = tMAX;
+    power_lim_settings.tCAP = tCAP;
 
-      if(pedal_torque > tMAX) { //Return the minimum of the two
-        return tMAX;
-      }
-      return pedal_torque;
-    
-    } else {
-      tCAP = 100000; //Reset once wheels stop moving
-      return pedal_torque;
+    if(pedal_torque > tMAX) { // Return the minimum of the two
+      return tMAX;
     }
+    return pedal_torque;
+    
+  } else {
+    tCAP = MAX_TORQUE; // Reset once wheels stop moving
+    power_lim_settings.tCAP = tCAP;
+    return pedal_torque;
+  }
 }
 
 static int32_t get_temp_limited_torque(int32_t pedal_torque) {
