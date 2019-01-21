@@ -166,20 +166,36 @@ static int32_t get_regen_torque() {
 }
 
 static int32_t get_power_limited_torque(int32_t pedal_torque) {
-    if (mc_readings.speed < 0) { //prevent division by zero, make sure we are spinning (negative is forward)
+  static int32_t tCAP = 0;
+  static int32_t count = 1;
+  
+  if(speed < 0) { // check car is moving forward
     
-      int32_t tMAX = power_limit/(abs(mc_readings.speed)*628/6000)*10; //convert RPM to rad/s with 2pi/60, *10 to dNm
-      
-      if (tMAX > 2400) tMAX = 2400;
-      if(pedal_torque > tMAX) {
-        power_lim_settings.tMAX = tMAX;
-        return tMAX;
+    if(count <= 5) { // ramp is not over yet
+
+      if(pedal_torque >= tMAX) { // check if car pedal is above allowed torque
+        count++; // increase counter
+        return tCAP*count*100/600; // return tCAP in incrementing fifths
       }
+      count = 0; // else, reset the counter and return pedal
+      tCAP = 0;
       return pedal_torque;
-    
-    } else {
-      return pedal_torque;
+    } else { // else ramp is over, get new tMAX
+      
+      int32_t tMAX = power_limit*6000*10/((0-mc_readings.speed)*628); // calculate tMAX based on power limit and wheel speed
+      if(tMAX > MAX_TORQUE) tMAX = MAX_TORQUE; // cap at max torque
+      tCAP = tMAX;
+      
+      return tCAP/5;
     }
+    
+    return pedal_torque;
+
+  } else { // else car is not moving, reset and return pedal
+    count = 0;
+    tCAP = 0;
+    return pedal_torque;
+  }
 }
 
 static int32_t get_temp_limited_torque(int32_t pedal_torque) {
