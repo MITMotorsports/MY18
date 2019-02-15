@@ -1,4 +1,28 @@
 #include "main.h"
+#include "measure.h"
+
+static char str[10];
+
+static BMS_PACK_STATUS_T pack_status;
+static BMS_INPUT_T  bms_input;
+static BMS_OUTPUT_T bms_output;
+static BMS_STATE_T  bms_state;
+
+static BMS_PACK_CONFIG_T pack_config;
+static uint32_t cell_voltages[MAX_NUM_MODULES * MAX_CELLS_PER_MODULE];
+static int16_t  cell_temperatures[MAX_NUM_MODULES * MAX_THERMISTORS_PER_MODULE];
+static int16_t  cell_temperature_offsets[MAX_NUM_MODULES * MAX_THERMISTORS_PER_MODULE];
+static uint8_t  module_cell_count[MAX_NUM_MODULES];
+
+// memory allocation for BMS_OUTPUT balancing
+static bool balance_reqs[MAX_NUM_MODULES * MAX_CELLS_PER_MODULE];
+static bool balance_waitingoff[MAX_NUM_MODULES * MAX_CELLS_PER_MODULE];
+static uint32_t balance_timeon[MAX_NUM_MODULES * MAX_CELLS_PER_MODULE];
+
+// memory for console
+static microrl_t rl;
+static CONSOLE_OUTPUT_T console_output;
+
 
 int main(void) {
   Init_BMS_Structs();
@@ -164,6 +188,8 @@ void Process_Output(BMS_INPUT_T  *bms_input,
   else {
     Board_LTC6804_UpdateBalanceStates(bms_output->balance_req);
   }
+
+  Output_Measurements(&console_output, bms_input, bms_state);
 }
 
 void Process_Keyboard(void) {
