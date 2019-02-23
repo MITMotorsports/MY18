@@ -171,11 +171,13 @@ static int32_t get_power_limited_torque(int32_t pedal_torque) {
   
   if(speed < 0) { // check car is moving forward
     
+    
     int32_t tMAX = power_limit*6000*10/((0-mc_readings.speed)*628); // calculate tMAX based on power limit and wheel speed
     if(tMAX > MAX_TORQUE) tMAX = MAX_TORQUE; // cap at max torque
     tCAP = tMAX;
     
-    if(pedal_torque >= tCAP && count!= 5) { // ramp is over, get new tMAX
+
+    if(pedal_torque >= tCAP) { 
       if(count != 5) count++; return tCAP*count*100/500;
       
       if(count == 5) return tCAP; //ramp has been reached but pedal is still higher than tCAP
