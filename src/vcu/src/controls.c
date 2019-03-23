@@ -199,7 +199,7 @@ static int32_t get_power_limited_torque(int32_t pedal_torque, int32_t tThresh, i
 
 static int32_t torque_ramp(int32_t pedal_torque, int32_t tMAX, int32_t tThresh, int32_t Nsteps) {
   static int32_t count = 0;
-  count += 1;
+  count++;
   if(count > Nsteps) return tMAX;
 
   if(tMAX < tThresh) {
