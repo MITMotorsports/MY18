@@ -185,10 +185,7 @@ static int32_t get_power_limited_torque(int32_t pedal_torque, int32_t tThresh, i
     power_lim_settings.tMAX = tMAX;
     power_lim_settings.tCAP = tCAP;
 
-    if(pedal_torque > tMAX) { // Return the minimum of the two
-      return torque_ramp(pedal_torque, tMAX, tThresh, Nsteps);
-    }
-    return pedal_torque;
+    return torque_ramp(pedal_torque, tMAX, tThresh, Nsteps);
     
   } else {
     tCAP = MAX_TORQUE; // Reset once wheels stop moving
