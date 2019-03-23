@@ -15,6 +15,7 @@ static int32_t get_regen_torque(void);
 static int32_t get_temp_limited_torque(int32_t pedal_torque);
 static int32_t get_voltage_limited_torque(int32_t pedal_torque);
 static int32_t get_power_limited_torque(int32_t torque_command);
+static int32_t torque_ramp(int32_t torque_command, int32_t Nsteps);
 
 void init_controls_defaults(void) {
   control_settings.using_regen = false;
@@ -124,7 +125,11 @@ void execute_controls(void) {
     torque_command = limited_torque;
   }
 
-  sendTorqueCmdMsg(torque_command);
+  if(torque_command > 1800) {
+    torque_ramp(torque_command, 3);
+  } else {
+    sendTorqueCmdMsg(torque_command);
+  }
 }
 
 static int32_t get_torque(void) {
@@ -191,6 +196,13 @@ static int32_t get_power_limited_torque(int32_t pedal_torque) {
     tCAP = MAX_TORQUE; // Reset once wheels stop moving
     power_lim_settings.tCAP = tCAP;
     return pedal_torque;
+  }
+}
+
+static int32_t torque_ramp(int32_t pedal_torque, int32_t Nsteps) {
+  
+  for (int i = 1; i <= Nsteps; i++) {
+    sendTorqueCmdMsg(pedal_torque * (i / Nsteps));
   }
 }
 
