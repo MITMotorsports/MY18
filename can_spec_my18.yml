@@ -30,6 +30,9 @@ boards:
       can0:
         - FrontCanNodeBrakeThrottle
         - MCVoltage
+        - kistler_speed_distance
+        - kistler_velocity
+        - kistler_status
   dash:
     arch: lpc11cx4
     publish:
@@ -79,11 +82,74 @@ boards:
     subscribe:
       can0:
         - CurrentSensor_Config
+  kistler:
+    publish:
+      can0:
+        - kistler_speed_distance
+        - kistler_velocity
+        - kistler_status
 buses:
   can0:
     baudrate: 500000
     is_extended: false
     messages:
+      kistler_speed_distance:
+        can_id: 0x7FA
+        period: 4ms
+        is_big_endian: false
+        segments:
+          timestamp:
+            position: 0
+            length: 16
+            c_type: uint16_t
+          ground_speed:
+            position: 16
+            length: 16
+            c_type: uint16_t
+          distance:
+            position: 32
+            length: 32
+            c_type: uint32_t
+      kistler_velocity:
+        can_id: 0x7FB
+        period: 4ms
+        is_big_endian: false
+        segments:
+          longitudinal:
+            position: 0
+            length: 16
+            c_type: uint16_t
+          lateral:
+            position: 16
+            length: 16
+            c_type: int16_t
+          angle:
+            position: 32
+            length: 16
+            c_type: int16_t
+      kistler_status:
+        can_id: 0x7FC
+        period: 4ms
+        is_big_endian: false
+        segments:
+          serial_number:
+            position: 0
+            length: 24
+          sensor_number:
+            position: 24
+            length: 8
+          temperature:
+            position: 32
+            length: 8
+          led_illumination_curr:
+            position: 40
+            length: 8
+          status_byte_1:
+            position: 48
+            length: 8
+          status_byte_2: 
+            position: 56
+            length: 8
       FrontCanNodeBrakeThrottle:
         can_id: 0x090
         period: 13ms
