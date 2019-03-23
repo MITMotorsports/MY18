@@ -203,10 +203,11 @@ static int32_t torque_ramp(int32_t pedal_torque, int32_t tMAX, int32_t tThresh, 
   if(count > Nsteps) return tMAX;
 
   if(tMAX < tThresh) {
-    count = 0; return pedal_torque; // Reset ramp once torque is below threshold
+    count = 0; 
+    return pedal_torque; // Reset ramp once torque is below threshold
   }
-   
-  return tMAX*(count/Nsteps); // Return ramp
+
+  return tThresh + (tMAX-tThresh)*((count-1)/Nsteps); // Return ramp starting from tThresh
 }
 
 static int32_t get_temp_limited_torque(int32_t pedal_torque) {
