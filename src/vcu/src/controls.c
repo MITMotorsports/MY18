@@ -5,7 +5,9 @@ static int32_t torque_command = 0;
 static int32_t speed_command = 0;
 can0_VCUControlsParams_T control_settings = {};
 can0_PowerLimMonitoring_T power_lim_settings = {};
-static int32_t power_limit = 500; //Watts
+static int32_t power_limit = 500; // Watts
+const int32_t tThresh = 1600; // dNm
+const int32_t Nsteps = 5; // []
 
 static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
 
@@ -14,8 +16,8 @@ static int32_t get_torque(void);
 static int32_t get_regen_torque(void);
 static int32_t get_temp_limited_torque(int32_t pedal_torque);
 static int32_t get_voltage_limited_torque(int32_t pedal_torque);
-static int32_t get_power_limited_torque(int32_t torque_command);
-static int32_t torque_ramp(int32_t torque_command, int32_t Nsteps);
+static int32_t get_power_limited_torque(int32_t pedal_torque, int32_t tThresh, int32_t Nsteps);
+static int32_t torque_ramp(int32_t pedal_torque, int32_t tMAX, int32_t tThresh, int32_t Nsteps);
 
 void init_controls_defaults(void) {
   control_settings.using_regen = false;
@@ -76,7 +78,7 @@ void execute_controls(void) {
   }
   else {
     
-    int32_t power_limited_torque = get_power_limited_torque(torque_command);
+    int32_t power_limited_torque = get_power_limited_torque(torque_command, tThresh, Nsteps);
     //printf("Power limited torque: %ld\r\n", power_limited_torque);
     printf("%ld\r\n", power_limited_torque);
     // Only use limits when we're not doing regen
@@ -125,11 +127,7 @@ void execute_controls(void) {
     torque_command = limited_torque;
   }
 
-  if(torque_command > 1800) {
-    torque_ramp(torque_command, 3);
-  } else {
-    sendTorqueCmdMsg(torque_command);
-  }
+  sendTorqueCmdMsg(torque_command);
 }
 
 static int32_t get_torque(void) {
@@ -170,12 +168,12 @@ static int32_t get_regen_torque() {
   return -1 * regen_torque;
 }
 
-static int32_t get_power_limited_torque(int32_t pedal_torque) {
+static int32_t get_power_limited_torque(int32_t pedal_torque, int32_t tThresh, int32_t Nsteps) {
   static int32_t tCAP = MAX_TORQUE; // Set to max torque so that at first calculated tMAX will always be smaller than this
   
   if (mc_readings.speed < 0) { // Prevent division by zero, make sure we are spinning (negative is forward)
       
-    int32_t tMAX = power_limit/(abs(mc_readings.speed)*628/6000)*10; //Convert RPM to rad/s with 2pi/60, *10 to dNm
+    int32_t tMAX = power_limit/(abs(mc_readings.speed)*628/6000)*10; // Convert RPM to rad/s with 2pi/60, *10 to dNm
       
     if (tMAX > MAX_TORQUE) tMAX = MAX_TORQUE; // Cap the maximum tMAX
       
@@ -188,7 +186,7 @@ static int32_t get_power_limited_torque(int32_t pedal_torque) {
     power_lim_settings.tCAP = tCAP;
 
     if(pedal_torque > tMAX) { // Return the minimum of the two
-      return tMAX;
+      return torque_ramp(pedal_torque, tMAX, tThresh, Nsteps);
     }
     return pedal_torque;
     
@@ -199,11 +197,16 @@ static int32_t get_power_limited_torque(int32_t pedal_torque) {
   }
 }
 
-static int32_t torque_ramp(int32_t pedal_torque, int32_t Nsteps) {
-  
-  for (int i = 1; i <= Nsteps; i++) {
-    sendTorqueCmdMsg(pedal_torque * (i / Nsteps));
+static int32_t torque_ramp(int32_t pedal_torque, int32_t tMAX, int32_t tThresh, int32_t Nsteps) {
+  static int32_t count = 0;
+  count += 1;
+  if(count > Nsteps) return tMAX;
+
+  if(tMAX < tThresh) {
+    count = 0; return pedal_torque; // Reset ramp once torque is below threshold
   }
+   
+  return tMAX*(count/Nsteps); // Return ramp
 }
 
 static int32_t get_temp_limited_torque(int32_t pedal_torque) {
