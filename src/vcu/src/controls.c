@@ -3,6 +3,9 @@
 static bool enabled = false;
 static int32_t torque_command = 0;
 static int32_t speed_command = 0;
+
+static bool lc_state_locked_until_next_rtd = true;
+
 can0_VCUControlsParams_T control_settings = {};
 can0_VCUControlsParamsLC_T lc_settings = {};
 can0_DashSpeedCntrlRPMSetpoint_T rpm_setpoint = {};
@@ -66,6 +69,19 @@ void disable_controls(void) {
 
 bool get_controls_enabled(void) {
   return enabled;
+}
+
+// locks LC from being re-enabled by outside entities until RTD occurs
+void lock_lc_state(void) {
+  lc_state_locked_until_next_rtd = true;
+}
+
+void lc_rtd_callback(void) {
+  lc_state_locked_until_next_rtd = false;
+}
+
+bool get_lc_state_locked_until_next_rtd(void) {
+  return lc_state_locked_until_next_rtd;
 }
 
 void execute_controls(void) {
@@ -190,6 +206,7 @@ void execute_controls(void) {
           break;
         case ZERO_TORQUE:
           sendTorqueCmdMsg(0);
+          lock_lc_state();
           disable_speed_controller();
 
           if (pedalbox_max(accel) < LC_ACCEL_RELEASE) {
@@ -199,6 +216,7 @@ void execute_controls(void) {
           break;
         default:
           sendTorqueCmdMsg(0);
+          lock_lc_state();
           disable_speed_controller();
 
           printf("ERROR: NO STATE!\r\n");

@@ -1,4 +1,5 @@
 #include "state_vcu_rtd.h"
+#include "controls.h"
 
 const Time_T RTD_HOLD = 1000;
 
@@ -32,6 +33,7 @@ void update_vcu_state_rtd(void) {
     if (rtd_started) {
       if (HAL_GetTick() - rtd_last > RTD_HOLD) {
         if (brk_pressed) {
+          lc_rtd_callback(); // callback for controls to get ready after any rtd
           set_vcu_state(VCU_STATE_DRIVING);
           return;
         }
