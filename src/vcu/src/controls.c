@@ -1,13 +1,14 @@
 #include "controls.h"
+#include "controls_pwr_lim.h"
 
 static bool enabled = false;
 static int32_t torque_command = 0;
 static int32_t speed_command = 0;
+static const int32_t Nsteps = 5; // []
+static const int32_t tThresh = 1600; // dNm
+
 can0_VCUControlsParams_T control_settings = {};
 can0_PowerLimMonitoring_T power_lim_settings = {};
-static int32_t power_limit = 500; // Watts
-const int32_t tThresh = 1600; // dNm
-const int32_t Nsteps = 5; // []
 
 static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
 
@@ -16,8 +17,6 @@ static int32_t get_torque(void);
 static int32_t get_regen_torque(void);
 static int32_t get_temp_limited_torque(int32_t pedal_torque);
 static int32_t get_voltage_limited_torque(int32_t pedal_torque);
-static int32_t get_power_limited_torque(int32_t pedal_torque, int32_t tThresh, int32_t Nsteps);
-static int32_t torque_ramp(int32_t pedal_torque, int32_t tMAX, int32_t tThresh, int32_t Nsteps);
 
 void init_controls_defaults(void) {
   control_settings.using_regen = false;
@@ -166,45 +165,6 @@ static int32_t get_regen_torque() {
 
   // Regen is negative torque, and we've calculated a positive number so far
   return -1 * regen_torque;
-}
-
-static int32_t get_power_limited_torque(int32_t pedal_torque, int32_t tThresh, int32_t Nsteps) {
-  static int32_t tCAP = MAX_TORQUE; // Set to max torque so that at first calculated tMAX will always be smaller than this
-  
-  if (mc_readings.speed < 0) { // Prevent division by zero, make sure we are spinning (negative is forward)
-      
-    int32_t tMAX = power_limit/(abs(mc_readings.speed)*628/6000)*10; // Convert RPM to rad/s with 2pi/60, *10 to dNm
-      
-    if (tMAX > MAX_TORQUE) tMAX = MAX_TORQUE; // Cap the maximum tMAX
-      
-    // If the wheels slip, calculated tMAX will be higher, but we don't want
-    // sudden increases in tMAX, and so it will be capped by the maximum that
-    // was previously calculated, will be reset once the car's speed goes back to zero
-    if(tMAX <= tCAP) tCAP = tMAX;
-      
-    power_lim_settings.tMAX = tMAX;
-    power_lim_settings.tCAP = tCAP;
-
-    return torque_ramp(pedal_torque, tMAX, tThresh, Nsteps);
-    
-  } else {
-    tCAP = MAX_TORQUE; // Reset once wheels stop moving
-    power_lim_settings.tCAP = tCAP;
-    return pedal_torque;
-  }
-}
-
-static int32_t torque_ramp(int32_t pedal_torque, int32_t tMAX, int32_t tThresh, int32_t Nsteps) {
-  static int32_t count = 0;
-  count++;
-  if(count > Nsteps) return tMAX;
-
-  if(tMAX < tThresh) {
-    count = 0; 
-    return pedal_torque; // Reset ramp once torque is below threshold
-  }
-
-  return tThresh + (tMAX-tThresh)*((count-1)/Nsteps); // Return ramp starting from tThresh
 }
 
 static int32_t get_temp_limited_torque(int32_t pedal_torque) {
