@@ -68,12 +68,14 @@ extern can0_VCUControlsParamsLC_T lc_settings;
 extern can0_DashSpeedCntrlRPMSetpoint_T rpm_setpoint;
 
 // INTERACTION FUNCTIONS
-void enable_controls(void);
-void disable_controls(void);
+void enable_baseline_controls(void);
+void disable_baseline_controls(void);
 void lock_lc_state(void);
 void lc_rtd_callback(void);
 bool get_lc_state_locked_until_next_rtd(void);
 bool get_controls_enabled(void);
+void enable_lc_controls(void);
+void disable_lc_controls(void);
 void execute_controls(void);
 void set_lc_zero_torque(void);
 

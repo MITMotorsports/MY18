@@ -17,7 +17,8 @@ void enter_vcu_state_rtd(void) {
   send_mc_fault_clear();
   sendMotorOffCmdMsg();
 
-  disable_controls();
+  disable_baseline_controls();
+  disable_lc_controls();
 
   // Turn on battery fans
   HAL_GPIO_WritePin(GPIO(BFAN), GPIO_PIN_SET);

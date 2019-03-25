@@ -48,23 +48,29 @@ void init_controls_defaults(void) {
     MAX_TORQUE, SPEED_CONTROLLER_UPDATE_PERIOD_MS);
 }
 
-void enable_controls(void) {
+void enable_baseline_controls(void) {
   enabled = true;
   torque_command = 0;
   speed_command = 0;
-  lc_state = BEFORE;
 
   unlock_brake_valve();
 }
 
-void disable_controls(void) {
+void disable_baseline_controls(void) {
   enabled = false;
   torque_command = 0;
   speed_command = 0;
-  lc_state = DONE;
 
   set_brake_valve(false);
   lock_brake_valve();
+}
+
+void enable_lc_controls(void) {
+  lc_state = BEFORE;
+}
+
+void disable_lc_controls(void) {
+  lc_state = DONE;
 }
 
 bool get_controls_enabled(void) {
@@ -193,13 +199,13 @@ void execute_controls(void) {
             speedControlTorqueOutput = torque_command;
           }
 
-          if (HAL_GetTick() - last_time_step > 50) {
+          //if (HAL_GetTick() - last_time_step > 50) {
             //printf("[SC] SETPOINT: %d, ERR: %d, TORQUE: %d, ACCUM: %d, DERIV: %d\r\n",
             //  speed_command, get_speed_controller_error(), speedControlTorqueOutput,
             //  get_speed_controller_accum(), get_speed_controller_deriv());
 
-            last_time_step = HAL_GetTick();
-          }
+            //last_time_step = HAL_GetTick();
+          //}
 
           sendTorqueCmdMsg(speedControlTorqueOutput);
 

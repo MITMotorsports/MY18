@@ -43,7 +43,8 @@ void handle_fatal_fault(void) {
   // Make sure the driver can avoid death.
   set_brake_valve(false);
   lock_brake_valve();
-  disable_controls();
+  disable_baseline_controls();
+  disable_lc_controls();
 
   openLowSideContactor();
   openHighSideContactor();
@@ -62,7 +63,8 @@ void handle_recoverable_fault(void) {
   // Make sure the driver can avoid death.
   set_brake_valve(false);
   lock_brake_valve();
-  disable_controls();
+  disable_baseline_controls();
+  disable_lc_controls();
 }
 
 void handle_test_fault(void) {

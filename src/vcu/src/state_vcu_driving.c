@@ -20,7 +20,7 @@ void enter_vcu_state_driving(void) {
 
   printf("CONTROLS PARAMS:\r\n  using_regen: %d\r\n  using_voltage_limiting: %d\r\n  using_temp_limiting: %d\r\n  regen_bias: %d\r\n  limp_factor: %d\r\n  temp_lim_min_gain: %d\r\n  temp_lim_thresh_temp: %d\r\n  temp_abs_thesh: %d\r\n  volt_lim_min_gain: %d\r\n  volt_lim_min_voltage: %d\r\n  volt_abs_thresh: %d\r\n\r\n",
    control_settings.using_regen, control_settings.using_voltage_limiting, control_settings.using_temp_limiting, control_settings.regen_bias, control_settings.limp_factor, control_settings.temp_lim_min_gain, control_settings.temp_lim_thresh_temp, MAX_TEMP, control_settings.volt_lim_min_gain, control_settings.volt_lim_min_voltage, MIN_VOLTAGE);
-  enable_controls();
+  //enable_controls(); // Mar 25, 2019 Seb: I don't think we need this because below will suffice
 }
 
 void update_vcu_state_driving(void) {
@@ -35,8 +35,20 @@ void update_vcu_state_driving(void) {
   }
 
   // Calculate and send motor controller commands.
+  // NOTE: we have two seperate checks here. The first one is for LC.
+  // While LC may not be enabled by the user, we first enable the
+  // loop that at least considers whether or not LC should run.
+  // We will not however consider this if the state was previously
+  // locked from entering the DONE state.
+  // The second case checks for the baseline controls (ie. manual and such).
+  // We perform a separate consideration that is not based on the LC
+  // state being locked so that we may still run manual control in the
+  // event of a recoverable fault being recovered.
   if (!get_controls_enabled() && !get_lc_state_locked_until_next_rtd()) {
-    enable_controls();
+    enable_lc_controls();
+  }
+  if (!get_controls_enabled()) {
+    enable_baseline_controls();
   }
   execute_controls();
 
