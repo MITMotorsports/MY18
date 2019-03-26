@@ -21,6 +21,8 @@ int main(void) {
   DGPIO_INIT_IN(  IMD_GATE, GPIO_NOPULL);
   DGPIO_INIT_IN(  BPD_GATE, GPIO_NOPULL);
 
+  DGPIO_INIT_IN(  FAKE_IMD, GPIO_NOPULL);
+
   DGPIO_INIT_IN(MASTER_RST, GPIO_PULLUP);
 
   // Low Side Contactor closed signal from BMS

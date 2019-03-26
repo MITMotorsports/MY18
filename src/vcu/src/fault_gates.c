@@ -1,14 +1,22 @@
 #include "fault_gates.h"
 
 GateFaults_T gates;
+static bool const BELIEVE_IMD = true;
 
 // Gate faults occur when a pin goes LOW.
 void update_gate_status(void) {
+  bool old_imd = gates.imd_gate;
+
   gates.sdn      = !READ_PIN(SDN);
   gates.sdn_gate = !READ_PIN(SDN_GATE);
   gates.bms_gate = !READ_PIN(BMS_GATE);
-  gates.imd_gate = !READ_PIN(IMD_GATE);
+  // gates.imd_gate = !READ_PIN(IMD_GATE);
+  gates.imd_gate = !READ_PIN(FAKE_IMD);
   gates.bpd_gate = !READ_PIN(BPD_GATE);
+
+  if (old_imd != gates.imd_gate) {
+    printf("[IMD] Is now %d!\r\n", gates.imd_gate);
+  }
 }
 
 bool any_all_gate_fault(void) {
@@ -17,7 +25,7 @@ bool any_all_gate_fault(void) {
   return gates.sdn      ||
          gates.sdn_gate ||
          gates.bms_gate ||
-         gates.imd_gate ||
+         (BELIEVE_IMD && gates.imd_gate) ||
          gates.bpd_gate;
 }
 
@@ -40,7 +48,7 @@ bool any_fatal_gate_faults(void) {
   static bool   last_val  = 0;
 
   bool retval = gates.bms_gate ||
-                gates.imd_gate ||
+                (BELIEVE_IMD && gates.imd_gate) ||
                 gates.bpd_gate;
   // I like my indents to work well.
 
