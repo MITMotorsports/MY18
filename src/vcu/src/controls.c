@@ -11,14 +11,14 @@ static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
 
 
 static const int32_t powerlimit = 500;
-static const int32_t powerlimit_duration = 500; // ms
+static const int32_t ramp_duration = 500; // ms
 static const int32_t tThresh = 1600; // dNm
 
 static inline int32_t torque_ramp(int32_t pedal_torque, int32_t tMAX) {
   static uint32_t powerlimit_start = 0;
 
   const int32_t timestep = HAL_GetTick() - powerlimit_start;
-  if (timestep > powerlimit_duration) return tMAX;
+  if (timestep > ramp_duration) return tMAX;
 
   if (timestep <= 0) {
     powerlimit_start = HAL_GetTick();
@@ -28,9 +28,12 @@ static inline int32_t torque_ramp(int32_t pedal_torque, int32_t tMAX) {
     powerlimit_start = HAL_GetTick();
     return pedal_torque; // Reset ramp once torque is below threshold
   }
+  if (timestep >= ramp_duration) {
+    return tMAX;
+  }
 
   // Return ramp starting from tThresh
-  return tThresh + (tMAX - tThresh) * timestep / powerlimit_duration;
+  return tThresh + (tMAX - tThresh) * timestep / ramp_duration;
 }
 
 int32_t get_power_limited_torque(int32_t pedal_torque) {
