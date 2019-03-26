@@ -10,7 +10,7 @@ can0_PowerLimMonitoring_T power_lim_settings = {};
 static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
 
 
-static const int32_t powerlimit = 500;
+static const int32_t powerlimit = 500; // Watts
 static const int32_t ramp_duration = 500; // ms
 static const int32_t tThresh = 1600; // dNm
 
@@ -44,7 +44,7 @@ int32_t get_power_limited_torque(int32_t pedal_torque) {
     // Prevent division by zero, make sure we are spinning (negative is forward)
 
     // Convert RPM to rad/s with 2pi/60, *10 to dNm
-    int32_t tMAX = powerlimit / (abs(mc_readings.speed) * 628 / 6000) * 10;
+    int32_t tMAX = 10 * powerlimit / (-mc_readings.speed * 628 / 6000);
 
     if (tMAX > MAX_TORQUE) tMAX = MAX_TORQUE; // Cap the maximum tMAX
 
