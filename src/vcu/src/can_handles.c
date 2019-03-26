@@ -94,6 +94,10 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleDashRequest(&frame);
     break;
 
+  case can0_Dash_PowerLimSettings:
+    handleDash_PowerLimSettings(&frame);
+    break;
+
   default:
     break;
   }
@@ -343,7 +347,7 @@ void send_VCUControlsMonitoring(void) {
 void send_PowerLimMonitoring(void) {
   LIMIT(can0_PowerLimMonitoring);
 
-  can0_PowerLimMonitoring_Write(&power_lim_settings);
+  can0_PowerLimMonitoring_Write(&power_lim_monitoring);
 }
 
 void send_VCU(void) {
@@ -352,6 +356,7 @@ void send_VCU(void) {
   send_VCUControlsParams();
   send_VCUControlsMonitoring();
   send_PowerLimMonitoring();
+  send_VCU_PowerLimSettings();
 }
 
 void sendTorqueCmdMsg(int16_t torque) {
@@ -413,4 +418,23 @@ void send_mc_fault_clear(void) {
   msg.data    = 0;
 
   can0_MCParameterRequest_Write(&msg);
+}
+
+void handleDash_PowerLimSettings(Frame *msg) {
+  can0_Dash_PowerLimSettings_T unpacked_msg;
+
+  unpack_can0_Dash_PowerLimSettings(msg, &unpacked_msg);
+
+  power_lim_settings.using_pl = unpacked_msg.using_pl;
+  power_lim_settings.using_torque_ramp = unpacked_msg.using_torque_ramp;
+
+  power_lim_settings.ramp_duration = unpacked_msg.ramp_duration;
+  power_lim_settings.tThresh = unpacked_msg.tThresh;
+  power_lim_settings.power_lim = unpacked_msg.power_lim;
+}
+
+void send_VCU_PowerLimSettings(void) {
+  LIMIT(can0_VCU_PowerLimSettings);
+
+  can0_VCU_PowerLimSettings_Write(&power_lim_settings);
 }

@@ -99,7 +99,14 @@ void dispatch_init() {
     carstats.controls.using_voltage_limiting = false;
     carstats.controls.active_aero_enabled    = false;
 
+    carstats.pl_controls.power_lim = 80;
+    carstats.pl_controls.ramp_duration = 100;
+    carstats.pl_controls.tThresh = 0;
+    carstats.pl_controls.using_torque_ramp = true;
+    carstats.pl_controls.using_pl = false;
+
     carstats.vcu_controls_received = false;
+    carstats.vcu_pl_controls_received = false;
 
     init_button_state(&carstats.buttons.left);
     init_button_state(&carstats.buttons.right);
@@ -169,6 +176,7 @@ void update_lights(void) {
 void send_dash_controls(void) {
     LIMIT(can0_DashRequest_period);
     handle_can_error(can0_DashRequest_Write(&carstats.controls));
+    handle_can_error(can0_Dash_PowerLimSettings_Write(&carstats.pl_controls));
 }
 
 void vcu_controls_update(void) {

@@ -1546,8 +1546,64 @@ buses:
             position: 0
             length: 32
             c_type: int32_t
-          tCAP:
-            unit: dNm
+          power_lim_trq:
+            unit: dMm
             position: 32
             length: 32
             c_type: int32_t
+      VCU_PowerLimSettings:
+        can_id: 0x701
+        is_big_endian: true
+        period: 25 ms
+        segments:
+          power_lim:
+            unit: kW
+            position: 0
+            length: 16
+            c_type: uint16_t
+          ramp_duration:
+            unit: ms
+            position: 16
+            length: 16
+            c_type: uint16_t
+          tThresh:
+            unit: dNm
+            position: 32
+            length: 16
+            c_type: uint16_t
+          using_torque_ramp:
+            position: 48
+            length: 1
+            c_type: bool
+          using_pl:
+            position: 49
+            length: 1
+            c_type: bool
+      Dash_PowerLimSettings:
+        can_id: 0x702
+        is_big_endian: true
+        period: 25 ms
+        segments:
+          power_lim:
+            unit: kW
+            position: 0
+            length: 16
+            c_type: uint16_t
+          ramp_duration:
+            unit: ms
+            position: 16
+            length: 16
+            c_type: uint16_t
+          tThresh:
+            unit: dNm
+            position: 32
+            length: 16
+            c_type: uint16_t
+          using_torque_ramp:
+            position: 48
+            length: 1
+            c_type: bool
+          using_pl:
+            position: 49
+            length: 1
+            c_type: bool

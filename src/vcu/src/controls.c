@@ -5,49 +5,57 @@ static int32_t torque_command = 0;
 static int32_t speed_command = 0;
 
 can0_VCUControlsParams_T control_settings = {};
-can0_PowerLimMonitoring_T power_lim_settings = {};
+can0_PowerLimMonitoring_T power_lim_monitoring = {};
+can0_VCU_PowerLimSettings_T power_lim_settings = {};
 
 static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
 
-
-static const int32_t powerlimit = 500; // Watts
-static const int32_t ramp_duration = 500; // ms
-static const int32_t tThresh = 1600; // dNm
+static int16_t get_eff_percent(int32_t torque, int32_t speed);
 
 static inline int32_t torque_ramp(int32_t pedal_torque, int32_t tMAX) {
   static uint32_t powerlimit_start = 0;
 
   const int32_t timestep = HAL_GetTick() - powerlimit_start;
-  if (timestep > ramp_duration) return tMAX;
+  if (timestep > power_lim_settings.ramp_duration) return tMAX;
 
   if (timestep <= 0) {
     powerlimit_start = HAL_GetTick();
-    return tThresh; // Begin ramp
+    return power_lim_settings.tThresh; // Begin ramp
   }
-  if (tMAX < tThresh) {
+  if (tMAX < power_lim_settings.tThresh) {
     powerlimit_start = HAL_GetTick();
     return pedal_torque; // Reset ramp once torque is below threshold
   }
-  if (timestep >= ramp_duration) {
+  if (timestep >= power_lim_settings.ramp_duration) {
     return tMAX;
   }
 
   // Return ramp starting from tThresh
-  return tThresh + (tMAX - tThresh) * timestep / ramp_duration;
+  return power_lim_settings.tThresh + (tMAX - power_lim_settings.tThresh) * timestep / power_lim_settings.ramp_duration;
 }
 
 int32_t get_power_limited_torque(int32_t pedal_torque) {
   if (mc_readings.speed < 0) {
     // Prevent division by zero, make sure we are spinning (negative is forward)
 
+    int16_t eff_percent = get_eff_percent(pedal_torque, -mc_readings.speed); 
+
     // Convert RPM to rad/s with 2pi/60, *10 to dNm
-    int32_t tMAX = 10 * powerlimit / (-mc_readings.speed * 628 / 6000);
+    int32_t tMAX = 10 * power_lim_settings.power_lim * 1000 * 100 / (eff_percent * -mc_readings.speed * 628 / 6000);
+
+
 
     if (tMAX > MAX_TORQUE) tMAX = MAX_TORQUE; // Cap the maximum tMAX
 
-    power_lim_settings.tMAX = tMAX;
+    power_lim_monitoring.tMAX = tMAX;
 
-    return torque_ramp(pedal_torque, tMAX);
+    if (power_lim_settings.using_torque_ramp) {
+      torque_ramp(pedal_torque, tMAX);
+    } else {
+      if (tMAX < pedal_torque) {
+        return tMAX;
+      } else return pedal_torque;
+    }
   } else {
     return pedal_torque;
   }
@@ -68,6 +76,12 @@ void init_controls_defaults(void) {
   control_settings.volt_lim_min_gain = 0;
   control_settings.volt_lim_min_voltage = 300;
   control_settings.torque_temp_limited = false;
+
+  power_lim_settings.power_lim = 80;
+  power_lim_settings.ramp_duration = 100;
+  power_lim_settings.tThresh = 0;
+  power_lim_settings.using_torque_ramp = true;
+  power_lim_settings.using_pl = false;
 }
 
 void enable_controls(void) {
@@ -117,27 +131,17 @@ void execute_controls(void) {
     torque_command = regen_torque;
   }
   else {
-
-    int32_t power_limited_torque = get_power_limited_torque(torque_command);
-    //printf("Power limited torque: %ld\r\n", power_limited_torque);
-    printf("%ld\r\n", power_limited_torque);
     // Only use limits when we're not doing regen
+    int32_t power_limited_torque = get_power_limited_torque(torque_command);
+
+    power_lim_monitoring.power_lim_trq = power_limited_torque;
+
     int32_t voltage_limited_torque = get_voltage_limited_torque(torque_command);
-    // static uint32_t last_vt = 0;
-    // if (HAL_GetTick() - last_vt > 10) {
-    //   printf("VT: %d\r\n", voltage_limited_torque);
-    //
-    //   last_vt = HAL_GetTick();
-    // }
+
     if (!control_settings.using_voltage_limiting) voltage_limited_torque = torque_command;
 
     int32_t temp_limited_torque = get_temp_limited_torque(torque_command);
-    // static uint32_t last_tt = 0;
-    // if (HAL_GetTick() - last_tt > 10) {
-    //   printf("TT: %d\r\n", temp_limited_torque);
-    //
-    //   last_tt = HAL_GetTick();
-    // }
+
     if (!control_settings.using_temp_limiting) temp_limited_torque = torque_command;
 
     control_settings.torque_temp_limited = temp_limited_torque < torque_command;
@@ -150,7 +154,7 @@ void execute_controls(void) {
       min_sensor_torque = temp_limited_torque;
     }
 
-    if (power_limited_torque < min_sensor_torque) {
+    if (power_lim_settings.using_pl && power_limited_torque < min_sensor_torque) {
         min_sensor_torque = power_limited_torque;
     }
 
@@ -270,4 +274,9 @@ int32_t positive_hinge(int32_t x, int32_t m, int32_t c) {
 int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c) {
   if (c > e) return positive_hinge(x - e, m, c - e);
   else       return positive_hinge(e - x, m, e - c);
+}
+
+int16_t get_eff_percent(int32_t torque, int32_t speed) {
+  // TODO: implement
+  return 100;
 }

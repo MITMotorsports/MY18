@@ -7,6 +7,13 @@
 #define DATA_UNKNOWN "?"
 #define VCU_HEARTBEAT_TIMEOUT 1000 // ms
 
+const uint16_t pwr_lim_sweeps[] = {1, 5, 10, 30, 60, 80};
+const uint8_t num_pwr_lim_sweeps = 6;
+const uint16_t tThresh_sweeps[] = {0, 500, 1000, 1500, 2000, 2500};
+const uint8_t num_tThesh_sweeps = 6;
+const uint16_t ramp_dur_sweeps[] = {10, 20, 100, 300, 500};
+const uint8_t num_ramp_dur_sweeps = 5;
+
 void page_manager_init(page_manager_t *pm, carstats_t *stats) {
     pm->page  = DASH_PAGE_CRITICAL;
     pm->stats = stats;
@@ -76,6 +83,9 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
             break;
         case DASH_PAGE_DEBUG:
             draw_debug_page(pm, oled);
+            break;
+        case DASH_PAGE_PL:
+            draw_pl_page(pm, oled);
             break;
         default:
             break;
@@ -569,6 +579,117 @@ void draw_debug_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
   } else {
       oled_print(oled, DATA_UNKNOWN);
   }
+}
+
+void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+  carstats_t *stats = pm->stats;
+    static uint8_t var_toggled = 1;
+    static uint8_t lim_indx = 255;
+    static uint8_t thresh_indx = 255;
+    static uint8_t ramp_indx = 255;
+
+    // Process contextual actions
+    if (stats->buttons.B.rising_edge) var_toggled++;
+    var_toggled = LOOPOVER(var_toggled, 1, 5);
+
+    if (stats->buttons.left.action == BUTTON_ACTION_TAP) {
+      switch (var_toggled) {
+        case 1:
+          stats->pl_controls.using_pl ^= 1;
+          break;
+        case 2:
+          stats->pl_controls.using_torque_ramp ^= 1;
+          break;
+        case 3:
+            lim_indx--;
+            break;
+        case 4:
+            thresh_indx--;
+            break;
+        case 5:
+            ramp_indx--;
+            break;
+      }
+    }
+
+    if (stats->buttons.right.action == BUTTON_ACTION_TAP) {
+      switch (var_toggled) {
+        case 1:
+          stats->pl_controls.using_pl ^= 1;
+          break;
+        case 2:
+          stats->pl_controls.using_torque_ramp ^= 1;
+          break;
+        case 3:
+            lim_indx++;
+            break;
+        case 4:
+            thresh_indx++;
+            break;
+        case 5:
+            ramp_indx++;
+            break;
+      }
+    }
+
+    if (lim_indx != 255) {
+      lim_indx = LOOPOVER(lim_indx, 0, num_pwr_lim_sweeps - 1);
+      stats->pl_controls.power_lim = pwr_lim_sweeps[lim_indx];
+    }
+
+    if (thresh_indx != 255) {
+      thresh_indx = LOOPOVER(thresh_indx, 0, num_tThesh_sweeps - 1);
+      stats->pl_controls.tThresh = tThresh_sweeps[thresh_indx];
+    }
+
+    if (ramp_indx != 255) {
+      ramp_indx = LOOPOVER(ramp_indx, 0, num_ramp_dur_sweeps - 1);
+      stats->pl_controls.ramp_duration = ramp_dur_sweeps[ramp_indx];
+    }
+
+    // Render
+    oled_clearline(oled, 0);
+    oled_set_pos(oled, 0, 2);
+    oled_print(oled, "PL: ");
+    oled_print(oled, (stats->pl_controls.using_pl) ? "ON " : "OFF");
+    oled_rprint_pad(oled, "RMP: ", 4);
+    oled_print(oled, (stats->pl_controls.using_torque_ramp) ? "ON " : "OFF");
+
+    oled_clearline(oled, 1);
+    oled_set_pos(oled, 1, 1);
+    oled_print(oled, "LIMIT: ");
+    if (lim_indx != 255) {
+        oled_print_num(oled, stats->pl_controls.power_lim);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+
+    oled_clearline(oled, 2);
+    oled_set_pos(oled, 2, 1);
+    oled_print(oled, "tTRHESH: ");
+    if (thresh_indx != 255) {
+        oled_print_num(oled, stats->pl_controls.tThresh);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+
+    oled_clearline(oled, 3);
+    oled_set_pos(oled, 3, 1);
+    oled_print(oled, "RAMP DUR: ");
+    if (ramp_indx != 255) {
+        oled_print_num(oled, stats->pl_controls.ramp_duration);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+
+    if (var_toggled == 1) {
+        oled_set_pos(oled, 0, 0);
+    } else if (var_toggled == 2) {
+        oled_set_pos(oled, 0, 1);
+    } else {
+        oled_set_pos(oled, var_toggled - 2, 0);
+    }
+    oled_print(oled, ">");
 }
 
 
