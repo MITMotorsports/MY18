@@ -1541,16 +1541,21 @@ buses:
         is_big_endian: true
         period: 25 ms
         segments:
-          tMAX:
+          unramped_tMAX:
             unit: dNm
             position: 0
-            length: 32
-            c_type: int32_t
+            length: 16
+            c_type: int16_t
+          final_tMAX:
+            unit: dNm
+            position: 16
+            length: 16
+            c_type: int16_t
           power_lim_trq:
             unit: dMm
             position: 32
-            length: 32
-            c_type: int32_t
+            length: 16
+            c_type: int16_t
       VCU_PowerLimSettings:
         can_id: 0x701
         is_big_endian: true

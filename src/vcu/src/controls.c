@@ -13,10 +13,11 @@ static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
 static int16_t get_eff_percent(int32_t torque, int32_t speed);
 
 static inline int32_t torque_ramp(int32_t pedal_torque, int32_t tMAX) {
+  printf("tMAX in: %ld\r\n", tMAX);
   static uint32_t powerlimit_start = 0;
+  power_lim_settings.tThresh = 1;
 
   const int32_t timestep = HAL_GetTick() - powerlimit_start;
-  if (timestep > power_lim_settings.ramp_duration) return tMAX;
 
   if (timestep <= 0) {
     powerlimit_start = HAL_GetTick();
@@ -26,12 +27,14 @@ static inline int32_t torque_ramp(int32_t pedal_torque, int32_t tMAX) {
     powerlimit_start = HAL_GetTick();
     return pedal_torque; // Reset ramp once torque is below threshold
   }
-  if (timestep >= power_lim_settings.ramp_duration) {
-    return tMAX;
-  }
+
+  if (timestep > power_lim_settings.ramp_duration) return tMAX;
 
   // Return ramp starting from tThresh
-  return power_lim_settings.tThresh + (tMAX - power_lim_settings.tThresh) * timestep / power_lim_settings.ramp_duration;
+  int32_t retval = power_lim_settings.tThresh + (tMAX - power_lim_settings.tThresh) * timestep / power_lim_settings.ramp_duration;
+  printf("ramp_dration: %d\r\ntimestep: %ld\r\nretval: %ld\r\n\r\n",
+    power_lim_settings.ramp_duration, timestep, retval);
+  return retval;
 }
 
 int32_t get_power_limited_torque(int32_t pedal_torque) {
@@ -40,21 +43,28 @@ int32_t get_power_limited_torque(int32_t pedal_torque) {
 
     int16_t eff_percent = get_eff_percent(pedal_torque, -mc_readings.speed); 
 
-    // Convert RPM to rad/s with 2pi/60, *10 to dNm
-    int32_t tMAX = 10 * power_lim_settings.power_lim * 1000 * 100 / (eff_percent * -mc_readings.speed * 628 / 6000);
-
+    // Convert RPM to rad/s with 2pi/60, *10 to dNm, *1000 for kW to W
+    // int32_t tMAX = 10 * power_lim_settings.power_lim * 1000 * 100 / (eff_percent * -mc_readings.speed * 628 / 6000);
+    int32_t tMAX = 10 * 500 * 100 / (eff_percent * -mc_readings.speed * 628 / 6000);
 
 
     if (tMAX > MAX_TORQUE) tMAX = MAX_TORQUE; // Cap the maximum tMAX
 
-    power_lim_monitoring.tMAX = tMAX;
+    int32_t ramped_tMAX = torque_ramp(pedal_torque, tMAX);
+
+    power_lim_monitoring.unramped_tMAX = tMAX;
 
     if (power_lim_settings.using_torque_ramp) {
-      torque_ramp(pedal_torque, tMAX);
+      power_lim_monitoring.final_tMAX = ramped_tMAX;
+      return ramped_tMAX;
     } else {
       if (tMAX < pedal_torque) {
+        power_lim_monitoring.final_tMAX = tMAX;
         return tMAX;
-      } else return pedal_torque;
+      } else {
+        power_lim_monitoring.final_tMAX = pedal_torque;
+        return pedal_torque;
+      }
     }
   } else {
     return pedal_torque;
@@ -134,7 +144,7 @@ void execute_controls(void) {
     // Only use limits when we're not doing regen
     int32_t power_limited_torque = get_power_limited_torque(torque_command);
 
-    power_lim_monitoring.power_lim_trq = power_limited_torque;
+    power_lim_monitoring.power_lim_trq = (int16_t)power_limited_torque;
 
     int32_t voltage_limited_torque = get_voltage_limited_torque(torque_command);
 

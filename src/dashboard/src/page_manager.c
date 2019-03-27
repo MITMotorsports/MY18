@@ -9,10 +9,10 @@
 
 const uint16_t pwr_lim_sweeps[] = {1, 5, 10, 30, 60, 80};
 const uint8_t num_pwr_lim_sweeps = 6;
-const uint16_t tThresh_sweeps[] = {0, 500, 1000, 1500, 2000, 2500};
+const uint16_t tThresh_sweeps[] = {50, 500, 1000, 1500, 2000, 2500};
 const uint8_t num_tThesh_sweeps = 6;
-const uint16_t ramp_dur_sweeps[] = {10, 20, 100, 300, 500};
-const uint8_t num_ramp_dur_sweeps = 5;
+const uint16_t ramp_dur_sweeps[] = {10, 20, 100, 300, 500, 30000};
+const uint8_t num_ramp_dur_sweeps = 6;
 
 void page_manager_init(page_manager_t *pm, carstats_t *stats) {
     pm->page  = DASH_PAGE_CRITICAL;
