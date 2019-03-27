@@ -18,7 +18,9 @@ static inline int32_t torque_ramp(int32_t pedal_torque, int32_t tMAX) {
   static uint32_t powerlimit_start = 0;
 
   const int32_t timestep = HAL_GetTick() - powerlimit_start;
-  if (timestep > ramp_duration) return tMAX;
+  if (timestep >= ramp_duration) {
+    return tMAX;
+  }
 
   if (timestep <= 0) {
     powerlimit_start = HAL_GetTick();
@@ -27,9 +29,6 @@ static inline int32_t torque_ramp(int32_t pedal_torque, int32_t tMAX) {
   if (tMAX < tThresh) {
     powerlimit_start = HAL_GetTick();
     return pedal_torque; // Reset ramp once torque is below threshold
-  }
-  if (timestep >= ramp_duration) {
-    return tMAX;
   }
 
   // Return ramp starting from tThresh
