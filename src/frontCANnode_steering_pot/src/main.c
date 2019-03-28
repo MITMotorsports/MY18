@@ -17,7 +17,7 @@
 const uint32_t OscRateIn = 12000000;
 volatile uint32_t msTicks;
 
-void Set_Interrupt_Priorities(void);
+// void Set_Interrupt_Priorities(void);
 
 static ADC_Errors_T errors;
 static ADC_Input_T adc;
@@ -30,7 +30,7 @@ void SysTick_Handler(void) {
 }
 
 void initialize_input(void) {
-  errors.accel_1_under = false;
+  /*errors.accel_1_under = false;
   errors.accel_1_over = false;
   errors.accel_2_under = false;
   errors.accel_2_over = false;
@@ -55,13 +55,13 @@ void initialize_input(void) {
     adc.brake_2_raws[i] = 0;
   }
   adc.brake_1 = 0;
-  adc.brake_2 = 0;
+  adc.brake_2 = 0;*/
   adc.steering_pot = 0;
 
   input.adc = &adc;
 
   // Initialize wheel speed sensor
-  for (int i = 0; i < NUM_WHEELS; i++) {
+  /*for (int i = 0; i < NUM_WHEELS; i++) {
     speed.num_ticks[i] = 0;
     speed.big_sum[i] = 0;
     speed.little_sum[i] = 0;
@@ -79,7 +79,7 @@ void initialize_input(void) {
   speed.can_node_left_32b_wheel_speed = 0;
   speed.can_node_left_16b_wheel_speed = 0;
 
-  input.speed = &speed;
+  input.speed = &speed;*/
   input.msTicks = 0;
 }
 
@@ -93,9 +93,9 @@ int main(void) {
   ADC_Init();
 
   // Wheel speed timer
-  Timer_Init();
-  Set_Interrupt_Priorities();
-  Timer_Start();
+  // Timer_Init();
+  // Set_Interrupt_Priorities();
+  // Timer_Start();
 
   initialize_input();
   Serial_Println("Started up!");
@@ -107,20 +107,33 @@ int main(void) {
     while(1);
   }
 
-  Frame devnull;
+  Frame raw_msg = {};
+  uint32_t last_tick = 0;
 
   while(1) {
-    Can_RawRead(&devnull);
+    Can_RawRead(&raw_msg);
+    /*if (raw_msg.id != 0) {
+      Serial_Println("Msg received");
+    }*/
+    if (raw_msg.id == 0x0E3) {
+      can0_FrontCanNodeSteering_T msg;
+      unpack_can0_FrontCanNodeSteering(&raw_msg, &msg);
+      Serial_Print("Steering pot val: ");
+      Serial_PrintlnNumber(msg.value, 10);
+    }
 
     input.msTicks = msTicks;
     Input_fill_input();
     Output_process_output();
+    if (msTicks - last_tick > 500) {
+    //  Serial_PrintlnNumber(input.adc->steering_pot, 10);
+    }
   }
 }
 
 // Interrupt configs
 
-void handle_interrupt(LPC_TIMER_T* timer, Wheel_T wheel) {
+/*void handle_interrupt(LPC_TIMER_T* timer, Wheel_T wheel) {
   // Reset the timer immediately
   Chip_TIMER_Reset(timer);
   // Clear the capture
@@ -155,4 +168,4 @@ void Set_Interrupt_Priorities(void) {
   NVIC_SetPriority(TIMER_16_1_IRQn, 1);
   // Give the SysTick function a lower priority
   NVIC_SetPriority(SysTick_IRQn, 2);
-}
+}*/

@@ -16,12 +16,13 @@ void handle_can_error(Can_ErrorID_T error);
 bool period_reached(uint32_t start, uint32_t period, uint32_t msTicks);
 
 void Output_process_output() {
-  write_can_brakethrottle_msg();
-  write_can_left_wheel_speed_msg();
-  write_can_right_wheel_speed_msg();
+  // write_can_brakethrottle_msg();
+  // write_can_left_wheel_speed_msg();
+  // write_can_right_wheel_speed_msg();
+  write_can_steering_msg();
 }
 
-void write_can_brakethrottle_msg() {
+/*void write_can_brakethrottle_msg() {
   LIMIT(can0_FrontCanNodeBrakeThrottle_period);
 
   can0_FrontCanNodeBrakeThrottle_T msg;
@@ -40,9 +41,19 @@ void write_can_brakethrottle_msg() {
   msg.brake_2_over = input.adc->errors->brake_2_over;
 
   handle_can_error(can0_FrontCanNodeBrakeThrottle_Write(&msg));
+}*/
+
+void write_can_steering_msg() {
+  LIMIT(can0_FrontCanNodeSteering_period);
+
+  can0_FrontCanNodeSteering_T msg;
+
+  msg.value = input.adc->steering_pot;
+
+  handle_can_error(can0_FrontCanNodeSteering_Write(&msg));
 }
 
-void write_can_left_wheel_speed_msg() {
+/* void write_can_left_wheel_speed_msg() {
   LIMIT(can0_FrontCanNodeLeftWheelSpeed_period)
 
   can0_FrontCanNodeLeftWheelSpeed_T msg;
@@ -62,7 +73,8 @@ void write_can_right_wheel_speed_msg() {
   msg.right_16b = input.speed->can_node_right_16b_wheel_speed;
 
   handle_can_error(can0_FrontCanNodeRightWheelSpeed_Write(&msg));
-}
+}*/
+
 void handle_can_error(Can_ErrorID_T error) {
   if ((error != Can_Error_NONE) && (error != Can_Error_NO_RX)) {
     switch (error) {

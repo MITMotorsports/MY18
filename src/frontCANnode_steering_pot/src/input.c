@@ -13,7 +13,7 @@ uint16_t transform2(uint32_t accel_2_raw);
 
 void Input_fill_input() {
   update_adc();
-  update_wheel_speed();
+  //update_wheel_speed();
 }
 
 void update_adc() {
@@ -22,7 +22,7 @@ void update_adc() {
 
 
   if (next_updated < input.msTicks) {
-    uint16_t lastest_accel_1 = ADC_Read(ACCEL_1_CHANNEL);
+    /* uint16_t lastest_accel_1 = ADC_Read(ACCEL_1_CHANNEL);
     uint16_t lastest_accel_2 = ADC_Read(ACCEL_2_CHANNEL);
     uint16_t lastest_brake_1 = ADC_Read(BRAKE_1_CHANNEL);
     uint16_t lastest_brake_2 = ADC_Read(BRAKE_2_CHANNEL);
@@ -66,7 +66,7 @@ void update_adc() {
       brake_2_sum += adc->brake_2_raws[i];
     }
     adc->brake_1 = brake_1_sum / BRAKE_LOG_LENGTH;
-    adc->brake_2 = brake_2_sum / BRAKE_LOG_LENGTH;
+    adc->brake_2 = brake_2_sum / BRAKE_LOG_LENGTH;*/
 
     // Update other sensors
     adc->steering_pot = ADC_Read(STEERING_CHANNEL);
@@ -74,7 +74,7 @@ void update_adc() {
   }
 }
 
-uint32_t click_time_to_mRPM(uint32_t us_per_click) {
+/* uint32_t click_time_to_mRPM(uint32_t us_per_click) {
   if (us_per_click == 0) {
     return 0;
   }
@@ -223,4 +223,4 @@ void Input_handle_interrupt(uint32_t msTicks, uint32_t curr_tick, Wheel_T wheel)
 
   // Update timestamp
   speed->last_updated[wheel] = msTicks;
-}
+}*/
