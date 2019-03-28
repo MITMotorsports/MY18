@@ -30,9 +30,9 @@ boards:
       can0:
         - FrontCanNodeBrakeThrottle
         - MCVoltage
-        - kistler_speed_distance
-        - kistler_velocity
-        - kistler_status
+        - KistlerSpeedDistance
+        - KistlerVelocity
+        - KistlerStatus
   dash:
     arch: lpc11cx4
     publish:
@@ -85,15 +85,15 @@ boards:
   kistler:
     publish:
       can0:
-        - kistler_speed_distance
-        - kistler_velocity
-        - kistler_status
+        - KistlerSpeedDistance
+        - KistlerVelocity
+        - KistlerStatus
 buses:
   can0:
     baudrate: 500000
     is_extended: false
     messages:
-      kistler_speed_distance:
+      KistlerSpeedDistance:
         can_id: 0x7FA
         period: 4ms
         is_big_endian: false
@@ -110,7 +110,7 @@ buses:
             position: 32
             length: 32
             c_type: uint32_t
-      kistler_velocity:
+      KistlerVelocity:
         can_id: 0x7FB
         period: 4ms
         is_big_endian: false
@@ -127,7 +127,7 @@ buses:
             position: 32
             length: 16
             c_type: int16_t
-      kistler_status:
+      KistlerStatus:
         can_id: 0x7FC
         period: 4ms
         is_big_endian: false
