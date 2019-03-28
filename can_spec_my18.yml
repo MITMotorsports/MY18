@@ -102,14 +102,17 @@ buses:
             position: 0
             length: 16
             c_type: uint16_t
+            unit: 4 ms
           ground_speed:
             position: 16
             length: 16
             c_type: uint16_t
+            unit: 1e-2 m/s
           distance:
             position: 32
             length: 32
             c_type: uint32_t
+            unit: mm
       KistlerVelocity:
         can_id: 0x7FB
         period: 4ms
@@ -119,14 +122,17 @@ buses:
             position: 0
             length: 16
             c_type: uint16_t
+            unit: 1e-2 m/s
           lateral:
             position: 16
             length: 16
             c_type: int16_t
+            unit: 1e-2 m/s
           angle:
             position: 32
             length: 16
             c_type: int16_t
+            unit: 1e-2 deg
       KistlerStatus:
         can_id: 0x7FC
         period: 4ms
@@ -135,21 +141,29 @@ buses:
           serial_number:
             position: 0
             length: 24
+            c_type: uint32_t
           sensor_number:
             position: 24
             length: 8
+            c_type: uint8_t
           temperature:
             position: 32
             length: 8
+            c_type: uint8_t
+            unit: degC
           led_illumination_curr:
             position: 40
             length: 8
+            c_type: uint8_t
+            unit: 1e-2 A
           status_byte_1:
             position: 48
             length: 8
+            c_type: uint8_t
           status_byte_2: 
             position: 56
             length: 8
+            c_type: uint8_t
       FrontCanNodeBrakeThrottle:
         can_id: 0x090
         period: 13ms
