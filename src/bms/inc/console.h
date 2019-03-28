@@ -100,7 +100,6 @@ typedef struct {
   bool           measure_on;
   bool           measure_temp;
   bool           measure_voltage;
-  bool           measure_packcurrent;
   bool           measure_packvoltage;
 } CONSOLE_OUTPUT_T;
 

@@ -99,6 +99,9 @@
 #define IMD_GATE_PIN                  GPIO_PIN_5
 #define IMD_GATE_PORT                 GPIOC
 
+#define FAKE_IMD_PIN                  GPIO_PIN_3
+#define FAKE_IMD_PORT                 GPIOA
+
 #define BPD_GATE_PIN                  GPIO_PIN_6
 #define BPD_GATE_PORT                 GPIOC
 

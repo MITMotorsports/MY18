@@ -1,23 +1,21 @@
 #pragma once
 
-#include <array>
-
 template<typename T, size_t N>
 class FIFOCircBuffer {
   // Modified version of https://gist.github.com/xstherrera1987/3196485
 
 private:
-  std::array<T, N> data;
+  T data[N];
   size_t front;
   size_t count;
 public:
   FIFOCircBuffer(): front(0), count(0) {}
 
   T    first() { return data[front]; }
-  T    last()  { return data[(front + count) % data.size()]; }
+  T    last()  { return data[(front + count) % N]; }
 
   bool empty() { return count == 0; }
-  bool full()  { return count == data.size(); }
+  bool full()  { return count == N; }
 
   bool add(const T&);
   bool remove(T*);
@@ -29,7 +27,7 @@ public:
 template<typename T, size_t N>
 void FIFOCircBuffer<T, N>::push(const T &t) {
   // find index where insert will occur
-  size_t end = (front + count) % data.size();
+  size_t end = (front + count) % N;
   data[end] = t;
   count++;
 }
@@ -46,7 +44,7 @@ bool FIFOCircBuffer<T, N>::add(const T &t) {
 template<typename T, size_t N>
 void FIFOCircBuffer<T, N>::pop() {
   if (!empty()) {
-    front = (front == data.size() - 1) ? 0 : front + 1;
+    front = (front == N - 1) ? 0 : front + 1;
     count--;
   }
 }
