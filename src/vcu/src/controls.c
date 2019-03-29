@@ -1,8 +1,12 @@
 #include "controls.h"
 
+#define USING_VQ_CALC true
+
 static bool enabled = false;
 static int32_t torque_command = 0;
 static int32_t speed_command = 0;
+static int32_t max_dTorque = 100;
+static int32_t dTorque_lim_period = 10;
 
 can0_VCUControlsParams_T control_settings = {};
 can0_PowerLimMonitoring_T power_lim_monitoring = {};
@@ -12,30 +16,72 @@ static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
 
 static int16_t get_eff_percent(int32_t torque, int32_t speed);
 
+static inc_dTorque_lim(int32_t* old_torque_lim);
+
+const int16_t rms_eff_percent = 97;
+const int8_t num_pole_pairs = 10;
+const int16_t flux = 355; // Vs * 10 ** -4
+
+static int32_t get_power_limited_torque_vq(void) {
+  if (mc_readings.V_VBC_Vq == 0) return MAX_TORQUE;
+
+  // Motor constant times 10e4
+  int32_t motor_constant_10e4 = 3 * num_pole_pairs * flux / 2;
+
+  // Powers of 10:
+  // +3 Multiply by 1000 for kW to W
+  // +1 Multiply by 10 to divide numerater by 10, which gives dV to V
+  // -2 Divide by 100 to covert from percentage points to fraction
+  // ------------------------------------------------------------------
+  // + 2 total
+  int32_t allowed_iq = 100 * power_lim_settings.power_lim * rms_eff_percent / mc_readings.V_VBC_Vq;
+
+  return (allowed_iq) * motor_constant_10e4;
+}
+
+static int32_t get_power_limited_torque_mech(void) {
+  if (mc_readings.speed >= 0) return MAX_TORQUE;
+
+  // Convert RPM to rad/s with 2pi/60, *10 to dNm, *1000 for kW to W
+  return 10 * power_lim_settings.power_lim * 1000 / (-mc_readings.speed * 628 / 6000);
+}
+
 int32_t get_power_limited_torque(int32_t pedal_torque) {
-  if (mc_readings.speed < 0) {
-    // Prevent division by zero, make sure we are spinning (negative is forward)
+  int32_t tMAX_vq = get_power_limited_torque_vq();
+  int32_t tMAX_mech = get_power_limited_torque_vq();
 
-    int16_t eff_percent = get_eff_percent(pedal_torque, -mc_readings.speed); 
-
-    // Convert RPM to rad/s with 2pi/60, *10 to dNm, *1000 for kW to W
-    int32_t tMAX = 10 * power_lim_settings.power_lim * 1000 * 100 / (eff_percent * -mc_readings.speed * 628 / 6000);
-
-
-    if (tMAX > MAX_TORQUE) tMAX = MAX_TORQUE; // Cap the maximum tMAX
-
-    power_lim_monitoring.unramped_tMAX = tMAX;
-
-    if (tMAX < pedal_torque) {
-      power_lim_monitoring.final_tMAX = tMAX;
-      return tMAX;
-    } else {
-      power_lim_monitoring.final_tMAX = pedal_torque;
-      return pedal_torque;
-    }
+  int32_t pwr_lim_trq;
+  if (USING_VQ_CALC) {
+    pwr_lim_trq = tMAX_vq;
   } else {
-    return pedal_torque;
+    pwr_lim_trq = tMAX_mech;
   }
+
+  if (pwr_lim_trq > MAX_TORQUE) pwr_lim_trq = MAX_TORQUE;
+
+  return pwr_lim_trq;
+}
+
+static inc_dTorque_lim(int32_t* old_torque_lim) {
+  LIMIT(dTorque_lim);
+
+  *old_torque_lim += max_dTorque;
+}
+
+static ramp_torque(int32_t torque) {
+  static dTorque_lim = 0;
+
+  inc_dTorque_lim(&dTorque_lim);
+
+  if (dTorque_lim < torque) {
+    // If the limit is below the torque, limit it
+    torque = dTorque_lim;
+  } else {
+    // If the limit is above torque, pull the limit back down
+    dTorque_lim = torque;
+  }
+
+  return torque;
 }
 
 // PRIVATE FUNCTIONS
@@ -55,9 +101,6 @@ void init_controls_defaults(void) {
   control_settings.torque_temp_limited = false;
 
   power_lim_settings.power_lim = 80;
-  power_lim_settings.ramp_duration = 100;
-  power_lim_settings.tThresh = 0;
-  power_lim_settings.using_torque_ramp = true;
   power_lim_settings.using_pl = false;
 }
 
