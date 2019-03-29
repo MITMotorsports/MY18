@@ -350,6 +350,7 @@ void send_VCU(void) {
   send_VCUControlsParams();
   send_VCUControlsMonitoring();
   send_ElectricalPL();
+  send_PowerLimitingMonitoring();
 }
 
 void sendTorqueCmdMsg(int16_t torque) {
@@ -433,5 +434,12 @@ void handleDash_ElectricalPL(Frame *msg) {
   power_limiting_settings.anti_windup = unpacked_msg.anti_windup;
   power_limiting_settings.pl_enable = unpacked_msg.pl_enable;
 
+
+}
+
+void send_PowerLimitingMonitoring(void) { 
+  LIMIT(can0_ElectricalPLLogging);
+
+  can0_ElectricalPLLogging_Write(power_limiting_monitoring);
 
 }

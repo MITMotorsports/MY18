@@ -1,3 +1,4 @@
+
 #include "controls.h"
 
 static bool enabled = false;
@@ -5,6 +6,7 @@ static int32_t torque_command = 0;
 static int32_t speed_command = 0;
 can0_VCUControlsParams_T control_settings = {};
 can0_VCUElectricalPL_T power_limiting_settings = {};
+can0_ElectricalPLLogging_T power_limiting_monitoring = {};
 
 int32_t accumulated_torque_error = 0; //might need to move
 
@@ -117,6 +119,8 @@ void execute_controls(void) {
     //Electrical Power limiter
     int32_t electrical_power_limited_torque = get_electrical_power_limited_torque(torque_command); 
 
+    power_limiting_monitoring.power_limited_torque = (int16_t)electrical_power_limited_torque;
+    
     if (power_limiting_settings.pl_enable && electrical_power_limited_torque < min_sensor_torque) {
 
       min_sensor_torque = electrical_power_limited_torque; 
@@ -228,6 +232,7 @@ int32_t get_electrical_power_limited_torque(int32_t pedal_torque) {
   //CHECK THAT CS_READINGS.POWER is in watts 
   if (cs_readings.power < max_power) {
     return pedal_torque; //if we are below our set power limit we return the maximum pedal torque 
+
     //this may need to be replaced by a ramp to reduce jumps forward in torque. 
 
     accumulated_torque_error = 0;
@@ -246,8 +251,11 @@ int32_t get_electrical_power_limited_torque(int32_t pedal_torque) {
       accumulated_torque_error = anti_windup; 
     }
 
-
     int32_t limited_torque = pedal_torque - (electrical_P * torque_error + electrical_I * accumulated_torque_error); 
+
+    if (limited_torque < 0) {
+      limited_torque = 0;
+    }
 
     if (limited_torque < pedal_torque){ 
       return limited_torque;

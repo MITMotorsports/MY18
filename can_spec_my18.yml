@@ -1588,3 +1588,15 @@ buses:
             position: 48
             length: 1 
             c_type: bool
+        ElectricalPLLogging:
+          can_id: 0x802
+          is_big_endian: true
+          period: 25 ms 
+          segments: 
+            power_limited_torque: 
+              unit: dNM 
+              position: 0 
+              length: 16
+              c_type: uint16_t 
+
+
