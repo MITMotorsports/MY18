@@ -4,16 +4,12 @@ static bool enabled = false;
 static int32_t torque_command = 0;
 static int32_t speed_command = 0;
 can0_VCUControlsParams_T control_settings = {};
+can0_VCUElectricalPL_T power_limiting_settings = {};
+
+int32_t accumulated_torque_error = 0; //might need to move
+
 
 static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
-
-
-//Electrical power limiting values (need to be converted to CAN parameters)
-static int32_t max_power = 1000; //in watts 
-static int32_t electrical_P = 1; 
-static int32_t electrical_I = 1; 
-static int32_t anti_windup = 10; 
-int32_t accumulated_torque_error = 0; 
 
 
 // PRIVATE FUNCTIONS
@@ -31,6 +27,15 @@ void init_controls_defaults(void) {
   control_settings.volt_lim_min_gain = 0;
   control_settings.volt_lim_min_voltage = 300;
   control_settings.torque_temp_limited = false;
+
+
+  power_limiting_settings.max_power = 80; //kW
+  power_limiting_settings.electrical_P = 1; 
+  power_limiting_settings.electrical_I = 1;
+  power_limiting_settings.anti_windup = 1; 
+  power_limiting_settings.pl_enable = false; 
+
+
 }
 
 void enable_controls(void) {
@@ -109,6 +114,15 @@ void execute_controls(void) {
       min_sensor_torque = temp_limited_torque;
     }
 
+    //Electrical Power limiter
+    int32_t electrical_power_limited_torque = get_electrical_power_limited_torque(torque_command); 
+
+    if (power_limiting_settings.pl_enable && electrical_power_limited_torque < min_sensor_torque) {
+
+      min_sensor_torque = electrical_power_limited_torque; 
+    }
+
+    //dash 
     int32_t dash_limited_torque = torque_command * control_settings.limp_factor / 100;
 
     int32_t limited_torque;
