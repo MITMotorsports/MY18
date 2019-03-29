@@ -703,7 +703,7 @@ void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_clearline(oled, 2);
     oled_set_pos(oled, 2, 1);
     oled_print(oled, "KP: ");
-    if (thresh_indx != 255) {
+    if (P_indx != 255) {
         oled_print_num(oled, stats->pl_controls.electrical_P);
     } else {
         oled_print(oled, DATA_UNKNOWN);
@@ -712,7 +712,7 @@ void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_clearline(oled, 3);
     oled_set_pos(oled, 3, 1);
     oled_print(oled, "RAMP DUR: ");
-    if (ramp_indx != 255) {
+    if (I_indx != 255) {
         oled_print_num(oled, stats->pl_controls.electrical_I);
     } else {
         oled_print(oled, DATA_UNKNOWN);

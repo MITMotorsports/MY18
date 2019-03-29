@@ -40,6 +40,48 @@ void init_controls_defaults(void) {
 
 }
 
+int32_t get_electrical_power_limited_torque(int32_t pedal_torque) { 
+  //CHECK THAT CS_READINGS.POWER is in watts 
+  if (cs_readings.power < power_limiting_settings.max_power) {
+    return pedal_torque; //if we are below our set power limit we return the maximum pedal torque 
+
+    //this may need to be replaced by a ramp to reduce jumps forward in torque. 
+
+    accumulated_torque_error = 0;
+    //will need to reset integrator here. 
+
+  }
+
+  else {
+    int32_t power_error = -1 * (cs_readings.power - power_limiting_settings.max_power); //This is now a positive value. 
+    int32_t current_speed = mc_readings.speed * 628 / 6000; //rad/s = rpm * 2pi/60 
+    int32_t torque_error = power_error / current_speed * 10; //dNm 
+
+    accumulated_torque_error = accumulated_torque_error + torque_error; 
+
+    if (accumulated_torque_error > power_limiting_settings.anti_windup) { 
+      accumulated_torque_error = power_limiting_settings.anti_windup; 
+    }
+
+    int32_t limited_torque = pedal_torque - (power_limiting_settings.electrical_P * torque_error + power_limiting_settings.electrical_I * accumulated_torque_error); 
+
+    if (limited_torque < 0) {
+      limited_torque = 0;
+    }
+
+    if (limited_torque < pedal_torque){ 
+      return limited_torque;
+    }
+    else { 
+      return pedal_torque; 
+    }
+
+    //check for big jumps in torque
+
+  }
+
+}
+
 void enable_controls(void) {
   enabled = true;
   torque_command = 0;
@@ -120,7 +162,7 @@ void execute_controls(void) {
     int32_t electrical_power_limited_torque = get_electrical_power_limited_torque(torque_command); 
 
     power_limiting_monitoring.power_limited_torque = (int16_t)electrical_power_limited_torque;
-    
+
     if (power_limiting_settings.pl_enable && electrical_power_limited_torque < min_sensor_torque) {
 
       min_sensor_torque = electrical_power_limited_torque; 
@@ -225,49 +267,6 @@ static int32_t get_voltage_limited_torque(int32_t pedal_torque) {
 
   controls_monitoring.vl_gain = gain;
   return gain * pedal_torque / 100;
-}
-
-
-int32_t get_electrical_power_limited_torque(int32_t pedal_torque) { 
-  //CHECK THAT CS_READINGS.POWER is in watts 
-  if (cs_readings.power < max_power) {
-    return pedal_torque; //if we are below our set power limit we return the maximum pedal torque 
-
-    //this may need to be replaced by a ramp to reduce jumps forward in torque. 
-
-    accumulated_torque_error = 0;
-    //will need to reset integrator here. 
-
-  }
-
-  else {
-    int32_t power_error = -1 * (cs_readings.power - max_power); //This is now a positive value. 
-    int32_t current_speed = mc_readings.speed * 628 / 6000; //rad/s = rpm * 2pi/60 
-    int32_t torque_error = power_error / current_speed * 10; //dNm 
-
-    accumulated_torque_error = accumulated_torque_error + torque_error; 
-
-    if (accumulated_torque_error > anti_windup) { 
-      accumulated_torque_error = anti_windup; 
-    }
-
-    int32_t limited_torque = pedal_torque - (electrical_P * torque_error + electrical_I * accumulated_torque_error); 
-
-    if (limited_torque < 0) {
-      limited_torque = 0;
-    }
-
-    if (limited_torque < pedal_torque){ 
-      return limited_torque;
-    }
-    else { 
-      return pedal_torque; 
-    }
-
-    //check for big jumps in torque
-
-  }
-
 }
 
 

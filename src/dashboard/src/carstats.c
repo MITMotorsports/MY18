@@ -120,7 +120,7 @@ void can_handle_vcu_controls(carstats_t *cs) {
 void can_handle_vcu_controls_electrical_pl(carstats_t *cs) {
 
     unpack_can0_VCUElectricalPL(&frame, &cs->vcu_pl_controls);
-    cs->vcu_pl_controls_receieved = true; 
+    cs->vcu_pl_controls_received = true; 
 }
 
 void can_update_carstats(carstats_t *cs) {
@@ -170,7 +170,7 @@ void can_update_carstats(carstats_t *cs) {
             can_handle_vcu_controls(cs);
             break; 
 
-        case can0_VCUElectricalPL 
+        case can0_VCUElectricalPL: 
             can_handle_vcu_controls_electrical_pl(cs);
             break; 
 
