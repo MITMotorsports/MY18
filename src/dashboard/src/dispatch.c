@@ -101,6 +101,14 @@ void dispatch_init() {
 
     carstats.vcu_controls_received = false;
 
+    carstats.pl_controls.max_power = 80;
+    carstats.pl_controls.electrical_P = 1; 
+    carstats.pl_controls.electrical_I = 1;
+    carstats.pl_controls.anti_windup = 1; 
+    carstats.pl_controls.pl_enable = false; 
+
+    carstats.vcu_pl_controls_received = false; 
+
     init_button_state(&carstats.buttons.left);
     init_button_state(&carstats.buttons.right);
     init_button_state(&carstats.buttons.A);

@@ -117,6 +117,12 @@ void can_handle_vcu_controls(carstats_t *cs) {
     cs->vcu_controls_received = true;
 }
 
+void can_handle_vcu_controls_electrical_pl(carstats_t *cs) {
+
+    unpack_can0_VCUElectricalPL(&frame, &cs->vcu_pl_controls);
+    cs->vcu_pl_controls_receieved = true; 
+}
+
 void can_update_carstats(carstats_t *cs) {
     handle_can_error(Can_RawRead(&frame));
 
@@ -162,6 +168,12 @@ void can_update_carstats(carstats_t *cs) {
             break;
         case can0_VCUControlsParams:
             can_handle_vcu_controls(cs);
+            break; 
+
+        case can0_VCUElectricalPL 
+            can_handle_vcu_controls_electrical_pl(cs);
+            break; 
+
         default:
             // do nothing
             break;
