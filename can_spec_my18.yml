@@ -1537,7 +1537,7 @@ buses:
             length: 16
             c_type: int16_t
       VCUElectricalPL:
-        can_id: 0x800
+        can_id: 0x720
         is_big_endian: true
         period: 25 ms
         segments:
@@ -1563,7 +1563,7 @@ buses:
             length: 1 
             c_type: bool
       DashElectricalPL:
-        can_id: 0x801
+        can_id: 0x721
         is_big_endian: true
         period: 25 ms
         segments:
@@ -1589,7 +1589,7 @@ buses:
             length: 1 
             c_type: bool
       ElectricalPLLogging:
-        can_id: 0x802
+        can_id: 0x722
         is_big_endian: true
         period: 25 ms 
         segments: 
