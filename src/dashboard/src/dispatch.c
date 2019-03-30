@@ -100,10 +100,8 @@ void dispatch_init() {
     carstats.controls.active_aero_enabled    = false;
 
     carstats.pl_controls.power_lim = 80;
-    carstats.pl_controls.ramp_duration = 100;
-    carstats.pl_controls.tThresh = 0;
-    carstats.pl_controls.using_torque_ramp = true;
     carstats.pl_controls.using_pl = false;
+    carstats.pl_controls.using_vq_lim = true;
 
     carstats.vcu_controls_received = false;
     carstats.vcu_pl_controls_received = false;

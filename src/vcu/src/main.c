@@ -89,8 +89,10 @@ int main(void) {
       // printf("CONTROLS PARAMS:\r\n  using_regen: %d\r\n  using_voltage_limiting: %d\r\n  using_temp_limiting: %d\r\n  regen_bias: %d\r\n  limp_factor: %d\r\n  temp_lim_min_gain: %d\r\n  temp_lim_thresh_temp: %d\r\n  temp_abs_thesh: %d\r\n  volt_lim_min_gain: %d\r\n  volt_lim_min_voltage: %d\r\n  volt_abs_thresh: %d\r\n\r\n",
       // control_settings.using_regen, control_settings.using_voltage_limiting, control_settings.using_temp_limiting, control_settings.regen_bias, control_settings.limp_factor, control_settings.temp_lim_min_gain, control_settings.temp_lim_thresh_temp, MAX_TEMP, control_settings.volt_lim_min_gain, control_settings.volt_lim_min_voltage,MIN_VOLTAGE);
 
-      // printf("\tramp dur: %d\r\n\tlimit: %d\r\n\ttThresh: %d\r\n\tramp on: %d\r\n\tpwr lim on: %d\r\n",
-      //   power_lim_settings.ramp_duration, power_lim_settings.power_lim, power_lim_settings.tThresh, power_lim_settings.using_torque_ramp, power_lim_settings.using_pl);
+      // printf("\tpower_lim: %d\r\n\tusing_pl: %d\r\n\tusing_vq_lim: %d\r\n\r\n",
+      //   power_lim_settings.power_lim, power_lim_settings.using_pl, power_lim_settings.using_vq_lim);
+
+      // printf("Speed: %d\r\n", mc_readings.speed);
 
       lastt = HAL_GetTick();
     }

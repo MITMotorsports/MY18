@@ -426,10 +426,7 @@ void handleDash_PowerLimSettings(Frame *msg) {
   unpack_can0_Dash_PowerLimSettings(msg, &unpacked_msg);
 
   power_lim_settings.using_pl = unpacked_msg.using_pl;
-  power_lim_settings.using_torque_ramp = unpacked_msg.using_torque_ramp;
-
-  power_lim_settings.ramp_duration = unpacked_msg.ramp_duration;
-  power_lim_settings.tThresh = unpacked_msg.tThresh;
+  power_lim_settings.using_vq_lim = unpacked_msg.using_vq_lim;
   power_lim_settings.power_lim = unpacked_msg.power_lim;
 }
 

@@ -1541,17 +1541,12 @@ buses:
         is_big_endian: true
         period: 25 ms
         segments:
-          unramped_tMAX:
+          vq_tmax:
             unit: dNm
             position: 0
             length: 16
             c_type: int16_t
-          final_tMAX:
-            unit: dNm
-            position: 16
-            length: 16
-            c_type: int16_t
-          power_lim_trq:
+          mech_tmax:
             unit: dMm
             position: 32
             length: 16
@@ -1562,26 +1557,16 @@ buses:
         period: 25 ms
         segments:
           power_lim:
-            unit: kW
+            unit: cW
             position: 0
             length: 16
             c_type: uint16_t
-          ramp_duration:
-            unit: ms
+          using_pl:
             position: 16
-            length: 16
-            c_type: uint16_t
-          tThresh:
-            unit: dNm
-            position: 32
-            length: 16
-            c_type: uint16_t
-          using_torque_ramp:
-            position: 48
             length: 1
             c_type: bool
-          using_pl:
-            position: 49
+          using_vq_lim:
+            position: 17
             length: 1
             c_type: bool
       Dash_PowerLimSettings:
@@ -1590,25 +1575,15 @@ buses:
         period: 25 ms
         segments:
           power_lim:
-            unit: kW
+            unit: cW
             position: 0
             length: 16
             c_type: uint16_t
-          ramp_duration:
-            unit: ms
+          using_pl:
             position: 16
-            length: 16
-            c_type: uint16_t
-          tThresh:
-            unit: dNm
-            position: 32
-            length: 16
-            c_type: uint16_t
-          using_torque_ramp:
-            position: 48
             length: 1
             c_type: bool
-          using_pl:
-            position: 49
+          using_vq_lim:
+            position: 17
             length: 1
             c_type: bool

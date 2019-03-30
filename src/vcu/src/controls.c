@@ -1,7 +1,5 @@
 #include "controls.h"
 
-#define USING_VQ_CALC true
-
 static bool enabled = false;
 static int32_t torque_command = 0;
 static int32_t speed_command = 0;
@@ -23,42 +21,67 @@ const int8_t num_pole_pairs = 10;
 const int16_t flux = 355; // Vs * 10 ** -4
 
 static int32_t get_power_limited_torque_vq(void) {
-  if (mc_readings.V_VBC_Vq == 0) return MAX_TORQUE;
+  if (mc_readings.V_VBC_Vq >= 0) return MAX_TORQUE;
 
   // Motor constant times 10e4
   int32_t motor_constant_10e4 = 3 * num_pole_pairs * flux / 2;
 
+  // Convert to W from W / 100
+  int32_t plim_W = power_lim_settings.power_lim * 100;
+
   // Powers of 10:
-  // +3 Multiply by 1000 for kW to W
   // +1 Multiply by 10 to divide numerater by 10, which gives dV to V
   // -2 Divide by 100 to covert from percentage points to fraction
   // ------------------------------------------------------------------
-  // + 2 total
-  int32_t allowed_iq = 100 * power_lim_settings.power_lim * rms_eff_percent / mc_readings.V_VBC_Vq;
+  // - 1 total
+  int32_t allowed_iq = -1 * rms_eff_percent * plim_W / (mc_readings.V_VBC_Vq * 10);
 
-  return (allowed_iq) * motor_constant_10e4;
+  printf("Plim W: %ld\t|Vq| in dV: %d\tAllowed Iq: %ld\r\n", plim_W, -mc_readings.V_VBC_Vq, allowed_iq);
+
+  int32_t undivided_iq = (allowed_iq) * motor_constant_10e4;
+
+  printf("Undivided Iq: %d\r\n", undivided_iq);
+
+  // Powers of 10:
+  // +1 convert from Nm to dNm
+  // -4 Divide out 10e4 in motor_constant_10e4
+  int32_t calc_torq = undivided_iq / 1000;
+
+  if (calc_torq < MAX_TORQUE) {
+    return calc_torq;
+  }
+  return MAX_TORQUE;
 }
 
 static int32_t get_power_limited_torque_mech(void) {
   if (mc_readings.speed >= 0) return MAX_TORQUE;
 
-  // Convert RPM to rad/s with 2pi/60, *10 to dNm, *1000 for kW to W
-  return 10 * power_lim_settings.power_lim * 1000 / (-mc_readings.speed * 628 / 6000);
+  int32_t plim_W = power_lim_settings.power_lim * 100;
+
+  printf("plim_W: %d\r\n", plim_W);
+
+  // Convert RPM to rad/s with 2pi/60, *10 to dNm, *100 for dkW to W
+  return 10 * plim_W / (-mc_readings.speed * 628 / 6000);
 }
 
 int32_t get_power_limited_torque(int32_t pedal_torque) {
   int32_t tMAX_vq = get_power_limited_torque_vq();
-  int32_t tMAX_mech = get_power_limited_torque_vq();
+  int32_t tMAX_mech = get_power_limited_torque_mech();
 
   int32_t pwr_lim_trq;
-  if (USING_VQ_CALC) {
+  if (power_lim_settings.using_vq_lim) {
     pwr_lim_trq = tMAX_vq;
+    printf("vq tmax = %d\r\n", tMAX_vq);
   } else {
     pwr_lim_trq = tMAX_mech;
   }
 
+  power_lim_monitoring.vq_tmax = tMAX_vq;
+  power_lim_monitoring.mech_tmax = tMAX_mech;
+
   if (pwr_lim_trq > MAX_TORQUE) pwr_lim_trq = MAX_TORQUE;
 
+  printf("FINAL PWR LIMITED TRQ: %d\r\n", pwr_lim_trq);
   return pwr_lim_trq;
 }
 
@@ -100,7 +123,7 @@ void init_controls_defaults(void) {
   control_settings.volt_lim_min_voltage = 300;
   control_settings.torque_temp_limited = false;
 
-  power_lim_settings.power_lim = 80;
+  power_lim_settings.power_lim = 800;
   power_lim_settings.using_pl = false;
 }
 
@@ -153,8 +176,6 @@ void execute_controls(void) {
   else {
     // Only use limits when we're not doing regen
     int32_t power_limited_torque = get_power_limited_torque(torque_command);
-
-    power_lim_monitoring.power_lim_trq = (int16_t)power_limited_torque;
 
     int32_t voltage_limited_torque = get_voltage_limited_torque(torque_command);
 
