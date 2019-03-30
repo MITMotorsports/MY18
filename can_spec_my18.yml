@@ -938,12 +938,12 @@ buses:
             length: 16
             c_type: int16_t
             unit: mWb
-          Iq_feedback:
+          Id_feedback:
             position: 32
             length: 16
             c_type: int16_t
             unit: dA
-          Id_feedback:
+          Iq_feedback:
             position: 48
             length: 16
             c_type: int16_t

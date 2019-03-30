@@ -30,9 +30,7 @@ def shift(arr, n=1):
     return np.array([0] * n + list(arr[:-n]))
 
 power = d['CurrentSensor_Power']
-tCMD = d['MCCommand']
-settings = d['VCU_PowerLimSettings']
-motorSpeed = d['MCMotorPositionInfo']
+mc_voltage = d['MCVoltage']
 
 min_time = min(
     min(power['time']),
@@ -49,4 +47,3 @@ plt.plot(settings['time'] - min_time, settings['power_lim'] * 100, label="Limit 
 
 plt.legend()
 plt.show()
-interp_speed
