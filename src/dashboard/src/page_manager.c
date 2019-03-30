@@ -13,8 +13,8 @@ const uint8_t num_pwr_lim_sweeps = 6;
 const uint16_t Kp_sweeps[] = {0, 1, 2, 5, 10, 20};
 const uint8_t num_Kp_sweeps = 6;
 const uint16_t Ki_sweeps[] = {0, 1, 2, 5, 10, 20};
-const uint16_t num_Ki_sweeps = 100; 
-const uint8_t anti_windup_sweeps = 6;
+const uint16_t num_Ki_sweeps = 6; 
+const uint8_t anti_windup_sweeps = 100;
 
 void page_manager_init(page_manager_t *pm, carstats_t *stats) {
     pm->page  = DASH_PAGE_CRITICAL;
