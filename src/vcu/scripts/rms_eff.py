@@ -15,15 +15,11 @@ time1 = 191103
 time2 = 193838
 time3 = 194829
 full_path = base.joinpath(str(date), "numpy", str(time2) + ".npz")
-
-rms_eff_percent = 97
-num_pole_pairs = 10.0
-flux = 355
-
-motor_constant_10e4 = 3 * num_pole_pairs * flux / 2
-plim = 5
-
-d = np.load(full_path)
+filepaths = [
+    (20180615, 191103),
+    (20180615, 193838),
+    (20180615, 194829)
+]
 
 def shift(arr, n=1):
     return np.array([0] * n + list(arr[:-n]))
@@ -33,69 +29,56 @@ def plot(data, val_name, label=None, mult=1):
         label = val_name.replace('_', ' ').capitalize()
     plt.plot(data['time'] - min_time, mult * data[val_name], label=label)
 
-# Load data
-power = d['CurrentSensor_Power']
-mc_voltage = d['MCVoltage']
-flux_info = d['MCFluxInfo']
-flux_command = d['MCModulationIndxFluxWeakeningInfo']
-trq_cmd = d['MCCommand']
-spd = d['MCMotorPositionInfo']
+
+spds = np.array([])
+trqs = np.array([])
+effs = np.array([])
+
+for date, time in filepaths:
+    full_path = base.joinpath(str(date), "numpy", str(time) + ".npz")
+    d = np.load(full_path)
+    
+    # Load data
+    power = d['CurrentSensor_Power']
+    mc_voltage = d['MCVoltage']
+    flux_info = d['MCFluxInfo']
+    flux_command = d['MCModulationIndxFluxWeakeningInfo']
+    trq_cmd = d['MCCommand']
+    spd = d['MCMotorPositionInfo']
 
 
-min_time = min(
-    min(power['time']),
-    min(mc_voltage['time']),
-    min(flux_info['time']),
-    min(flux_command['time']),
-    min(trq_cmd['time']),
-    min(spd['time'])
-)
+    min_time = min(
+        min(power['time']),
+        min(mc_voltage['time']),
+        min(flux_info['time']),
+        min(flux_command['time']),
+        min(trq_cmd['time']),
+        min(spd['time'])
+    )
 
-# Do calcs
-# interp_vq = interpolate.interp1d(mc_voltage['time'], mc_voltage['VBC_Vq'], fill_value="extrapolate")
+    # Do calcs
+    vq_at_iq_fb_times = np.interp(flux_info['time'], mc_voltage['time'], mc_voltage['VBC_Vq'])
 
-# vq_at_iq_fb_times = np.array([interp_vq(i) for i in flux_info['time']])
-# vq_at_iq_com_times = np.array([interp_vq(i) for i in flux_command['time']])
+    vq_iq_fb = vq_at_iq_fb_times * flux_info['Iq_feedback'] / 100
 
-vq_at_iq_fb_times = np.interp(flux_info['time'], mc_voltage['time'], mc_voltage['VBC_Vq'])
+    flux_time = flux_info['time'] - min_time
 
-vq_iq_fb = vq_at_iq_fb_times * flux_info['Iq_feedback'] / 100
+    # Interpolate
+    trq_at_iq_fb_times = np.interp(flux_info['time'], trq_cmd['time'], trq_cmd['torque'])
+    spd_at_iq_fb_times = np.interp(flux_info['time'], spd['time'], spd['motor_speed'])
+    pwr_at_iq_fb_times = np.interp(flux_info['time'], power['time'], power['result'])
 
-flux_time = flux_info['time'] - min_time
+    # Calc eff
+    eff = vq_iq_fb / pwr_at_iq_fb_times
+    np.nan_to_num(eff, copy=False)
+    np.clip(eff, -1, 1, out=eff)
+    eff = np.abs(eff)
 
-# interp_trq = interpolate.interp1d(trq_cmd['time'], trq_cmd['torque'], fill_value="extrapolate")
-# trq_at_iq_fb_times = np.array([interp_trq(i) for i in flux_info['time']])
+    # Append to arrays
+    spds = np.append(spds, -spd_at_iq_fb_times)
+    trqs = np.append(trqs, trq_at_iq_fb_times/10)
+    effs = np.append(effs, eff)
 
-trq_at_iq_fb_times = np.interp(flux_info['time'], trq_cmd['time'], trq_cmd['torque'])
-
-# interp_spd = interpolate.interp1d(spd['time'], spd['motor_speed'], fill_value="extrapolate")
-# spd_at_iq_fb_times = np.array([interp_spd(i) for i in flux_info['time']])
-
-spd_at_iq_fb_times = np.interp(flux_info['time'], spd['time'], spd['motor_speed'])
-
-# interp_pwr = interpolate.interp1d(power['time'], power['result'], fill_value="extrapolate")
-# pwr_at_iq_fb_times = np.array([interp_pwr(i) for i in flux_info['time']])
-
-pwr_at_iq_fb_times = np.interp(flux_info['time'], power['time'], power['result'])
-# pwr_at_iq_fb_times[pwr_at_iq_fb_times == 0] = 0.001
-
-eff = vq_iq_fb / pwr_at_iq_fb_times
-np.nan_to_num(eff, copy=False)
-np.clip(eff, -1, 1, out=eff)
-
-# Plot
-# plot(power, "result", label="Power (W)", mult=0.01)
-# plot(flux_info, "Iq_feedback", mult=-0.1)
-# plot(mc_voltage, "VBC_Vq", label="$V_q$", mult=-0.1)
-# # plt.plot(flux_time, vq_iq_fb, label="$V_qI_q$ power (feedback)")
-# plt.plot(flux_time, vq_iq_fb / pwr_at_iq_fb_times * 100, label="Efficiency")
-
-# plot(spd, "motor_speed")
-# plt.plot(flux_time, spd_at_iq_fb_times, label="Interp spd", linestyle='--')
-
-# plot(trq_cmd, "torque")
-# plt.plot(flux_time, trq_at_iq_fb_times, label="Interp trq", linestyle='--')
-
-plt.scatter(-spd_at_iq_fb_times, trq_at_iq_fb_times, c=eff, cmap='plasma', s=200)
+plt.scatter(spds, trqs, c=effs, cmap='plasma', s=200)
 plt.colorbar()
 plt.show()
