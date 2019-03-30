@@ -79,7 +79,9 @@ spd_at_iq_fb_times = np.interp(flux_info['time'], spd['time'], spd['motor_speed'
 pwr_at_iq_fb_times = np.interp(flux_info['time'], power['time'], power['result'])
 # pwr_at_iq_fb_times[pwr_at_iq_fb_times == 0] = 0.001
 
-eff = vq_iq_fb / pwr_at_iq_fb_times * 100
+eff = vq_iq_fb / pwr_at_iq_fb_times
+np.nan_to_num(eff, copy=False)
+np.clip(eff, -1, 1, out=eff)
 
 # Plot
 # plot(power, "result", label="Power (W)", mult=0.01)
@@ -94,12 +96,6 @@ eff = vq_iq_fb / pwr_at_iq_fb_times * 100
 # plot(trq_cmd, "torque")
 # plt.plot(flux_time, trq_at_iq_fb_times, label="Interp trq", linestyle='--')
 
-np.nan_to_num(eff, copy=False)
-np.clip(eff, -1, 1, out=eff)
-
-print("Min efficiency:", np.nanmin(eff))
-print("Max efficiency:", np.nanmax(eff))
-
-plt.scatter(-spd_at_iq_fb_times, trq_at_iq_fb_times, c=eff, cmap='viridis')
-
+plt.scatter(-spd_at_iq_fb_times, trq_at_iq_fb_times, c=eff, cmap='plasma', s=200)
+plt.colorbar()
 plt.show()
