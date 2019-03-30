@@ -10,9 +10,9 @@
 
 const uint16_t pwr_lim_sweeps[] = {1, 5, 10, 30, 60, 80};
 const uint8_t num_pwr_lim_sweeps = 6;
-const uint16_t Kp_sweeps[] = {0, 500, 1000, 1500, 2000, 2500};
+const uint16_t Kp_sweeps[] = {0, 1, 2, 5, 10, 20};
 const uint8_t num_Kp_sweeps = 6;
-const uint16_t Ki_sweeps[] = {0, 500, 1000, 1500, 2000, 2500};
+const uint16_t Ki_sweeps[] = {0, 1, 2, 5, 10, 20;
 const uint8_t num_Ki_sweeps = 6; 
 const uint8_t anti_windup_sweeps = 6;
 
@@ -624,7 +624,7 @@ void draw_traction_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 }
 
 void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
-  carstats_t *stats = pm->stats;
+    carstats_t *stats = pm->stats;
     static uint8_t var_toggled = 1;
     static uint8_t lim_indx = 255;
     static uint8_t P_indx = 255;
@@ -711,21 +711,20 @@ void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     oled_clearline(oled, 3);
     oled_set_pos(oled, 3, 1);
-    oled_print(oled, "KI: ");
+    oled_print(oled, "RAMP DUR: ");
     if (I_indx != 255) {
         oled_print_num(oled, stats->pl_controls.electrical_I);
     } else {
         oled_print(oled, DATA_UNKNOWN);
     }
 
-    // if (var_toggled == 1) {
-    //     oled_set_pos(oled, 0, 0);
-    // } else if (var_toggled == 2) {
-    //     oled_set_pos(oled, 0, 1);
-    // } else {
-    //     oled_set_pos(oled, var_toggled - 2, 0);
-    // }
-    oled_set_pos(oled, var_toggled-1, 0);
+    if (var_toggled == 1) {
+        oled_set_pos(oled, 0, 0);
+    } else if (var_toggled == 2) {
+        oled_set_pos(oled, 0, 1);
+    } else {
+        oled_set_pos(oled, var_toggled - 2, 0);
+    }
     oled_print(oled, ">");
 }
 
