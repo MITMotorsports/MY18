@@ -711,20 +711,23 @@ void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     oled_clearline(oled, 3);
     oled_set_pos(oled, 3, 1);
-    oled_print(oled, "RAMP DUR: ");
+    oled_print(oled, "KI: ");
     if (I_indx != 255) {
         oled_print_num(oled, stats->pl_controls.electrical_I);
     } else {
         oled_print(oled, DATA_UNKNOWN);
     }
 
-    if (var_toggled == 1) {
-        oled_set_pos(oled, 0, 0);
-    } else if (var_toggled == 2) {
-        oled_set_pos(oled, 0, 1);
-    } else {
-        oled_set_pos(oled, var_toggled - 2, 0);
-    }
+   // if (var_toggled == 1) {
+    //    oled_set_pos(oled, 0, 0);
+   // } else if (var_toggled == 2) {
+   //     oled_set_pos(oled, 0, 1);
+   // } else {
+   //     oled_set_pos(oled, var_toggled - 2, 0);
+   // }
+
+    oled_set_pos(oled, var_toggled - 1, 0);
+
     oled_print(oled, ">");
 }
 
