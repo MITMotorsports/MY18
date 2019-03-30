@@ -38,7 +38,6 @@ for date, time in filepaths:
     trq_cmd = d['MCCommand']
     spd = d['MCMotorPositionInfo']
 
-
     min_time = min(
         min(power['time']),
         min(mc_voltage['time']),
@@ -71,8 +70,35 @@ for date, time in filepaths:
     trqs = np.append(trqs, trq_at_iq_fb_times/10)
     effs = np.append(effs, eff)
 
+# fin_spds = np.linspace(0, 6000, 600, endpoint=False)
+# fin_trqs = np.linspace(0, 240, 48, endpoint=False)
+eff_dict = {}
 
+for trq, spd, eff in zip(trqs, spds, effs):
+    idx = (int(trq/5) * 5, int(spd/10) * 5)
+    try:
+        eff_dict[idx].append(eff)
+    except KeyError:
+        eff_dict[idx] = [eff]
 
+# fin_trqs = np.linspace(0, 240, 48, endpoint=False)
+fin_spds = []
+fin_trqs = []
+fin_effs = []
+for (trq, spd), eff in eff_dict.items():
+    if trq < 0:
+        continue
+
+    avg_eff = sum(eff)/len(eff)
+    fin_trqs.append(trq)
+    fin_spds.append(spd)
+    fin_effs.append(avg_eff)
+
+plt.subplot(211)
 plt.scatter(spds, trqs, c=effs, cmap='plasma', s=20)
+plt.colorbar()
+
+plt.subplot(212)
+plt.scatter(fin_spds, fin_trqs, c=fin_effs, cmap='plasma', s=20)
 plt.colorbar()
 plt.show()
