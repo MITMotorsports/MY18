@@ -34,7 +34,7 @@ void init_controls_defaults(void) {
   power_limiting_settings.max_power = 80; //kW
   power_limiting_settings.electrical_P = 1; 
   power_limiting_settings.electrical_I = 1;
-  power_limiting_settings.anti_windup = 1; 
+  power_limiting_settings.anti_windup = 100; 
   power_limiting_settings.pl_enable = false; 
 
 
@@ -43,7 +43,8 @@ void init_controls_defaults(void) {
 int32_t get_electrical_power_limited_torque(int32_t pedal_torque) { 
   //CHECK THAT CS_READINGS.POWER is in watts 
 
-  if (cs_readings.power < power_limiting_settings.max_power) {
+
+  if (cs_readings.power < power_limiting_settings.max_power * 100) {
     return pedal_torque; //if we are below our set power limit we return the maximum pedal torque 
 
     //this may need to be replaced by a ramp to reduce jumps forward in torque. 
@@ -54,12 +55,12 @@ int32_t get_electrical_power_limited_torque(int32_t pedal_torque) {
   }
 
   else {
-    int32_t power_error = -1 * (cs_readings.power - power_limiting_settings.max_power); //This is now a positive value. 
+    int32_t power_error = (cs_readings.power - (power_limiting_settings.max_power * 100)); //This is now a positive value when over the limit
+    printf("POwer Error: %d \r \n", power_error);
     int32_t current_speed = mc_readings.speed * 628 / 6000; //rad/s = rpm * 2pi/60 
-    int32_t torque_error = power_error / current_speed * 10; //dNm 
-
+    int32_t torque_error = -1*power_error / current_speed * 10; //dNm, sign flipped due to speed direction
     accumulated_torque_error = accumulated_torque_error + torque_error; 
-
+    printf("Accumulated error: %d \r \n", accumulated_torque_error);
     if (accumulated_torque_error > power_limiting_settings.anti_windup) { 
       accumulated_torque_error = power_limiting_settings.anti_windup; 
     }
@@ -162,8 +163,11 @@ void execute_controls(void) {
     //Electrical Power limiter
     int32_t electrical_power_limited_torque = get_electrical_power_limited_torque(torque_command); 
 
-    power_limiting_monitoring.power_limited_torque = (int16_t)electrical_power_limited_torque;
+    printf("Power limited torque: %d \r \n", electrical_power_limited_torque);
+    printf("Pedal torque: %d \r \n", torque_command);
 
+    power_limiting_monitoring.power_limited_torque = (int16_t)electrical_power_limited_torque;
+    printf("min_sensor_torque: %d \r \n", min_sensor_torque);
     if (power_limiting_settings.pl_enable && electrical_power_limited_torque < min_sensor_torque) {
 
       min_sensor_torque = electrical_power_limited_torque; 
@@ -180,6 +184,7 @@ void execute_controls(void) {
       limited_torque = min_sensor_torque;
     }
 
+    printf("commanded torque: %d \r \n", limited_torque);
     torque_command = limited_torque;
   }
 
