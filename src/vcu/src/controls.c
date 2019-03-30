@@ -42,6 +42,7 @@ void init_controls_defaults(void) {
 
 int32_t get_electrical_power_limited_torque(int32_t pedal_torque) { 
   //CHECK THAT CS_READINGS.POWER is in watts 
+
   if (cs_readings.power < power_limiting_settings.max_power) {
     return pedal_torque; //if we are below our set power limit we return the maximum pedal torque 
 

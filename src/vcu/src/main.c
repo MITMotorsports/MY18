@@ -80,6 +80,13 @@ int main(void) {
 
     print_gate_faults(false);
     if (HAL_GetTick() - lastt > 100) {
+
+      printf("P: %d \r \n", power_limiting_settings.electrical_P);
+      printf("I: %d \r \n", power_limiting_settings.electrical_I);
+      printf("Max: %d \r \n", power_limiting_settings.max_power);
+      printf("Enable: %d \r \n", power_limiting_settings.pl_enable);
+      printf("Windup: %d \r \n", power_limiting_settings.anti_windup);
+
       HAL_GPIO_TogglePin(GPIO(LED));
 
       if (mc_readings.can_fault) {

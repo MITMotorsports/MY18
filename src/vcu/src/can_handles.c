@@ -425,8 +425,10 @@ void send_ElectricalPL(void) {
 void handleDash_ElectricalPL(Frame *msg) {
   can0_DashElectricalPL_T unpacked_msg;
 
+
   unpack_can0_DashElectricalPL(msg, &unpacked_msg);
 
+  printf("%d \r \n", unpacked_msg.max_power);
 
   power_limiting_settings.max_power = unpacked_msg.max_power;
   power_limiting_settings.electrical_P = unpacked_msg.electrical_P;
