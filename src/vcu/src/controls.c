@@ -19,11 +19,14 @@ const int16_t flux = 355; // Vs * 10 ** -4
 static int32_t get_power_limited_torque_vq(void) {
   if (mc_readings.V_VBC_Vq >= 0) return MAX_TORQUE;
 
-  uint8_t rms_eff_percent = get_eff_percent(mc_readings.last_commanded_trq / 10, -mc_readings.speed);
+  int32_t trq = mc_readings.last_commanded_trq / 10;
+  int32_t spd = -mc_readings.speed;
+
+  uint8_t rms_eff_percent = get_eff_percent(trq, spd);
 
   power_lim_monitoring.calc_eff = rms_eff_percent;
   printf("Eff percent: %d\tTorque for eff: %d\tSpeed for eff: %d\r\n",
-    rms_eff_percent, mc_readings.last_commanded_trq / 10, -mc_readings.speed);
+    rms_eff_percent, trq, -mc_readings.speed);
 
   // Motor constant times 10e4
   int32_t motor_constant_10e4 = 3 * num_pole_pairs * flux / 2;

@@ -10,8 +10,8 @@ RADS_PER_SEC_TO_RPM = 60 / (2*pi)
 RPM_TO_RADS_PER_SEC = 1 / RADS_PER_SEC_TO_RPM
 
 base = Path("/home/dani/Documents/racecar/data")
-date = 20190330
-time1 = "230145"
+date = 20190331
+time1 = "002307"
 full_path = base.joinpath(str(date), "numpy", str(time1) + ".npz")
 
 d = np.load(full_path)
@@ -52,8 +52,8 @@ new_eff = [get_eff_percent(tor / 10, -spd_at_trq_times[i]) for (i, tor) in enume
 # plt.plot(settings['time'] - min_time, settings['using_vq_lim'] * 600, label="$Vq$ based limit on")
 # plt.plot(settings['time'] - min_time, settings['using_pl'] * 650, label="Power limiting on")
 plt.plot(settings['time'] - min_time, settings['power_lim'] * 100, label="Limit in W")
-plt.plot(monitoring['time'] - min_time, monitoring['calc_eff'] * 100, label="Efficiency")
-plt.plot(tCMD['time'] - min_time, new_eff, label="New efficiency")
+plt.plot(monitoring['time'] - min_time, monitoring['calc_eff'], label="Efficiency")
+# plt.plot(tCMD['time'] - min_time, new_eff, label="New efficiency")
 
 plt.legend()
 plt.show()
