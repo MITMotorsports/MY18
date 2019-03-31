@@ -19,7 +19,8 @@ filepaths = [
     (20180615, 191103),
     (20180615, 193838),
     (20180615, 194829),
-    # (20190330, "040403")
+    (20190330, "220706"),
+    (20190330, "220143"),
 ]
 
 spds = np.array([])
@@ -37,6 +38,7 @@ for date, time in filepaths:
     flux_command = d['MCModulationIndxFluxWeakeningInfo']
     trq_cmd = d['MCCommand']
     spd = d['MCMotorPositionInfo']
+    trq_fb = d['MCTorqueTimerInfo']
 
     min_time = min(
         min(power['time']),
@@ -44,7 +46,8 @@ for date, time in filepaths:
         min(flux_info['time']),
         min(flux_command['time']),
         min(trq_cmd['time']),
-        min(spd['time'])
+        min(spd['time']),
+        min(trq_fb['time'])
     )
 
     # Do calcs
@@ -56,6 +59,7 @@ for date, time in filepaths:
 
     # Interpolate
     trq_at_iq_fb_times = np.interp(flux_info['time'], trq_cmd['time'], trq_cmd['torque'])
+    # trq_at_iq_fb_times = np.interp(flux_info['time'], trq_fb['time'], trq_fb['torque_feedback'])
     spd_at_iq_fb_times = np.interp(flux_info['time'], spd['time'], spd['motor_speed'])
     pwr_at_iq_fb_times = np.interp(flux_info['time'], power['time'], power['result'])
 
@@ -89,7 +93,7 @@ fin_spds = []
 fin_trqs = []
 fin_effs = []
 for (trq, spd), eff in eff_dict.items():
-    if trq < 0:
+    if trq < 0 or spd < 0:
         continue
 
     avg_eff = sum(eff)/len(eff)
@@ -97,11 +101,57 @@ for (trq, spd), eff in eff_dict.items():
     fin_spds.append(spd)
     fin_effs.append(avg_eff)
 
-plt.subplot(211)
-plt.scatter(spds, trqs, c=effs, cmap='plasma', s=20)
-plt.colorbar()
+fin_spds = np.array(fin_spds)
+fin_trqs = np.array(fin_trqs)
+fin_effs = np.array(fin_effs)
 
-plt.subplot(212)
-plt.scatter(fin_spds, fin_trqs, c=fin_effs, cmap='plasma', s=20)
-plt.colorbar()
+plt.subplot(311)
+plt.xlim(0,6100)
+plt.ylim(0,250)
+plt.title(r"Raw efficiency data $\left(\frac{V_qI_q}{P_{DC}}\right)$")
+plt.xlabel("Speed (RPM)")
+plt.ylabel("Torque (Nm)")
+plt.scatter(spds, trqs, c=effs, cmap='plasma', s=20)
+clb = plt.colorbar()
+clb.ax.set_title('Efficiency')
+
+plt.subplot(312)
+plt.xlim(0,6100)
+plt.ylim(0,250)
+plt.title("Averaged efficiecy over 20 Nm by 100 RPM chunks")
+plt.xlabel("Speed (RPM)")
+plt.ylabel("Torque (Nm)")
+plt.scatter(fin_spds, fin_trqs, c=fin_effs, cmap='plasma', s=600)
+clb = plt.colorbar()
+clb.ax.set_title('Efficiency')
+
+plt.subplot(313)
+plt.xlim(0,6100)
+plt.ylim(0,250)
+plt.title("Complete interpolated efficiency map")
+plt.xlabel("Speed (RPM)")
+plt.ylabel("Torque (Nm)")
+
+TRQ_DELTA = 2
+SPD_DELTA = 5
+
+grid_x, grid_y = np.mgrid[0:6000:SPD_DELTA, 0:240:TRQ_DELTA]
+grid = interpolate.griddata((fin_spds, fin_trqs), fin_effs, (grid_x, grid_y), method='linear')
+plt.scatter(grid_x, grid_y, c=grid, cmap='plasma', s=10)
+clb = plt.colorbar()
+clb.ax.set_title('Efficiency')
+
+np.nan_to_num(grid, copy=False)
+np.clip(grid, 0, 1, out=grid)
+
+# print "{"
+# for row in grid:
+#     print "  {",
+#     for val in row:
+#         print "{},".format(int(round(val * 100))),
+#     print "},"
+# print "}"
+
+print(grid.shape)
+
 plt.show()
