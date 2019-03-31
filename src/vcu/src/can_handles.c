@@ -255,6 +255,7 @@ void handleMCTorqueTimerInfo(Frame *msg) {
   unpack_can0_MCTorqueTimerInfo(msg, &unpacked_msg);
 
   mc_readings.torque_feedback = unpacked_msg.torque_feedback;
+  mc_readings.last_commanded_trq = unpacked_msg.commanded_torque;
 }
 
 void handleDashRequest(Frame *msg) {

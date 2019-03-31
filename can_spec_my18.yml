@@ -1551,6 +1551,11 @@ buses:
             position: 32
             length: 16
             c_type: int16_t
+          calc_eff:
+            unit: percent
+            position: 48
+            length: 8
+            c_type: uint8_t
       VCU_PowerLimSettings:
         can_id: 0x701
         is_big_endian: true

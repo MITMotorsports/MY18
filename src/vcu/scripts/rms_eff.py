@@ -74,8 +74,11 @@ for date, time in filepaths:
 # fin_trqs = np.linspace(0, 240, 48, endpoint=False)
 eff_dict = {}
 
+TRQ_DELTA = 20
+SPD_DELTA = 100
+
 for trq, spd, eff in zip(trqs, spds, effs):
-    idx = (int(trq/5) * 5, int(spd/10) * 5)
+    idx = (int(trq/TRQ_DELTA) * TRQ_DELTA, int(spd/SPD_DELTA) * SPD_DELTA)
     try:
         eff_dict[idx].append(eff)
     except KeyError:

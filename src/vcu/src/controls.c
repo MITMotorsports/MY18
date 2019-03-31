@@ -1,10 +1,9 @@
 #include "controls.h"
+#include "eff.h"
 
 static bool enabled = false;
 static int32_t torque_command = 0;
 static int32_t speed_command = 0;
-static int32_t max_dTorque = 100;
-static int32_t dTorque_lim_period = 10;
 
 can0_VCUControlsParams_T control_settings = {};
 can0_PowerLimMonitoring_T power_lim_monitoring = {};
@@ -14,14 +13,16 @@ static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
 
 static int16_t get_eff_percent(int32_t torque, int32_t speed);
 
-static inc_dTorque_lim(int32_t* old_torque_lim);
-
-const int16_t rms_eff_percent = 97;
 const int8_t num_pole_pairs = 10;
 const int16_t flux = 355; // Vs * 10 ** -4
 
 static int32_t get_power_limited_torque_vq(void) {
   if (mc_readings.V_VBC_Vq >= 0) return MAX_TORQUE;
+
+  uint8_t rms_eff_percent = get_eff_percent(mc_readings.last_commanded_trq / 10, mc_readings.speed);
+
+  power_lim_monitoring.calc_eff = rms_eff_percent;
+  printf("Eff percent: %d\r\n", rms_eff_percent);
 
   // Motor constant times 10e4
   int32_t motor_constant_10e4 = 3 * num_pole_pairs * flux / 2;
@@ -83,28 +84,6 @@ int32_t get_power_limited_torque(int32_t pedal_torque) {
 
   printf("FINAL PWR LIMITED TRQ: %d\r\n", pwr_lim_trq);
   return pwr_lim_trq;
-}
-
-static inc_dTorque_lim(int32_t* old_torque_lim) {
-  LIMIT(dTorque_lim);
-
-  *old_torque_lim += max_dTorque;
-}
-
-static ramp_torque(int32_t torque) {
-  static dTorque_lim = 0;
-
-  inc_dTorque_lim(&dTorque_lim);
-
-  if (dTorque_lim < torque) {
-    // If the limit is below the torque, limit it
-    torque = dTorque_lim;
-  } else {
-    // If the limit is above torque, pull the limit back down
-    dTorque_lim = torque;
-  }
-
-  return torque;
 }
 
 // PRIVATE FUNCTIONS
@@ -318,6 +297,7 @@ int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c) {
 }
 
 int16_t get_eff_percent(int32_t torque, int32_t speed) {
-  // TODO: implement
-  return 100;
+  int16_t torq_idx = torque * NUM_TRQ_INDXS / 240;
+  int16_t spd_idx = speed * NUM_SPD_INDXS / 6000;
+  return data_eff_percent[spd_idx][torq_idx];
 }
