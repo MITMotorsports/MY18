@@ -79,7 +79,7 @@ for date, time in filepaths:
 eff_dict = {}
 
 TRQ_DELTA = 20
-SPD_DELTA = 100
+SPD_DELTA = 200
 
 for trq, spd, eff in zip(trqs, spds, effs):
     idx = (int(trq/TRQ_DELTA) * TRQ_DELTA, int(spd/SPD_DELTA) * SPD_DELTA)
@@ -132,17 +132,19 @@ plt.title("Complete interpolated efficiency map")
 plt.xlabel("Speed (RPM)")
 plt.ylabel("Torque (Nm)")
 
-TRQ_DELTA = 2
+TRQ_DELTA = 1
 SPD_DELTA = 5
 
 grid_x, grid_y = np.mgrid[0:6000:SPD_DELTA, 0:240:TRQ_DELTA]
 grid = interpolate.griddata((fin_spds, fin_trqs), fin_effs, (grid_x, grid_y), method='linear')
-plt.scatter(grid_x, grid_y, c=grid, cmap='plasma', s=10)
+plt.scatter(grid_x, grid_y, c=grid, cmap='plasma', s=100)
 clb = plt.colorbar()
 clb.ax.set_title('Efficiency')
 
 np.nan_to_num(grid, copy=False)
 np.clip(grid, 0, 1, out=grid)
+
+np.savez("grid", grid=grid)
 
 # print "{"
 # for row in grid:
@@ -152,6 +154,6 @@ np.clip(grid, 0, 1, out=grid)
 #     print "},"
 # print "}"
 
-print(grid.shape)
+# print(grid.shape)
 
 plt.show()
