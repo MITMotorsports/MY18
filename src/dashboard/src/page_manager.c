@@ -8,7 +8,7 @@
 #define VCU_HEARTBEAT_TIMEOUT 1000 // ms
 
 
-const uint16_t pwr_lim_sweeps[] = {1, 5, 10, 30, 60, 80};
+const uint16_t pwr_lim_sweeps[] = {1, 2, 5, 10, 20, 80};
 const uint8_t num_pwr_lim_sweeps = 6;
 const uint16_t Kp_sweeps[] = {0, 1, 2, 5, 10, 20};
 const uint8_t num_Kp_sweeps = 6;
