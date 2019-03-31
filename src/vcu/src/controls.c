@@ -46,30 +46,7 @@ int32_t get_electrical_power_limited_torque(int32_t pedal_torque) {
 
   if (cs_readings.power < power_limiting_settings.max_power * 100) {
     accumulated_torque_error = 0;
-    int32_t power_error = -1*(cs_readings.power - (power_limiting_settings.max_power * 100)); //This is now a positive value when over the limit
-    printf("POwer Error: %d \r \n", power_error);
-    int32_t current_speed = mc_readings.speed * 628 / 6000; //rad/s = rpm * 2pi/60 
-    int32_t torque_error = -1*power_error / current_speed * 10; //dNm, sign flipped due to speed direction
-
-
-    accumulated_torque_error_2 = accumulated_torque_error_2 + torque_error; 
-    printf("Accumulated error 2: %d \r \n", accumulated_torque_error_2);
-    if (accumulated_torque_error_2 > power_limiting_settings.anti_windup) { 
-      accumulated_torque_error_2 = power_limiting_settings.anti_windup; 
-    }
-
-    int32_t limited_torque = pedal_torque - (power_limiting_settings.electrical_P * torque_error + power_limiting_settings.electrical_I * accumulated_torque_error_2); 
-
-    if (limited_torque < 0) {
-      limited_torque = 0;
-    }
-
-    if (limited_torque < pedal_torque){ 
-      return limited_torque;
-    }
-    else { 
-      return pedal_torque; 
-    }
+    return pedal_torque;
 
 
   }
