@@ -9,7 +9,7 @@ can0_VCUElectricalPL_T power_limiting_settings = {};
 can0_ElectricalPLLogging_T power_limiting_monitoring = {};
 
 int32_t accumulated_torque_error = 0; //might need to move
-int32_t accumulated_torque_error_2 = 0; 
+int32_t previous_torque = 0;
 
 static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
 
@@ -39,21 +39,15 @@ void init_controls_defaults(void) {
 
 
 }
-
+/*
 int32_t get_electrical_power_limited_torque(int32_t pedal_torque) { 
-  //CHECK THAT CS_READINGS.POWER is in watts 
-
-
   if (cs_readings.power < power_limiting_settings.max_power * 100) {
     accumulated_torque_error = 0;
     return pedal_torque;
 
 
   }
-
   else {
-    accumulated_torque_error_2 = 0;
-
     int32_t power_error = (cs_readings.power - (power_limiting_settings.max_power * 100)); //This is now a positive value when over the limit
     printf("POwer Error: %d \r \n", power_error);
     int32_t current_speed = mc_readings.speed * 628 / 6000; //rad/s = rpm * 2pi/60 
@@ -80,6 +74,57 @@ int32_t get_electrical_power_limited_torque(int32_t pedal_torque) {
     //check for big jumps in torque
 
   }
+
+}
+*/
+
+int32_t get_electrical_power_limited_torque(int32_t pedal_torque) { 
+    int32_t power_error = (cs_readings.power - (power_limiting_settings.max_power * 100)); //This is now a positive value when over the limit, negative when under
+    int32_t limited_torque = 0;
+
+    printf("Power Error: %d \r \n", power_error);
+    int32_t current_speed = mc_readings.speed * 628 / 6000; //rad/s = rpm * 2pi/60 
+    int32_t torque_error = -1*power_error / current_speed * 10; //dNm, sign flipped due to speed direction
+    accumulated_torque_error = accumulated_torque_error + torque_error; 
+
+    if (accumulated_torque_error > power_limiting_settings.anti_windup) { 
+      accumulated_torque_error = power_limiting_settings.anti_windup; 
+    }
+    else if (accumulated_torque_error < -1 * power_limiting_settings.anti_windup) { 
+      accumulated_torque_error = -1*power_limiting_settings.anti_windup;
+    }
+    printf("Accumulated error: %d \r \n", accumulated_torque_error);
+
+    if (cs_readings.power < power_limiting_settings.max_power * 100) {
+      limited_torque = previous_torque - (power_limiting_settings.electrical_P/10 * torque_error + power_limiting_settings.electrical_I/10 * accumulated_torque_error); 
+    }
+    else 
+    {
+      limited_torque = pedal_torque - (power_limiting_settings.electrical_P * torque_error + power_limiting_settings.electrical_I * accumulated_torque_error); 
+    }
+
+    if (limited_torque < 0) {
+      limited_torque = 0;
+    }
+
+    if (limited_torque < pedal_torque){ 
+      if ((previous_torque ^ limited_torque) < 0){
+        accumulated_torque_error = 0;
+      }
+      previous_torque = limited_torque;
+      return limited_torque;
+    }
+    else { 
+      if ((previous_torque ^ pedal_torque) < 0){
+        accumulated_torque_error = 0;
+      }
+      previous_torque = pedal_torque;
+      return pedal_torque; 
+    }
+
+    //check for big jumps in torque
+
+  
 
 }
 
