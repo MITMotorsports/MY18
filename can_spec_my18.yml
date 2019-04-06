@@ -1598,5 +1598,13 @@ buses:
             position: 0 
             length: 16
             c_type: uint16_t 
-
+          pedal_torque:
+            unit: dNM
+            position: 16
+            length: 16
+            c_type: uint16_t
+          anti_windup:
+            position: 32
+            length: 16
+            c_type: int16_t
 

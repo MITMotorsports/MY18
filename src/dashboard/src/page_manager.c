@@ -8,13 +8,13 @@
 #define VCU_HEARTBEAT_TIMEOUT 1000 // ms
 
 
-const uint16_t pwr_lim_sweeps[] = {1, 2, 5, 10, 20, 80};
-const uint8_t num_pwr_lim_sweeps = 6;
-const uint16_t Kp_sweeps[] = {0, 1, 2, 5, 10, 20};
-const uint8_t num_Kp_sweeps = 6;
-const uint16_t Ki_sweeps[] = {0, 1, 2, 5, 10, 20};
-const uint16_t num_Ki_sweeps = 6; 
-const uint8_t anti_windup_sweeps = 100;
+const uint16_t pwr_lim_sweeps[] = {1, 2, 5, 10, 20, 50, 100};
+const uint8_t num_pwr_lim_sweeps = 7;
+const uint16_t Kp_sweeps[] = {0, 1, 2, 5, 10, 20, 50, 100, 150};
+const uint8_t num_Kp_sweeps = 9;
+const uint16_t Ki_sweeps[] = {0, 1, 2, 5, 10, 20, 50, 100, 150};
+const uint16_t num_Ki_sweeps = 9; 
+const uint8_t anti_windup_sweeps = 1000;
 
 void page_manager_init(page_manager_t *pm, carstats_t *stats) {
     pm->page  = DASH_PAGE_CRITICAL;
@@ -690,7 +690,7 @@ void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_print(oled, (stats->pl_controls.pl_enable) ? "ON " : "OFF");
     oled_rprint_pad(oled, "WDP: ", 4);
     stats->pl_controls.anti_windup = anti_windup_sweeps;
-    oled_print(oled, (stats->pl_controls.anti_windup));
+    oled_print(oled, ("%d", anti_windup_sweeps));
 
     oled_clearline(oled, 1);
     oled_set_pos(oled, 1, 1);

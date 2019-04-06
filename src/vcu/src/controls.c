@@ -34,7 +34,7 @@ void init_controls_defaults(void) {
   power_limiting_settings.max_power = 80; //kW
   power_limiting_settings.electrical_P = 1; 
   power_limiting_settings.electrical_I = 1;
-  power_limiting_settings.anti_windup = 100; 
+  power_limiting_settings.anti_windup = 1; 
   power_limiting_settings.pl_enable = false; 
 
 
@@ -94,18 +94,22 @@ int32_t get_electrical_power_limited_torque(int32_t pedal_torque) {
       accumulated_torque_error = -1*power_limiting_settings.anti_windup;
     }
     printf("Accumulated error: %d \r \n", accumulated_torque_error);
+    power_limiting_monitoring.anti_windup = (int16_t)accumulated_torque_error;
 
     if (cs_readings.power < power_limiting_settings.max_power * 100) {
       limited_torque = previous_torque - (power_limiting_settings.electrical_P/10 * torque_error + power_limiting_settings.electrical_I/10 * accumulated_torque_error); 
     }
     else 
     {
-      limited_torque = pedal_torque - (power_limiting_settings.electrical_P * torque_error + power_limiting_settings.electrical_I * accumulated_torque_error); 
+      limited_torque = pedal_torque - (power_limiting_settings.electrical_P/10 * torque_error + power_limiting_settings.electrical_I/10 * accumulated_torque_error); 
     }
 
     if (limited_torque < 0) {
       limited_torque = 0;
     }
+
+    power_limiting_monitoring.power_limited_torque = (int16_t)limited_torque;
+
 
     if (limited_torque < pedal_torque){ 
       if ((previous_torque ^ limited_torque) < 0){
@@ -153,6 +157,7 @@ void execute_controls(void) {
   if (!enabled) return;
 
   torque_command = get_torque();
+  power_limiting_monitoring.pedal_torque =  (int16_t)torque_command; 
   controls_monitoring.raw_torque = torque_command;
 
   // Control regen brake valve:
@@ -207,11 +212,6 @@ void execute_controls(void) {
     //Electrical Power limiter
     int32_t electrical_power_limited_torque = get_electrical_power_limited_torque(torque_command); 
 
-    printf("Power limited torque: %d \r \n", electrical_power_limited_torque);
-    printf("Pedal torque: %d \r \n", torque_command);
-
-    power_limiting_monitoring.power_limited_torque = (int16_t)electrical_power_limited_torque;
-    printf("min_sensor_torque: %d \r \n", min_sensor_torque);
     if (power_limiting_settings.pl_enable && electrical_power_limited_torque < min_sensor_torque) {
 
       min_sensor_torque = electrical_power_limited_torque; 
@@ -227,8 +227,6 @@ void execute_controls(void) {
     else {
       limited_torque = min_sensor_torque;
     }
-
-    printf("commanded torque: %d \r \n", limited_torque);
     torque_command = limited_torque;
   }
 
