@@ -52,8 +52,11 @@ for date, time in filepaths:
 
     # Do calcs
     vq_at_iq_fb_times = np.interp(flux_info['time'], mc_voltage['time'], mc_voltage['VBC_Vq'])
+    vd_at_id_fb_times = np.interp(flux_info['time'], mc_voltage['time'], mc_voltage['VAB_Vd'])
 
     vq_iq_fb = vq_at_iq_fb_times * flux_info['Iq_feedback'] / 100
+    vd_id_fb = vq_at_iq_fb_times * flux_info['Id_feedback'] / 100
+
 
     flux_time = flux_info['time'] - min_time
 
@@ -64,7 +67,7 @@ for date, time in filepaths:
     pwr_at_iq_fb_times = np.interp(flux_info['time'], power['time'], power['result'])
 
     # Calc eff
-    eff = vq_iq_fb / pwr_at_iq_fb_times
+    eff = (vq_iq_fb + vd_id_fb) / pwr_at_iq_fb_times
     np.nan_to_num(eff, copy=False)
     np.clip(eff, -1, 1, out=eff)
     eff = np.abs(eff)
@@ -74,8 +77,6 @@ for date, time in filepaths:
     trqs = np.append(trqs, trq_at_iq_fb_times/10)
     effs = np.append(effs, eff)
 
-# fin_spds = np.linspace(0, 6000, 600, endpoint=False)
-# fin_trqs = np.linspace(0, 240, 48, endpoint=False)
 eff_dict = {}
 
 TRQ_DELTA = 20
