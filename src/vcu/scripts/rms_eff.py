@@ -9,18 +9,24 @@ plt.rcParams.update({'font.size': 22})
 RADS_PER_SEC_TO_RPM = 60 / (2*pi)
 RPM_TO_RADS_PER_SEC = 1 / RADS_PER_SEC_TO_RPM
 
-base = Path("/home/dani/Documents/racecar/data")
-date = 20180615
-time1 = 191103
-time2 = 193838
-time3 = 194829
-full_path = base.joinpath(str(date), "numpy", str(time2) + ".npz")
+base = Path("/home/dani/Documents/racecar/data/Parsed")
 filepaths = [
-    (20180615, 191103),
-    (20180615, 193838),
-    (20180615, 194829),
-    (20190330, "220706"),
-    (20190330, "220143"),
+    # ("20180615", "191103"),
+    # ("20180615", "193838"),
+    # ("20180615", "194829"),
+    # ("20190330", "220706"),
+    # ("20190330", "220143"),
+    # ("20190325", "053330"),
+    # ("20190325", "153521"),
+    # ("20190327", "112624"),
+    # ("20190327", "032221"),
+    # ("20190327", "111226"),
+    # ("20190327", "015447"),
+    ("20190327", "163546"),
+    ("20190327", "161913"),
+    ("20190327", "164959"),
+    ("20190327", "170159"),
+    # ("20190328", "174251")
 ]
 
 spds = np.array([])
@@ -67,7 +73,7 @@ for date, time in filepaths:
     pwr_at_iq_fb_times = np.interp(flux_info['time'], power['time'], power['result'])
 
     # Calc eff
-    eff = (vq_iq_fb + vd_id_fb) / pwr_at_iq_fb_times
+    eff = (vq_iq_fb) / pwr_at_iq_fb_times
     np.nan_to_num(eff, copy=False)
     np.clip(eff, -1, 1, out=eff)
     eff = np.abs(eff)
@@ -89,7 +95,6 @@ for trq, spd, eff in zip(trqs, spds, effs):
     except KeyError:
         eff_dict[idx] = [eff]
 
-# fin_trqs = np.linspace(0, 240, 48, endpoint=False)
 fin_spds = []
 fin_trqs = []
 fin_effs = []
