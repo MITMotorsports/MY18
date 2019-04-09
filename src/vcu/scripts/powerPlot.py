@@ -11,7 +11,7 @@ RPM_TO_RADS_PER_SEC = 1 / RADS_PER_SEC_TO_RPM
 
 base = Path("/home/dani/Documents/racecar/data")
 date = 20190331
-time1 = "002307"
+time1 = "033829" # 0323
 full_path = base.joinpath(str(date), "numpy", str(time1) + ".npz")
 
 d = np.load(full_path)
