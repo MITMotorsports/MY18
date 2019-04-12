@@ -8,13 +8,13 @@
 #define VCU_HEARTBEAT_TIMEOUT 1000 // ms
 
 
-const uint16_t pwr_lim_sweeps[] = {1, 2, 5, 10, 20, 50, 100};
-const uint8_t num_pwr_lim_sweeps = 7;
-const uint16_t Kp_sweeps[] = {0, 1, 2, 5, 10, 20, 50, 100, 150};
-const uint8_t num_Kp_sweeps = 9;
-const uint16_t Ki_sweeps[] = {0, 1, 2, 5, 10, 20, 50, 100, 150};
-const uint16_t num_Ki_sweeps = 9; 
-const uint8_t anti_windup_sweeps = 1000;
+const uint16_t pwr_lim_sweeps[] = {5, 10, 20, 50, 100};
+const uint8_t num_pwr_lim_sweeps = 5;
+const uint16_t Kp_sweeps[] = {0, 5, 10, 20, 50, 75, 100, 150};
+const uint8_t num_Kp_sweeps = 8;
+const uint16_t Ki_sweeps[] = {0, 5, 10, 20, 50, 75, 100, 150};
+const uint16_t num_Ki_sweeps = 8; 
+const uint8_t anti_windup_sweeps = 200;
 
 void page_manager_init(page_manager_t *pm, carstats_t *stats) {
     pm->page  = DASH_PAGE_CRITICAL;
