@@ -1,25 +1,17 @@
-#ifndef _ADC_H_
-#define _ADC_H_
-
-#include <stdint.h>
+#ifndef ADC_H
+#define ADC_H
 
 #include "chip.h"
-#include "uart.h"
 
-// PIN CONFIGS
-#define ADC_CH2_PIN IOCON_PIO1_1
-#define ADC_CH3_PIN IOCON_PIO1_2
-#define ADC_CH4_PIN IOCON_PIO1_3
-#define ADC_CH5_PIN IOCON_PIO1_4
+#include "types.h"
 
-#define ADC_CH2_PIN_CFG (IOCON_FUNC2 | IOCON_MODE_INACT | IOCON_ADMODE_EN)
-#define ADC_CH3_PIN_CFG (IOCON_FUNC2 | IOCON_MODE_INACT | IOCON_ADMODE_EN)
-#define ADC_CH4_PIN_CFG (IOCON_FUNC2 | IOCON_MODE_INACT | IOCON_ADMODE_EN)
-#define ADC_CH5_PIN_CFG (IOCON_FUNC1 | IOCON_MODE_INACT | IOCON_ADMODE_EN)
+#define STEERING_CHANNEL ADC_CH0
+#define ACCEL_1_CHANNEL ADC_CH2
+#define ACCEL_2_CHANNEL ADC_CH3
+#define BRAKE_1_CHANNEL ADC_CH4
+#define BRAKE_2_CHANNEL ADC_CH5
 
-// FUNCTIONS
-void Init_Internal_ADC(void);
+void ADC_Init(void);
+uint16_t ADC_Read(ADC_CHANNEL_T channel);
 
-uint16_t Read_Internal_ADC(ADC_CHANNEL_T channel);
-
-#endif
+#endif // ADC_H

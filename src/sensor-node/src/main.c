@@ -1,89 +1,139 @@
-#include "main.h"
+#include "serial.h"
+#include "types.h"
+#include "input.h"
+#include "output.h"
+#include "adc.h"
 
-//#define DEBUG_UART true
+#include "timer.h"
+
+#include "sysinit.h"
+#include "chip.h"
+
+#include "CANlib.h"
+
+#define SERIAL_BAUDRATE 57600
+#define CAN_BAUDRATE 500000
 
 const uint32_t OscRateIn = 12000000;
 volatile uint32_t msTicks;
 
-// ADC Data Containers
-uint16_t ext_adc_data[8];
-uint16_t int_adc_data[4];
+// void Set_Interrupt_Priorities(void);
+
+static ADC_Errors_T errors;
+static ADC_Input_T adc;
+static Speed_Input_T speed;
+
+Input_T input;
 
 void SysTick_Handler(void) {
   msTicks++;
 }
 
-Speed_Input_T speed_val;
+void initialize_input(void) {
+  /*errors.accel_1_under = false;
+  errors.accel_1_over = false;
+  errors.accel_2_under = false;
+  errors.accel_2_over = false;
+  errors.brake_1_under = false;
+  errors.brake_1_over = false;
+  errors.brake_2_under = false;
+  errors.brake_2_over = false;
 
-#define ADC_UPDATE_PERIOD 100
-#define WHEEL_SPEED_TIMEOUT_MS 100
-#define WHEEL_SPEED_READ_PERIOD_MS 10
+  adc.errors = &errors;
 
-int main(void) {
-    SystemCoreClockUpdate();
-    if (SysTick_Config (SystemCoreClock / 1000)) while(1);  // Hang on error
+  // Initialize adc
+  adc.accel_1 = 0;
+  adc.accel_2 = 0;
 
-    Board_UART_Init(57600);
+  for (int i = 0; i < ACCEL_LOG_LENGTH; i++) {
+    adc.accel_1_raws[i] = 0;
+    adc.accel_2_raws[i] = 0;
+  }
 
-    GPIO_Init();
+  for (int i = 0; i < BRAKE_LOG_LENGTH; i++) {
+    adc.brake_1_raws[i] = 0;
+    adc.brake_2_raws[i] = 0;
+  }
+  adc.brake_1 = 0;
+  adc.brake_2 = 0;*/
+  adc.steering_pot = 0;
 
-    Init_SPI_ADC();
-    Init_Internal_ADC();
+  input.adc = &adc;
 
-    Timer_Init();
-    Set_Interrupt_Priorities();
-    Timer_Start();
+  // Initialize wheel speed sensor
+  /*for (int i = 0; i < NUM_WHEELS; i++) {
+    speed.num_ticks[i] = 0;
+    speed.big_sum[i] = 0;
+    speed.little_sum[i] = 0;
+    speed.last_updated[i] = 0;
+    speed.wheel_stopped[i] = true;
 
-    init_can0_sensor_node();
+    for (int j = 0; j < NUM_TEETH; j++) {
+      speed.last_tick[i][j] = 0;
+    }
+  }
 
+  speed.last_speed_read_ms = 0;
+  speed.can_node_right_32b_wheel_speed = 0;
+  speed.can_node_right_16b_wheel_speed = 0;
+  speed.can_node_left_32b_wheel_speed = 0;
+  speed.can_node_left_16b_wheel_speed = 0;
 
-    uint32_t adc_update = 0;
-
-	while (1) {
-#ifdef DEBUG_UART
-        //Board_Print("Speed: ");
-        //Board_PrintNum(speed_val.can_node_left_32b_wheel_speed, 10);
-        //Board_Print(" / ");
-        //Board_PrintNum(speed_val.can_node_left_32b_wheel_speed, 10);
-        //Board_Println(""); 
-#endif
-
-        if (speed_val.last_speed_read_ms + WHEEL_SPEED_READ_PERIOD_MS < msTicks) {
-            update_wheel_speed();
-        }
-
-
-#if DEBUG_UART
-        Board_Print_BLOCKING("CH2: ");
-        Board_PrintNum(Read_Internal_ADC(ADC_CH2), 10);
-        Board_Println_BLOCKING("");
-        Board_Print_BLOCKING("CH3: ");
-        Board_PrintNum(Read_Internal_ADC(ADC_CH3), 10);
-        Board_Println_BLOCKING("");
-        Board_Print_BLOCKING("CH4: ");
-        Board_PrintNum(Read_Internal_ADC(ADC_CH4), 10);
-        Board_Println_BLOCKING("");
-        Board_Print_BLOCKING("CH5: ");
-        Board_PrintNum(Read_Internal_ADC(ADC_CH5), 10);
-        Board_Println_BLOCKING("");
-#endif
-
-        Read_Internal_ADC_Range(int_adc_data, 0, 4, 1);
-        can_transmit(ext_adc_data, int_adc_data, &speed_val);
-        
-        adc_update = msTicks + ADC_UPDATE_PERIOD;
-	}
-
-	return 0;
+  input.speed = &speed;*/
+  input.msTicks = 0;
 }
 
-// wheel speed code very sloppily copied from can node
+int main(void) {
+  SystemCoreClockUpdate();
 
+  Serial_Init(SERIAL_BAUDRATE);
 
+  init_can0_can_node();
 
-void Input_handle_interrupt(uint32_t msTicks, uint32_t curr_tick, Wheel_T wheel);
+  ADC_Init();
 
-void handle_interrupt(LPC_TIMER_T* timer, Wheel_T wheel) {
+  // Wheel speed timer
+  // Timer_Init();
+  // Set_Interrupt_Priorities();
+  // Timer_Start();
+
+  initialize_input();
+  Serial_Println("Started up!");
+  Serial_Println("Currently running "HASH);
+  Serial_Println("Flashed by: "AUTHOR);
+
+  if (SysTick_Config (SystemCoreClock / 1000)) {
+    // Error
+    while(1);
+  }
+
+  Frame raw_msg = {};
+  uint32_t last_tick = 0;
+
+  while(1) {
+    Can_RawRead(&raw_msg);
+    /*if (raw_msg.id != 0) {
+      Serial_Println("Msg received");
+    }*/
+    if (raw_msg.id == 0x0E3) {
+      can0_FrontCanNodeSteering_T msg;
+      unpack_can0_FrontCanNodeSteering(&raw_msg, &msg);
+      Serial_Print("Steering pot val: ");
+      Serial_PrintlnNumber(msg.value, 10);
+    }
+
+    input.msTicks = msTicks;
+    Input_fill_input();
+    Output_process_output();
+    if (msTicks - last_tick > 500) {
+    //  Serial_PrintlnNumber(input.adc->steering_pot, 10);
+    }
+  }
+}
+
+// Interrupt configs
+
+/*void handle_interrupt(LPC_TIMER_T* timer, Wheel_T wheel) {
   // Reset the timer immediately
   Chip_TIMER_Reset(timer);
   // Clear the capture
@@ -96,126 +146,26 @@ void handle_interrupt(LPC_TIMER_T* timer, Wheel_T wheel) {
 // a rising edge or falling edge of the signal going into the timer capture pin
 void TIMER32_0_IRQHandler(void) {
   handle_interrupt(LPC_TIMER32_0, LEFT_32);
-  //Board_Println("left wheel?");
 }
 
 void TIMER32_1_IRQHandler(void) {
   handle_interrupt(LPC_TIMER32_1, RIGHT_32);
-  //Board_Println("right wheel?");
+}
+
+void TIMER16_0_IRQHandler(void) {
+  handle_interrupt(LPC_TIMER16_0, LEFT_16);
+}
+
+void TIMER16_1_IRQHandler(void) {
+  handle_interrupt(LPC_TIMER16_1, RIGHT_16);
 }
 
 void Set_Interrupt_Priorities(void) {
   // Give 32 bit interrupts the higher priority
   NVIC_SetPriority(TIMER_32_0_IRQn, 0);
+  NVIC_SetPriority(TIMER_16_0_IRQn, 1);
   NVIC_SetPriority(TIMER_32_1_IRQn, 0);
+  NVIC_SetPriority(TIMER_16_1_IRQn, 1);
   // Give the SysTick function a lower priority
   NVIC_SetPriority(SysTick_IRQn, 2);
-}
-
-void Input_handle_interrupt(uint32_t msTicks, uint32_t curr_tick, Wheel_T wheel) {
-  Speed_Input_T *speed = &speed_val;
-  if (false && speed->wheel_stopped[wheel]) {
-    speed->num_ticks[wheel] = 0;
-    speed->big_sum[wheel] = 0;
-    speed->little_sum[wheel] = 0;
-    speed->last_updated[wheel] = msTicks;
-    return;
-  }
-
-  const uint32_t count = speed->num_ticks[wheel];
-  const uint8_t idx = count % NUM_TEETH;
-  const uint32_t this_tooth_last_rev =
-    count < NUM_TEETH ? 0 : speed->last_tick[wheel][idx];
-
-  // Register tick
-  speed->last_tick[wheel][idx] = curr_tick;
-  speed->num_ticks[wheel]++;
-
-  // Update big sum
-  speed->big_sum[wheel] += NUM_TEETH * curr_tick;
-  speed->big_sum[wheel] -= speed->little_sum[wheel];
-
-  // Update little sum
-  speed->little_sum[wheel] += curr_tick;
-  speed->little_sum[wheel] -= this_tooth_last_rev;
-
-  // Update timestamp
-  speed->last_updated[wheel] = msTicks;
-}
-//
-// Microsecond = 1 millionth of a second
-#define MICROSECONDS_PER_SECOND_F 1000000.0
-// 1000 millirevs = 1 rev
-#define MILLIREVS_PER_REV_F 1000.0
-#define SECONDS_PER_MINUTE 60
-
-uint32_t click_time_to_mRPM(uint32_t us_per_click) {
-  if (us_per_click == 0) {
-    return 0;
-  }
-  // Convert milliseconds per click to milli rpm
-  const float us_per_rev = us_per_click * 1.0 * NUM_TEETH * 2;
-
-  const float s_per_rev = us_per_rev / MICROSECONDS_PER_SECOND_F;
-
-  const float mrev_per_s = MILLIREVS_PER_REV_F / s_per_rev;
-
-  const float mrev_per_min = mrev_per_s * SECONDS_PER_MINUTE;
-  return mrev_per_min;
-}
-
-void update_wheel_speed() {
-  Speed_Input_T* speed = &speed_val;
-  if (speed->last_speed_read_ms + WHEEL_SPEED_READ_PERIOD_MS < msTicks) {
-    // Capture values
-    speed->last_speed_read_ms = msTicks;
-    uint8_t wheel;
-    for(wheel = 0; wheel < NUM_WHEELS; wheel++) {
-      const uint32_t count = speed->num_ticks[wheel];
-      uint8_t idx;
-      if (count > 0) {
-        // If there are x ticks so far, the last tick is index (x - 1)
-        idx = (count - 1) % NUM_TEETH;
-      } else {
-        idx = 0;
-      }
-
-      uint32_t moving_avg;
-      if (count < NUM_TEETH) {
-        moving_avg = 0;
-      } else {
-        const uint32_t avg = speed->big_sum[wheel] / SUM_ALL_TEETH;
-        moving_avg = avg;
-      }
-      const bool timeout =
-        speed->last_updated[wheel] + WHEEL_SPEED_TIMEOUT_MS < msTicks;
-
-      uint32_t calculated_speed;
-      speed->wheel_stopped[wheel] = timeout;
-      if (speed->wheel_stopped[wheel]) {
-        calculated_speed = 0;
-      } else {
-        if (count < NUM_TEETH) {
-          calculated_speed = click_time_to_mRPM(speed->last_tick[wheel][idx]);
-        } else {
-          calculated_speed = click_time_to_mRPM(moving_avg);
-        }
-      }
-
-      // 32 bit timer speeds are first in the enum, so it's safe to look back at
-      // their values
-      switch (wheel) {
-        case LEFT_32:
-          speed->can_node_left_32b_wheel_speed = calculated_speed;
-          break;
-        case RIGHT_32:
-          speed->can_node_right_32b_wheel_speed = calculated_speed;
-          break;
-        default:
-          continue;
-      }
-    }
-  }
-}
-
-
+}*/
