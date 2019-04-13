@@ -34,7 +34,7 @@ RM = rm -f
 OCD_SCRIPTS = $(OCD_D)/scripts
 
 OCD_DIR = /usr/local/share/openocd/scripts
-OCD = C:\Users\Elijah\Dropbox (MIT)\FSAE\Software\6.332MotorController-master\6.332MotorController-master\openOCD\bin\openocd.exe
+OCD = $(OCD_DIR)/bin/openocd
 
 CAN_LIB_DIR = ../../lib/CANlib
 

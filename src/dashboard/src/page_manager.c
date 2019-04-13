@@ -689,7 +689,7 @@ void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_print(oled, (stats->pl_controls.pl_enable) ? "ON " : "OFF");
     oled_rprint_pad(oled, "WDP: ", 4);
     stats->pl_controls.anti_windup = anti_windup_sweeps;
-    oled_print(oled, ("%d", anti_windup_sweeps));
+    oled_print_num(oled, ("%d", anti_windup_sweeps));
 
     oled_clearline(oled, 1);
     oled_set_pos(oled, 1, 1);
@@ -717,14 +717,6 @@ void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     } else {
         oled_print(oled, DATA_UNKNOWN);
     }
-
-   // if (var_toggled == 1) {
-    //    oled_set_pos(oled, 0, 0);
-   // } else if (var_toggled == 2) {
-   //     oled_set_pos(oled, 0, 1);
-   // } else {
-   //     oled_set_pos(oled, var_toggled - 2, 0);
-   // }
 
     oled_set_pos(oled, var_toggled - 1, 0);
 

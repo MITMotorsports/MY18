@@ -416,32 +416,20 @@ void send_mc_fault_clear(void) {
 
 void send_ElectricalPL(void) {
   LIMIT(can0_VCUElectricalPL);
-
   can0_VCUElectricalPL_Write(&power_limiting_settings);
-
-
 }
 
 void handleDash_ElectricalPL(Frame *msg) {
   can0_DashElectricalPL_T unpacked_msg;
-
-
   unpack_can0_DashElectricalPL(msg, &unpacked_msg);
-
-  printf("%d \r \n", unpacked_msg.max_power);
-
   power_limiting_settings.max_power = unpacked_msg.max_power;
   power_limiting_settings.electrical_P = unpacked_msg.electrical_P;
   power_limiting_settings.electrical_I = unpacked_msg.electrical_I;
   power_limiting_settings.anti_windup = unpacked_msg.anti_windup;
   power_limiting_settings.pl_enable = unpacked_msg.pl_enable;
-
-
 }
 
 void send_PowerLimitingMonitoring(void) { 
   LIMIT(can0_ElectricalPLLogging);
-
   can0_ElectricalPLLogging_Write(&power_limiting_monitoring);
-
 }
