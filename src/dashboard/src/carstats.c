@@ -169,11 +169,9 @@ void can_update_carstats(carstats_t *cs) {
         case can0_VCUControlsParams:
             can_handle_vcu_controls(cs);
             break; 
-
         case can0_VCUElectricalPL: 
             can_handle_vcu_controls_electrical_pl(cs);
             break; 
-
         default:
             // do nothing
             break;
