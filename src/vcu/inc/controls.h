@@ -40,6 +40,8 @@
 #define TEMP_LOG_LENGTH 200
 
 extern can0_VCUControlsParams_T control_settings;
+extern can0_VCUElectricalPL_T power_limiting_settings;
+extern can0_ElectricalPLLogging_T power_limiting_monitoring; 
 
 // INTERACTION FUNCTIONS
 void enable_controls(void);

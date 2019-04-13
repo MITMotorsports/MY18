@@ -31,8 +31,9 @@ SIZE = $(TOOLCHAIN)size
 GDB = $(TOOLCHAIN)gdb
 RM = rm -f
 
-OCD_DIR ?= /usr/local/share/openocd
 OCD_SCRIPTS = $(OCD_D)/scripts
+
+OCD_DIR = /usr/local/share/openocd/scripts
 OCD = $(OCD_DIR)/bin/openocd
 
 CAN_LIB_DIR = ../../lib/CANlib

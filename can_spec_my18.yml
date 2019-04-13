@@ -1616,3 +1616,55 @@ buses:
             position: 48
             length: 16
             c_type: int16_t
+      VCUElectricalPL:
+        can_id: 0x720
+        is_big_endian: true
+        period: 25 ms
+        <<: &epl
+          segments:
+            max_power:
+              unit: hW #Kw/10
+              position: 0
+              length: 16
+              c_type: int16_t
+            electrical_P:
+              position: 16
+              length: 8
+              c_type: uint8_t
+            electrical_I:
+              position: 24
+              length: 8
+              c_type: uint8_t
+            anti_windup:
+              position: 32
+              length: 16
+              c_type: uint16_t
+            pl_enable: 
+              position: 48
+              length: 1 
+              c_type: bool
+      DashElectricalPL:
+        can_id: 0x721
+        is_big_endian: true
+        period: 25 ms
+        <<: *epl
+      ElectricalPLLogging:
+        can_id: 0x722
+        is_big_endian: true
+        period: 25 ms 
+        segments: 
+          power_limited_torque: 
+            unit: dNM 
+            position: 0 
+            length: 16
+            c_type: uint16_t 
+          pedal_torque:
+            unit: dNM
+            position: 16
+            length: 16
+            c_type: uint16_t
+          anti_windup:
+            position: 32
+            length: 16
+            c_type: int16_t
+

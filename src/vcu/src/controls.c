@@ -1,11 +1,18 @@
+
 #include "controls.h"
 
 static bool enabled = false;
 static int32_t torque_command = 0;
 static int32_t speed_command = 0;
 can0_VCUControlsParams_T control_settings = {};
+can0_VCUElectricalPL_T power_limiting_settings = {};
+can0_ElectricalPLLogging_T power_limiting_monitoring = {};
+
+int32_t accumulated_torque_error = 0; //might need to move
+int32_t previous_torque = 0;
 
 static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
+
 
 // PRIVATE FUNCTIONS
 static int32_t get_torque(void);
@@ -22,6 +29,59 @@ void init_controls_defaults(void) {
   control_settings.volt_lim_min_gain = 0;
   control_settings.volt_lim_min_voltage = 300;
   control_settings.torque_temp_limited = false;
+  power_limiting_settings.max_power = 80; //kW
+  power_limiting_settings.electrical_P = 1; 
+  power_limiting_settings.electrical_I = 1;
+  power_limiting_settings.anti_windup = 1; 
+  power_limiting_settings.pl_enable = false; 
+}
+
+int32_t get_electrical_power_limited_torque(int32_t pedal_torque) { 
+  int32_t power_error = (cs_readings.power - (power_limiting_settings.max_power * 100)); //This is now a positive value when over the limit, negative when under
+  int32_t limited_torque = 0;
+  int32_t current_speed = mc_readings.speed * 628 / 6000; //rad/s = rpm * 2pi/60 
+  int32_t torque_error = -1*power_error / current_speed * 10; //dNm, sign flipped due to speed direction
+  accumulated_torque_error = accumulated_torque_error + torque_error; 
+  if (accumulated_torque_error > power_limiting_settings.anti_windup) { 
+    //check for PI windup
+    accumulated_torque_error = power_limiting_settings.anti_windup; 
+  }
+  else if (accumulated_torque_error < -1 * power_limiting_settings.anti_windup) { 
+    //check for PI windup in the opposite direction 
+    accumulated_torque_error = -1*power_limiting_settings.anti_windup;
+  }
+  power_limiting_monitoring.anti_windup = (int16_t)accumulated_torque_error;
+  if (cs_readings.power < power_limiting_settings.max_power * 100) {
+    //check if the power limit is being violated
+    if (current_speed >= 0) {
+      //speed is negative so if there is no speed on the system set to pedal torque as to stop div zero errors
+      limited_torque = pedal_torque;
+    }
+    else {
+      //P controller for below power limiter
+      limited_torque = previous_torque - (power_limiting_settings.electrical_P/10 * torque_error); 
+    }
+  }
+  else {
+    //PI controller for above power limiter
+    limited_torque = pedal_torque - (power_limiting_settings.electrical_P/10 * torque_error + power_limiting_settings.electrical_I/10 * accumulated_torque_error); 
+  }
+  if (limited_torque < 0) {
+    //never command less than 0 torque
+    limited_torque = 0;
+  }
+  power_limiting_monitoring.power_limited_torque = (int16_t)limited_torque;
+  if (limited_torque < pedal_torque){ 
+    //don't send more than pedal torque
+    previous_torque = limited_torque;
+    return limited_torque;
+  }
+  else { 
+    //When we aren't limiting torque reset the windup 
+    accumulated_torque_error = 0;
+    previous_torque = pedal_torque;
+    return pedal_torque; 
+  }
 }
 
 void enable_controls(void) {
@@ -49,6 +109,7 @@ void execute_controls(void) {
   if (!enabled) return;
 
   torque_command = get_torque();
+  power_limiting_monitoring.pedal_torque =  (int16_t)torque_command; 
   controls_monitoring.raw_torque = torque_command;
 
   // Control regen brake valve:
@@ -100,8 +161,15 @@ void execute_controls(void) {
       min_sensor_torque = temp_limited_torque;
     }
 
-    int32_t dash_limited_torque = torque_command * control_settings.limp_factor / 100;
+    //Electrical Power limiter
+    int32_t electrical_power_limited_torque = get_electrical_power_limited_torque(torque_command); 
 
+    if (power_limiting_settings.pl_enable && electrical_power_limited_torque < min_sensor_torque) {
+
+      min_sensor_torque = electrical_power_limited_torque; 
+    }
+
+    int32_t dash_limited_torque = torque_command * control_settings.limp_factor / 100;
     int32_t limited_torque;
     if (dash_limited_torque < min_sensor_torque) {
       limited_torque = dash_limited_torque;
@@ -109,7 +177,6 @@ void execute_controls(void) {
     else {
       limited_torque = min_sensor_torque;
     }
-
     torque_command = limited_torque;
   }
 
