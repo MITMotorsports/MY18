@@ -14,7 +14,7 @@ typedef enum {
     DASH_PAGE_FAULT,
     DASH_PAGE_DEBUG,
     DASH_PAGE_PL,
-    DASH_PAGE_COUNT
+    DASH_PAGE_COUNT,
 } dash_page_type;
 
 typedef struct {

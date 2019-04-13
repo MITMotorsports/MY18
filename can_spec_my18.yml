@@ -30,6 +30,9 @@ boards:
       can0:
         - FrontCanNodeBrakeThrottle
         - MCVoltage
+        - KistlerSpeedDistance
+        - KistlerVelocity
+        - KistlerStatus
   dash:
     arch: lpc11cx4
     publish:
@@ -79,11 +82,88 @@ boards:
     subscribe:
       can0:
         - CurrentSensor_Config
+  kistler:
+    publish:
+      can0:
+        - KistlerSpeedDistance
+        - KistlerVelocity
+        - KistlerStatus
 buses:
   can0:
     baudrate: 500000
     is_extended: false
     messages:
+      KistlerSpeedDistance:
+        can_id: 0x7FA
+        period: 4ms
+        is_big_endian: false
+        segments:
+          timestamp:
+            position: 0
+            length: 16
+            c_type: uint16_t
+            unit: 4 ms
+          ground_speed:
+            position: 16
+            length: 16
+            c_type: uint16_t
+            unit: 1e-2 m/s
+          distance:
+            position: 32
+            length: 32
+            c_type: uint32_t
+            unit: mm
+      KistlerVelocity:
+        can_id: 0x7FB
+        period: 4ms
+        is_big_endian: false
+        segments:
+          longitudinal:
+            position: 0
+            length: 16
+            c_type: uint16_t
+            unit: 1e-2 m/s
+          lateral:
+            position: 16
+            length: 16
+            c_type: int16_t
+            unit: 1e-2 m/s
+          angle:
+            position: 32
+            length: 16
+            c_type: int16_t
+            unit: 1e-2 deg
+      KistlerStatus:
+        can_id: 0x7FC
+        period: 4ms
+        is_big_endian: false
+        segments:
+          serial_number:
+            position: 0
+            length: 24
+            c_type: uint32_t
+          sensor_number:
+            position: 24
+            length: 8
+            c_type: uint8_t
+          temperature:
+            position: 32
+            length: 8
+            c_type: uint8_t
+            unit: degC
+          led_illumination_curr:
+            position: 40
+            length: 8
+            c_type: uint8_t
+            unit: 1e-2 A
+          status_byte_1:
+            position: 48
+            length: 8
+            c_type: uint8_t
+          status_byte_2: 
+            position: 56
+            length: 8
+            c_type: uint8_t
       FrontCanNodeBrakeThrottle:
         can_id: 0x090
         period: 13ms
@@ -1592,3 +1672,55 @@ buses:
             position: 17
             length: 1
             c_type: bool
+      VCUElectricalPL:
+        can_id: 0x720
+        is_big_endian: true
+        period: 25 ms
+        <<: &epl
+          segments:
+            max_power:
+              unit: hW #Kw/10
+              position: 0
+              length: 16
+              c_type: int16_t
+            electrical_P:
+              position: 16
+              length: 8
+              c_type: uint8_t
+            electrical_I:
+              position: 24
+              length: 8
+              c_type: uint8_t
+            anti_windup:
+              position: 32
+              length: 16
+              c_type: uint16_t
+            pl_enable: 
+              position: 48
+              length: 1 
+              c_type: bool
+      DashElectricalPL:
+        can_id: 0x721
+        is_big_endian: true
+        period: 25 ms
+        <<: *epl
+      ElectricalPLLogging:
+        can_id: 0x722
+        is_big_endian: true
+        period: 25 ms 
+        segments: 
+          power_limited_torque: 
+            unit: dNM 
+            position: 0 
+            length: 16
+            c_type: uint16_t 
+          pedal_torque:
+            unit: dNM
+            position: 16
+            length: 16
+            c_type: uint16_t
+          anti_windup:
+            position: 32
+            length: 16
+            c_type: int16_t
+

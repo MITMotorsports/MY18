@@ -7,8 +7,13 @@
 #define DATA_UNKNOWN "?"
 #define VCU_HEARTBEAT_TIMEOUT 1000 // ms
 
-const uint16_t pwr_lim_sweeps[] = {5, 10, 50, 100, 300, 600, 800};
-const uint8_t num_pwr_lim_sweeps = 7;
+#define num_pwr_lim_sweeps 5;
+const uint16_t pwr_lim_sweeps[num_pwr_lim_sweeps] = {5, 10, 20, 50, 100};
+#define num_Kp_sweeps 8;
+const uint16_t Kp_sweeps[num_Kp_sweeps] = {0, 5, 10, 20, 50, 75, 100, 150};
+#define num_Ki_sweeps 8; 
+const uint16_t Ki_sweeps[num_Ki_sweeps] = {0, 5, 10, 20, 50, 75, 100, 150};
+const uint8_t anti_windup_sweeps = 200;
 
 void page_manager_init(page_manager_t *pm, carstats_t *stats) {
     pm->page  = DASH_PAGE_PL; // DASH_PAGE_CRITICAL;
@@ -684,3 +689,105 @@ void draw_traction_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
         oled_print(oled, DATA_UNKNOWN);
     }
 }
+
+void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+    carstats_t *stats = pm->stats;
+    static uint8_t var_toggled = 1;
+    static uint8_t lim_indx = 255;
+    static uint8_t P_indx = 255;
+    static uint8_t I_indx = 255;
+
+    // Process contextual actions
+    if (stats->buttons.B.rising_edge) var_toggled++;
+    var_toggled = LOOPOVER(var_toggled, 1, 5);
+
+    if (stats->buttons.left.action == BUTTON_ACTION_TAP) {
+      switch (var_toggled) {
+        case 1:
+          stats->pl_controls.pl_enable ^= 1;
+          break;
+        case 2:
+            lim_indx--;
+            break;
+        case 3:
+            P_indx--;
+            break;
+        case 4:
+            I_indx--;
+            break;
+      }
+    }
+
+    if (stats->buttons.right.action == BUTTON_ACTION_TAP) {
+      switch (var_toggled) {
+        case 1:
+          stats->pl_controls.pl_enable ^= 1;
+          break;
+        case 2:
+            lim_indx++;
+            break;
+        case 3:
+            P_indx++;
+            break;
+        case 4:
+            I_indx++;
+            break;
+      }
+    }
+
+    if (lim_indx != 255) {
+      lim_indx = LOOPOVER(lim_indx, 0, num_pwr_lim_sweeps - 1);
+      stats->pl_controls.max_power = pwr_lim_sweeps[lim_indx];
+    }
+
+    if (P_indx != 255) {
+      P_indx = LOOPOVER(P_indx, 0, num_Kp_sweeps - 1);
+      stats->pl_controls.electrical_P = Kp_sweeps[P_indx];
+    }
+
+    if (I_indx != 255) {
+      I_indx = LOOPOVER(I_indx, 0, num_Ki_sweeps - 1);
+      stats->pl_controls.electrical_I = Ki_sweeps[I_indx];
+    }
+
+    // Render
+    oled_clearline(oled, 0);
+    oled_set_pos(oled, 0, 2);
+    oled_print(oled, "PL: ");
+    oled_print(oled, (stats->pl_controls.pl_enable) ? "ON " : "OFF");
+    oled_rprint_pad(oled, "WDP: ", 4);
+    stats->pl_controls.anti_windup = anti_windup_sweeps;
+    oled_print_num(oled, ("%d", anti_windup_sweeps));
+
+    oled_clearline(oled, 1);
+    oled_set_pos(oled, 1, 1);
+    oled_print(oled, "LIMIT: ");
+    if (lim_indx != 255) {
+        oled_print_num(oled, stats->pl_controls.max_power);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+
+    oled_clearline(oled, 2);
+    oled_set_pos(oled, 2, 1);
+    oled_print(oled, "KP: ");
+    if (P_indx != 255) {
+        oled_print_num(oled, stats->pl_controls.electrical_P);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+
+    oled_clearline(oled, 3);
+    oled_set_pos(oled, 3, 1);
+    oled_print(oled, "KI: ");
+    if (I_indx != 255) {
+        oled_print_num(oled, stats->pl_controls.electrical_I);
+    } else {
+        oled_print(oled, DATA_UNKNOWN);
+    }
+
+    oled_set_pos(oled, var_toggled - 1, 0);
+
+    oled_print(oled, ">");
+}
+

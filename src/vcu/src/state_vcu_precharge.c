@@ -2,12 +2,12 @@
 #include "fault.h"
 
 // Choose which bus voltage you want to use:
-#define bus_voltage mc_readings.V_bus
+#define bus_voltage (cs_readings.V_bus / 100)
 
 static Time_T prechargeTimeout;
 static Time_T voltagePrintTimeout;
 
-const Time_T PRINT_VOLTAGE_TIME = 500;
+const Time_T PRINT_VOLTAGE_TIME = 10;
 const Time_T DEAD_RECKON_TIME   = 10000;
 
 inline Voltage_T calculate_precharge_target(void) {

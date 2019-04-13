@@ -31,8 +31,10 @@ SIZE = $(TOOLCHAIN)size
 GDB = $(TOOLCHAIN)gdb
 RM = rm -f
 
-OCD_DIR ?= /usr/local/share/openocd/scripts
-OCD ?= openocd
+OCD_SCRIPTS = $(OCD_D)/scripts
+
+OCD_DIR = /usr/local/share/openocd/scripts
+OCD = $(OCD_DIR)/bin/openocd
 
 CAN_LIB_DIR = ../../lib/CANlib
 
@@ -327,11 +329,11 @@ copy: all
 
 program: all
 	@echo "Programming" $(ELF) "with OCD"
-	@$(OCD) -s $(OCD_DIR) $(OCD_FLAGS) -c "program $(ELF) verify reset exit"
+	@$(OCD) -s $(OCD_SCRIPTS) $(OCD_FLAGS) -c "program $(ELF) verify reset exit"
 
 reset:
 	@echo "Resetting with OCD"
-	@$(OCD) -s $(OCD_DIR) $(OCD_FLAGS) -c "soft_reset_halt"
+	@$(OCD) -s $(OCD_SCRIPTS) $(OCD_FLAGS) -c "soft_reset_halt"
 
 #-----------------------------------------------------------------------------#
 # Open up serial port
@@ -346,7 +348,7 @@ com:
 #-----------------------------------------------------------------------------#
 
 debug_start:
-	$(OCD) -s $(OCD_DIR) $(OCD_FLAGS) -c "init" -c "reset halt" -c 'sleep 10'
+	$(OCD) -s $(OCD_SCRIPTS) $(OCD_FLAGS) -c "init" -c "reset halt" -c 'sleep 10'
 
 debug:
 	$(GDB) -x ./vcu.gdbinit

@@ -58,7 +58,13 @@ typedef struct {
 
     // Controls values
     can0_DashRequest_T controls;
+<<<<<<< HEAD
     can0_Dash_PowerLimSettings_T pl_controls;
+=======
+
+    can0_VCUElectricalPL_T vcu_pl_controls;
+    can0_DashElectricalPL_T pl_controls; 
+>>>>>>> spring-2019-controls
     can0_VCUControlsParams_T vcu_controls;
     can0_VCU_PowerLimSettings_T vcu_pl_controls;
 

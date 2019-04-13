@@ -80,6 +80,9 @@ int main(void) {
 
     print_gate_faults(false);
     if (HAL_GetTick() - lastt > 100) {
+
+
+
       HAL_GPIO_TogglePin(GPIO(LED));
 
       if (mc_readings.can_fault) {
