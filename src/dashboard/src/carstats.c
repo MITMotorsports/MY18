@@ -176,9 +176,6 @@ void can_update_carstats(carstats_t *cs) {
         case can0_VCU_PowerLimSettings:
             can_handle_vcu_controls_pl(cs);
             break; 
-        case can0_VCUElectricalPL: 
-            can_handle_vcu_controls_electrical_pl(cs);
-            break; 
         default:
             // do nothing
             break;

@@ -98,9 +98,9 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleDash_PowerLimSettings(&frame);
     break;
     
-  case can0_DashElectricalPL:
-    handleDash_ElectricalPL(&frame);
-    break;
+  // case can0_DashElectricalPL:
+  //   handleDash_ElectricalPL(&frame);
+  //  break;
 
   default:
     break;
@@ -363,7 +363,7 @@ void send_VCU(void) {
   send_VCUControlsMonitoring();
   send_PowerLimMonitoring();
   send_VCU_PowerLimSettings();
-  send_ElectricalPL();
+  // send_ElectricalPL();
   send_PowerLimitingMonitoring();
 }
 
@@ -433,9 +433,12 @@ void handleDash_PowerLimSettings(Frame *msg) {
 
   unpack_can0_Dash_PowerLimSettings(msg, &unpacked_msg);
 
-  power_lim_settings.using_pl = unpacked_msg.using_pl;
-  power_lim_settings.using_vq_lim = unpacked_msg.using_vq_lim;
+  power_lim_settings.pl_enable = unpacked_msg.pl_enable;
   power_lim_settings.power_lim = unpacked_msg.power_lim;
+  power_lim_settings.using_vq_lim = unpacked_msg.using_vq_lim;
+  power_lim_settings.electrical_P = unpacked_msg.electrical_P;
+  power_lim_settings.electrical_I = unpacked_msg.electrical_I;
+  power_lim_settings.anti_windup = unpacked_msg.anti_windup;
 }
 
 void send_VCU_PowerLimSettings(void) {
@@ -443,20 +446,20 @@ void send_VCU_PowerLimSettings(void) {
   can0_VCU_PowerLimSettings_Write(&power_lim_settings);
 }
 
-void send_ElectricalPL(void) {
-  LIMIT(can0_VCUElectricalPL);
-  can0_VCUElectricalPL_Write(&power_limiting_settings);
-}
+// void send_ElectricalPL(void) {
+//   LIMIT(can0_VCUElectricalPL);
+//   can0_VCUElectricalPL_Write(&power_limiting_settings);
+// }
 
-void handleDash_ElectricalPL(Frame *msg) {
-  can0_DashElectricalPL_T unpacked_msg;
-  unpack_can0_DashElectricalPL(msg, &unpacked_msg);
-  power_limiting_settings.max_power = unpacked_msg.max_power;
-  power_limiting_settings.electrical_P = unpacked_msg.electrical_P;
-  power_limiting_settings.electrical_I = unpacked_msg.electrical_I;
-  power_limiting_settings.anti_windup = unpacked_msg.anti_windup;
-  power_limiting_settings.pl_enable = unpacked_msg.pl_enable;
-}
+// void handleDash_ElectricalPL(Frame *msg) {
+//   can0_DashElectricalPL_T unpacked_msg;
+//   unpack_can0_DashElectricalPL(msg, &unpacked_msg);
+//   power_limiting_settings.max_power = unpacked_msg.max_power;
+//   power_limiting_settings.electrical_P = unpacked_msg.electrical_P;
+//   power_limiting_settings.electrical_I = unpacked_msg.electrical_I;
+//   power_limiting_settings.anti_windup = unpacked_msg.anti_windup;
+//   power_limiting_settings.pl_enable = unpacked_msg.pl_enable;
+// }
 
 void send_PowerLimitingMonitoring(void) { 
   LIMIT(can0_ElectricalPLLogging);

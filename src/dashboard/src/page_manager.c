@@ -7,11 +7,11 @@
 #define DATA_UNKNOWN "?"
 #define VCU_HEARTBEAT_TIMEOUT 1000 // ms
 
-#define num_pwr_lim_sweeps 5;
+#define num_pwr_lim_sweeps 5
 const uint16_t pwr_lim_sweeps[num_pwr_lim_sweeps] = {5, 10, 20, 50, 100};
-#define num_Kp_sweeps 8;
+#define num_Kp_sweeps 8
 const uint16_t Kp_sweeps[num_Kp_sweeps] = {0, 5, 10, 20, 50, 75, 100, 150};
-#define num_Ki_sweeps 8; 
+#define num_Ki_sweeps 8 
 const uint16_t Ki_sweeps[num_Ki_sweeps] = {0, 5, 10, 20, 50, 75, 100, 150};
 const uint8_t anti_windup_sweeps = 200;
 
@@ -596,7 +596,7 @@ void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     if (stats->buttons.left.action == BUTTON_ACTION_TAP) {
         switch (var_toggled) {
             case 0:
-                stats->pl_controls.using_pl ^= 1;
+                stats->pl_controls.pl_enable ^= 1;
                 break;
             case 1:
                 stats->pl_controls.using_vq_lim ^= 1;
@@ -610,7 +610,7 @@ void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     if (stats->buttons.right.action == BUTTON_ACTION_TAP) {
         switch (var_toggled) {
             case 0:
-                stats->pl_controls.using_pl ^= 1;
+                stats->pl_controls.pl_enable ^= 1;
                 break;
             case 1:
                 stats->pl_controls.using_vq_lim ^= 1;
@@ -630,7 +630,7 @@ void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_clearline(oled, 0);
     oled_set_pos(oled, 0, 1);
     oled_print(oled, "POWER LIMITING: ");
-    oled_print(oled, (stats->pl_controls.using_pl) ? "ON " : "OFF");
+    oled_print(oled, (stats->pl_controls.pl_enable) ? "ON " : "OFF");
 
     oled_clearline(oled, 1);
     oled_set_pos(oled, 1, 1);
@@ -690,7 +690,7 @@ void draw_traction_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     }
 }
 
-void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+void draw_epl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     carstats_t *stats = pm->stats;
     static uint8_t var_toggled = 1;
     static uint8_t lim_indx = 255;
@@ -737,7 +737,7 @@ void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     if (lim_indx != 255) {
       lim_indx = LOOPOVER(lim_indx, 0, num_pwr_lim_sweeps - 1);
-      stats->pl_controls.max_power = pwr_lim_sweeps[lim_indx];
+      stats->pl_controls.power_lim = pwr_lim_sweeps[lim_indx];
     }
 
     if (P_indx != 255) {
@@ -763,7 +763,7 @@ void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     oled_set_pos(oled, 1, 1);
     oled_print(oled, "LIMIT: ");
     if (lim_indx != 255) {
-        oled_print_num(oled, stats->pl_controls.max_power);
+        oled_print_num(oled, stats->pl_controls.power_lim);
     } else {
         oled_print(oled, DATA_UNKNOWN);
     }

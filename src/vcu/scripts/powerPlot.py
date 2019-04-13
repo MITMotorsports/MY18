@@ -47,7 +47,7 @@ plt.plot(power['time'] - min_time, power['result'], label="Power (W)")
 plt.plot(spd['time'] - min_time, -spd['motor_speed'], label="Speed (RPM)")
 
 plt.plot(settings['time'] - min_time, settings['using_vq_lim'] * -100, label="$Vq$ based limit on", linestyle=' ')
-plt.plot(settings['time'] - min_time, settings['using_pl'] * -200, label="Power limiting on", linestyle=' ', marker='o')
+plt.plot(settings['time'] - min_time, settings['pl_enable'] * -200, label="Power limiting on", linestyle=' ', marker='o')
 plt.plot(settings['time'] - min_time, settings['power_lim'] * 100, label="Limit (W)")
 
 plt.plot(monitoring['time'] - min_time, monitoring['calc_eff'], label="Efficiency")
