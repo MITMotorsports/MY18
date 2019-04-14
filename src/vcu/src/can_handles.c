@@ -94,8 +94,8 @@ void handleCAN(CAN_HandleTypeDef *hcan) {
     handleDashRequest(&frame);
     break;
 
-  case can0_DashElectricalPL:
-    handleDash_ElectricalPL(&frame);
+  case can0_Dash_PowerLimSettings:
+    handleDash_PowerLimSettings(&frame);
     break;
 
   default:
@@ -256,6 +256,7 @@ void handleMCTorqueTimerInfo(Frame *msg) {
   unpack_can0_MCTorqueTimerInfo(msg, &unpacked_msg);
 
   mc_readings.torque_feedback = unpacked_msg.torque_feedback;
+  mc_readings.last_commanded_trq = unpacked_msg.commanded_torque;
 }
 
 void handleDashRequest(Frame *msg) {
@@ -345,12 +346,19 @@ void send_VCUControlsMonitoring(void) {
   can0_VCUControlsMonitoring_Write(&controls_monitoring);
 }
 
+void send_PowerLimMonitoring(void) {
+  LIMIT(can0_PowerLimMonitoring);
+
+  can0_PowerLimMonitoring_Write(&power_lim_monitoring);
+}
+
 void send_VCU(void) {
   send_VCUHeartbeat();
   send_VCUErrors();
   send_VCUControlsParams();
   send_VCUControlsMonitoring();
-  send_ElectricalPL();
+  send_PowerLimMonitoring();
+  send_VCU_PowerLimSettings();
   send_PowerLimitingMonitoring();
 }
 
@@ -415,22 +423,25 @@ void send_mc_fault_clear(void) {
   can0_MCParameterRequest_Write(&msg);
 }
 
-void send_ElectricalPL(void) {
-  LIMIT(can0_VCUElectricalPL);
-  can0_VCUElectricalPL_Write(&power_limiting_settings);
+void handleDash_PowerLimSettings(Frame *msg) {
+  can0_Dash_PowerLimSettings_T unpacked_msg;
+
+  unpack_can0_Dash_PowerLimSettings(msg, &unpacked_msg);
+
+  power_lim_settings.pl_enable = unpacked_msg.pl_enable;
+  power_lim_settings.power_lim = unpacked_msg.power_lim;
+  power_lim_settings.using_vq_lim = unpacked_msg.using_vq_lim;
+  power_lim_settings.electrical_P = unpacked_msg.electrical_P;
+  power_lim_settings.electrical_I = unpacked_msg.electrical_I;
+  power_lim_settings.anti_windup = unpacked_msg.anti_windup;
 }
 
-void handleDash_ElectricalPL(Frame *msg) {
-  can0_DashElectricalPL_T unpacked_msg;
-  unpack_can0_DashElectricalPL(msg, &unpacked_msg);
-  power_limiting_settings.max_power = unpacked_msg.max_power;
-  power_limiting_settings.electrical_P = unpacked_msg.electrical_P;
-  power_limiting_settings.electrical_I = unpacked_msg.electrical_I;
-  power_limiting_settings.anti_windup = unpacked_msg.anti_windup;
-  power_limiting_settings.pl_enable = unpacked_msg.pl_enable;
+void send_VCU_PowerLimSettings(void) {
+  LIMIT(can0_VCU_PowerLimSettings);
+  can0_VCU_PowerLimSettings_Write(&power_lim_settings);
 }
 
 void send_PowerLimitingMonitoring(void) { 
   LIMIT(can0_ElectricalPLLogging);
-  can0_ElectricalPLLogging_Write(&power_limiting_monitoring);
+  can0_ElectricalPLLogging_Write(&e_power_limit_monitoring);
 }

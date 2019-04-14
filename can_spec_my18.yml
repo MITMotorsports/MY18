@@ -1018,12 +1018,12 @@ buses:
             length: 16
             c_type: int16_t
             unit: mWb
-          Iq_feedback:
+          Id_feedback:
             position: 32
             length: 16
             c_type: int16_t
             unit: dA
-          Id_feedback:
+          Iq_feedback:
             position: 48
             length: 16
             c_type: int16_t
@@ -1616,35 +1616,59 @@ buses:
             position: 48
             length: 16
             c_type: int16_t
-      VCUElectricalPL:
-        can_id: 0x720
+      PowerLimMonitoring:
+        can_id: 0x700
+        is_big_endian: true
+        period: 25 ms
+        segments:
+          vq_tmax:
+            unit: dNm
+            position: 0
+            length: 16
+            c_type: int16_t
+          mech_tmax:
+            unit: dMm
+            position: 32
+            length: 16
+            c_type: int16_t
+          calc_eff:
+            unit: percent
+            position: 48
+            length: 8
+            c_type: uint8_t
+      VCU_PowerLimSettings:
+        can_id: 0x701
         is_big_endian: true
         period: 25 ms
         <<: &epl
           segments:
-            max_power:
-              unit: hW #Kw/10
+            power_lim:
+              unit: hW
               position: 0
               length: 16
-              c_type: int16_t
-            electrical_P:
+              c_type: uint16_t
+            pl_enable:
               position: 16
+              length: 1
+              c_type: bool
+            using_vq_lim:
+              position: 17
+              length: 1
+              c_type: bool
+            electrical_P:
+              position: 18
               length: 8
               c_type: uint8_t
             electrical_I:
-              position: 24
+              position: 26
               length: 8
               c_type: uint8_t
             anti_windup:
-              position: 32
+              position: 34
               length: 16
               c_type: uint16_t
-            pl_enable: 
-              position: 48
-              length: 1 
-              c_type: bool
-      DashElectricalPL:
-        can_id: 0x721
+      Dash_PowerLimSettings:
+        can_id: 0x702
         is_big_endian: true
         period: 25 ms
         <<: *epl

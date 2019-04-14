@@ -1,18 +1,98 @@
 
 #include "controls.h"
+#include "eff.h"
 
 static bool enabled = false;
 static int32_t torque_command = 0;
 static int32_t speed_command = 0;
-can0_VCUControlsParams_T control_settings = {};
-can0_VCUElectricalPL_T power_limiting_settings = {};
-can0_ElectricalPLLogging_T power_limiting_monitoring = {};
-
-int32_t accumulated_torque_error = 0; //might need to move
+int32_t accumulated_torque_error = 0;
 int32_t previous_torque = 0;
+
+can0_VCUControlsParams_T control_settings = {};
+can0_PowerLimMonitoring_T power_lim_monitoring = {};
+can0_VCU_PowerLimSettings_T power_lim_settings = {};
+can0_ElectricalPLLogging_T e_power_limit_monitoring = {};
 
 static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
 
+static int16_t get_eff_percent(int32_t torque, int32_t speed);
+
+const int8_t num_pole_pairs = 10;
+const int16_t flux = 355; // Vs * 10 ** -4
+
+static int32_t get_power_limited_torque_vq(void) {
+  if (mc_readings.V_VBC_Vq >= 0) return MAX_TORQUE;
+
+  int32_t trq = mc_readings.last_commanded_trq / 10;
+  int32_t spd = -mc_readings.speed;
+
+  uint8_t rms_eff_percent = get_eff_percent(trq, spd);
+
+  power_lim_monitoring.calc_eff = rms_eff_percent;
+  printf("Eff percent: %d\tTorque for eff: %d\tSpeed for eff: %d\r\n",
+    rms_eff_percent, trq, -mc_readings.speed);
+
+  // Motor constant times 10e4
+  int32_t motor_constant_10e4 = 3 * num_pole_pairs * flux / 2;
+
+  // Convert to W from W / 100
+  int32_t plim_W = power_lim_settings.power_lim * 100;
+
+  // Powers of 10:
+  // +1 Multiply by 10 to divide numerater by 10, which gives dV to V
+  // -2 Divide by 100 to covert from percentage points to fraction
+  // ------------------------------------------------------------------
+  // - 1 total
+  int32_t allowed_iq = -1 * rms_eff_percent * plim_W / (mc_readings.V_VBC_Vq * 10);
+
+  printf("Plim W: %ld\t|Vq| in dV: %d\tAllowed Iq: %ld\r\n", plim_W, -mc_readings.V_VBC_Vq, allowed_iq);
+
+  int32_t undivided_iq = (allowed_iq) * motor_constant_10e4;
+
+  printf("Undivided Iq: %d\r\n", undivided_iq);
+
+  // Powers of 10:
+  // +1 convert from Nm to dNm
+  // -4 Divide out 10e4 in motor_constant_10e4
+  int32_t calc_torq = undivided_iq / 1000;
+
+  if (calc_torq < MAX_TORQUE) {
+    return calc_torq;
+  }
+  return MAX_TORQUE;
+}
+
+static int32_t get_power_limited_torque_mech(void) {
+  if (mc_readings.speed >= 0) return MAX_TORQUE;
+
+  int32_t plim_W = power_lim_settings.power_lim * 100;
+
+  printf("plim_W: %d\r\n", plim_W);
+
+  // Convert RPM to rad/s with 2pi/60, *10 to dNm, *100 for dkW to W
+  return 10 * plim_W / (-mc_readings.speed * 628 / 6000);
+}
+
+int32_t get_power_limited_torque(int32_t pedal_torque) {
+  int32_t tMAX_vq = get_power_limited_torque_vq();
+  int32_t tMAX_mech = get_power_limited_torque_mech();
+
+  int32_t pwr_lim_trq;
+  if (power_lim_settings.using_vq_lim) {
+    pwr_lim_trq = tMAX_vq;
+    printf("vq tmax = %d\r\n", tMAX_vq);
+  } else {
+    pwr_lim_trq = tMAX_mech;
+  }
+
+  power_lim_monitoring.vq_tmax = tMAX_vq;
+  power_lim_monitoring.mech_tmax = tMAX_mech;
+
+  if (pwr_lim_trq > MAX_TORQUE) pwr_lim_trq = MAX_TORQUE;
+
+  printf("FINAL PWR LIMITED TRQ: %d\r\n", pwr_lim_trq);
+  return pwr_lim_trq;
+}
 
 // PRIVATE FUNCTIONS
 static int32_t get_torque(void);
@@ -29,29 +109,29 @@ void init_controls_defaults(void) {
   control_settings.volt_lim_min_gain = 0;
   control_settings.volt_lim_min_voltage = 300;
   control_settings.torque_temp_limited = false;
-  power_limiting_settings.max_power = 80; //kW
-  power_limiting_settings.electrical_P = 1; 
-  power_limiting_settings.electrical_I = 1;
-  power_limiting_settings.anti_windup = 1; 
-  power_limiting_settings.pl_enable = false; 
+  power_lim_settings.power_lim = 800; // hW
+  power_lim_settings.electrical_P = 1; 
+  power_lim_settings.electrical_I = 1;
+  power_lim_settings.anti_windup = 1; 
+  power_lim_settings.pl_enable = false; 
 }
 
 int32_t get_electrical_power_limited_torque(int32_t pedal_torque) { 
-  int32_t power_error = (cs_readings.power - (power_limiting_settings.max_power * 100)); //This is now a positive value when over the limit, negative when under
+  int32_t power_error = (cs_readings.power - (power_lim_settings.power_lim * 100)); //This is now a positive value when over the limit, negative when under
   int32_t limited_torque = 0;
   int32_t current_speed = mc_readings.speed * 628 / 6000; //rad/s = rpm * 2pi/60 
   int32_t torque_error = -1*power_error / current_speed * 10; //dNm, sign flipped due to speed direction
   accumulated_torque_error = accumulated_torque_error + torque_error; 
-  if (accumulated_torque_error > power_limiting_settings.anti_windup) { 
+  if (accumulated_torque_error > power_lim_settings.anti_windup) { 
     //check for PI windup
-    accumulated_torque_error = power_limiting_settings.anti_windup; 
+    accumulated_torque_error = power_lim_settings.anti_windup; 
   }
-  else if (accumulated_torque_error < -1 * power_limiting_settings.anti_windup) { 
+  else if (accumulated_torque_error < -1 * power_lim_settings.anti_windup) { 
     //check for PI windup in the opposite direction 
-    accumulated_torque_error = -1*power_limiting_settings.anti_windup;
+    accumulated_torque_error = -1*power_lim_settings.anti_windup;
   }
-  power_limiting_monitoring.anti_windup = (int16_t)accumulated_torque_error;
-  if (cs_readings.power < power_limiting_settings.max_power * 100) {
+  e_power_limit_monitoring.anti_windup = (int16_t)accumulated_torque_error;
+  if (cs_readings.power < power_lim_settings.power_lim * 100) {
     //check if the power limit is being violated
     if (current_speed >= 0) {
       //speed is negative so if there is no speed on the system set to pedal torque as to stop div zero errors
@@ -59,18 +139,18 @@ int32_t get_electrical_power_limited_torque(int32_t pedal_torque) {
     }
     else {
       //P controller for below power limiter
-      limited_torque = previous_torque - (power_limiting_settings.electrical_P/10 * torque_error); 
+      limited_torque = previous_torque - (power_lim_settings.electrical_P/10 * torque_error); 
     }
   }
   else {
     //PI controller for above power limiter
-    limited_torque = pedal_torque - (power_limiting_settings.electrical_P/10 * torque_error + power_limiting_settings.electrical_I/10 * accumulated_torque_error); 
+    limited_torque = pedal_torque - (power_lim_settings.electrical_P/10 * torque_error + power_lim_settings.electrical_I/10 * accumulated_torque_error); 
   }
   if (limited_torque < 0) {
     //never command less than 0 torque
     limited_torque = 0;
   }
-  power_limiting_monitoring.power_limited_torque = (int16_t)limited_torque;
+  e_power_limit_monitoring.power_limited_torque = (int16_t)limited_torque;
   if (limited_torque < pedal_torque){ 
     //don't send more than pedal torque
     previous_torque = limited_torque;
@@ -109,7 +189,7 @@ void execute_controls(void) {
   if (!enabled) return;
 
   torque_command = get_torque();
-  power_limiting_monitoring.pedal_torque =  (int16_t)torque_command; 
+  e_power_limit_monitoring.pedal_torque =  (int16_t)torque_command; 
   controls_monitoring.raw_torque = torque_command;
 
   // Control regen brake valve:
@@ -133,22 +213,14 @@ void execute_controls(void) {
   }
   else {
     // Only use limits when we're not doing regen
+    int32_t power_limited_torque = get_power_limited_torque(torque_command);
+
     int32_t voltage_limited_torque = get_voltage_limited_torque(torque_command);
-    // static uint32_t last_vt = 0;
-    // if (HAL_GetTick() - last_vt > 10) {
-    //   printf("VT: %d\r\n", voltage_limited_torque);
-    //
-    //   last_vt = HAL_GetTick();
-    // }
+
     if (!control_settings.using_voltage_limiting) voltage_limited_torque = torque_command;
 
     int32_t temp_limited_torque = get_temp_limited_torque(torque_command);
-    // static uint32_t last_tt = 0;
-    // if (HAL_GetTick() - last_tt > 10) {
-    //   printf("TT: %d\r\n", temp_limited_torque);
-    //
-    //   last_tt = HAL_GetTick();
-    // }
+
     if (!control_settings.using_temp_limiting) temp_limited_torque = torque_command;
 
     control_settings.torque_temp_limited = temp_limited_torque < torque_command;
@@ -161,10 +233,14 @@ void execute_controls(void) {
       min_sensor_torque = temp_limited_torque;
     }
 
+    if (power_lim_settings.pl_enable && power_limited_torque < min_sensor_torque) {
+        min_sensor_torque = power_limited_torque;
+    }
+
     //Electrical Power limiter
     int32_t electrical_power_limited_torque = get_electrical_power_limited_torque(torque_command); 
 
-    if (power_limiting_settings.pl_enable && electrical_power_limited_torque < min_sensor_torque) {
+    if (power_lim_settings.pl_enable && electrical_power_limited_torque < min_sensor_torque) {
 
       min_sensor_torque = electrical_power_limited_torque; 
     }
@@ -267,7 +343,6 @@ static int32_t get_voltage_limited_torque(int32_t pedal_torque) {
   return gain * pedal_torque / 100;
 }
 
-
 // Returns the output of a linear hinge.
 // It is a continuous function.
 // `m` is the minimum output of this function.
@@ -280,9 +355,14 @@ int32_t positive_hinge(int32_t x, int32_t m, int32_t c) {
   return (x * (m - 100) / c) + 100;
 }
 
-
 // Returns the output of a bidirectional linear hinge limiter.
 int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c) {
   if (c > e) return positive_hinge(x - e, m, c - e);
   else       return positive_hinge(e - x, m, e - c);
+}
+
+int16_t get_eff_percent(int32_t torque, int32_t speed) {
+  int16_t torq_idx = torque * NUM_TRQ_INDXS / 240;
+  int16_t spd_idx = speed * NUM_SPD_INDXS / 6000;
+  return data_eff_percent[spd_idx][torq_idx];
 }

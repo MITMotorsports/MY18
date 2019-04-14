@@ -1,7 +1,7 @@
 #include "fault_gates.h"
 
 GateFaults_T gates;
-static bool const BELIEVE_IMD = true;
+static bool const BELIEVE_IMD = false;
 
 // Gate faults occur when a pin goes LOW.
 void update_gate_status(void) {
