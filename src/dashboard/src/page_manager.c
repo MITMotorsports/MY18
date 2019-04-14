@@ -13,7 +13,9 @@ const uint16_t pwr_lim_sweeps[num_pwr_lim_sweeps] = {5, 10, 20, 50, 100};
 const uint16_t Kp_sweeps[num_Kp_sweeps] = {0, 5, 10, 20, 50, 75, 100, 150};
 #define num_Ki_sweeps 8 
 const uint16_t Ki_sweeps[num_Ki_sweeps] = {0, 5, 10, 20, 50, 75, 100, 150};
-const uint8_t anti_windup_sweeps = 200;
+const uint16_t anti_windup_sweeps = 1000;
+
+static uint8_t lim_indx = 255;
 
 void page_manager_init(page_manager_t *pm, carstats_t *stats) {
     pm->page  = DASH_PAGE_PL; // DASH_PAGE_CRITICAL;
@@ -89,7 +91,7 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
             draw_pl_page(pm, oled);
             break;
         case DASH_PAGE_EPL:
-            draw_pl_page(pm, oled);
+            draw_epl_page(pm, oled);
             break;
         default:
             break;
@@ -588,7 +590,6 @@ void draw_debug_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
   carstats_t *stats = pm->stats;
     static uint8_t var_toggled = 2;
-    static uint8_t lim_indx = 255;
     static uint8_t thresh_indx = 255;
     static uint8_t ramp_indx = 255;
 
@@ -696,7 +697,6 @@ void draw_traction_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 void draw_epl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     carstats_t *stats = pm->stats;
     static uint8_t var_toggled = 1;
-    static uint8_t lim_indx = 255;
     static uint8_t P_indx = 255;
     static uint8_t I_indx = 255;
 
@@ -707,7 +707,7 @@ void draw_epl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     if (stats->buttons.left.action == BUTTON_ACTION_TAP) {
       switch (var_toggled) {
         case 1:
-          stats->pl_controls.pl_enable ^= 1;
+          stats->pl_controls.epl_enable ^= 1;
           break;
         case 2:
             lim_indx--;
@@ -724,7 +724,7 @@ void draw_epl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     if (stats->buttons.right.action == BUTTON_ACTION_TAP) {
       switch (var_toggled) {
         case 1:
-          stats->pl_controls.pl_enable ^= 1;
+          stats->pl_controls.epl_enable ^= 1;
           break;
         case 2:
             lim_indx++;
@@ -756,8 +756,8 @@ void draw_epl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     // Render
     oled_clearline(oled, 0);
     oled_set_pos(oled, 0, 2);
-    oled_print(oled, "PL: ");
-    oled_print(oled, (stats->pl_controls.pl_enable) ? "ON " : "OFF");
+    oled_print(oled, "EPL: ");
+    oled_print(oled, (stats->pl_controls.epl_enable) ? "ON " : "OFF");
     oled_rprint_pad(oled, "WDP: ", 4);
     stats->pl_controls.anti_windup = anti_windup_sweeps;
     oled_print_num(oled, ("%d", anti_windup_sweeps));

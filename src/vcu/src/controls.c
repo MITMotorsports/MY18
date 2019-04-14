@@ -126,9 +126,9 @@ int32_t get_electrical_power_limited_torque(int32_t pedal_torque) {
     //check for PI windup
     accumulated_torque_error = power_lim_settings.anti_windup; 
   }
-  else if (accumulated_torque_error < -1 * power_lim_settings.anti_windup) { 
+  else if (accumulated_torque_error < 0) { 
     //check for PI windup in the opposite direction 
-    accumulated_torque_error = -1*power_lim_settings.anti_windup;
+    accumulated_torque_error = 0;
   }
   e_power_limit_monitoring.anti_windup = (int16_t)accumulated_torque_error;
   if (cs_readings.power < power_lim_settings.power_lim * 100) {
@@ -151,8 +151,6 @@ int32_t get_electrical_power_limited_torque(int32_t pedal_torque) {
     return limited_torque;
   }
   else { 
-    //When we aren't limiting torque reset the windup 
-    accumulated_torque_error = 0;
     previous_torque = pedal_torque;
     return pedal_torque; 
   }
