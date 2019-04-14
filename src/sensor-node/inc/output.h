@@ -4,7 +4,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "timer.h"
 #include "types.h"
 #include "serial.h"
 
