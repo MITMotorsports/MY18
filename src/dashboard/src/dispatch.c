@@ -178,7 +178,6 @@ void send_dash_controls(void) {
     LIMIT(can0_DashRequest_period);
     handle_can_error(can0_DashRequest_Write(&carstats.controls));
     handle_can_error(can0_Dash_PowerLimSettings_Write(&carstats.pl_controls));
-    // handle_can_error(can0_DashElectricalPL_Write(&carstats.pl_controls));
 }
 
 void vcu_controls_update(void) {

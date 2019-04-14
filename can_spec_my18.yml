@@ -1643,7 +1643,7 @@ buses:
         <<: &epl
           segments:
             power_lim:
-              unit: cW
+              unit: hW
               position: 0
               length: 16
               c_type: uint16_t

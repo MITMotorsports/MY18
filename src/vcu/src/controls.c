@@ -11,7 +11,6 @@ int32_t previous_torque = 0;
 can0_VCUControlsParams_T control_settings = {};
 can0_PowerLimMonitoring_T power_lim_monitoring = {};
 can0_VCU_PowerLimSettings_T power_lim_settings = {};
-// can0_VCUElectricalPL_T power_limiting_settings = {};
 can0_ElectricalPLLogging_T power_limiting_monitoring = {};
 
 static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
