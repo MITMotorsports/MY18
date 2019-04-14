@@ -443,5 +443,5 @@ void send_VCU_PowerLimSettings(void) {
 
 void send_PowerLimitingMonitoring(void) { 
   LIMIT(can0_ElectricalPLLogging);
-  can0_ElectricalPLLogging_Write(&power_limiting_monitoring);
+  can0_ElectricalPLLogging_Write(&e_power_limit_monitoring);
 }

@@ -11,7 +11,7 @@ int32_t previous_torque = 0;
 can0_VCUControlsParams_T control_settings = {};
 can0_PowerLimMonitoring_T power_lim_monitoring = {};
 can0_VCU_PowerLimSettings_T power_lim_settings = {};
-can0_ElectricalPLLogging_T power_limiting_monitoring = {};
+can0_ElectricalPLLogging_T e_power_limit_monitoring = {};
 
 static int32_t hinge_limiter(int32_t x, int32_t m, int32_t e, int32_t c);
 
@@ -130,7 +130,7 @@ int32_t get_electrical_power_limited_torque(int32_t pedal_torque) {
     //check for PI windup in the opposite direction 
     accumulated_torque_error = -1*power_lim_settings.anti_windup;
   }
-  power_limiting_monitoring.anti_windup = (int16_t)accumulated_torque_error;
+  e_power_limit_monitoring.anti_windup = (int16_t)accumulated_torque_error;
   if (cs_readings.power < power_lim_settings.power_lim * 100) {
     //check if the power limit is being violated
     if (current_speed >= 0) {
@@ -150,7 +150,7 @@ int32_t get_electrical_power_limited_torque(int32_t pedal_torque) {
     //never command less than 0 torque
     limited_torque = 0;
   }
-  power_limiting_monitoring.power_limited_torque = (int16_t)limited_torque;
+  e_power_limit_monitoring.power_limited_torque = (int16_t)limited_torque;
   if (limited_torque < pedal_torque){ 
     //don't send more than pedal torque
     previous_torque = limited_torque;
@@ -189,7 +189,7 @@ void execute_controls(void) {
   if (!enabled) return;
 
   torque_command = get_torque();
-  power_limiting_monitoring.pedal_torque =  (int16_t)torque_command; 
+  e_power_limit_monitoring.pedal_torque =  (int16_t)torque_command; 
   controls_monitoring.raw_torque = torque_command;
 
   // Control regen brake valve:
