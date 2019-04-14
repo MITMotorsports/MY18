@@ -1667,6 +1667,10 @@ buses:
               position: 34
               length: 16
               c_type: uint16_t
+            epl_enable:
+              position: 50
+              length: 1
+              c_type: bool
       Dash_PowerLimSettings:
         can_id: 0x702
         is_big_endian: true

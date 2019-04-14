@@ -132,15 +132,9 @@ int32_t get_electrical_power_limited_torque(int32_t pedal_torque) {
   }
   e_power_limit_monitoring.anti_windup = (int16_t)accumulated_torque_error;
   if (cs_readings.power < power_lim_settings.power_lim * 100) {
-    //check if the power limit is being violated
-    if (current_speed >= 0) {
-      //speed is negative so if there is no speed on the system set to pedal torque as to stop div zero errors
-      limited_torque = pedal_torque;
-    }
-    else {
-      //P controller for below power limiter
-      limited_torque = previous_torque - (power_lim_settings.electrical_P/10 * torque_error); 
-    }
+    //check if the power limit is being violated and if not return pedal torque
+    limited_torque = pedal_torque;
+    
   }
   else {
     //PI controller for above power limiter
@@ -240,7 +234,7 @@ void execute_controls(void) {
     //Electrical Power limiter
     int32_t electrical_power_limited_torque = get_electrical_power_limited_torque(torque_command); 
 
-    if (power_lim_settings.pl_enable && electrical_power_limited_torque < min_sensor_torque) {
+    if (power_lim_settings.epl_enable && electrical_power_limited_torque < min_sensor_torque) {
 
       min_sensor_torque = electrical_power_limited_torque; 
     }

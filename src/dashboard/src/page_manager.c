@@ -88,6 +88,9 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
         case DASH_PAGE_PL:
             draw_pl_page(pm, oled);
             break;
+        case DASH_PAGE_EPL:
+            draw_pl_page(pm, oled);
+            break;
         default:
             break;
     }
