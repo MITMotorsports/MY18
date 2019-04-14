@@ -26,8 +26,8 @@ static int32_t get_power_limited_torque_vq(void) {
   int32_t trq = mc_readings.last_commanded_trq / 10;
   int32_t spd = -mc_readings.speed;
 
-  uint8_t rms_eff_percent = get_eff_percent(trq, spd);
-
+  //uint8_t rms_eff_percent = get_eff_percent(trq, spd);
+  uint8_t rms_eff_percent = 97;
   power_lim_monitoring.calc_eff = rms_eff_percent;
   printf("Eff percent: %d\tTorque for eff: %d\tSpeed for eff: %d\r\n",
     rms_eff_percent, trq, -mc_readings.speed);
