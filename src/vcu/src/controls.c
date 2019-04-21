@@ -26,8 +26,8 @@ static int32_t get_power_limited_torque_vq(void) {
   int32_t trq = mc_readings.last_commanded_trq / 10;
   int32_t spd = -mc_readings.speed;
 
-  uint8_t rms_eff_percent = get_eff_percent(trq, spd);
- // uint8_t rms_eff_percent = 97;
+  // uint8_t rms_eff_percent = get_eff_percent(trq, spd);
+  uint8_t rms_eff_percent = 97;
   power_lim_monitoring.calc_eff = rms_eff_percent;
   printf("Eff percent: %d\tTorque for eff: %d\tSpeed for eff: %d\r\n",
     rms_eff_percent, trq, -mc_readings.speed);
@@ -38,12 +38,13 @@ static int32_t get_power_limited_torque_vq(void) {
   // Convert to W from W / 100
   int32_t plim_W = power_lim_settings.power_lim * 100;
 
+  // VqIq power = Vq * Iq * 3/2
   // Powers of 10:
   // +1 Multiply by 10 to divide numerater by 10, which gives dV to V
   // -2 Divide by 100 to covert from percentage points to fraction
   // ------------------------------------------------------------------
   // - 1 total
-  int32_t allowed_iq = -1 * rms_eff_percent * plim_W / (mc_readings.V_VBC_Vq * 10);
+  int32_t allowed_iq = -1 * rms_eff_percent * plim_W * 3 / (mc_readings.V_VBC_Vq * 10 * 2);
 
   printf("Plim W: %ld\t|Vq| in dV: %d\tAllowed Iq: %ld\r\n", plim_W, -mc_readings.V_VBC_Vq, allowed_iq);
 
