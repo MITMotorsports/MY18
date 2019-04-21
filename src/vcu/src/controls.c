@@ -44,7 +44,7 @@ static int32_t get_power_limited_torque_vq(void) {
   // -2 Divide by 100 to covert from percentage points to fraction
   // ------------------------------------------------------------------
   // - 1 total
-  int32_t allowed_iq = -1 * rms_eff_percent * plim_W * 3 / (mc_readings.V_VBC_Vq * 10 * 2);
+  int32_t allowed_iq = -1 * rms_eff_percent * plim_W * 2/ (mc_readings.V_VBC_Vq * 10 * 3);
 
   printf("Plim W: %ld\t|Vq| in dV: %d\tAllowed Iq: %ld\r\n", plim_W, -mc_readings.V_VBC_Vq, allowed_iq);
 
@@ -71,7 +71,7 @@ static int32_t get_power_limited_torque_mech(void) {
   printf("plim_W: %d\r\n", plim_W);
 
   // Convert RPM to rad/s with 2pi/60, *10 to dNm, *100 for dkW to W
-  return 10 * power_lim_settings.fudge_factor/100 * plim_W / (-mc_readings.speed * 628 / 6000);
+  return power_lim_settings.fudge_factor * plim_W / (-mc_readings.speed * 628 / 60000); //2*pi/60 * 10 (dNM) /100 (power fudge percent to decimal)
 }
 
 int32_t get_power_limited_torque(int32_t pedal_torque) {
