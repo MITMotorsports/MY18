@@ -1671,6 +1671,10 @@ buses:
               position: 50
               length: 1
               c_type: bool
+            fudge_factor: 
+              position: 51
+              length: 8
+              c_type: uint8_t
       Dash_PowerLimSettings:
         can_id: 0x702
         is_big_endian: true

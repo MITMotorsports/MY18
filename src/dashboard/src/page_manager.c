@@ -14,6 +14,8 @@ const uint16_t Kp_sweeps[num_Kp_sweeps] = {0, 5, 10, 20, 50, 75, 100, 150};
 #define num_Ki_sweeps 8 
 const uint16_t Ki_sweeps[num_Ki_sweeps] = {0, 5, 10, 20, 50, 75, 100, 150};
 const uint16_t anti_windup_sweeps = 1000;
+#define num_fudge_sweeps 5
+const uint8_t fudge_sweeps[num_fudge_sweeps] = {100, 95, 90, 85, 80}
 
 static uint8_t lim_indx = 255;
 
@@ -592,10 +594,11 @@ void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     static uint8_t var_toggled = 2;
     static uint8_t thresh_indx = 255;
     static uint8_t ramp_indx = 255;
+    static uint8_t fudge_indx = 255;
 
     // Process contextual actions
     if (stats->buttons.B.rising_edge) var_toggled++;
-    var_toggled = LOOPOVER(var_toggled, 0, 2);
+    var_toggled = LOOPOVER(var_toggled, 0, 3);
 
     if (stats->buttons.left.action == BUTTON_ACTION_TAP) {
         switch (var_toggled) {
@@ -608,6 +611,9 @@ void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
             case 2:
                 lim_indx--;
                 break;
+            case 3:
+                fudge_indx--;
+                break; 
         }
     }
 
@@ -622,12 +628,20 @@ void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
             case 2:
                 lim_indx++;
                 break;
+            case 3:
+                fudge_indx++;
+                break; 
         }
     }
 
     if (lim_indx != 255) {
       lim_indx = LOOPOVER(lim_indx, 0, num_pwr_lim_sweeps - 1);
       stats->pl_controls.power_lim = pwr_lim_sweeps[lim_indx];
+    }
+
+    if (fudge_indx != 255){
+        fudge_indx = LOOPOVER(fudge_indx, 0, num_fudge_sweeps -1);
+        stats->pl_controls.fudge_factor = fudge_sweeps[fudge_indx];
     }
 
     // Render
@@ -649,6 +663,11 @@ void draw_pl_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     } else {
         oled_print(oled, DATA_UNKNOWN);
     }
+
+    oled_clearline(oled, 3);
+    oled_set_pos(oled,3,1);
+    oled_print(oled, "Fudge Factor: ");
+    oled_print_num(oled, stats->pl_controls.fudge_factor);
 
     oled_set_pos(oled, var_toggled, 0);
     oled_print(oled, ">");

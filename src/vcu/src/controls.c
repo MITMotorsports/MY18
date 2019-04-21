@@ -26,8 +26,8 @@ static int32_t get_power_limited_torque_vq(void) {
   int32_t trq = mc_readings.last_commanded_trq / 10;
   int32_t spd = -mc_readings.speed;
 
-  //uint8_t rms_eff_percent = get_eff_percent(trq, spd);
-  uint8_t rms_eff_percent = 97;
+  uint8_t rms_eff_percent = get_eff_percent(trq, spd);
+ // uint8_t rms_eff_percent = 97;
   power_lim_monitoring.calc_eff = rms_eff_percent;
   printf("Eff percent: %d\tTorque for eff: %d\tSpeed for eff: %d\r\n",
     rms_eff_percent, trq, -mc_readings.speed);
@@ -70,7 +70,7 @@ static int32_t get_power_limited_torque_mech(void) {
   printf("plim_W: %d\r\n", plim_W);
 
   // Convert RPM to rad/s with 2pi/60, *10 to dNm, *100 for dkW to W
-  return 10 * plim_W / (-mc_readings.speed * 628 / 6000);
+  return 10 * power_lim_settings.fudge_factor/100 * plim_W / (-mc_readings.speed * 628 / 6000);
 }
 
 int32_t get_power_limited_torque(int32_t pedal_torque) {
@@ -114,6 +114,7 @@ void init_controls_defaults(void) {
   power_lim_settings.electrical_I = 1;
   power_lim_settings.anti_windup = 1; 
   power_lim_settings.pl_enable = false; 
+  power_lim_settings.fudge_factor = 100;
 }
 
 int32_t get_electrical_power_limited_torque(int32_t pedal_torque) { 

@@ -435,6 +435,7 @@ void handleDash_PowerLimSettings(Frame *msg) {
   power_lim_settings.electrical_I = unpacked_msg.electrical_I;
   power_lim_settings.anti_windup = unpacked_msg.anti_windup;
   power_lim_settings.epl_enable = unpacked_msg.epl_enable; 
+  power_lim_settings.fudge_factor = unpacked_msg.fudge_factor;
 }
 
 void send_VCU_PowerLimSettings(void) {

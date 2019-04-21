@@ -106,6 +106,7 @@ void dispatch_init() {
     carstats.pl_controls.electrical_I = 1;
     carstats.pl_controls.anti_windup = 1; 
     carstats.pl_controls.epl_enable = false;
+    carstats.pl_controls.fudge_factor = 100;
      
     carstats.vcu_controls_received = false;
     carstats.vcu_pl_controls_received = false;
