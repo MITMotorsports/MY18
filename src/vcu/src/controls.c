@@ -70,8 +70,14 @@ static int32_t get_power_limited_torque_mech(void) {
 
   printf("plim_W: %d\r\n", plim_W);
 
-  // Convert RPM to rad/s with 2pi/60, *10 to dNm, *100 for dkW to W
-  return power_lim_settings.fudge_factor * plim_W / (-mc_readings.speed * 628 / 60000); //2*pi/60 * 10 (dNM) /100 (power fudge percent to decimal)
+  // Convert RPM to rad/s by multiplying by 60/2pi
+  // Powers of 10:
+  // +1 for Nm to dNm
+  // -2 for fudge factor percentage points to fraction
+  // +2 for for divide 628 to 6.28 (a.k.a. 2pi)
+  // ----------------------------------------------------
+  // +1 total
+  return 60 * 10 * power_lim_settings.fudge_factor * plim_W / (-mc_readings.speed * 628);
 }
 
 int32_t get_power_limited_torque(int32_t pedal_torque) {
