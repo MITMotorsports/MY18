@@ -15,7 +15,7 @@ const uint16_t Kp_sweeps[num_Kp_sweeps] = {0, 5, 10, 20, 50, 75, 100, 150};
 const uint16_t Ki_sweeps[num_Ki_sweeps] = {0, 5, 10, 20, 50, 75, 100, 150};
 const uint16_t anti_windup_sweeps = 1000;
 #define num_fudge_sweeps 5
-const uint8_t fudge_sweeps[num_fudge_sweeps] = {100, 95, 90, 85, 80}
+const uint8_t fudge_sweeps[num_fudge_sweeps] = {100, 95, 90, 85, 80};
 
 static uint8_t lim_indx = 255;
 
