@@ -7,8 +7,8 @@
 #define DATA_UNKNOWN "?"
 #define VCU_HEARTBEAT_TIMEOUT 1000 // ms
 
-#define num_pwr_lim_sweeps 5
-const uint16_t pwr_lim_sweeps[num_pwr_lim_sweeps] = {5, 10, 20, 50, 100};
+#define num_pwr_lim_sweeps 11
+const uint16_t pwr_lim_sweeps[num_pwr_lim_sweeps] = {5, 10, 20, 50, 100, 200, 300, 400, 500, 600, 800};
 #define num_Kp_sweeps 8
 const uint16_t Kp_sweeps[num_Kp_sweeps] = {0, 5, 10, 20, 50, 75, 100, 150};
 #define num_Ki_sweeps 8 

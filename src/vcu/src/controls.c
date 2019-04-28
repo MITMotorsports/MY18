@@ -66,18 +66,22 @@ static int32_t get_power_limited_torque_vq(void) {
 static int32_t get_power_limited_torque_mech(void) {
   if (mc_readings.speed >= 0) return MAX_TORQUE;
 
-  int32_t plim_W = power_lim_settings.power_lim * 100;
+  printf("Power limit: %d\r\n", power_lim_settings.power_lim *100);
+  int32_t plim_W = power_lim_settings.power_lim;
 
-  printf("plim_W: %d\r\n", plim_W);
 
   // Convert RPM to rad/s by multiplying by 60/2pi
   // Powers of 10:
   // +1 for Nm to dNm
   // -2 for fudge factor percentage points to fraction
-  // +2 for for divide 628 to 6.28 (a.k.a. 2pi)
+  // +1 for for divide 62.8 to 6.28 (a.k.a. 2pi)
+  // +2 for HW to W
   // ----------------------------------------------------
-  // +1 total
-  return 60 * 10 * power_lim_settings.fudge_factor * plim_W / (-mc_readings.speed * 628);
+  // +2 total
+
+  printf("meche power limit: %ld\r\n", 60 * 100 * power_lim_settings.fudge_factor * plim_W/ (-mc_readings.speed * 63));
+
+  return 60 * 100 * power_lim_settings.fudge_factor * plim_W / (-mc_readings.speed * 63);
 }
 
 int32_t get_power_limited_torque(int32_t pedal_torque) {
@@ -253,6 +257,11 @@ void execute_controls(void) {
     else {
       limited_torque = min_sensor_torque;
     }
+
+    if (limited_torque < 0){
+      limited_torque = 0;
+    }
+
     torque_command = limited_torque;
   }
 
