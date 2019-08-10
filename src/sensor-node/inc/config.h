@@ -16,7 +16,4 @@
 #define CAN_BAUD 500000
 #define EEPROM_BAUD 600000
 
-#define SENSOR1 286327060
-#define SENSOR2 353760068
-
 #endif
