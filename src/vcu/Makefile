@@ -33,8 +33,10 @@ RM = rm -f
 
 OCD_SCRIPTS = $(OCD_D)/scripts
 
+#OCD_DIR = /usr/local/share/openocd/scripts
+#OCD = $(OCD_DIR)/bin/openocd
 OCD_DIR = /usr/local/share/openocd/scripts
-OCD = $(OCD_DIR)/bin/openocd
+OCD = C:\Users\Elijah\Dropbox (MIT)\FSAE\Software\6.332MotorController-master\6.332MotorController-master\openOCD\bin\openocd.exe
 
 CAN_LIB_DIR = ../../lib/CANlib
 
@@ -124,8 +126,8 @@ C_STD = gnu99
 
 MOUNT = /Volumes/NODE_F207ZG/
 UART_BAUD = 115200
-COMPORT ?= $(word 1, $(wildcard /dev/tty.usbserial-*) $(wildcard /dev/tty.usbmodem*) $(wildcard /dev/ttyUSB*) $(wildcard /dev/ttyACM*))
-
+#COMPORT ?= $(word 1, $(wildcard /dev/tty.usbserial-*) $(wildcard /dev/tty.usbmodem*) $(wildcard /dev/ttyUSB*) $(wildcard /dev/ttyACM*))
+COMPORT ?= /dev/ttyS3
 #=============================================================================#
 # set the VPATH according to SRCS_DIRS and startup file directory
 #=============================================================================#
