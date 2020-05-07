@@ -9,6 +9,10 @@
 #include "fault_pedalbox.h"
 #include "fault_brakes.h"
 
+// Internal Speed Controller settings for launch control
+#define MAX_INPUT_SPEED 3200 
+#define SPEED_CONTROLLER_UPDATE_PERIOD_MS  1
+
 // TODO: Extract MAX_TORQUE from RMS EEPROM (over CAN?)
 #define MAX_TORQUE    2400 // unit: dNm
 #define MAX_ACCEL_VAL 1000
@@ -61,10 +65,14 @@ typedef enum {
 
 extern can0_VCUControlsParams_T control_settings;
 extern can0_VCUControlsParamsLC_T lc_settings;
+extern can0_DashSpeedCntrlRPMSetpoint_T rpm_setpoint;
 
 // INTERACTION FUNCTIONS
 void enable_controls(void);
 void disable_controls(void);
+void lock_lc_state(void);
+void lc_rtd_callback(void);
+bool get_lc_state_locked_until_next_rtd(void);
 bool get_controls_enabled(void);
 void execute_controls(void);
 void set_lc_zero_torque(void);

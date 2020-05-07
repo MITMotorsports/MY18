@@ -52,6 +52,7 @@ void draw_regen_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 void draw_launch_control_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 void draw_traction_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 void draw_fault_page(page_manager_t *pm, NHD_US2066_OLED *oled);
+void draw_lc_pid_page(page_manager_t *pm, NHD_US2066_OLED *oled);
 
 void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
     // Make sure that active aero is disable if we are not on the critical page
@@ -80,6 +81,9 @@ void page_manager_update(page_manager_t *pm, NHD_US2066_OLED *oled) {
             break;
         case DASH_PAGE_DEBUG:
             draw_debug_page(pm, oled);
+            break;
+        case DASH_LC_PID_DEBUG:
+            draw_lc_pid_page(pm, oled);
             break;
         default:
             break;
@@ -516,7 +520,7 @@ void draw_launch_control_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     oled_rprint_pad(oled, "SR ", 4);
 
-    if (stats->lc_controls.launch_ctrl_slip_ratio != 255) {
+    if (stats->lc_controls.launch_ctrl_slip_ratio != -1) {
         oled_print_num(oled, stats->lc_controls.launch_ctrl_slip_ratio);
     } else {
         oled_print(oled, DATA_UNKNOWN);
@@ -524,7 +528,7 @@ void draw_launch_control_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
 
     oled_clearline(oled, 2);
     oled_set_pos(oled, 2, 0);
-    
+
     oled_print(oled, "TORQ ");
     if (stats->lc_controls.speeding_up_torque != 65535) {
         oled_print_num(oled, stats->lc_controls.speeding_up_torque);
@@ -729,4 +733,66 @@ void draw_traction_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
     } else {
         oled_print(oled, DATA_UNKNOWN);
     }
+}
+
+
+void draw_lc_pid_page(page_manager_t *pm, NHD_US2066_OLED *oled) {
+
+    carstats_t *stats = pm->stats;
+    static int var_toggled = 0;
+
+    // Process contextual actions
+    if (stats->buttons.B.rising_edge) var_toggled++;
+    var_toggled = LOOPOVER(var_toggled, 0, 2);
+
+    if (stats->buttons.left.action == BUTTON_ACTION_TAP) {
+      switch (var_toggled) {
+        case 0:
+          stats->kp.kp_times_1000 -= 50;
+          break;
+        case 1:
+          stats->ki.ki_times_1000 -= 1;
+          break;
+        case 2:
+          stats->rpm_setpoint.rpm_setpoint -= 100;
+          break;
+      }
+    }
+
+    if (stats->buttons.right.action == BUTTON_ACTION_TAP) {
+      switch (var_toggled) {
+        case 0:
+          stats->kp.kp_times_1000 += 50;
+          break;
+        case 1:
+          stats->ki.ki_times_1000 += 1;
+          break;
+        case 2:
+          stats->rpm_setpoint.rpm_setpoint += 100;
+          break;
+      }
+    }
+
+    stats->kp.kp_times_1000 = LOOPOVER(stats->kp.kp_times_1000, 1000, 2000);
+    stats->ki.ki_times_1000 = LOOPOVER(stats->ki.ki_times_1000, 0, 25);
+    stats->rpm_setpoint.rpm_setpoint = LOOPOVER(stats->rpm_setpoint.rpm_setpoint, 0, 2500);
+
+    oled_clearline(oled, 0);
+    oled_set_pos(oled, 0, 1);
+    oled_print(oled, "P: ");
+    oled_print_num(oled, stats->kp.kp_times_1000);
+
+    oled_clearline(oled, 1);
+    oled_set_pos(oled, 1, 1);
+    oled_print(oled, "I: ");
+    oled_print_num(oled, stats->ki.ki_times_1000);
+
+    oled_clearline(oled, 2);
+    oled_set_pos(oled, 2, 1);
+    oled_print(oled, "RPM Setpoint: ");
+    oled_print_num(oled, stats->rpm_setpoint.rpm_setpoint);
+
+
+    oled_set_pos(oled, var_toggled, 0);
+    oled_print(oled, ">");
 }

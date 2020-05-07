@@ -3,9 +3,16 @@
 static bool enabled = false;
 static int32_t torque_command = 0;
 static int32_t speed_command = 0;
+
+static bool lc_state_locked_until_next_rtd = true;
+
 can0_VCUControlsParams_T control_settings = {};
 can0_VCUControlsParamsLC_T lc_settings = {};
+can0_DashSpeedCntrlRPMSetpoint_T rpm_setpoint = {};
+
 static Launch_Control_State_T lc_state = BEFORE;
+
+uint32_t last_time_step = 0;
 
 uint32_t get_front_wheel_speed(void);
 static bool any_lc_faults();
@@ -34,6 +41,11 @@ void init_controls_defaults(void) {
   lc_settings.speeding_up_torque = LC_DEFAULT_SPEEDING_UP_TORQUE;
   lc_settings.speeding_up_speed = LC_DEFAULT_SPEEDING_UP_SPEED;
   lc_settings.ws_thresh = LC_DEFAULT_WS_THRESH;
+
+  rpm_setpoint.rpm_setpoint = 0;
+
+  init_speed_controller_defaults(MAX_INPUT_SPEED, 
+    MAX_TORQUE, SPEED_CONTROLLER_UPDATE_PERIOD_MS);
 }
 
 void enable_controls(void) {
@@ -57,6 +69,19 @@ void disable_controls(void) {
 
 bool get_controls_enabled(void) {
   return enabled;
+}
+
+// locks LC from being re-enabled by outside entities until RTD occurs
+void lock_lc_state(void) {
+  lc_state_locked_until_next_rtd = true;
+}
+
+void lc_rtd_callback(void) {
+  lc_state_locked_until_next_rtd = false;
+}
+
+bool get_lc_state_locked_until_next_rtd(void) {
+  return lc_state_locked_until_next_rtd;
 }
 
 void execute_controls(void) {
@@ -132,19 +157,47 @@ void execute_controls(void) {
       switch (lc_state) {
         case BEFORE:
           sendTorqueCmdMsg(0);
+          disable_speed_controller();
 
           // Transition
           if (pedalbox_min(accel) > LC_ACCEL_BEGIN) {
             lc_state = SPEED_CONTROLLER;
-            printf("[LAUNCH CONTROL] SPEED CONTROLLER STATE ENTERED\r\n");
+            enable_speed_controller();
+            printf("[LAUNCH CONTROL] SPEEDING UP STATE ENTERED\r\n");
           }
           break;
         case SPEED_CONTROLLER:
-          speed_command = 500; // get_launch_control_speed(front_wheel_speed);
-          sendSpeedCmdMsg(speed_command, torque_command);
+          
+          // speed_command = get_launch_control_speed(front_wheel_speed);
+          // speed_command = 500;
+
+
+          set_speed_controller_setpoint(rpm_setpoint.rpm_setpoint); // RPM
+
+          // Update the internal speed controller with the new speed value
+          // TODO: replace HAL_GetTick with the timestamp of the message
+          update_speed_controller_error(mc_readings.speed, HAL_GetTick());
+                           
+          int32_t speedControlTorqueOutput = get_speed_controller_torque_command();
+          if (speedControlTorqueOutput > torque_command) {
+            speedControlTorqueOutput = torque_command;
+          }
+
+          if (HAL_GetTick() - last_time_step > 50) {
+            //printf("[SC] SETPOINT: %d, ERR: %d, TORQUE: %d, ACCUM: %d, DERIV: %d\r\n",
+            //  speed_command, get_speed_controller_error(), speedControlTorqueOutput,
+            //  get_speed_controller_accum(), get_speed_controller_deriv());
+
+            last_time_step = HAL_GetTick();
+          }
+
+          sendTorqueCmdMsg(speedControlTorqueOutput);
+
           break;
         case ZERO_TORQUE:
           sendTorqueCmdMsg(0);
+          lock_lc_state();
+          disable_speed_controller();
 
           if (pedalbox_max(accel) < LC_ACCEL_RELEASE) {
             lc_state = DONE;
@@ -153,6 +206,8 @@ void execute_controls(void) {
           break;
         default:
           sendTorqueCmdMsg(0);
+          lock_lc_state();
+          disable_speed_controller();
 
           printf("ERROR: NO STATE!\r\n");
           break;
@@ -242,10 +297,12 @@ static bool any_lc_faults(void) {
     // that is indicative of driver braking intent. The other brake is for regen.
     printf("[LAUNCH CONTROL ERROR] Brake (%d) too high\r\n", pedalbox.brake_2);
     return true;
-  } else /*else if (mc_readings.speed > LC_BACKWARDS_CUTOFF) {m
-    printf("[LAUNCH CONTROL ERROR] MC reading (%d) is great than cutoff (%d)\r\n", mc_readings.speed, LC_BACKWARDS_CUTOFF);
-    return true;
-  }*/
+  } 
+
+  // else if (mc_readings.speed > LC_BACKWARDS_CUTOFF) {
+  //   printf("[LAUNCH CONTROL ERROR] MC reading (%d) is great than cutoff (%d)\r\n", mc_readings.speed, LC_BACKWARDS_CUTOFF);
+  //   return true;
+  // }
     return false;
 }
 

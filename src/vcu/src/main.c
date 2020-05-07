@@ -88,6 +88,7 @@ int main(void) {
       lastt = HAL_GetTick();
     }
     if (HAL_GetTick() - lastt2 > 100) {
+      //printf("Rpm setpoint: %d\r\n", //rpm_setpoint.rpm_setpoint);
       // printf("CONTROLS PARAMS:\r\n  speeding_up_torque: %d\r\n  speeding_up_speed: %d\r\n  ws_thresh: %d\r\n  launch_ctrl_slip_ratio: %d\r\n  using_launch_ctrl: %d\r\n  accel: %d\r\n  wheel speed: %d\r\n",
       // lc_settings.speeding_up_torque, lc_settings.speeding_up_speed, lc_settings.ws_thresh, lc_settings.launch_ctrl_slip_ratio, lc_settings.using_launch_ctrl, pedalbox_min(accel), get_front_wheel_speed());
       // switch (get_lc_state()) {

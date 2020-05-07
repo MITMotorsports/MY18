@@ -10,4 +10,4 @@
 	path = lib/CANlib
 	url = https://github.com/MITMotorsports/CANlib.git
 	branch = master
-    ignore = dirty
+  ignore = dirty

@@ -4,6 +4,8 @@
 #include "stdio.h"
 #include "stm32f2xx_hal.h"
 #include "CANlib.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 #include "state.h"
 #include "fault.h"
@@ -40,5 +42,28 @@ void sendTorqueCmdMsg(int16_t torque);
 void sendSpeedCmdMsg(int16_t speed, int16_t torque_limit);
 void sendMotorOffCmdMsg(void);
 void send_mc_fault_clear(void);
+
+void sendVCUSpeedCntrlKpTimes1000Msg(void);
+void sendVCUSpeedCntrlKiTimes1000Msg(void);
+void sendVCUSpeedCntrlKdTimes1000Msg(void);
+void sendVCUSpeedCntrlIWindupMaxMsg(void);
+void sendVCUSpeedCntrlIWindupMinMsg(void);
+void sendVCUSpeedCntrlMinOutputValueMsg(void);
+void sendVCUSpeedCntrlMaxOutputValueMsg(void);
+void sendVCUSpeedCntrlMinInputValueMsg(void);
+void sendVCUSpeedCntrlMaxInputValueMsg(void);
+void sendVCUSpeedCntrlErrorUpdateTimeoutMsg(void);
+void sendVCUSpeedCntrlDtMsg(void);
+void sendVCUSpeedCntrlEnabledMsg(void);
+void sendVCUSpeedCntrlOutOfInputRangeThrottledMsg(void);
+void sendVCUSpeedCntrlOutOfOutputRangeThrottledMsg(void);
+void sendVCUSpeedCntrlErrorUpdateTimedOutMsg(void);
+void sendVCUSpeedCntrlRPMSetpointMsg(void);
+void sendVCUSpeedCntrlCommandedTorqueMsg(void);
+void sendVCUSpeedCntrlRPMErrorMsg(void);
+void sendVCUSpeedCntrlLastRPMErrorMsg(void);
+void sendVCUSpeedCntrlDerivRPMErrorMsg(void);
+void sendVCUSpeedCntrlRPMErrorAccumulatedMsg(void);
+void sendVCUSpeedCntrlLastErrorUpdateTimestampMsg(void);
 
 #endif // ifndef __CAN_HANDLES_H

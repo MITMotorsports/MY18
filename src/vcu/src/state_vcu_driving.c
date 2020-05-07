@@ -35,7 +35,7 @@ void update_vcu_state_driving(void) {
   }
 
   // Calculate and send motor controller commands.
-  if (!get_controls_enabled()) {
+  if (!get_controls_enabled() && !get_lc_state_locked_until_next_rtd()) {
     enable_controls();
   }
   execute_controls();

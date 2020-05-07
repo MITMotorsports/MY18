@@ -6,6 +6,7 @@
 #include "state_vcu.h"
 #include "can_handles.h"
 #include "controls.h"
+#include "speed_controller.h"
 
 #define AA_SETUP 10
 #define AA_HOLD 10
